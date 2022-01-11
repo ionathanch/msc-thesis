@@ -266,7 +266,7 @@
 	\ifx\dep@rtment\empty\relax\else(\dep@rtment)\fi
 	\vspace{1em}
 
-	{\large \@institution}\\
+	{\Large \textsc{\MakeTextLowercase{\@institution}}}\\
 	{\large (\c@mpus)}\\[1em]
 	{\large \@submonth\ \@subye@r}\\[1em]
 
