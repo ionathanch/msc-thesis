@@ -30,7 +30,7 @@
 %%
 
 % For submission to GPS
-\documentclass[gpscopy,onehalfspacing,11pt]{ubcdiss}
+\documentclass[gpscopy,twoside,balanced,onehalfspacing,11pt]{ubcdiss}
 
 % For your own copies (looks nicer)
 % \documentclass[balanced,twoside,11pt]{ubcdiss}
@@ -52,8 +52,9 @@
 %%
 
 %% NFSS font specification (New Font Selection Scheme)
-\usepackage{times,mathptmx,courier}
-\usepackage[scaled=.92]{helvet}
+%\usepackage{times,mathptmx,courier}
+%\usepackage[scaled=.92]{helvet}
+\usepackage{mlmodern}
 
 %% Math or theory people may want to include the handy AMS macros
 %\usepackage{amssymb}
@@ -102,6 +103,7 @@
 %%
 %% Recommended packages
 %%
+\usepackage[margin=1.25in]{geometry}
 \usepackage{checkend}	% better error messages on left-open environments
 \usepackage{graphicx}	% for incorporating external images
 
@@ -315,42 +317,36 @@
 %% Document meta-data: be sure to also change the \hypersetup information
 %%
 
-\title{On the Use of the \texttt{ubcdiss} Template}
+\title{sszz}
 %\subtitle{If you want a subtitle}
 
-\author{Johnny Canuck}
-\previousdegree{B. Basket Weaving, University of Illustrious Arts, 1991}
-\previousdegree{M. Silly Walks, Another University, 1994}
+\author{Jonathan Ho\hspace{0.1em}-\hspace{-0.1em}Wing Chan}
 
 % What is this dissertation for?
-\degreetitle{Doctor of Philosophy}
+\degreetitle{Master of Science}
 
 \institution{The University of British Columbia}
 \campus{Vancouver}
 
-\faculty{The Faculty of XXX}
-\department{Basket Weaving}
+\faculty{The Faculty of Graduate and Postdoctoral Studies}
+\department{Computer Science}
 \submissionmonth{April}
-\submissionyear{2192}
+\submissionyear{2022}
 
 % details of your examining committee
-\examiningcommittee{John Smith, Materials Engineering}{Supervisor}
-\examiningcommittee{Mary Maker, Materials Engineering}%
-    {Supervisory Committee Member}
-\examiningcommittee{Nebulous Name, Department}{Supervisory Committee Member}
-\examiningcommittee{Magnus Monolith, Other Department}{Additional Examiner}
+\examiningcommittee{William J. Bowman, Computer Science}{Supervisor}
+\examiningcommittee{Ronald Garcia, Computer Science}{Supervisory Committee Member}
+\examiningcommittee{Alexander J. Summers, Computer Science}{Supervisory Committee Member}
+\examiningcommittee{Examiner, Department}{Additional Examiner}
 
 % details of your supervisory committee
-\supervisorycommittee{Ira Crater, Materials Engineering}%
-    {Supervisory Committee Member}
-\supervisorycommittee{Adeline Long, \textsc{CEO} of Aerial Machine
-    Transportation, Inc.}{Supervisory Committee Member}
+\supervisorycommittee{Your Mom, Department}{Supervisory Committee Member}
 
 %% hyperref package provides support for embedding meta-data in .PDF
 %% files
 \hypersetup{
-  pdftitle={Change this title!  (DRAFT: \today)},
-  pdfauthor={Johnny Canuck},
+  pdftitle={sszz},
+  pdfauthor={Jonathan Chan},
   pdfkeywords={Your keywords here}
 }
 
@@ -384,15 +380,12 @@
 
 %    3. Abstract (mandatory - maximum 350 words)
 \include{abstract}
-\cleardoublepage
 
 %    4. Lay Summary (Effective May 2017, mandatory - maximum 150 words)
 \include{laysummary}
-\cleardoublepage
 
 %    5. Preface
 \include{preface}
-\cleardoublepage
 
 %    6. Table of contents (mandatory - list all items in the preliminary pages
 %    starting with the abstract, followed by chapter headings and
@@ -417,9 +410,10 @@
 \textspacing		% begin one-half or double spacing
 
 %   12. Acknowledgements (optional)
-\include{ack}
+\include{acknowledgements}
 
 %   13. Dedication (optional)
+\include{dedication}
 
 % Body of Thesis (not all sections may apply)
 \mainmatter
