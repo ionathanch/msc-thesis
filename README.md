@@ -1,3 +1,56 @@
 # The Future Home of Jonathan's Master's Thesis
 
-Stuff will be here eventually!
+## Outline
+
+1. Introduction
+  1. Something whimsical
+  2. Dependent types
+  3. Sized types
+  4. Syntactic model
+  4. Outline (typographical notes might go here)
+2. Sized CCω
+  1. CCω
+    1. Universes and cumulativity
+    2. Untyped convertibility, eta conversion, congruence, transitivity...
+    <br/> (does this need to be a separate chapter? I don't think so...)
+  2. Sized types
+    1. Basics
+    3. Higher-rank sizes
+    2. [Inflationary/bounded sizes](https://ionathan.ch/2021/08/26/using-sized-types.html#3-inflationary-sized-types)
+  3. Naturals and W types
+  4. (Future work?) Inductives, streams, and coinductives
+3. Syntactic Model
+  1. Extensional CIC (Oury's CC_E + inductives)
+    <br/> (if CCω is separate from Sized CCω, CIC_E could go with it)
+  2. Recipe for a syntactic model and trivial translations
+  3. Sizes as ordinals in type theory
+    1. Successor and limit
+    2. Ordering of sizes
+    3. Accessibility of sizes wrt order
+    4. Well-orderedness of sizes (induction principle)
+  4. Translation of naturals, W types, and fixpoints
+4. Type Preservation
+  1. Recipe for proving preservation
+  2. Compositionality lemmas
+  3. Convertibility of reduction
+  4. Convertibility of closure of reduction
+  5. Preservation of convertibility
+  6. Preservation of subtyping
+  7. Preservation of sizes
+  8. Preservation of typing
+  9. Normalization and consistency
+5. Extensions
+  1. Pairs and equality
+  2. Streams
+  3. Inductives (coinductives? idk there's no target theory)
+6. Outstanding issues
+  1. Universe levels (fix: parametrized sizes?)
+  2. Infinite size (fix: erasure? irrelevance? modality?)
+7. Related work (see ISTCP?)
+8. Conclusion
+
+## Technical TODOs
+
+* Add congruence of convertibility to source
+* See if match η-equivalence can be proven from equality reflection
+* Add equality, streams to source
