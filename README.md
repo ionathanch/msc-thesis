@@ -11,8 +11,7 @@
 2. Sized CCω
    1. CCω
       1. Universes and cumulativity
-      2. Untyped convertibility, eta conversion, congruence, transitivity...
-      <br/> (does this need to be a separate chapter? I don't think so...)
+      2. Untyped convertibility, η-conversion, congruence, transitivity
    2. Sized types
       1. Basics
       3. Higher-rank sizes
@@ -29,6 +28,8 @@
       3. Accessibility of sizes wrt order
       4. Well-orderedness of sizes (induction principle)
    4. Translation of naturals, W types, and fixpoints
+   5. CIC + Ω as alternative (w/ accessibility in as strict prop)
+      <br/> (since equality reflection is only needed to show this via funext)
 4. Type Preservation
    1. Recipe for proving preservation
    2. Compositionality lemmas
@@ -40,9 +41,9 @@
    8. Preservation of typing
    9. Normalization and consistency
 5. Extensions
-   1. Pairs and equality
-   2. Streams
-   3. Inductives (coinductives? idk there's no target theory)
+   1. Function η-equivalences
+   2. Pairs and equality/inductives
+   3. Streams/coinductives
 6. Outstanding issues
    1. Universe levels (fix: parametrized sizes?)
    2. Infinite size (fix: erasure? irrelevance? modality?)
