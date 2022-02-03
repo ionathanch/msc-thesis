@@ -1,0 +1,71 @@
+\chapter{Overview and Motivation} \label{sec:overview}
+
+\section{Dependent Types}
+
+As a simple but expressive foundation for dependent types,
+I begin with the Generalized Calculus of Constructions (\GCC)\index{Generalized Calculus of Constructions},
+originally proposed by \citet{GCC-Coquand},
+proven strongly normalizing by \citet{GCC-Luo},
+and extended to include definitions by \citet{universes}.
+It has the following features:
+
+\begin{itemize}
+  \item \textbf{Dependent function types}, as is standard in the Calculus of Constructions (CC)~\citep{CoC}\index{Calculus of Constructions};
+  \item \textbf{Definitions}, \ie locally-named expressions;
+  \item \textbf{Universes \ala Russell}\index{universes \ala Russell}, where the types of types are themselves terms
+    (as opposed to universes \ala Tarski\index{universes \ala Tarski}, where their \emph{encodings} are terms);
+  \item An \textbf{impredicative universe}\index{impredicativity} $\Prop$ such that function types into types in $\Prop$
+    are themselves in $\Prop$;
+  \item A \textbf{cumulative hierarchy of universes}\index{cumulativity} such that $\Type{i}: \Type{i+1}$,
+    any term in $\Type{i}$ is also in $\Type{j}$ given \emph{universe levels}\index{universe level} $i \leq j$,
+    and there is a subtyping relation on types induced by this inclusion; and
+  \item \textbf{Untyped conversion}\index{conversion} stating when two terms are judgementally equal to one another.
+\end{itemize}
+
+These features cover many modern proof assistants.
+To name a few, in terms of universes,
+Coq and Arend have all of the above;
+Lean lacks cumulativity; and
+Agda and F$\star$ lack cumulativity and impredicative universe.
+On the other hand, these proof assistants all have some form of
+\emph{universe level polymorphism},
+but this is much more complex and largely orthogonal to sized types
+and the syntactic model.
+
+Perhaps the most contentious design decision so far is the use of untyped conversion,
+as can be found in Coq, over typed conversion or \emph{equivalence}\index{equivalence}%
+\footnote{From this point onwards, I will use \emph{conversion}\index{conversion}
+to refer to the untyped judgemental equality,
+and \emph{equivalence}\index{equivalence} to refer to the typed judgemental equality.},
+as can be found in Agda.
+Certain proponents%
+\footnote{This would be a fun place to link to someone's tweets.}
+will argue that equivalence is ``more correct'',
+since one never deals with ill-typed terms,
+but this means that the equivalence judgement depends on the typing judgement.
+Meanwhile, since types can depend on terms,
+typing itself depends on equivalence to check whether one type can be used in place of another.
+As we'll see in \TODO, these mutually-defined judgements would greatly complicate the proofs,
+so I settle for conversion instead.
+
+On top of \GCC, I add two inductive definitions featured in Martin--L\"of type theory (MLTT)~\citep{mltt}\index{Martin--L\"of type theory}:
+the \emph{Peano naturals}\index{naturals} and \emph{wellfounded trees}\index{wellfounded trees}, augmented with sizes.
+As the simplest nontrivial inductive,
+the naturals make it easy to demonstrate intuitive uses of sized types.
+On the other hand, wellfounded trees are an example of \emph{generalized} inductives,
+with recursive arguments that are functions that return wellfounded trees,
+and can in fact encode all (nonmutual, nonnested) inductives---%
+although not so much their proper induction principles~\citep{w-types}.
+I don't add inductive types in general in their place
+because the syntactic baggage that comes with handling the generalization
+obscures the intuition behind sized inductive types and the syntactic model,
+while it's easy to see how one \emph{could} go from the naturals and from wellfounded trees
+to inductive types in general.
+
+Finally, I add a standard \emph{homogeneous propositional equality type}\index{propositional equality},
+which isn't particularly difficult to deal with
+and will allow for some more interesting examples.
+
+\section{Sized Types}
+
+\section{Syntactic Model}

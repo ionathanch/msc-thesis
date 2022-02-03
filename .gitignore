@@ -14,6 +14,9 @@
 *.snm
 *.pyc
 *.vrb
+*.idx
+*.ilg
+*.ind
 *.dblite
 *.fls
 *.fdb_latexmk
