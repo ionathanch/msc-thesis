@@ -1,0 +1,60 @@
+% required packages
+\usepackage{xspace}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{stmaryrd}
+
+\makeatletter
+\newenvironment{epigraph}{%
+	\begin{flushright}
+	\begin{minipage}{\columnwidth-0.75in}
+	\begin{flushright}
+	\@ifundefined{singlespacing}{}{\singlespacing}%
+    }{
+	\end{flushright}
+	\end{minipage}
+	\end{flushright}}
+\makeatother
+
+% colours for:
+% - metafunctions (pale magenta)
+% - keywords (golden yellow)
+% - constants (soft blue)
+% - constructors (turquoise)
+% - target language (dark orange)
+% by Okabe and Ito (https://jfly.uni-koeln.de/color/#pallet)
+\definecolor{metacolour}{HTML}{CC79A7}
+\definecolor{kwcolour}{HTML}{E69F00}
+\definecolor{constcolour}{HTML}{0072B2}
+\definecolor{constrcolour}{HTML}{009E73}
+\definecolor{targetcolour}{HTML}{D55E00}
+
+% foreign phrases
+\newcommand{\eg}{\emph{e.g.}\xspace}
+\newcommand{\ie}{\emph{i.e.}\xspace}
+\newcommand{\etal}{\emph{et al.}\xspace}
+\newcommand{\ala}{\emph{\`a la}\xspace}
+\newcommand{\TODO}{\meta{\texttt{TODO}}}
+
+% language names
+\newcommand{\GCC}{CC$^\omega$\xspace}
+\newcommand{\Fstar}{F$\star$}
+
+% styling
+\newcommand{\meta}[1]{\textcolor{metacolour}{#1}}
+\newcommand{\kw}[1]{\mathsf{\textcolor{kwcolour}{#1}}}
+\newcommand{\const}[1]{\mathsf{\textcolor{constcolour}{#1}}}
+\newcommand{\constr}[1]{\mathsf{\textcolor{constrcolour}{#1}}}
+\newcommand{\target}[1]{\begingroup%
+  \definecolor{metacolour}{named}{targetcolour}
+  \definecolor{kwcolour}{named}{targetcolour}
+  \definecolor{constcolour}{named}{targetcolour}
+  \definecolor{constrcolour}{named}{targetcolour}
+  \renewcommand{\mathsf}{\mathtt}
+  \mathtt{{\textcolor{targetcolour}{#1}}}
+\endgroup}
+
+% source language
+\newcommand{\Type}[1]{\const{Type}_{#1}}
+\newcommand{\Prop}{\const{Prop}}
