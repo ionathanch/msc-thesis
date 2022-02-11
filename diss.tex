@@ -25,58 +25,48 @@
 
 \usepackage{mlmodern}
 \usepackage[margin=1.25in]{geometry}
+\usepackage[numbers]{natbib}
 \usepackage{checkend}	% better error messages on left-open environments
 \usepackage{booktabs} % nicer tables
 \usepackage{graphicx}
+\usepackage{mathtools}
 \usepackage{imakeidx} \makeindex[intoc]
-\usepackage{comment}
-\usepackage[numbers]{natbib}
 \usepackage[format=hang,indention=-1cm,labelfont={bf},margin=1em]{caption}
-\usepackage{url} \urlstyle{sf}
-\usepackage{xspace}
+\usepackage{url} \urlstyle{sf} % should come before hyperref
+\usepackage{xcolor}
+\usepackage{comment}
 
 % https://www.grad.ubc.ca/current-students/dissertation-thesis-preparation/fonts-print
 \usepackage[
-  bookmarks,bookmarksnumbered,%
-  pagebackref,linktocpage,%
-  colorlinks=true,%
-  linkcolor=blue,%
-  urlcolor=blue,%
-  citecolor=blue%
+  bookmarks,bookmarksnumbered,
+  pagebackref,linktocpage,
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue,
+  pdftitle={sszz},
+  pdfauthor={Jonathan Chan}
 ]{hyperref}
-\newcommand{\doi}[1]{doi:\href{https://doi.org/#1}{\textsf{#1}}}
-
-\usepackage[printonlyused,nohyperlinks]{acronym}
-\renewcommand{\acsfont}[1]{{\scshape \MakeTextLowercase{#1}}} % acronyms in small caps
-
-\usepackage{color}
-\definecolor{greytext}{gray}{0.5}
-
-\usepackage[compact]{titlesec}
-\titleformat*{\section}{\singlespacing\raggedright\bfseries\Large}
-\titleformat*{\subsection}{\singlespacing\raggedright\bfseries\large}
-\titleformat*{\subsubsection}{\singlespacing\raggedright\bfseries}
-\titleformat*{\paragraph}{\singlespacing\raggedright\itshape}
-
-\newcommand{\nocitations}{\relax}
-\renewcommand*{\backrefsep}{,~}
-\renewcommand*{\backreftwosep}{,~}
-\renewcommand*{\backreflastsep}{,~}
 \renewcommand*{\backrefalt}[4]{
-\textcolor{greytext}{\ifcase #1
-\nocitations
+\textcolor{gray}{\ifcase #1
 \or
-\(\rightarrow\) page #2
+$\hookrightarrow$ page #2
 \else
-\(\rightarrow\) pages #2
+$\hookrightarrow$ pages #2
 \fi}}
 
-\renewcommand{\chapterautorefname}{Chapter}
-\renewcommand{\sectionautorefname}{Section}
-\renewcommand{\subsectionautorefname}{Section}
-\renewcommand{\subsubsectionautorefname}{Section}
+% idk if I'll have acronyms as opposed to just an index...
+\usepackage[printonlyused,nohyperlinks]{acronym}
+\renewcommand{\acsfont}[1]{{\scshape \MakeTextLowercase{#1}}}
 
-\input{macros}
+% needs to come after hyperref and mathtools
+\usepackage[capitalise, noabbrev]{cleveref}
+
+% this fixes the appearance of DOI links in the Bibliography, somehow
+\newcommand{\doi}[1]{doi:\href{https://doi.org/#1}{\textsf{#1}}}
+
+% custom style and macros
+\usepackage{style}
 
 \title{sszz}
 %\subtitle{}
@@ -95,12 +85,6 @@
 \examiningcommittee{Alexander J. Summers, Computer Science}{Supervisory Committee Member}
 \examiningcommittee{Examiner, Department}{Additional Examiner}
 \supervisorycommittee{Your Mom, Department}{Supervisory Committee Member}
-
-\hypersetup{
-  pdftitle={sszz},
-  pdfauthor={Jonathan Chan},
-  pdfkeywords={Your keywords here}
-}
 
 \begin{document}
 \maketitle
@@ -140,6 +124,11 @@
 
 \appendix
 \include{appendix}
+
+% recursive entry in index (https://tex.stackexchange.com/a/367999/202877)
+\newcommand{\here}[2]{\label{#1}\pageref{#1}}
+\newcommand{\recindex}[2]{\index{#1|here{#2}}}
+\recindex{recursion}{sec:index:recursion}
 
 \backmatter
 \printindex
