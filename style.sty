@@ -24,6 +24,38 @@
 	\end{flushright}
 }
 
+% rule labels:
+% \rlabel{name}{label} creates given label and prints name
+% \rref{label} prints "Rule <name>"
+% \rref{label, label} prints "Rules <name> and <name>"
+% \rref{label, ..., label} prints "Rules <name>, ..., and <name>"
+\newcounter{nrules}
+\newcommand{\rlabel}[2]{%
+  \edef\@currentlabelname{#1}%
+  \phantomsection\label{#2}#1%
+}
+\newcommand{\rref}[1]{
+  \setcounter{nrules}{0}
+  \@for\rule:={#1}\do{\addtocounter{nrules}{1}}
+  \ifcase \value{nrules}
+  \or Rule~\nameref{#1}
+  \or Rules\@for\rule:={\zap@space #1 \@empty}\do{
+    \ifcase \value{nrules}
+    \or and \nameref{\rule}%
+    \else \nameref{\rule}%
+    \fi
+    \addtocounter{nrules}{-1}%
+  }
+  \else Rules\@for\rule:={\zap@space #1 \@empty}\do{
+    \ifcase \value{nrules}
+    \or and \nameref{\rule}%
+    \else \nameref{\rule},%
+    \fi
+    \addtocounter{nrules}{-1}%
+  }
+  \fi
+}
+
 % colours for:
 % - metafunctions (pale magenta)
 % - keywords (golden yellow)
