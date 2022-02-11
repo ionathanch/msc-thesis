@@ -26,7 +26,7 @@ These features cover many modern proof assistants.
 To name a few, in terms of universes,
 Coq and Arend have all of the above;
 Lean lacks cumulativity; and
-Agda and F$\star$ lack cumulativity and impredicative universe.
+Agda and \Fstar lack cumulativity and impredicative universe.
 On the other hand, these proof assistants all have some form of
 \emph{universe level polymorphism},
 but this is much more complex and largely orthogonal to sized types
@@ -51,7 +51,7 @@ so I settle for conversion instead.
 On top of \GCC, I add two inductive definitions featured in Martin--L\"of type theory (MLTT)~\citep{mltt}\index{Martin--L\"of type theory}:
 the \emph{Peano naturals}\index{naturals} and \emph{wellfounded trees}\index{wellfounded trees}, augmented with sizes.
 As the simplest nontrivial inductive,
-the naturals make it easy to demonstrate intuitive uses of sized types.
+the naturals make it easy to demonstrate intuitive uses of sized inductives.
 On the other hand, wellfounded trees are an example of \emph{generalized} inductives,
 with recursive arguments that are functions that return wellfounded trees,
 and can in fact encode all (nonmutual, nonnested) inductives---%
