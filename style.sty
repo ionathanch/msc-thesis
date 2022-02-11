@@ -1,27 +1,34 @@
+\ProvidesPackage{style}
+
 % required packages
 \usepackage{xspace}
 \usepackage{xcolor}
-\usepackage{amssymb}
-\usepackage{amsfonts}
+\usepackage{suffix}
+\usepackage{mathtools}
 \usepackage{stmaryrd}
 
-\makeatletter
-\newenvironment{epigraph}{%
+% \newcmd*{\cmd}[n]{expression} defines the suffixed command \cmd*
+% similarly for \newcmd<
+\WithSuffix\newcommand\newcmd*[3]{\WithSuffix\newcommand#1*#2{#3}}
+\WithSuffix\newcommand\newcmd<[3]{\WithSuffix\newcommand#1<#2{#3}}
+
+% nice epigraph environment
+\newenvironment{epigraph}{
 	\begin{flushright}
 	\begin{minipage}{\columnwidth-0.75in}
 	\begin{flushright}
-	\@ifundefined{singlespacing}{}{\singlespacing}%
-    }{
+	\@ifundefined{singlespacing}{}{\singlespacing}
+}{
 	\end{flushright}
 	\end{minipage}
-	\end{flushright}}
-\makeatother
+	\end{flushright}
+}
 
 % colours for:
 % - metafunctions (pale magenta)
 % - keywords (golden yellow)
 % - constants (soft blue)
-% - constructors (turquoise)
+% - constructions (turquoise)
 % - target language (dark orange)
 % by Okabe and Ito (https://jfly.uni-koeln.de/color/#pallet)
 \definecolor{metacolour}{HTML}{CC79A7}
@@ -39,7 +46,7 @@
 
 % language names
 \newcommand{\GCC}{CC$^\omega$\xspace}
-\newcommand{\Fstar}{F$\star$}
+\newcommand{\Fstar}{F$\star$\xspace}
 
 % styling
 \newcommand{\meta}[1]{\textcolor{metacolour}{#1}}
@@ -55,6 +62,27 @@
   \mathtt{{\textcolor{targetcolour}{#1}}}
 \endgroup}
 
+% delimiters
+\DeclarePairedDelimiter{\sqbr}{[}{]}
+\DeclarePairedDelimiter{\set}{\{}{\}}
+
 % source language
+\newcommand{\@et}{\:}
 \newcommand{\Type}[1]{\const{Type}_{#1}}
 \newcommand{\Prop}{\const{Prop}}
+\newcommand{\app}[1]{#1\@ifnextchar\bgroup{\@et\app}{\xspace}}
+\newcommand{\@pp}[1]{\sqbr{#1}\@ifnextchar\bgroup{\@et\@app}{\xspace}}
+\newcommand{\App}[1]{#1\@ifnextchar\bgroup{\@et\@pp}{\xspace}}
+\newcommand{\fun}[3]{\lambda #1 \mathrel{:} #2 \mathpunct{.} #3}
+\newcommand{\Fun}[2]{\Lambda #1 \mathpunct{.} #2}
+\newcmd<{\Fun}[3]{\Lambda #1 \mathrel{<} #2 \mathpunct{.} #3}
+\newcommand{\funtype}[3]{\Pi #1 \mathrel{:} #2 \mathpunct{.} #3}
+\newcommand{\Funtype}[2]{\forall #1 \mathpunct{.} #2}
+\newcmd<{\Funtype}[3]{\forall #1 \mathrel{<} #2 \mathpunct{.} #3}
+\newcommand{\arr}[3]{\mathopen{(} #1 \mathrel{:} #2 \mathclose{)} \mathrel{\rightarrow} \phantom{} #3}
+\newcmd*{\arr}[2]{\mathopen{#1 \mathrel{\rightarrow} \phantom{} #2}}
+\newcommand{\letin}[4]{\kw{let} \@et #1 \mathrel{\coloneqq} \phantom{} #3 \@et \kw{in} \@et #4}
+\newcommand{\Let}[3]{\kw{let} \@et #1 \mathrel{:} #2 \mathrel{\coloneqq} \phantom{} #3}
+\newcommand{\eq}[3]{#1 \stackrel{#2}{=\joinrel=} #3}
+\newcommand{\refl}[1]{\constr{refl}_{#1}}
+\newcommand{\J}[3]{\constr{J}_{#1} \@et #2 \@et #3}
