@@ -19,53 +19,44 @@
 %%   draft
 %%       disable more intensive processing, such as including
 %%       graphics, etc.
-%%
 
 \documentclass[gpscopy,twoside,balanced,onehalfspacing,11pt]{ubcdiss}
 
 \usepackage{mlmodern}
 \usepackage[margin=1.25in]{geometry}
 \usepackage[numbers]{natbib}
-\usepackage{checkend}	% better error messages on left-open environments
-\usepackage{booktabs} % nicer tables
-\usepackage{graphicx}
-\usepackage{imakeidx} \makeindex[intoc]
-\usepackage{url} \urlstyle{sf} % should come before hyperref
-\usepackage[format=hang,indention=-1cm,labelfont={bf},margin=1em]{caption}
-\usepackage{xcolor}
+\usepackage[hang,sc]{caption}
+\usepackage{checkend}	% indicate all unclosed envs
+\usepackage{imakeidx} % add an index
+\usepackage{graphicx} % graphics and images
+\usepackage{booktabs} % polished table styling
+\usepackage{xcolor} % coloured text and predefined colours
 \usepackage{amsmath}
-\usepackage{amsthm}
 \usepackage{amssymb}
-\usepackage{comment}
-
-% https://www.grad.ubc.ca/current-students/dissertation-thesis-preparation/fonts-print
+\usepackage{amsthm}
 \usepackage[
-  bookmarks,bookmarksnumbered,
+  bookmarksnumbered,
   pagebackref,linktocpage,
-  colorlinks=true,
-  linkcolor=blue,
-  urlcolor=blue,
-  citecolor=blue,
+  colorlinks,allcolors=blue,
   pdftitle={sszz},
   pdfauthor={Jonathan Chan}
 ]{hyperref}
-\renewcommand*{\backrefalt}[4]{
-\textcolor{gray}{\ifcase #1
-\or
-$\hookrightarrow$ page #2
-\else
-$\hookrightarrow$ pages #2
-\fi}}
+\usepackage[capitalize, noabbrev]{cleveref} % needs to come after hyperref and amsmath
+
+% decline to singular or plural noun based on number
+% with zero considered as "plural"
+\newcommand{\decline}[3]{\ifcase #1 #3 \or #2 \else #3 \fi}
+
+% package configurations
+\urlstyle{sf}
+\makeindex[intoc] % include index in table of contents
+\setlength{\captionmargin}{2\parindent} % set caption margins to 2× indent
+\newcommand{\doi}[1]{doi:\href{https://doi.org/#1}{\textsf{#1}}} % biblio DOI link formatting
+\renewcommand{\backrefalt}[4]{\textcolor{gray}{$\hookrightarrow$ \decline{#1}{page}{pages}#2}} % ↪ page(s) x, y, and z
 
 % idk if I'll have acronyms as opposed to just an index...
 \usepackage[printonlyused,nohyperlinks]{acronym}
 \renewcommand{\acsfont}[1]{{\scshape \MakeTextLowercase{#1}}}
-
-% needs to come after hyperref and mathtools
-\usepackage[capitalise, noabbrev]{cleveref}
-
-% this fixes the appearance of DOI links in the Bibliography, somehow
-\newcommand{\doi}[1]{doi:\href{https://doi.org/#1}{\textsf{#1}}}
 
 % custom style and macros
 \usepackage{style}
