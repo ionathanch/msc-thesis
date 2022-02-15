@@ -79,6 +79,15 @@
 % language names
 \newcommand{\GCC}{CC$^\omega$\xspace}
 \newcommand{\Fstar}{F$\star$\xspace}
+\newcommand{\lambdahat}{$\lambda\widehat{~}$\xspace}
+\newcommand{\Fhat}{F$\widehat{~}$\xspace}
+\newcommand{\Fhatomega}{F$\widehat{_\omega}$\xspace}
+\newcommand{\Fhattimes}{F$\widehat{_{\times}}$\xspace}
+\newcommand{\CIChat}{CIC$\widehat{~}$\xspace}
+\newcommand{\CIChatminus}{CIC$\widehat{_-}$\xspace}
+\newcommand{\CChatomega}{CC$\widehat{\omega}$\xspace}
+\newcommand{\CIChatstar}{CC$\widehat{\ast}$\xspace}
+\newcommand{\CIChatl}{CIC$\widehat{_\ell}$}
 
 % styling
 \newcommand{\meta}[1]{\textcolor{metacolour}{#1}}
@@ -102,6 +111,7 @@
 \newcommand{\@et}{\:}
 \newcommand{\Type}[1]{\const{Type}_{#1}}
 \newcommand{\Prop}{\const{Prop}}
+\newcommand{\sss}[1]{\widehat{#1}}
 \newcommand{\app}[1]{#1\@ifnextchar\bgroup{\@et\app}{\xspace}}
 \newcommand{\@pp}[1]{\sqbr{#1}\@ifnextchar\bgroup{\@et\@app}{\xspace}}
 \newcommand{\App}[1]{#1\@ifnextchar\bgroup{\@et\@pp}{\xspace}}
@@ -112,9 +122,10 @@
 \newcommand{\Funtype}[2]{\forall #1 \mathpunct{.} #2}
 \newcmd<{\Funtype}[3]{\forall #1 \mathrel{<} #2 \mathpunct{.} #3}
 \newcommand{\arr}[3]{\mathopen{(} #1 \mathrel{:} #2 \mathclose{)} \mathrel{\rightarrow} \phantom{} #3}
-\newcmd*{\arr}[2]{\mathopen{#1 \mathrel{\rightarrow} \phantom{} #2}}
+\newcmd*{\arr}[1]{#1\@ifnextchar\bgroup{\mathrel{\rightarrow}\arr*}{\xspace}}
 \newcommand{\letin}[4]{\kw{let} \@et #1 \mathrel{\coloneqq} \phantom{} #3 \@et \kw{in} \@et #4}
 \newcommand{\Let}[3]{\kw{let} \@et #1 \mathrel{:} #2 \mathrel{\coloneqq} \phantom{} #3}
 \newcommand{\eq}[3]{#1 \stackrel{#2}{=\joinrel=} #3}
 \newcommand{\refl}[1]{\constr{refl}_{#1}}
 \newcommand{\J}[3]{\constr{J}_{#1} \@et #2 \@et #3}
+\newcommand{\List}[1]{\app{\const{List}}{#1}}

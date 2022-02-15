@@ -22,6 +22,7 @@
 
 \documentclass[gpscopy,twoside,balanced,onehalfspacing,11pt]{ubcdiss}
 
+\usepackage[T1]{fontenc}
 \usepackage{mlmodern}
 \usepackage[margin=1.25in]{geometry}
 \usepackage[numbers]{natbib}
@@ -34,18 +35,16 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
-\usepackage[
-  bookmarksnumbered,
-  pagebackref,linktocpage,
-  colorlinks,allcolors=blue,
-  pdftitle={sszz},
-  pdfauthor={Jonathan Chan}
-]{hyperref}
+\usepackage[pagebackref,bookmarksnumbered,linktocpage,colorlinks]{hyperref}
 \usepackage[capitalize, noabbrev]{cleveref} % needs to come after hyperref and amsmath
 
 % decline to singular or plural noun based on number
 % with zero considered as "plural"
 \newcommand{\decline}[3]{\ifcase #1 #3 \or #2 \else #3 \fi}
+
+% Links must be in "dark blue"
+% https://www.grad.ubc.ca/current-students/dissertation-thesis-preparation/fonts-print
+\definecolor{darkblue}{HTML}{0000EE}
 
 % package configurations
 \urlstyle{sf}
@@ -53,6 +52,14 @@
 \setlength{\captionmargin}{2\parindent} % set caption margins to 2× indent
 \newcommand{\doi}[1]{doi:\href{https://doi.org/#1}{\textsf{#1}}} % biblio DOI link formatting
 \renewcommand{\backrefalt}[4]{\textcolor{gray}{$\hookrightarrow$ \decline{#1}{page}{pages}#2}} % ↪ page(s) x, y, and z
+\hypersetup{
+  allcolors=darkblue,
+  pdftitle={sszz},
+  pdfauthor={Jonathan Chan},
+  pdfsubject={},
+  pdfkeywords={},
+  pdflang={en-CA}
+}
 
 % idk if I'll have acronyms as opposed to just an index...
 \usepackage[printonlyused,nohyperlinks]{acronym}
