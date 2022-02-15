@@ -98,7 +98,8 @@ size quantifications never appear inside of a type,
 and in fact all size abstractions and applications are fully inferred.
 Explicit sizes, in contrast, let us express
 \emph{higher-rank}\index{polymorphism!higher-rank \textasciitilde} size quantification,
-which is also found in \Fhatomega~\citep{Abel-diss}
+which is also found in \Fhatomega~\citep{Abel-diss},
+\Fcopomega~\citep{F-omega-cop},
 and in a MLTT-style sized dependent type theory~\cite{NbE}.
 Higher-rank sizes allow for more expressiveness:
 for instance, supposing we have cons lists parametrized over some sized type $\tau$,
@@ -107,8 +108,30 @@ that leaves the sizes untouched.
 The type of such a function might be
 $$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\List{(\App{\tau}{\alpha})}}{\List{(\App{\tau}{\alpha})}}}.$$
 
-% TODO: Bounded sizes
-% TODO: Size bounds are NOT subtyping!
+Along with higher-rank sizes, I also include \emph{bounded} size quantification $\Funtype<{\alpha}{s}{\tau}$
+and abstraction $\Fun<{\alpha}{s}{e}$.
+An order on sizes is induced by these bound instantiations and the successor operator;
+this order has nothing to do with subtyping,
+and in particular we do \emph{not} have subtyping relations between
+$\N{\alpha}$ and $\N{\sss{\alpha}}$, for instance.
+% TODO: forward ref to where we define the cast between the two
+Fixpoint expressions recur on smaller sizes according to the order,
+summarized by the below typing rule.
+%
+\begin{mathpar}
+\inferrule[]{
+  \check{\Phi, \alpha; \Gamma, f: \Funtype<{\beta}{\alpha}{\subst{\tau}{\alpha}{\beta}}}{e}{\tau}
+}{
+  \infer{\Phi; \Gamma}{\fix{}{f}{\alpha}{\tau}{e}}{\Funtype{\alpha}{\tau}}
+}
+\end{mathpar}
+
+Bounded sizes were originally introduced for MiniAgda~\citep{MiniAgda, flationary}
+to avoid complex \emph{semi-continuity}\index{semi-continuity} or approximative \emph{polarity}\index{polarity}
+requirements on fixpoints' types in the presence of an \emph{infinite size}\index{infinite size}
+that is strictly larger than all sizes.
+Although I don't include an infinite size,
+this style of recursion is more elegant because it corresponds neatly to well-founded induction on sizes.
 
 In summary, the sized type features I include are:
 
@@ -123,5 +146,11 @@ In summary, the sized type features I include are:
 \end{itemize}
 
 Notably, these are all features found in Agda's implementation of sized types.
+The only missing feature is the infinite size,
+since its properties and its use are known to be inconsistent in Agda%
+\footnote{See issue \#2820 of the Agda repo,
+\textit{Equality is incompatible with sized types},
+URL \url{https://github.com/agda/agda/issues/2820}.}.
+% TODO: forward ref to discussion on the infinite size
 
 \section{Syntactic Model}
