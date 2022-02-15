@@ -1,5 +1,7 @@
 \chapter{Overview and Motivation} \label{sec:overview}
 
+% TODO: Remember to mentioned that the languages are also referred to as "source" and "target"
+
 \section{Dependent Types}
 
 As a simple but expressive foundation for dependent types,
@@ -55,7 +57,7 @@ the naturals make it easy to demonstrate intuitive uses of sized inductives.
 On the other hand, wellfounded trees are an example of \emph{generalized} inductives,
 with recursive arguments that are functions that return wellfounded trees,
 and can in fact encode all (nonmutual, nonnested) inductives---%
-although not so much their proper induction principles~\citep{w-types}.
+although not so much their proper induction principles~\citep{W-types}.
 I don't add inductive types in general in their place
 because the syntactic baggage that comes with handling the generalization
 obscures the intuition behind sized inductive types and the syntactic model,
@@ -67,5 +69,59 @@ which isn't particularly difficult to deal with
 and will allow for some more interesting examples.
 
 \section{Sized Types}
+
+Sized types are introduced with explicit size quantification $\Funtype{\alpha}{\tau}$,
+size abstraction $\Fun{\alpha}{e}$, and size application $\App{e}{s}$.
+Sizes themselves consist of size variables as well as a \emph{base size}
+and a \emph{size successor operator}.
+This is the standard for size expressions in sized type systems.
+% TODO: forward ref to related work
+Some such as \Fhattimes~\citep{F-hat-times} and \CIChatl~\citep{CIC-hat-l}
+add addition of size variables and multiplication by a natural, respectively,
+increasing expressivity at the expense of complexity.
+To keep things simple, I don't include these features and stick to successor sizes.
+Note that size expressions are \emph{not} terms,
+and their quantifications, abstractions, and applications
+are syntactically distinct from those of terms,
+similar to how, in nondependent polymorphic type systems,
+types are distinct from terms.
+
+Having explicit sizes differs from some sized type systems such as
+\lambdahat~\citep{lambda-hat, lambda-hat-diss},
+\Fhat~\citep{F-hat}, \CIChat~\citep{cic-hat},
+\CIChatminus~\citep{cic-hat-minus-nat, cic-hat-minus},
+\CChatomega~\citep{cc-hat-omega}, and \CIChatstar~\citep{CIC-hat-star} where,
+extending the type polymorphism analogy,
+there is only implicit \emph{rank-1} or
+\emph{prenex}\index{polymorphism!prenex/rank-1 \textasciitilde} size quantification:
+size quantifications never appear inside of a type,
+and in fact all size abstractions and applications are fully inferred.
+Explicit sizes, in contrast, let us express
+\emph{higher-rank}\index{polymorphism!higher-rank \textasciitilde} size quantification,
+which is also found in \Fhatomega~\citep{Abel-diss}
+and in a MLTT-style sized dependent type theory~\cite{NbE}.
+Higher-rank sizes allow for more expressiveness:
+for instance, supposing we have cons lists parametrized over some sized type $\tau$,
+one could write a size-preserving mapping function over a list
+that leaves the sizes untouched.
+The type of such a function might be
+$$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\List{(\App{\tau}{\alpha})}}{\List{(\App{\tau}{\alpha})}}}.$$
+
+% TODO: Bounded sizes
+% TODO: Size bounds are NOT subtyping!
+
+In summary, the sized type features I include are:
+
+\begin{itemize}
+  \item \textbf{Explicit size} quantification $\Funtype{\alpha}{\tau}$,
+    abstraction $\Fun{\alpha}{e}$, and
+    application $\App{e}{s}$;
+  \item A \textbf{simple size grammar} with size variables $\alpha$, a base size $\circ$, and successors $\sss{s}$;
+  \item \textbf{Higher-rank sizes}, \eg $\arr*{(\Funtype{\alpha}{\tau})}{\sigma}$;
+  \item \textbf{Bounded size} quantification $\Funtype<{\alpha}{s}{\tau}$ and
+  abstraction $\Fun<{\alpha}{s}{e}$.
+\end{itemize}
+
+Notably, these are all features found in Agda's implementation of sized types.
 
 \section{Syntactic Model}
