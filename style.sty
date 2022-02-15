@@ -6,6 +6,7 @@
 \RequirePackage{suffix}
 \RequirePackage{mathtools}
 \RequirePackage{stmaryrd}
+\RequirePackage{mathpartir}
 
 % \newcmd*{\cmd}[n]{expression} defines the suffixed command \cmd*
 % similarly for \newcmd<
@@ -83,6 +84,7 @@
 \newcommand{\Fhat}{F$\widehat{~}$\xspace}
 \newcommand{\Fhatomega}{F$\widehat{_\omega}$\xspace}
 \newcommand{\Fhattimes}{F$\widehat{_{\times}}$\xspace}
+\newcommand{\Fcopomega}{F$^{\textrm{cop}}_{\omega}$\xspace}
 \newcommand{\CIChat}{CIC$\widehat{~}$\xspace}
 \newcommand{\CIChatminus}{CIC$\widehat{_-}$\xspace}
 \newcommand{\CChatomega}{CC$\widehat{\omega}$\xspace}
@@ -107,6 +109,9 @@
 \DeclarePairedDelimiter{\sqbr}{[}{]}
 \DeclarePairedDelimiter{\set}{\{}{\}}
 
+% metafunctions
+\newcommand{\subst}[3]{#1\mathopen{\meta{[}}#2 \mathrel{\meta{\mapsto}} #3\mathclose{\meta{]}}}
+
 % source language
 \newcommand{\@et}{\:}
 \newcommand{\Type}[1]{\const{Type}_{#1}}
@@ -128,4 +133,10 @@
 \newcommand{\eq}[3]{#1 \stackrel{#2}{=\joinrel=} #3}
 \newcommand{\refl}[1]{\constr{refl}_{#1}}
 \newcommand{\J}[3]{\constr{J}_{#1} \@et #2 \@et #3}
+\newcommand{\N}[1]{\App{\const{\mathbb{N}}}{#1}}
 \newcommand{\List}[1]{\app{\const{List}}{#1}}
+\newcommand{\fix}[5]{\kw{fix}_{#1} \@et #2 \@et \sqbr{#3} \mathrel{:} #4 \mathrel{\coloneqq} \phantom{} #5}
+
+% source judgements
+\renewcommand{\check}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
+\renewcommand{\infer}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
