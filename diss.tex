@@ -24,11 +24,13 @@
 
 \usepackage[T1]{fontenc}
 \usepackage{mlmodern}
-\usepackage[margin=1.25in]{geometry}
+\usepackage[margin=1.25in, marginparwidth=7em]{geometry}
 \usepackage[numbers]{natbib}
 \usepackage[hang,sc]{caption}
+\usepackage{marginnote} % margin notes
 \usepackage{checkend}	% indicate all unclosed envs
 \usepackage{imakeidx} % add an index
+\usepackage{enumitem} % better enumerations and itemizations
 \usepackage{graphicx} % graphics and images
 \usepackage{booktabs} % polished table styling
 \usepackage{xcolor} % coloured text and predefined colours
@@ -38,22 +40,30 @@
 \usepackage[pagebackref,bookmarksnumbered,linktocpage,colorlinks]{hyperref}
 \usepackage[capitalize, noabbrev]{cleveref} % needs to come after hyperref and amsmath
 
-% decline to singular or plural noun based on number
-% with zero considered as "plural"
+% backreferences styled as ↪ page(s) x, y, and z
 \newcommand{\decline}[3]{\ifcase #1 #3 \or #2 \else #3 \fi}
+\renewcommand{\backrefalt}[4]{\textcolor{gray}{$\hookrightarrow$ \decline{#1}{page}{pages}#2}}
 
-% Links must be in "dark blue"
+% links must be in "dark blue"
 % https://www.grad.ubc.ca/current-students/dissertation-thesis-preparation/fonts-print
 \definecolor{darkblue}{HTML}{0000EE}
+\hypersetup{allcolors=darkblue}
 
-% package configurations
+% use ⬛ as QED symbol
+\renewcommand\qedsymbol{$\blacksquare$}
+
+% style URLs (incl. DOIs) in sans serif
 \urlstyle{sf}
-\makeindex[intoc] % include index in table of contents
-\setlength{\captionmargin}{2\parindent} % set caption margins to 2× indent
-\newcommand{\doi}[1]{doi:\href{https://doi.org/#1}{\textsf{#1}}} % biblio DOI link formatting
-\renewcommand{\backrefalt}[4]{\textcolor{gray}{$\hookrightarrow$ \decline{#1}{page}{pages}#2}} % ↪ page(s) x, y, and z
+\newcommand{\doi}[1]{doi:\href{https://doi.org/#1}{\textsf{#1}}}
+
+% set caption margins to 2× indent
+\setlength{\captionmargin}{2\parindent}
+
+% style margin notes in single-spaced footnotesize Latin Modern
+\renewcommand{\marginfont}{\fontfamily{lmr}\selectfont\footnotesize\singlespacing}
+
+% PDF metadata
 \hypersetup{
-  allcolors=darkblue,
   pdftitle={sszz},
   pdfauthor={Jonathan Chan},
   pdfsubject={},
@@ -70,6 +80,7 @@
 
 \title{sszz}
 %\subtitle{}
+\makeindex[intoc]
 
 \author{Jonathan Ho\hspace{0.1em}-\hspace{-0.1em}Wing Chan}
 \degreetitle{Master of Science}
@@ -116,12 +127,12 @@
 \include{introduction.tex}
 \include{overview.tex}
 
-\begin{singlespace}
+\singlespacing
 \raggedright
 \bibliographystyle{unsrtnat}
 \bibliography{biblio}
-\end{singlespace}
 
+\textspacing
 \appendix
 \include{appendix}
 

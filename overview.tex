@@ -20,7 +20,7 @@ It has the following features:
     are themselves in $\Prop$;
   \item A \textbf{cumulative hierarchy of universes}\index{cumulativity} such that $\Type{i}: \Type{i+1}$,
     any term in $\Type{i}$ is also in $\Type{j}$ given \emph{universe levels}\index{universe level} $i \leq j$,
-    and there is a subtyping relation on types induced by this inclusion; and
+    and there is a subtyping relation\index{subtyping} on types induced by this inclusion; and
   \item \textbf{Untyped conversion}\index{conversion} stating when two terms are judgementally equal to one another.
 \end{itemize}
 
@@ -36,9 +36,8 @@ and the syntactic model.
 
 Perhaps the most contentious design decision so far is the use of untyped conversion,
 as can be found in Coq, over typed conversion or \emph{equivalence}\index{equivalence}%
-\footnote{From this point onwards, I will use \emph{conversion}\index{conversion}
-to refer to the untyped judgemental equality,
-and \emph{equivalence}\index{equivalence} to refer to the typed judgemental equality.},
+\marginnote{\emph{Conversion} refers to untyped judgemental equality
+while \emph{equivalence} refers to typed judgemental equality hereafter.},
 as can be found in Agda.
 Certain proponents%
 \footnote{This would be a fun place to link to someone's tweets.}
@@ -135,7 +134,7 @@ this style of recursion is more elegant because it corresponds neatly to well-fo
 
 In summary, the sized type features I include are:
 
-\begin{itemize}
+\begin{itemize}[noitemsep]
   \item \textbf{Explicit size} quantification $\Funtype{\alpha}{\tau}$,
     abstraction $\Fun{\alpha}{e}$, and
     application $\App{e}{s}$;
@@ -152,5 +151,97 @@ since its properties and its use are known to be inconsistent in Agda%
 \textit{Equality is incompatible with sized types},
 URL \url{https://github.com/agda/agda/issues/2820}.}.
 % TODO: forward ref to discussion on the infinite size
+% TODO: mention ⊔ or add it??
 
 \section{Syntactic Model}
+
+To show that \lang is consistent and therefore a suitable type theory for proofs,
+I define for it a \emph{syntactic model}\index{syntactic model}~\citep{syntactic-models}.
+This involves defining a translation from \lang into some target type theory
+that is known to be consistent---in this case,
+the \emph{extensional Calculus of Inductive Constructions}\index{extensional Calculus of Inductive Constructions}
+(\CICE)~\citep{CCE, CICE}.
+This translation must be \emph{type preserving}\index{type preservation}:
+if some term $e$ is well typed under some environments $\Phi; \Gamma$ with some type $\tau$,
+then the translated term $\compile{e}$ must also be well typed
+under the translated environment $\compile{\Phi}\compile{\Gamma}$
+with the translated type $\compile{\tau}$.
+With the consistency of \CICE and a type-preserving translation to it,
+we prove the consistency of \lang.
+\marginnote{Terms, environments, etc. typeset in
+\textcolor{targetcolour}{\texttt{vermilion teletype}}
+belong to the target language \CICE.}
+
+\begin{fact}[Consistency of \CICE]\label{fact:consistency-cice}
+There exists no term $\target{e}$ such that
+$\type{\target{\cdot}}{\target{e}}{\target{\funtype{P}{\Prop}{P}}}$.
+\end{fact}
+
+\begin{theorem}[Consistency of \lang]
+Suppose $\compile{\bot} = \target{\funtype{P}{\Prop}{P}}$.
+Then there exists no term $e$ such that \mbox{$\type{\cdot; \cdot}{e}{\bot}$}.
+\end{theorem}
+\begin{proof}
+Suppose that there were such a term $e$.
+By the type-preserving translation, we would have that
+$\type{\target{\cdot}}{\compile{e}}{\target{\funtype{P}{\Prop}{P}}}$ holds.
+However, this contradicts \cref{fact:consistency-cice},
+so there must not be such a term.
+\end{proof}
+
+What remains, then, is to define $\bot$ and an appropriate translation from \lang to \CICE
+such that $\compile{\bot} = \target{\funtype{P}{\Prop}{P}}$,
+and to show that this translation is type preserving.
+I define my translation by induction on the typing derivations of \lang
+rather than merely over its syntax,
+ensuring that only well-typed terms have a translation.
+% TODO: forward ref here?
+
+Type preservation of the translation is proven by induction on not only the typing derivations,
+but also the derivations of the judgements on which the typing rules depend.
+In particular, typing depends on subtyping\index{subtyping}, which in turn depends
+on \emph{$\alpha$-cumulativity}\index{$\alpha$-cumulativity}~\citep{MetaCoq}
+and on the reflexive, transitive, congruent closure of \emph{reduction}\index{reduction}.
+Finally, this closure of reduction depends on the reduction rules,
+most of which are defined by substitution.
+Below are the relevant rules showing these dependencies and an example reduction rule.
+%
+\begin{mathpar}
+\inferrule[conv]{
+  \dots \\\\
+  \infer{\Phi; \Gamma}{e}{\sigma} \\\\
+  \subtype{\Phi; \Gamma}{\sigma}{\tau}
+}{
+  \check{\Phi; \Gamma}{e}{\tau}
+}
+
+\inferrule[$\preccurlyeq$-red]{
+  \cumul{\sigma_1}{\sigma_2} \\\\
+  \red*{\Phi; \Gamma}{\tau_1}{\sigma_1} \\\\
+  \red*{\Phi; \Gamma}{\tau_2}{\sigma_2}
+}{
+  \subtype{\Phi; \Gamma}{\tau_1}{\tau_2}
+}
+
+\inferrule[$\rhd^*$-trans]{
+  \red{\Phi; \Gamma}{e_1}{e_2} \\\\
+  \red*{\Phi; \Gamma}{e_2}{e_3}
+}{
+  \red*{\Phi; \Gamma}{e_1}{e_3}
+}
+
+\inferrule[]{~}{
+  \red[\beta]{\Phi; \Gamma}{\app{\fun{x}{\tau}{e_1}}{e_2}}{\subst{e_1}{x}{e_2}}
+}
+\end{mathpar}
+
+We therefore need some lemmas showing that the translation respects
+substitution, reduction, the closure of reduction, $\alpha$-cumulativity, and subtyping
+in order to prove type preservation.
+I summarize them here, omitting some hypotheses and sublemmas,
+to outline the proof architecture.
+
+% TODO: state the lemmas and brief descriptions of how they may be proven
+% TODO: make a note of how some of the lemmas are by mutual induction
+% TODO: make a note about how untyped reduction makes the proof less complicated
+% TODO: cite William's dissertation for this proof architecture or for the above

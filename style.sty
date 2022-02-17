@@ -70,6 +70,11 @@
 \definecolor{constrcolour}{HTML}{009E73}
 \definecolor{targetcolour}{HTML}{D55E00}
 
+% various theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{fact}[theorem]{Fact}
+
 % foreign phrases
 \newcommand{\eg}{\emph{e.g.}\xspace}
 \newcommand{\ie}{\emph{i.e.}\xspace}
@@ -78,6 +83,7 @@
 \newcommand{\TODO}{\meta{\texttt{TODO}}}
 
 % language names
+\newcommand{\lang}{$\widehat{\mathrm{TT}}$\xspace}
 \newcommand{\GCC}{CC$^\omega$\xspace}
 \newcommand{\Fstar}{F$\star$\xspace}
 \newcommand{\lambdahat}{$\lambda\widehat{~}$\xspace}
@@ -85,6 +91,7 @@
 \newcommand{\Fhatomega}{F$\widehat{_\omega}$\xspace}
 \newcommand{\Fhattimes}{F$\widehat{_{\times}}$\xspace}
 \newcommand{\Fcopomega}{F$^{\textrm{cop}}_{\omega}$\xspace}
+\newcommand{\CICE}{CIC$_E$\xspace}
 \newcommand{\CIChat}{CIC$\widehat{~}$\xspace}
 \newcommand{\CIChatminus}{CIC$\widehat{_-}$\xspace}
 \newcommand{\CChatomega}{CC$\widehat{\omega}$\xspace}
@@ -111,6 +118,7 @@
 
 % metafunctions
 \newcommand{\subst}[3]{#1\mathopen{\meta{[}}#2 \mathrel{\meta{\mapsto}} #3\mathclose{\meta{]}}}
+\newcommand{\compile}[1]{\mathopen{\meta{\llbracket}} #1 \mathclose{\meta{\rrbracket}}}
 
 % source language
 \newcommand{\@et}{\:}
@@ -140,3 +148,8 @@
 % source judgements
 \renewcommand{\check}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
 \renewcommand{\infer}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
+\newcommand{\type}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
+\newcommand{\subtype}[3]{#1 \mathrel{\vdash} #2 \mathrel{\preccurlyeq} #3}
+\newcommand{\cumul}[2]{#1 \mathrel{\sqsubseteq} #2}
+\newcommand{\red}[4][]{#2 \mathrel{\vdash} #3 \mathrel{\rhd}_{#1} #4}
+\newcmd*{\red}[3]{#1 \mathrel{\vdash} #2 \mathrel{\rhd^*} #3}
