@@ -13,18 +13,6 @@
 \WithSuffix\newcommand\newcmd*[3]{\WithSuffix\newcommand#1*#2{#3}}
 \WithSuffix\newcommand\newcmd<[3]{\WithSuffix\newcommand#1<#2{#3}}
 
-% nice epigraph environment
-\newenvironment{epigraph}{
-	\begin{flushright}
-	\begin{minipage}{\columnwidth-0.75in}
-	\begin{flushright}
-	\@ifundefined{singlespacing}{}{\singlespacing}
-}{
-	\end{flushright}
-	\end{minipage}
-	\end{flushright}
-}
-
 % rule labels:
 % \rlabel{name}{label} creates given label and prints name
 % \rref{label} prints "Rule <name>"
@@ -80,7 +68,7 @@
 \newcommand{\ie}{\emph{i.e.}\xspace}
 \newcommand{\etal}{\emph{et al.}\xspace}
 \newcommand{\ala}{\emph{\`a la}\xspace}
-\newcommand{\TODO}{\meta{\texttt{TODO}}}
+\newcommand{\TODO}{\meta{\texttt{TODO}}\xspace}
 
 % language names
 \newcommand{\lang}{$\widehat{\mathrm{TT}}$\xspace}
@@ -95,7 +83,7 @@
 \newcommand{\CIChat}{CIC$\widehat{~}$\xspace}
 \newcommand{\CIChatminus}{CIC$\widehat{_-}$\xspace}
 \newcommand{\CChatomega}{CC$\widehat{\omega}$\xspace}
-\newcommand{\CIChatstar}{CC$\widehat{\ast}$\xspace}
+\newcommand{\CIChatstar}{CIC$\widehat{\ast}$\xspace}
 \newcommand{\CIChatl}{CIC$\widehat{_\ell}$}
 
 % styling
@@ -146,9 +134,11 @@
 \newcommand{\fix}[5]{\kw{fix}_{#1} \@et #2 \@et \sqbr{#3} \mathrel{:} #4 \mathrel{\coloneqq} \phantom{} #5}
 
 % source judgements
+\newcommand{\wf}[2]{#1 \mathrel{\vdash} #2}
 \renewcommand{\check}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
 \renewcommand{\infer}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
 \newcommand{\type}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
+\newcommand{\defeq}[4]{#1 \mathrel{\vdash} #2 \mathrel{\equiv} #3 \mathrel{:} #4}
 \newcommand{\subtype}[3]{#1 \mathrel{\vdash} #2 \mathrel{\preccurlyeq} #3}
 \newcommand{\cumul}[2]{#1 \mathrel{\sqsubseteq} #2}
 \newcommand{\red}[4][]{#2 \mathrel{\vdash} #3 \mathrel{\rhd}_{#1} #4}
