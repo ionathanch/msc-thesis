@@ -1,11 +1,57 @@
-\chapter{Overview and Motivation} \label{sec:overview}
+\chapter{Overview} \label{sec:overview}
 
-% TODO: Remember to mentioned that the languages are also referred to as "source" and "target"
+% TODO: make sure to name \lang in the intro
+\epigraphic[0.51]{14?! Ridiculous! We need to develop one universal standard that covers everyone's use cases.}
+{Randall Munroe, \href{https://xkcd.com/927/}{\textsc{xkcd} \texttt{\#927}}}
+
+What need is there for yet another sized type system?
+Since \citet{hughes}, there has been a little over two decades' worth of past work on sized types.
+\citet{flationary} notes that it has been the topic of at least five dissertations.
+This chapter alone names a dozen different type systems with sized types.
+There have been many advancements along the way,
+but none quite satisfactory to close the matter,
+especially when it comes to dependent types.
+
+\lang, the next three chapters, and this thesis as a whole does not aim to resolve
+all of the remaining problems of sized types left open by these past works.
+Instead, the purpose is threefold:
+
+\begin{itemize}
+  \item To fill an existing gap in sized dependent type theories.
+    Two modern sized type features are higher-rank and bounded size quantification,
+    and there exist a few dependent type theories with one or the other,
+    but not both, to my knowledge.
+    On the other hand, they are currently in Agda's implementation of sized types.
+    By proving the consistency of \lang, a novel type theory with these two features,
+    I bring the theoretical state-of-the-art closer to practice.
+  \item To demonstrate the viability of using a syntactic model to prove consistency
+    of a sized type theory.
+    Doing so from scratch through a set-theoretic model is notoriously difficult,
+    and often requires sacrifices to and constraints on the type theory;
+    see Sacchini's dissertation~\citep{CIC-hat-minus} or \CIChatstar~\citep{CIC-hat-star},
+    for instance.
+    Instead, a syntactic model relies on the consistency of the language in which I'm modelling,
+    and requires no additional deep mathematical knowledge.
+  \clearpage % NOTE: cross-page bullet points are gross, but this may change
+  \item To reopen the discussion on sized dependent types.
+    Since the discovery of the inconsistency of Agda's sized types%
+    \footnote{\label{foot:agda-inconsistent} See issue \#2820 of the Agda repo,
+    \textit{Equality is incompatible with sized types},
+    URL \url{https://github.com/agda/agda/issues/2820}.},
+    progress appears to have stagnated a little.
+    In later chapters, I examine these difficulties as they might apply to \lang
+    and its interpretation in the syntactic model.
+\end{itemize}
+
+I begin in this chapter by describing and justifying the design of
+the dependent types and the sized types of \lang,
+explaining how a syntactic model is used to prove its consistency,
+and briefly outlining the structure of the proof.
 
 \section{Dependent Types}
 
 As a simple but expressive foundation for dependent types,
-I begin with the Generalized Calculus of Constructions (\GCC)\index{Generalized Calculus of Constructions},
+I start with the Generalized Calculus of Constructions (\GCC)\index{Generalized Calculus of Constructions},
 originally proposed by \citet{GCC-Coquand},
 proven strongly normalizing by \citet{GCC-Luo},
 and extended to include definitions by \citet{universes}.
@@ -42,11 +88,11 @@ as can be found in Agda.
 Certain proponents%
 \footnote{This would be a fun place to link to someone's tweets.}
 will argue that equivalence is ``more correct'',
-since one never deals with ill-typed terms,
+since it never deals with ill-typed terms,
 but this means that the equivalence judgement depends on the typing judgement.
 Meanwhile, since types can depend on terms,
 typing itself depends on equivalence to check whether one type can be used in place of another.
-As we'll see in \TODO, these mutually-defined judgements would greatly complicate the proofs,
+As we'll see in \cref{sec:syntactic-model}, these mutually-defined judgements would greatly complicate the proofs,
 so I settle for conversion instead.
 
 On top of \GCC, I add two inductive definitions featured in Martin--L\"of type theory (MLTT)~\citep{mltt}\index{Martin--L\"of type theory}:
@@ -87,9 +133,9 @@ types are distinct from terms.
 
 Having explicit sizes differs from some sized type systems such as
 \lambdahat~\citep{lambda-hat, lambda-hat-diss},
-\Fhat~\citep{F-hat}, \CIChat~\citep{cic-hat},
-\CIChatminus~\citep{cic-hat-minus-nat, cic-hat-minus},
-\CChatomega~\citep{cc-hat-omega}, and \CIChatstar~\citep{CIC-hat-star} where,
+\Fhat~\citep{F-hat}, \CIChat~\citep{CIC-hat},
+\CIChatminus~\citep{CIC-hat-minus-nat, CIC-hat-minus},
+\CChatomega~\citep{CC-hat-omega}, and \CIChatstar~\citep{CIC-hat-star} where,
 extending the type polymorphism analogy,
 there is only implicit \emph{rank-1} or
 \emph{prenex}\index{polymorphism!prenex/rank-1 \textasciitilde} size quantification:
@@ -147,21 +193,27 @@ In summary, the sized type features I include are:
 Notably, these are all features found in Agda's implementation of sized types.
 The only missing feature is the infinite size,
 since its properties and its use are known to be inconsistent in Agda%
-\footnote{See issue \#2820 of the Agda repo,
-\textit{Equality is incompatible with sized types},
-URL \url{https://github.com/agda/agda/issues/2820}.}.
+\textsuperscript{\labelcref{foot:agda-inconsistent}}.
 % TODO: forward ref to discussion on the infinite size
 % TODO: mention ⊔ or add it??
 
-\section{Syntactic Model}
+\section{Syntactic Model}\label{sec:syntactic-model}
 
 To show that \lang is consistent and therefore a suitable type theory for proofs,
 I define for it a \emph{syntactic model}\index{syntactic model}~\citep{syntactic-models}.
 This involves defining a translation from \lang into some target type theory
 that is known to be consistent---in this case,
-the \emph{extensional Calculus of Inductive Constructions}\index{extensional Calculus of Inductive Constructions}
+the \emph{extensional Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions}
 (\CICE)~\citep{CCE, CICE}.
-This translation must be \emph{type preserving}\index{type preservation}:
+It, too, has a cumulative hierarchy of universes \ala Russell and an impredicative universe,
+augmented with inductive types and \emph{equality reflection}\index{equality reflection},
+where a definitional equality between terms can be derived from a propositional one between them.
+The most notable difference from \lang, aside from these features and sized types,
+is that \CICE must use the typed equivalence rather than the untyped conversion
+to accomodate equality reflection.
+% TODO: forward ref to discussion on inconsistency of untyped conversion + equality reflection
+
+This translation from \lang to \CICE must be \emph{type preserving}\index{type preservation}:
 if some term $e$ is well typed under some environments $\Phi; \Gamma$ with some type $\tau$,
 then the translated term $\compile{e}$ must also be well typed
 under the translated environment $\compile{\Phi}\compile{\Gamma}$
@@ -207,7 +259,7 @@ most of which are defined by substitution.
 Below are the relevant rules showing these dependencies and an example reduction rule.
 %
 \begin{mathpar}
-\inferrule[conv]{
+\inferrule[]{
   \dots \\\\
   \infer{\Phi; \Gamma}{e}{\sigma} \\\\
   \subtype{\Phi; \Gamma}{\sigma}{\tau}
@@ -215,7 +267,7 @@ Below are the relevant rules showing these dependencies and an example reduction
   \check{\Phi; \Gamma}{e}{\tau}
 }
 
-\inferrule[$\preccurlyeq$-red]{
+\inferrule[]{
   \cumul{\sigma_1}{\sigma_2} \\\\
   \red*{\Phi; \Gamma}{\tau_1}{\sigma_1} \\\\
   \red*{\Phi; \Gamma}{\tau_2}{\sigma_2}
@@ -223,7 +275,7 @@ Below are the relevant rules showing these dependencies and an example reduction
   \subtype{\Phi; \Gamma}{\tau_1}{\tau_2}
 }
 
-\inferrule[$\rhd^*$-trans]{
+\inferrule[]{
   \red{\Phi; \Gamma}{e_1}{e_2} \\\\
   \red*{\Phi; \Gamma}{e_2}{e_3}
 }{
@@ -231,17 +283,107 @@ Below are the relevant rules showing these dependencies and an example reduction
 }
 
 \inferrule[]{~}{
-  \red[\beta]{\Phi; \Gamma}{\app{\fun{x}{\tau}{e_1}}{e_2}}{\subst{e_1}{x}{e_2}}
+  \red[\beta]{\Phi; \Gamma}{\app{(\fun{x}{\tau}{e_1})}{e_2}}{\subst{e_1}{x}{e_2}}
 }
 \end{mathpar}
 
 We therefore need some lemmas showing that the translation respects
 substitution, reduction, the closure of reduction, $\alpha$-cumulativity, and subtyping
 in order to prove type preservation.
+In short, substitution satisfies a \emph{compositionality}\index{compositionality} principle,
+reduction of terms are equivalent by the \CICE equivalence judgement
+$\defeq{\target{\Gamma}}{\target{e_1}}{\target{e_2}}{\target{\tau}}$,
+and $\alpha$-cumulative terms and subtypes are correspondingly \CICE subtypes.
 I summarize them here, omitting some hypotheses and sublemmas,
-to outline the proof architecture.
+to outline the proof architecture,
+which roughly follows the structure of type-preserving compilation by~\citet{wjb}.
 
-% TODO: state the lemmas and brief descriptions of how they may be proven
-% TODO: make a note of how some of the lemmas are by mutual induction
-% TODO: make a note about how untyped reduction makes the proof less complicated
-% TODO: cite William's dissertation for this proof architecture or for the above
+\begin{lemma}[Compositionality]\label{lem:compositionality}\hfill
+\begin{enumerate}[noitemsep]
+  \item $\compile{\subst{e}{x}{e'}} = \subst{\compile{e}}{x}{\compile{e'}}$.
+  \item $\compile{\subst{e}{\alpha}{s}} = \subst{\compile{e}}{\alpha}{\compile{s}}$
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
+\end{proof}
+
+\begin{lemma}[Preservation of Reduction]\label{lem:pres-red}
+If $\red{\Phi; \Gamma}{e}{e'}$ and
+$\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$
+then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$.
+\end{lemma}
+
+\begin{proof}
+By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$
+and inversion on the derivation of $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$,
+using \cref{lem:compositionality}
+and an application of equality reflection in the case for reduction of fixpoints.
+\end{proof}
+
+\begin{lemma}[Preservation of $\alpha$-Cumulativity]\label{lem:pres-cumul}
+If $\cumul{\tau_1}{\tau_2}$ and
+$\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\target{U_i}}$
+then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\cumul{\tau_1}{\tau_2}$,
+using inversion on the derivations of $\type{\Phi; \Gamma}{\tau_i}{U_i}$ and
+$\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\target{U_i}}$.
+\end{proof}
+
+The final three lemmas and theorem are proven mutually;
+I state them separately for clarity.
+
+\begin{lemma}[Preservation of Reflexive, Transitive, Congruent Closure of Reduction]\label{lem:pres-red*}
+If $\red*{\Phi; \Gamma}{e}{e'}$ and
+$\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$
+then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$.
+\end{lemma}
+
+\begin{proof}
+By lexicographical induction on the derivations of $\red*{\Phi; \Gamma}{e}{e'}$
+and of $\type{\Phi; \Gamma}{e}{\tau}$,
+using \cref{lem:pres-red}, \cref{lem:pres-subtyping}, and \cref{lem:pres-typing}.
+\end{proof}
+
+\begin{lemma}[Preservation of Subtyping]\label{lem:pres-subtyping}
+If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$
+then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\tau_2}$.
+\end{lemma}
+
+\begin{proof}
+By cases on the derivation of $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$,
+using \cref{lem:pres-cumul}, \cref{lem:pres-red*}, and subject reduction of \lang.
+\end{proof}
+
+\begin{theorem}[Type Preservation]\label{lem:pres-typing}\hfill
+\begin{enumerate}[noitemsep]
+  \item If $\wf{\Phi}{\Gamma}$ then $\wf{}{\compile{\Phi}\compile{\Gamma}}$.
+  \item If $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+By mutual induction on the derivations of $\wf{\Phi}{\Gamma}$ and $\type{\Phi; \Gamma}{e}{\tau}$,
+using \cref{lem:pres-subtyping}.
+\end{proof}
+
+The most important properties required of \lang are subject reduction,
+used in \cref{lem:pres-subtyping},
+and confluence, which is used to show that subtyping is transitive,
+which in turn is used to prove the inversion principles for the typing judgement.
+
+This proof structure is possible by virtue of the non-mutuality of the judgements of \lang
+due to the use of untyped conversion (and hence untyped reduction).
+If it were instead typed, then it would mutually depend on typing and subtyping as well,
+and the above lemmas would circularly depend on one another~\citep{wjb}. \\
+
+\noindent In the next chapter, I describe the syntax and judgements of \lang in detail,
+provide example programs in \lang that make use of sized types,
+and prove various necessary metatheoretical properties including subject reduction and confluence.
+Next, in \TODO I describe \CICE and define the translation from \lang to \CICE.
+Following that, I elaborate on the proof of type preservation and its associated lemmas.
+% TODO: forward ref to sections mentioned

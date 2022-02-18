@@ -22,6 +22,7 @@
 
 \documentclass[gpscopy,twoside,balanced,onehalfspacing,11pt]{ubcdiss}
 
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{mlmodern}
 \usepackage[margin=1.25in, marginparwidth=7em]{geometry}
@@ -29,6 +30,7 @@
 \usepackage[hang,sc]{caption}
 \usepackage{marginnote} % margin notes
 \usepackage{checkend}	% indicate all unclosed envs
+\usepackage{epigraph} % add epigraphs
 \usepackage{imakeidx} % add an index
 \usepackage{enumitem} % better enumerations and itemizations
 \usepackage{graphicx} % graphics and images
@@ -55,6 +57,14 @@
 % style URLs (incl. DOIs) in sans serif
 \urlstyle{sf}
 \newcommand{\doi}[1]{doi:\href{https://doi.org/#1}{\textsf{#1}}}
+
+% epigraph custom styling
+\epigraphnoindent
+\setlength{\epigraphrule}{0pt}
+\newcommand{\epigraphic}[3][0.5]{
+  \setlength{\epigraphwidth}{#1\textwidth}
+  \epigraph{\textit{#2}}{--- #3}
+}
 
 % set caption margins to 2× indent
 \setlength{\captionmargin}{2\parindent}
@@ -129,7 +139,7 @@
 
 \singlespacing
 \raggedright
-\bibliographystyle{unsrtnat}
+\bibliographystyle{plainnat}
 \bibliography{biblio}
 
 \textspacing
