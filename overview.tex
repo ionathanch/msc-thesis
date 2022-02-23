@@ -1,4 +1,4 @@
-\chapter{Overview} \label{sec:overview}
+\chapter{Overview} \label{ch:overview}
 
 % TODO: make sure to name \lang in the intro
 \epigraphic[0.51]{14?! Ridiculous! We need to develop one universal standard that covers everyone's use cases.}
@@ -226,17 +226,17 @@ belong to the target language \CICE.}
 
 \begin{fact}[Consistency of \CICE]\label{fact:consistency-cice}
 There exists no term $\target{e}$ such that
-$\type{\target{\cdot}}{\target{e}}{\target{\funtype{P}{\Prop}{P}}}$.
+$\type{\target{\mt}}{\target{e}}{\target{\funtype{P}{\Prop}{P}}}$.
 \end{fact}
 
 \begin{theorem}[Consistency of \lang]
 Suppose $\compile{\bot} = \target{\funtype{P}{\Prop}{P}}$.
-Then there exists no term $e$ such that \mbox{$\type{\cdot; \cdot}{e}{\bot}$}.
+Then there exists no term $e$ such that \mbox{$\type{\mt \mathbin{;} \mt}{e}{\bot}$}.
 \end{theorem}
 \begin{proof}
 Suppose that there were such a term $e$.
 By the type-preserving translation, we would have that
-$\type{\target{\cdot}}{\compile{e}}{\target{\funtype{P}{\Prop}{P}}}$ holds.
+$\type{\target{\mt}}{\compile{e}}{\target{\funtype{P}{\Prop}{P}}}$ holds.
 However, this contradicts \cref{fact:consistency-cice},
 so there must not be such a term.
 \end{proof}
@@ -268,7 +268,7 @@ Below are the relevant rules showing these dependencies and an example reduction
 }
 
 \inferrule[]{
-  \cumul{\sigma_1}{\sigma_2} \\\\
+  \acum{\sigma_1}{\sigma_2} \\\\
   \red*{\Phi; \Gamma}{\tau_1}{\sigma_1} \\\\
   \red*{\Phi; \Gamma}{\tau_2}{\sigma_2}
 }{
@@ -283,7 +283,7 @@ Below are the relevant rules showing these dependencies and an example reduction
 }
 
 \inferrule[]{~}{
-  \red[\beta]{\Phi; \Gamma}{\app{(\fun{x}{\tau}{e_1})}{e_2}}{\subst{e_1}{x}{e_2}}
+  \red{\Phi; \Gamma}{\app{(\fun{x}{\tau}{e})}{e'}}{\subst{e}{x}{e'}}
 }
 \end{mathpar}
 
@@ -323,13 +323,13 @@ and an application of equality reflection in the case for reduction of fixpoints
 \end{proof}
 
 \begin{lemma}[Preservation of $\alpha$-Cumulativity]\label{lem:pres-cumul}
-If $\cumul{\tau_1}{\tau_2}$ and
+If $\acum{\tau_1}{\tau_2}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\target{U_i}}$
 then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
 \end{lemma}
 
 \begin{proof}
-By induction on the derivation of $\cumul{\tau_1}{\tau_2}$,
+By induction on the derivation of $\acum{\tau_1}{\tau_2}$,
 using inversion on the derivations of $\type{\Phi; \Gamma}{\tau_i}{U_i}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\target{U_i}}$.
 \end{proof}

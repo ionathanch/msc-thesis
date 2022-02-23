@@ -8,6 +8,10 @@
 \RequirePackage{stmaryrd}
 \RequirePackage{mathpartir}
 
+% save default lengths
+\newlength{\fboxsepdefault}
+\setlength{\fboxsepdefault}{\fboxsep}
+
 % \newcmd*{\cmd}[n]{expression} defines the suffixed command \cmd*
 % similarly for \newcmd<
 \WithSuffix\newcommand\newcmd*[3]{\WithSuffix\newcommand#1*#2{#3}}
@@ -18,27 +22,28 @@
 % \rref{label} prints "Rule <name>"
 % \rref{label, label} prints "Rules <name> and <name>"
 % \rref{label, ..., label} prints "Rules <name>, ..., and <name>"
+% NOTE: \rule and \@rule seem to conflict with footnotes, somehow??
 \newcounter{nrules}
 \newcommand{\rlabel}[2]{%
   \edef\@currentlabelname{#1}%
   \phantomsection\label{#2}#1%
 }
-\newcommand{\rref}[1]{
-  \setcounter{nrules}{0}
-  \@for\rule:={#1}\do{\addtocounter{nrules}{1}}
+\newcommand{\rref}[1]{%
+  \setcounter{nrules}{0}%
+  \@for\r@le:={#1}\do{\addtocounter{nrules}{1}}%
   \ifcase \value{nrules}
-  \or Rule~\nameref{#1}
-  \or Rules\@for\rule:={\zap@space #1 \@empty}\do{
+  \or Rule~\textsc{\nameref{#1}}%
+  \or Rules\@for\r@le:={\zap@space #1 \@empty}\do{
     \ifcase \value{nrules}
-    \or and \nameref{\rule}%
-    \else \nameref{\rule}%
+    \or and \textsc{\nameref{\r@le}}%
+    \else \textsc{\nameref{\r@le}}%
     \fi
     \addtocounter{nrules}{-1}%
   }
-  \else Rules\@for\rule:={\zap@space #1 \@empty}\do{
+  \else Rules\@for\r@le:={\zap@space #1 \@empty}\do{
     \ifcase \value{nrules}
-    \or and \nameref{\rule}%
-    \else \nameref{\rule},%
+    \or and \textsc{\nameref{\r@le}}%
+    \else \textsc{\nameref{\r@le}},%
     \fi
     \addtocounter{nrules}{-1}%
   }
@@ -57,6 +62,7 @@
 \definecolor{constcolour}{HTML}{0072B2}
 \definecolor{constrcolour}{HTML}{009E73}
 \definecolor{targetcolour}{HTML}{D55E00}
+\definecolor{newcolour}{gray}{0.85}
 
 % various theorem environments
 \newtheorem{theorem}{Theorem}[section]
@@ -71,7 +77,7 @@
 \newcommand{\TODO}{\meta{\texttt{TODO}}\xspace}
 
 % language names
-\newcommand{\lang}{$\widehat{\mathrm{TT}}$\xspace}
+\newcommand{\lang}{\texorpdfstring{$\widehat{\mathrm{TT}}$}{TT}\xspace}
 \newcommand{\GCC}{CC$^\omega$\xspace}
 \newcommand{\Fstar}{F$\star$\xspace}
 \newcommand{\lambdahat}{$\lambda\widehat{~}$\xspace}
@@ -99,14 +105,26 @@
   \renewcommand{\mathsf}{\mathtt}
   \mathtt{{\textcolor{targetcolour}{#1}}}
 \endgroup}
+\newcommand{\new}[1]{%
+  \setlength{\fboxsep}{2pt}%
+  \colorbox{newcolour}{#1}%
+  \setlength{\fboxsep}{\fboxsepdefault}%
+}
 
 % delimiters
 \DeclarePairedDelimiter{\sqbr}{[}{]}
 \DeclarePairedDelimiter{\set}{\{}{\}}
 
 % metafunctions
+\newcommand{\mt}{\meta{\cdot}}
+\newcommand{\seq}{\meta{\dots}}
 \newcommand{\subst}[3]{#1\mathopen{\meta{[}}#2 \mathrel{\meta{\mapsto}} #3\mathclose{\meta{]}}}
 \newcommand{\compile}[1]{\mathopen{\meta{\llbracket}} #1 \mathclose{\meta{\rrbracket}}}
+
+% source binders
+\newcommand{\annot}[2]{#1 \mathrel{:} #2}
+\newcommand{\define}[2]{#1 \mathrel{\coloneqq} #2}
+\newcommand{\bound}[2]{#1 \mathrel{<} #2}
 
 % source language
 \newcommand{\@et}{\:}
@@ -116,19 +134,20 @@
 \newcommand{\app}[1]{#1\@ifnextchar\bgroup{\@et\app}{\xspace}}
 \newcommand{\@pp}[1]{\sqbr{#1}\@ifnextchar\bgroup{\@et\@app}{\xspace}}
 \newcommand{\App}[1]{#1\@ifnextchar\bgroup{\@et\@pp}{\xspace}}
-\newcommand{\fun}[3]{\lambda #1 \mathrel{:} #2 \mathpunct{.} #3}
+\newcommand{\fun}[3]{\lambda \annot{#1}{#2} \mathpunct{.} #3}
 \newcommand{\Fun}[2]{\Lambda #1 \mathpunct{.} #2}
-\newcmd<{\Fun}[3]{\Lambda #1 \mathrel{<} #2 \mathpunct{.} #3}
-\newcommand{\funtype}[3]{\Pi #1 \mathrel{:} #2 \mathpunct{.} #3}
+\newcmd<{\Fun}[3]{\Lambda \bound{#1}{#2} \mathpunct{.} #3}
+\newcommand{\funtype}[3]{\Pi \annot{#1}{#2} \mathpunct{.} #3}
 \newcommand{\Funtype}[2]{\forall #1 \mathpunct{.} #2}
-\newcmd<{\Funtype}[3]{\forall #1 \mathrel{<} #2 \mathpunct{.} #3}
-\newcommand{\arr}[3]{\mathopen{(} #1 \mathrel{:} #2 \mathclose{)} \mathrel{\rightarrow} \phantom{} #3}
+\newcmd<{\Funtype}[3]{\forall \bound{#1}{#2} \mathpunct{.} #3}
+\newcommand{\arr}[3]{\mathopen{(} \annot{#1}{#2} \mathclose{)} \mathrel{\rightarrow} \phantom{} #3}
 \newcmd*{\arr}[1]{#1\@ifnextchar\bgroup{\mathrel{\rightarrow}\arr*}{\xspace}}
 \newcommand{\letin}[4]{\kw{let} \@et #1 \mathrel{\coloneqq} \phantom{} #3 \@et \kw{in} \@et #4}
-\newcommand{\Let}[3]{\kw{let} \@et #1 \mathrel{:} #2 \mathrel{\coloneqq} \phantom{} #3}
+\newcommand{\Let}[3]{\kw{let} \@et \annot{#1}{#2} \mathrel{\coloneqq} \phantom{} #3}
 \newcommand{\eq}[3]{#1 \stackrel{#2}{=\joinrel=} #3}
 \newcommand{\refl}[1]{\constr{refl}_{#1}}
 \newcommand{\J}[3]{\constr{J}_{#1} \@et #2 \@et #3}
+\newcmd*{\J}[0]{\constr{J}}
 \newcommand{\N}[1]{\App{\const{\mathbb{N}}}{#1}}
 \newcommand{\List}[1]{\app{\const{List}}{#1}}
 \newcommand{\fix}[5]{\kw{fix}_{#1} \@et #2 \@et \sqbr{#3} \mathrel{:} #4 \mathrel{\coloneqq} \phantom{} #5}
@@ -137,9 +156,10 @@
 \newcommand{\wf}[2]{#1 \mathrel{\vdash} #2}
 \renewcommand{\check}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
 \renewcommand{\infer}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
-\newcommand{\type}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
-\newcommand{\defeq}[4]{#1 \mathrel{\vdash} #2 \mathrel{\equiv} #3 \mathrel{:} #4}
+\newcommand{\type}[3]{#1 \mathrel{\vdash} \annot{#2}{#3}}
+\newcommand{\defeq}[4]{#1 \mathrel{\vdash} \annot{#2 \mathrel{\equiv} #3}{#4}}
+\newcommand{\subsize}[3]{#1 \mathrel{\vdash} #2 \mathrel{\leqslant} #3}
 \newcommand{\subtype}[3]{#1 \mathrel{\vdash} #2 \mathrel{\preccurlyeq} #3}
-\newcommand{\cumul}[2]{#1 \mathrel{\sqsubseteq} #2}
+\newcommand{\acum}[2]{#1 \mathrel{\sqsubseteq} #2}
 \newcommand{\red}[4][]{#2 \mathrel{\vdash} #3 \mathrel{\rhd}_{#1} #4}
 \newcmd*{\red}[3]{#1 \mathrel{\vdash} #2 \mathrel{\rhd^*} #3}
