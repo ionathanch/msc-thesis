@@ -1,0 +1,213 @@
+\newcommand{\FigSyntax}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{align*}
+  i, j, k, m, n &\Coloneqq \meta{\textsf{naturals}} &
+  \Gamma &\Coloneqq \mt \mid \Gamma, \annot{x}{\tau} \mid \Gamma, \define{x}{e} &
+  r, s &\Coloneqq \alpha \mid \sss{s} \mid \circ \\
+  f, g, x, y, z &\Coloneqq \meta{\textsf{term variables}} &
+  \Delta &\Coloneqq \mt \mid \Delta, \annot{x}{\tau} &
+  U &\Coloneqq \Prop \mid \Type{i} \\
+  \alpha, \beta &\Coloneqq \meta{\textsf{size variables}} &
+  \Phi &\Coloneqq \mt \mid \Phi, \alpha \mid \Phi, \bound{\alpha}{s} \\
+  e, p, P, \tau, \sigma &\Coloneqq \mathrlap{x \mid U \mid \letin{x}{\tau}{e}{e} \mid \eq{e}{\tau}{e} \mid \refl{e} \mid \J{P}{d}{p}} \\
+  &\mid \mathrlap{\funtype{x}{\tau}{\tau} \mid \fun{x}{\tau}{e} \mid \app{e}{e} \mid \Funtype{\alpha}{\tau} \mid \Funtype<{\alpha}{s}{\tau} \mid \Fun{\alpha}{e} \mid \Fun<{\alpha}{s}{e} \mid \App{e}{s}} \\
+  \end{align*}
+  \caption{Syntax (base \lang)}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigRed}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{mathpar}
+  \fbox{$\red{\Phi; \Gamma}{e}{e}$} \qquad
+  \fbox{$\red*{\Phi; \Gamma}{e}{e}$} \hfill \\
+  \inferrule[]{
+    (\annot{x}{\tau}) \in \Gamma \\\\
+    (\define{x}{e}) \in \Gamma
+  }{
+    \red{\Phi; \Gamma}{x}{e}
+  }
+  \and \inferrule[]{~}{\red{\Phi; \Gamma}{\app{(\fun{x}{\tau}{e})}{e'}}{\subst{e}{x}{e'}}}
+  \and \inferrule[]{~}{\red{\Phi; \Gamma}{\letin{x}{\tau}{e'}{e}}{\subst{e}{x}{e'}}}
+  \and \inferrule[]{~}{\red{\Phi; \Gamma}{\App{(\Fun{\alpha}{e})}{s}}{\subst{e}{\alpha}{s}}}
+  \and \inferrule[]{~}{\red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}}
+  \and \inferrule[]{~}{\red{\Phi; \Gamma}{\J{}{d}{\refl{}}}{d}}
+  \\\\
+  \inferrule[\rlabel{$\rhd^*$-refl}{red*-refl}]{~}{\red*{\Phi; \Gamma}{e}{e}}
+  \and
+  \inferrule[\rlabel{$\rhd^*$-trans}{red*-trans}]{
+    \red{\Phi; \Gamma}{e_1}{}{e_2} \\
+    \red*{\Phi; \Gamma}{e_2}{e_3}
+  }{
+    \red*{\Phi; \Gamma}{e_1}{e_3}
+  }
+  \and
+  \inferrule[\rlabel{$\rhd^*$-cong}{red*-cong}]{
+    \text{For every $1 \leq i \leq n$:} \and
+    \red*{\Phi'; \Gamma'}{e_i}{e'_i}
+  }{
+    \red*{\Phi; \Gamma}{\subst{e}{x_1, \seq, x_n}{e_1, \seq, e_n}}{\subst{e}{x_1, \seq, x_n}{e'_1, \seq, e'_n}}
+  }
+  \end{mathpar}
+  \caption{Reduction rules (base \lang)}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigSubtype}[1]{
+  \begin{figure}
+  \centering
+  \begin{mathpar}
+  \fbox{$\subtype{\Phi; \Gamma}{\tau}{\tau}$} \qquad
+  \fbox{$\acum{e}{e}$} \hfill \\
+  \inferrule[$\preccurlyeq$-red]{
+    \red*{\Phi; \Gamma}{\tau_1}{\sigma_1} \\
+    \red*{\Phi; \Gamma}{\tau_2}{\sigma_2} \\
+    \acum{\sigma_1}{\sigma_2}
+  }{
+    \subtype{\Phi; \Gamma}{\tau_1}{\tau_2}
+  }
+  \and
+  \inferrule[\rlabel{$\sqsubseteq$-prop}{acum-prop}]{~}{\acum{\Prop{}}{\Type{i}}}
+  \and
+  \inferrule[\rlabel{$\sqsubseteq$-type}{acum-type}]{i \leq j}{\acum{\Type{i}}{\Type{j}}}
+  \and
+  \inferrule[\rlabel{$\sqsubseteq$-refl}{acum-refl}]{
+  }{
+      \acum{e}{e}
+  }
+  \and
+  \inferrule[\rlabel{$\sqsubseteq$-pi}{acum-pi}]{
+    \acum{\tau_1}{\tau_2}
+  }{
+    \acum{\fun{x}{\sigma}{\tau_1}}{\fun{x}{\sigma}{\tau_2}}
+  }
+  \and
+  \inferrule[\rlabel{$\sqsubseteq$-forall}{acum-forall}]{
+    \acum{\tau_1}{\tau_2}
+  }{
+    \acum{\Funtype{\alpha}{\tau_1}}{\Funtype{\alpha}{\tau_2}}
+  }
+  \and
+  \inferrule[\rlabel{$\sqsubseteq$-forall$<$}{acum-forall<}]{
+    \acum{\tau_1}{\tau_2}
+  }{
+    \acum{\Funtype<{\alpha}{s}{\tau_1}}{\Funtype<{\alpha}{s}{\tau_2}}
+  }
+  \end{mathpar}
+  \caption{Subtyping and $\alpha$-cumulativity rules}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigSubsize}[1]{
+  \begin{figure}
+  \centering
+  \begin{mathpar}
+  \fbox{$\wf{\Phi}{s}$} \qquad
+  \fbox{$\subsize{\Phi}{s}{s}$} \hfill \\
+  \inferrule[]{
+    \wf{}{\Phi} \\
+    \alpha \in \Phi
+    \textit{ or }
+    (\bound{\alpha}{s}) \in \Phi
+  }{
+    \wf{\Phi}{\alpha}
+  }
+  \and
+  \inferrule[]{\wf{}{\Phi}}{\wf{\Phi}{\circ}}
+  \and
+  \inferrule[]{
+    \wf{\Phi}{s}
+  }{
+    \wf{\Phi}{\sss{s}}
+  }
+  \and
+  \inferrule[]{
+    \wf{}{\Phi} \\
+    (\bound{\alpha}{s}) \in \Phi
+  }{
+    \subsize{\Phi}{\sss{\alpha}}{s}
+  }
+  \\\\
+  \inferrule[]{
+    \wf{\Phi}{s}
+  }{
+    \subsize{\Phi}{\circ}{s}
+  }
+  \and
+  \inferrule[]{
+    \wf{\Phi}{s}
+  }{
+    \subsize{\Phi}{s}{s}
+  }
+  \and
+  \inferrule[]{
+    \wf{\Phi}{s}
+  }{
+    \subsize{\Phi}{s}{\sss{s}}
+  }
+  \and
+  \inferrule[]{
+    \subsize{\Phi}{r}{s}
+  }{
+    \subsize{\Phi}{\sss{r}}{\sss{s}}
+  }
+  \and
+  \inferrule[]{
+    \subsize{\Phi}{s_1}{s_2} \\\\
+    \subsize{\Phi}{s_2}{s_3}
+  }{
+    \subsize{\Phi}{s_1}{s_3}
+  }
+  % \and \inferrule[]{~}{\subsize{\Gamma}{s}{\infty}}
+  \end{mathpar}
+  \caption{Size and subsizing rules}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigWF}[1]{
+  \begin{figure}
+  \centering
+  \begin{mathpar}
+  \fbox{$\wf{}{\Phi}$} \qquad
+  \fbox{$\wf{\Phi}{\Gamma}$} \hfill \\
+  \inferrule[\rlabel{nil}{nil}]{~}{\wf{}{\mt}}
+  \and
+  \inferrule[\rlabel{cons-size}{cons-size}]{
+    \wf{}{\Phi}
+  }{
+    \wf{}{\Phi, \alpha}
+  }
+  \and
+  \inferrule[\rlabel{cons-size$<$}{cons-size<}]{
+    \wf{}{\Phi} \\\\
+    \wf{\Phi}{s}
+  }{
+    \wf{}{\Phi, \bound{\alpha}{s}}
+  }
+  \and
+  \inferrule[nil]{\wf{}{\Phi}}{\wf{\Phi}{\mt}}
+  \and
+  \inferrule[\rlabel{cons-ass}{cons-ass}]{
+    \wf{\Phi}{\Gamma} \\\\
+    \infer{\Phi; \Gamma}{\tau}{U}
+  }{
+    \wf{\Phi}{\Gamma, \annot{x}{\tau}}
+  }
+  \and
+  \inferrule[\rlabel{cons-def}{cons-def}]{
+    \wf{\Phi}{\Gamma} \\\\
+    \infer{\Phi; \Gamma}{e}{\tau}
+  }{
+    \wf{\Phi}{\Gamma, \define{x}{e}}
+  }
+  \end{mathpar}
+  \caption{Wellformedness rules}
+  \label{#1}
+  \end{figure}
+}
