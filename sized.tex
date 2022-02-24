@@ -7,7 +7,7 @@
 \section{Base \lang}
 
 Although sized types are quite pointless without any inductive types to be sized,
-I present in this subsection the sublanguage of \lang without naturals or wellfounded trees
+I present in this subsection the sublanguage of \lang without naturals or well-founded trees
 to not only get the preliminary details out of the way first,
 but also to show that the sublanguage is independent of the chosen inductive types.
 
@@ -27,6 +27,11 @@ $P$ for the \emph{motive}\index{motive} of eliminators,
 $p$ for proofs of equality, and
 $f, g$ for variables representing functions.
 
+As mentioned in \cref{ch:overview}, the judgement forms of \lang include
+reduction, its various closures, $\alpha$-cumulativity, subtyping, and typing.
+On top of those, there are also judgement forms for subsizing, sizes,
+and well-formedness of size and term environments.
+
 \FigRed{fig:reduction}
 The reduction rules and their reflexive, transitive, congruent closures are described in \cref{fig:reduction}.
 \new{$\subst{e}{x}{e'}$} denotes capture-avoiding substitution of $x$ for $e'$ within $e$,
@@ -36,17 +41,55 @@ which is summarized by \rref{red*-cong};
 the full set of rules can be found in \TODO. % put them in the appendix
 By convention, the reduction rules for functions are also referred to as $\beta$-reduction,
 for $\kw{let}$ expressions as $\zeta$-reduction,
-and for defined variables as $\delta$-reduction.%
+and for defined variables as $\delta$-reduction.
+\iffalse % this got too long
 \footnote{In MLTT, all rules consisting of an elimination form around an introduction form
 are referred to as $\beta$-reduction,
 which would include the reduction rule for $\J*$, not just functions.
 On the other hand, in type theories where propositional equality is defined as a inductive type,
 the reduction rule would be called $\iota$-reduction.
 I avoid this dilemma by not referring to the reduction rule for $\J*$ by name at all.}
+\fi
+
+These rules can be thought of as a description of nondeterministic evaluation of open terms,
+``running'' from the left term to the right.
+I separate them into reduction rules proper and closure rules so that the proof structure is more modular:
+the cases for the reduction rules have much more in common with each other than, say, those of the congruence rules,
+and the cases for the congruence rules require extra hypotheses that those of the reduction rules don't.
+This is also the convention for untyped reduction used by \eg \citet{wjb}.
 
 \FigSubtype{fig:subtyping}
+Rather than a single subtyping judgement, such as in the
+\emph{predicative Calculus of Cumulative Inductive Constructions}
+\index{predicative Calculus of Cumulative Inductive Constructions}
+(pCuIC)~\citep{pCuIC},
+I use the same presentation as MetaCoq\index{MetaCoq}~\citet{MetaCoq}
+and split it into a subtyping judgement
+and a separate $\alpha$-cumulativity\index{$\alpha$-cumulativity} judgement,
+listed in \cref{fig:subtyping}.
+This overcomes some technical proof complications that appear in
+the single-judgement presentation due to the transitivity rule.
+As usual, function types are invariant in the domain and covariant in the codomain.%
+\footnote{The domain could be made contravariant instead if \CICE were similarly contravariant,
+but to my knowledge, there is no such variant of CIC that has been proven consistent.}
+A term is then a subtype of another if they are confluent up to $\alpha$-cumulativity.
+Conversion can be defined as the confluence of two terms,
+but conversion isn't needed for any judgements so I exclude the definition.
 
+Notably, \lang does \emph{not} have a notion of $\eta$-conversion
+in either the reduction rules or in the subtyping rules,
+which would otherwise allow conversion between $\fun{x}{\tau}{\app{f}{x}}$ and $f$.
+Mixing $\eta$-conversion and untyped converion is notoriously difficult~\citep{eta},
+and remains an unresolved problem in MetaCoq, so I exclude it as well.
 
-\clearpage
 \FigSubsize{fig:subsizing}
+\cref{fig:subsizing} describes a preorder on sizes such that
+the successor operator is monotonic with respect to the order.
+The base size $\circ$ is smaller than all sizes,
+and the strict preorder $\bound{\alpha}{s}$ arising from bounded quantification or abstraction
+is defined as $\sss{\alpha} \mathrel{\leqslant} s$.
+An additional size judgement ensures well-scopedness of sizes.
+The size environment must be well formed as well;
+its rules are listed in \cref{fig:wf},
+along with those for well-formedness of term environments.
 \FigWF{fig:wf}
