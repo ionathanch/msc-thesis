@@ -120,6 +120,10 @@
 \newcommand{\seq}{\meta{\dots}}
 \newcommand{\subst}[3]{#1\mathopen{\meta{[}}#2 \mathrel{\meta{\mapsto}} #3\mathclose{\meta{]}}}
 \newcommand{\compile}[1]{\mathopen{\meta{\llbracket}} #1 \mathclose{\meta{\rrbracket}}}
+\newcommand{\metafun}[2]{\meta{\texttt{#1(}}#2\meta{\texttt{)}}}
+\newcommand{\rules}[2]{\metafun{rule}{#1, #2}}
+\newcommand{\axioms}[1]{\metafun{axiom}{#1}}
+\newcommand{\fresh}[1]{\metafun{fresh}{#1}}
 
 % source binders
 \newcommand{\annot}[2]{#1 \mathrel{:} #2}
