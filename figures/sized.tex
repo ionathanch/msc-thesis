@@ -211,3 +211,136 @@
   \label{#1}
   \end{figure}
 }
+
+\newcommand{\FigRuleAxiom}[1]{
+  \begin{figure}
+  \centering
+  \begin{align*}
+  \end{align*}
+  \caption{Metafunctions and metarelations}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigTyping}[1]{
+  \begin{figure}[!h]
+  \centering
+  \begin{mathpar}
+      \fbox{$\type{\Phi; \Gamma}{e}{\tau}$} \hfill \\
+      \inferrule[conv]{
+          \infer{\Phi; \Gamma}{e}{\sigma} \\
+          \infer{\Phi; \Gamma}{\tau}{U} \\\\
+          \check{\Phi; \Gamma}{\sigma}{U} \\
+          \subtype{\Phi; \Gamma}{\sigma}{\tau}
+      }{
+          \check{\Phi; \Gamma}{e}{\tau}
+      }
+      \and
+      \inferrule[var]{
+          \wf{\Phi}{\Gamma} \\
+          (\annot{x}{\tau}) \in \Gamma
+      }{
+          \infer{\Phi; \Gamma}{x}{\tau}
+      }
+      \and
+      \inferrule[univ]{
+          \wf{\Phi}{\Gamma} \\
+      }{
+          \infer{\Phi; \Gamma}{U}{\axioms{U}}
+      }
+      \and
+      \inferrule[pi]{
+          \infer{\Phi; \Gamma}{\sigma}{U_1} \\
+          \infer{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{U_2}
+      }{
+          \infer{\Gamma}{\funtype{x}{\sigma}{\tau}}{\rules{U_1}{U_2}}
+      }
+      \and
+      \inferrule[lam]{
+          \infer{\Phi; \Gamma}{\sigma}{U} \\
+          \infer{\Phi; \Gamma, \annot{x}{\sigma}}{e}{\tau}
+      }{
+          \infer{\Phi; \Gamma}{\fun{x}{\sigma}{e}}{\funtype{x}{\sigma}{\tau}}
+      }
+      \and
+      \inferrule[app]{
+          \infer{\Phi; \Gamma}{e_1}{\fun{x}{\sigma}{\tau}} \\
+          \check{\Phi; \Gamma}{e_2}{\sigma}
+      }{
+          \infer{\Phi; \Gamma}{\app{e_1}{e_2}}{\subst{\tau}{x}{e_1}}
+      }
+      \and
+      \inferrule[let]{
+          \infer{\Phi; \Gamma}{e_1}{\sigma} \\
+          \infer{\Phi; \Gamma, \annot{x}{\sigma}, \define{x}{e_1}}{e_2}{\tau}
+      }{
+          \infer{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\subst{\tau}{x}{e_1}}
+      }
+      \and
+      \inferrule[forall]{
+          \infer{\Phi, \alpha; \Gamma}{\tau}{U}
+      }{
+          \infer{\Phi; \Gamma}{\Funtype{\alpha}{\tau}}{U}
+      }
+      \and
+      \inferrule[slam]{
+          \infer{\Phi,\alpha; \Gamma}{e}{\tau}
+      }{
+          \infer{\Phi; \Gamma}{\Fun{\alpha}{e}}{\Funtype{\alpha}{\tau}}
+      }
+      \and
+      \inferrule[sapp]{
+          \infer{\Phi; \Gamma}{e}{\Funtype{\alpha}{\tau}} \\
+          \wf{\Phi}{s}
+      }{
+          \infer{\Phi; \Gamma}{\App{e}{s}}{\subst{\tau}{\alpha}{s}}
+      }
+      \and
+      \inferrule[forall$<$]{
+          \wf{\Phi}{s} \\
+          \infer{\Phi, \bound{\alpha}{s}; \Gamma}{\tau}{U}
+      }{
+          \infer{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau}}{U}
+      }
+      \and
+      \inferrule[slam$<$]{
+          \wf{\Phi}{s} \\
+          \infer{\Phi, \bound{\alpha}{s}; \Gamma}{e}{\tau}
+      }{
+          \infer{\Phi; \Gamma}{\Fun<{\alpha}{s}{e}}{\Funtype<{\alpha}{s}{\tau}}
+      }
+      \and
+      \inferrule[sapp$<$]{
+          \infer{\Phi; \Gamma}{e}{\Funtype<{\alpha}{r}{\tau}} \\
+          \subsize{\Phi}{\hat{s}}{r}
+      }{
+          \infer{\Phi; \Gamma}{\App{e}{s}}{\subst{\tau}{\alpha}{s}}
+      }
+      \and
+      \inferrule[eq]{
+          \infer{\Phi; \Gamma}{\tau}{U} \\
+          \check{\Phi; \Gamma}{e_1}{\tau} \\
+          \check{\Phi; \Gamma}{e_2}{\tau}
+      }{
+          \infer{\Phi; \Gamma}{\eq{e_1}{\tau}{e_2}}{U}
+      }
+      \and
+      \inferrule[refl]{
+          \infer{\Phi; \Gamma}{e}{\tau}
+      }{
+          \infer{\Phi; \Gamma}{\refl{e}}{\eq{e}{\tau}{e}}
+      }
+      \and
+      \inferrule[J]{
+          \infer{\Phi; \Gamma}{p}{\eq{e_1}{\tau}{e_2}} \\
+          \fresh{y, z} \\\\
+          \infer{\Phi; \Gamma, \annot{y}{\tau}, \annot{z}{\eq{e_1}{\tau}{y}}}{\app{\app{P}{y}}{z}}{U_i} \\
+          \check{\Phi; \Gamma}{d}{\app{\app{P}{e_1}}{\refl{e_1}}} \\
+      }{
+          \infer{\Phi; \Gamma}{\J{P}{d}{p}}{\app{\app{P}{e_2}}{p}}
+      }
+  \end{mathpar}
+  \caption{Typing rules}
+  \label{#1}
+  \end{figure}
+}
