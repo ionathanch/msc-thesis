@@ -58,7 +58,7 @@
 }
 
 \newcommand{\FigSubtype}[1]{
-  \begin{figure}
+  \begin{figure}[h]
   \centering
   \begin{mathpar}
   \fbox{$\subtype{\Phi; \Gamma}{\tau}{\tau}$} \qquad
@@ -83,7 +83,7 @@
   \inferrule[\rlabel{$\sqsubseteq$-pi}{acum-pi}]{
     \acum{\tau_1}{\tau_2}
   }{
-    \acum{\fun{x}{\sigma}{\tau_1}}{\fun{x}{\sigma}{\tau_2}}
+    \acum{\funtype{x}{\sigma}{\tau_1}}{\funtype{x}{\sigma}{\tau_2}}
   }
   \and
   \inferrule[\rlabel{$\sqsubseteq$-forall}{acum-forall}]{
@@ -104,7 +104,7 @@
 }
 
 \newcommand{\FigSubsize}[1]{
-  \begin{figure}
+  \begin{figure}[h]
   \centering
   \begin{mathpar}
   \fbox{$\wf{\Phi}{s}$} \qquad
@@ -132,7 +132,7 @@
   }{
     \subsize{\Phi}{\sss{\alpha}}{s}
   }
-  \\\\
+  \\
   \inferrule[]{
     \wf{\Phi}{s}
   }{
@@ -171,7 +171,7 @@
 }
 
 \newcommand{\FigWF}[1]{
-  \begin{figure}
+  \begin{figure}[h]
   \centering
   \begin{mathpar}
   \fbox{$\wf{}{\Phi}$} \qquad
@@ -207,7 +207,7 @@
     \wf{\Phi}{\Gamma, \define{x}{e}}
   }
   \end{mathpar}
-  \caption{Wellformedness rules}
+  \caption{Well-formedness rules}
   \label{#1}
   \end{figure}
 }

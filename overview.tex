@@ -96,17 +96,17 @@ As we'll see in \cref{sec:syntactic-model}, these mutually-defined judgements wo
 so I settle for conversion instead.
 
 On top of \GCC, I add two inductive definitions featured in Martin--L\"of type theory (MLTT)~\citep{mltt}\index{Martin--L\"of type theory}:
-the \emph{Peano naturals}\index{naturals} and \emph{wellfounded trees}\index{wellfounded trees}, augmented with sizes.
+the \emph{Peano naturals}\index{naturals} and \emph{well-founded trees}\index{well-founded trees}, augmented with sizes.
 As the simplest nontrivial inductive,
 the naturals make it easy to demonstrate intuitive uses of sized inductives.
-On the other hand, wellfounded trees are an example of \emph{generalized} inductives,
-with recursive arguments that are functions that return wellfounded trees,
+On the other hand, well-founded trees are an example of \emph{generalized} inductives,
+with recursive arguments that are functions that return well-founded trees,
 and can in fact encode all (nonmutual, nonnested) inductives---%
 although not so much their proper induction principles~\citep{W-types}.
 I don't add inductive types in general in their place
 because the syntactic baggage that comes with handling the generalization
 obscures the intuition behind sized inductive types and the syntactic model,
-while it's easy to see how one \emph{could} go from the naturals and from wellfounded trees
+while it's easy to see how one \emph{could} go from the naturals and from well-founded trees
 to inductive types in general.
 
 Finally, I add a standard \emph{homogeneous propositional equality type}\index{propositional equality},
