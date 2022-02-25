@@ -1,7 +1,9 @@
 \chapter{Sized Dependent Types} \label{ch:sized-dep-types}
 
 \input{figures/sized.tex}
+\input{figures/ind.tex}
 
+% TODO: explain metanotation (..., _, ·)
 % TODO: remember to mention that new notation not in a figure is highlighted in grey
 
 \section{Base \lang}
@@ -27,6 +29,7 @@ $P$ for the \emph{motive}\index{motive} of eliminators,
 $p$ for proofs of equality, and
 $f, g$ for variables representing functions.
 
+\clearpage % TODO: make sure this is still needed later
 As mentioned in \cref{ch:overview}, the judgement forms of \lang include
 reduction, its various closures, $\alpha$-cumulativity, subtyping, and typing.
 On top of those, there are also judgement forms for subsizing, sizes,
@@ -60,27 +63,33 @@ This is also the convention for untyped reduction used by \eg \citet{wjb}.
 
 \FigSubtype{fig:subtyping}
 Rather than a single subtyping judgement, such as in the
-\emph{predicative Calculus of Cumulative Inductive Constructions}
+predicative Calculus of Cumulative Inductive Constructions
 \index{predicative Calculus of Cumulative Inductive Constructions}
 (pCuIC)~\citep{pCuIC},
-I use the same presentation as MetaCoq\index{MetaCoq}~\citet{MetaCoq}
+I use the same presentation as MetaCoq\index{MetaCoq}~\citep{MetaCoq}
 and split it into a subtyping judgement
 and a separate $\alpha$-cumulativity\index{$\alpha$-cumulativity} judgement,
 listed in \cref{fig:subtyping}.
 This overcomes some technical proof complications that appear in
 the single-judgement presentation due to the transitivity rule.
-As usual, function types are invariant in the domain and covariant in the codomain.%
-\footnote{The domain could be made contravariant instead if \CICE were similarly contravariant,
-but to my knowledge, there is no such variant of CIC that has been proven consistent.}
+Aside from the expected cumulativity of universes,
+the function type and size quantification are covariant in the codomain
+(\ie are $\alpha$-cumulative when their codomains are),
+while remaining invariant in the domain.%
+\footnote{The domain could be made contravariant instead if function type subtyping
+in \CICE were similarly contravariant,
+but to my knowledge, there is no such variant of CIC with untyped conversion
+and without $\eta$-conversion that has been proven consistent.}
+All other types are invariant, as reflected by \rref{acum-refl}.
 A term is then a subtype of another if they are confluent up to $\alpha$-cumulativity.
-Conversion can be defined as the confluence of two terms,
-but conversion isn't needed for any judgements so I exclude the definition.
+% Conversion can be defined as the confluence of two terms,
+% but conversion isn't needed for any judgements so I exclude the definition.
 
 Notably, \lang does \emph{not} have a notion of $\eta$-conversion
 in either the reduction rules or in the subtyping rules,
 which would otherwise allow conversion between $\fun{x}{\tau}{\app{f}{x}}$ and $f$.
 Mixing $\eta$-conversion and untyped converion is notoriously difficult~\citep{eta},
-and remains an unresolved problem in MetaCoq, so I exclude it as well.
+and remains an unresolved problem in MetaCoq, so I exclude it here.
 
 \FigSubsize{fig:subsizing}
 \cref{fig:subsizing} describes a preorder on sizes such that
@@ -94,4 +103,90 @@ its rules are listed in \cref{fig:wf},
 along with those for well-formedness of term environments.
 \FigWF{fig:wf}
 
+\FigRulesAxioms{fig:rules-axioms}
 \FigTyping{fig:typing}
+Finally, the typing rules for the base \lang are given in \cref{fig:typing}.
+They use the metafunctions $\axioms{\mt}$ for the type of a universe
+$\rules{\mt}{\mt}$ for the type of a function type,
+defined in \cref{fig:rules-axioms},
+and $\fresh{\seq}$ for fresh variables.
+
+\rref{var, univ, let} are the usual rules for variables, universes, and $\kw{let}$ expressions
+in \GCC,\index{Calculus of Constructions!generalized \textasciitilde}
+while \rref{pi, lam, app} are the usual ones for functions.
+The $\Prop$ universe is impredicative\index{impredicativity} because
+a function type quantifying over any type is itself in $\Prop$
+as long as its codomain is as well,
+allowing a restricted form of circularity.
+For example, a function $\id \mathrel{\coloneqq} \fun{\tau}{\Prop}{\fun{x}{\tau}{x}}$
+can be assigned the type $\Id \mathrel{\coloneqq} \funtype{\tau}{\Prop}{\arr*{\tau}{\tau}}$ in $\Prop$
+and applied to its own type and itself to yield $\app{\id}{\Id}{\id}$
+of type $\Id$.
+
+\rref{conv} uses the subtyping judgement and essentially allows casting a term
+from one type to a supertype as needed.
+If we were working in a bidirectional presentation,
+where the typing judgement is replaced by either
+\emph{type checking}, which checks an input term against and input type,
+or \emph{type synthesis}, which synthesizes an output type for an input type,
+this rule for $\type{\Phi; \Gamma}{e}{\tau}$ would be the sole checking rule,
+first synthesizing types $\sigma$ and $U$ for $e$ and $\tau$ respectively,
+then checking $\sigma$ against $U$,
+and at last asserting that $\sigma$ is indeed a subtype of $\tau$.
+This is why, despite $\type{\Phi; \Gamma}{\sigma}{U}$ being derivable,
+I choose to retain it as a premise.
+
+\clearpage % TODO: make sure this is still needed later
+\rref{forall, forall<, slam, slam<, sapp, sapp<} are the new rules relevant to sized types,
+describing bound and unbound size quantification, abstraction, and application,
+which work similarly to functions.
+Of note is the bounded size application rule,
+which only allows applications to smaller sizes following the subsizing judgement.
+
+Lastly are \rref{eq, refl, J} for propositional equality.
+The constructor $\refl{e}$ is a reflexive proof of $\eq{e}{\tau}{e}$,
+that $e$ of type $\tau$ is equal to itself.
+Given some equality proof $p$ of $\eq{e_1}{\tau}{e_2}$
+and a motive\index{motive} $P$ taking some $y$ of type $\tau$ and a proof that $\eq{e_1}{\tau}{y}$,
+the $\J*$ eliminator is a proof of $\app{P}{e_2}{p}$ when provided a proof of $\app{P}{e_1}{\refl{e_1}}$.
+Other usual functions on proofs of equality can be derived from it,
+such as coercion (when the motive is a constant function on types in its first argument)
+or substitution (when the motive ignores the second argument).
+$\J*$ is only well typed when fully applied;
+it can be manually uncurried for a specific universe $U$ as the function
+\marginnote{The type annotation for the equality type and argument to $\refl{}$ may be omitted when evident from context.}
+$$\fun{\tau}{U}{\fun{e_1}{\tau}{\fun{e_2}{\tau}{\fun{P}{(\funtype{y}{\tau}{\funtype{z}{\eq{e_1}{}{y}}{U}})}{\fun{d}{\app{P}{e_1}{\refl{}}}{\fun{p}{\eq{e_1}{}{e_2}}{\J{P}{d}{p}}}}}}},$$
+and similarly for $\refl{}$.
+
+\section{Inductive Types}
+
+\FigSyntaxInd{fig:syntax-ind}
+\cref{fig:syntax-ind} extends the grammar with sized naturals, sized well-founded trees,
+$\kw{case}$ expressions, and fixpoint expressions.
+Informally, borrowing syntax from the definition of general inductives,
+sized naturals and well-founded trees can be thought of as being defined by the following:
+%
+\begin{align*}
+&\data*{\annot{\N{\alpha}}{\Type{1}}} && \data*{\annot{\app{\App{\W*}{\alpha}}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\Type{i}}} \\
+&\quad \annot{\zero*}{\Funtype<{\beta}{\alpha}{\N{\alpha}}} && \quad \annot{\sup*}{\Funtype<{\beta}{\alpha}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\beta}}{A}{B}})}{\app{\App{\W*}{\alpha}}{A}{B}}}}} \\
+&\quad \annot{\succ*}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}
+\end{align*}
+%
+The types of naturals and well-founded trees can then be considered to be (nonuniformly) parametrized by a size,
+and constructing an element of that type requires providing a strictly smaller size,
+which is the size of the constructor's recursive arguments.
+In \lang, the constructors are annotated with their types
+since their parameter-like sizes cannot otherwise be synthesized.
+Additionally, the types of well-founded trees have explicit binders for convenience:
+the variable $x$ is bound within $\tau$ in the type $\W{x}{\sigma}{\tau}{s}$.
+
+The expression
+$\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{z_1}{\seq}{z_m} \Rightarrow e_c) \seq}$
+contains three parts:
+the \emph{target}\index{target} $e$ it destructs,
+the motive\index{motive} $P$ denoting the return type of the expression abstracted over a target,
+and the \emph{branches}\index{branch} $e_c$, one for each constructor of the target's type,
+abstracted over the constructor's size and term arguments.
+Its reduction rules for each constructor are given in \cref{fig:reduction-ind};
+irrelevant syntactic elements are omitted with $\any$.
+\FigRedInd{fig:reduction-ind}
