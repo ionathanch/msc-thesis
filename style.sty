@@ -28,6 +28,7 @@
   \edef\@currentlabelname{#1}%
   \phantomsection\label{#2}#1%
 }
+\newcmd*{\rlabel}[1]{\rlabel{#1}{#1}}
 \newcommand{\rref}[1]{%
   \setcounter{nrules}{0}%
   \@for\r@le:={#1}\do{\addtocounter{nrules}{1}}%
@@ -39,14 +40,14 @@
     \else \textsc{\nameref{\r@le}}%
     \fi
     \addtocounter{nrules}{-1}%
-  }
+  }%
   \else Rules\@for\r@le:={\zap@space #1 \@empty}\do{
     \ifcase \value{nrules}
     \or and \textsc{\nameref{\r@le}}%
     \else \textsc{\nameref{\r@le}},%
     \fi
     \addtocounter{nrules}{-1}%
-  }
+  }%
   \fi
 }
 
@@ -116,11 +117,15 @@
 \DeclarePairedDelimiter{\set}{\{}{\}}
 
 % metafunctions
-\newcommand{\mt}{\meta{\cdot}}
-\newcommand{\seq}{\meta{\dots}}
+\newcommand{\mt}{\,\meta{\cdot}\,}
+\newcommand{\seq}{\,\meta{\ldots}\,}
+\newcommand{\any}{\meta{\texttt{\_}}}
 \newcommand{\subst}[3]{#1\mathopen{\meta{[}}#2 \mathrel{\meta{\mapsto}} #3\mathclose{\meta{]}}}
+\newcommand{\card}[1]{\mathopen{\meta{\lvert}} #1 \mathclose{\meta{\rvert}}}
 \newcommand{\compile}[1]{\mathopen{\meta{\llbracket}} #1 \mathclose{\meta{\rrbracket}}}
 \newcommand{\metafun}[2]{\meta{\texttt{#1(}}#2\meta{\texttt{)}}}
+\newcmd*{\metafun}[1]{\meta{\texttt{#1}}}
+\newcommand{\maximum}[1]{\metafun{max}{#1}}
 \newcommand{\rules}[2]{\metafun{rule}{#1, #2}}
 \newcommand{\axioms}[1]{\metafun{axiom}{#1}}
 \newcommand{\fresh}[1]{\metafun{fresh}{#1}}
@@ -139,6 +144,7 @@
 \newcommand{\@pp}[1]{\sqbr{#1}\@ifnextchar\bgroup{\@et\@app}{\xspace}}
 \newcommand{\App}[1]{#1\@ifnextchar\bgroup{\@et\@pp}{\xspace}}
 \newcommand{\fun}[3]{\lambda \annot{#1}{#2} \mathpunct{.} #3}
+\newcmd*{\fun}[2]{\lambda #1 \mathpunct{.} #2}
 \newcommand{\Fun}[2]{\Lambda #1 \mathpunct{.} #2}
 \newcmd<{\Fun}[3]{\Lambda \bound{#1}{#2} \mathpunct{.} #3}
 \newcommand{\funtype}[3]{\Pi \annot{#1}{#2} \mathpunct{.} #3}
@@ -152,8 +158,22 @@
 \newcommand{\refl}[1]{\constr{refl}_{#1}}
 \newcommand{\J}[3]{\constr{J}_{#1} \@et #2 \@et #3}
 \newcmd*{\J}[0]{\constr{J}}
+
+% source inductives
+\newcmd*{\data}[1]{\kw{data} \@et #1 \@et \kw{where}}
 \newcommand{\N}[1]{\App{\const{\mathbb{N}}}{#1}}
+\newcmd*{\N}[0]{\const{\mathbb{N}}}
+\newcommand{\W}[4]{\App{\const{\mathbb{W}} \annot{#1}{#2} \mathpunct{.} #3}{#4}}
+\newcmd*{\W}[0]{\const{\mathbb{W}}}
+\newcommand{\zero}[2]{\App{\constr{zero}_{\N{#1}}}{#2}}
+\newcmd*{\zero}[0]{\constr{zero}}
+\renewcommand{\succ}[3]{\app{\App{\constr{succ}_{\N{#1}}}{#2}}{#3}}
+\newcmd*{\succ}[0]{\constr{succ}}
+\renewcommand{\sup}[7]{\app{\App{\constr{sup}_{\W{#1}{#2}{#3}{#4}}}{#5}}{#6}{#7}}
+\newcmd*{\sup}[0]{\constr{sup}}
 \newcommand{\List}[1]{\app{\const{List}}{#1}}
+\newcommand{\match}[3]{\kw{case} \@et #1 \@et \kw{return} \@et #2 \@et \kw{of} \@et \phantom{} #3}
+\newcmd*{\match}[2]{\kw{case} \@et #1 \@et \kw{of} \@et \phantom{} #2}
 \newcommand{\fix}[5]{\kw{fix}_{#1} \@et #2 \@et \sqbr{#3} \mathrel{:} #4 \mathrel{\coloneqq} \phantom{} #5}
 
 % source judgements
@@ -167,3 +187,7 @@
 \newcommand{\acum}[2]{#1 \mathrel{\sqsubseteq} #2}
 \newcommand{\red}[4][]{#2 \mathrel{\vdash} #3 \mathrel{\rhd}_{#1} #4}
 \newcmd*{\red}[3]{#1 \mathrel{\vdash} #2 \mathrel{\rhd^*} #3}
+
+% example names
+\newcommand{\id}{\mathit{id}}
+\newcommand{\Id}{\mathit{Id}}
