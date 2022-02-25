@@ -1,0 +1,47 @@
+\newcommand{\FigSyntaxInd}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{align*}
+  c &\Coloneqq \zero* \mid \succ* \mid \sup* &&&&& \\
+  %t &\Coloneqq e \mid \mathopen{[} s \mathclose{]} &
+  %\Theta &\Coloneqq \mt \mid \Theta, \annot{x}{\tau} \mid \Theta, \alpha \mid \Theta, \bound{\alpha}{s} & \\
+  e &\Coloneqq \mathrlap{\cdots \mid \N{s} \mid \zero{s}{s} \mid \succ{s}{s}{e} \mid \W{x}{\tau}{\tau}{s} \mid \sup{x}{\tau}{\tau}{s}{s}{e}{e}} \\
+  &\mid \mathrlap{\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{z_1 \seq z_m} \Rightarrow e) \seq} \mid \fix{}{f}{\alpha}{\tau}{e}}
+\end{align*}
+  \caption{Syntax (naturals and well-founded trees)}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigRedInd}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{mathpar}
+  \vspace{-2ex}
+  \fbox{$\red{\Phi; \Gamma}{e}{e}$} \quad \cdots \hfill \\
+  \inferrule[]{~}{
+    \red[]{\Phi; \Gamma}{\match*{\App{\zero*_{\any}}{s}}{(\App{\zero*}{\alpha} \Rightarrow e_z) (\app{\App{\succ*}{\any}}{\any} \Rightarrow \any)}}{\subst{e_z}{\alpha}{s}}
+  }
+  \and
+  \inferrule[]{~}{
+    \red[]{\Phi; \Gamma}{\match*{\app{\App{\succ*_{\any}}{s}}{e}}{(\App{\zero*}{\any} \Rightarrow \any) (\app{\App{\succ*}{\alpha}}{z} \Rightarrow e_s)}}{\subst{e_s}{\alpha, z}{s, e}}
+  }
+  \and
+  \inferrule[]{~}{
+    \red[]{\Phi; \Gamma}{\match*{\app{\App{\sup*_{\any}}{s}}{e_1}{e_2}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e)}}{\subst{e}{\alpha, z_1, z_2}{s, e_1, e_2}}
+  }
+  \and
+  \inferrule[]{
+    s = \circ \textit{ or } \sss{r}
+  }{
+    \red[]{\Phi; \Gamma}{
+      \App{(\fix{}{f}{\alpha}{\sigma}{e})}{s}
+    }{
+      \subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{}{f}{\alpha}{\sigma}{e})}{\beta}}}
+    }
+  }
+  \end{mathpar}
+  \caption{Reduction rules (naturals and well-founded trees)}
+  \label{#1}
+  \end{figure}
+}
