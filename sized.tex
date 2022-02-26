@@ -175,8 +175,10 @@ sized naturals and well-founded trees can be thought of as being defined by the 
 The types of naturals and well-founded trees can then be considered to be (nonuniformly) parametrized by a size,
 and constructing an element of that type requires providing a strictly smaller size,
 which is the size of the constructor's recursive arguments.
+Constructors therefore always construct elements whose sizes are larger than their arguments'.
+\marginnote{The ``size of'' some construction is more precisely the size by which its \emph{inductive type} is parametrized.}
 In \lang, the constructors are annotated with their types
-since their parameter-like sizes cannot otherwise be synthesized.
+since the parameter-like sizes cannot otherwise be synthesized.
 Additionally, the types of well-founded trees have explicit binders for convenience:
 the variable $x$ is bound within $\tau$ in the type $\W{x}{\sigma}{\tau}{s}$.
 
