@@ -7,8 +7,8 @@
   %\Theta &\Coloneqq \mt \mid \Theta, \annot{x}{\tau} \mid \Theta, \alpha \mid \Theta, \bound{\alpha}{s} & \\
   e &\Coloneqq \mathrlap{\cdots \mid \N{s} \mid \zero{s}{s} \mid \succ{s}{s}{e} \mid \W{x}{\tau}{\tau}{s} \mid \sup{x}{\tau}{\tau}{s}{s}{e}{e}} \\
   &\mid \mathrlap{\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{z_1 \seq z_m} \Rightarrow e) \seq} \mid \fix{}{f}{\alpha}{\tau}{e}}
-\end{align*}
-  \caption{Syntax (naturals and well-founded trees)}
+  \end{align*}
+  \caption{Syntax (naturals, well-founded trees, \\ and $\kw{case}$ and fixpoint expressions)}
   \label{#1}
   \end{figure}
 }
@@ -32,7 +32,7 @@
   }
   \and
   \inferrule[]{
-    s = \circ \textit{ or } \sss{r}
+    \subsize{\Phi}{\sss{r}}{s}
   }{
     \red[]{\Phi; \Gamma}{
       \App{(\fix{}{f}{\alpha}{\sigma}{e})}{s}
@@ -41,7 +41,80 @@
     }
   }
   \end{mathpar}
-  \caption{Reduction rules (naturals and well-founded trees)}
+  \caption{Reduction rules ($\kw{case}$ and fixpoint expressions)}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigTypingInd}[1]{
+  \begin{figure}[h]
+  \begin{mathpar}
+  \fbox{$\type{\Phi; \Gamma}{e}{\tau}$} \quad \cdots \hfill \\
+  \inferrule[nat]{
+    \wf{\Phi}{\Gamma} \\
+    \wf{\Phi}{s}
+  }{
+    \infer{\Phi; \Gamma}{\N{s}}{\Type{1}}
+  }
+  \and
+  \inferrule[zero]{
+    \wf{\Phi}{\Gamma} \\
+    \subsize{\Phi}{\hat{r}}{s}
+  }{
+    \infer{\Phi; \Gamma}{\zero{s}{r}}{\N{s}}
+  }
+  \and
+  \inferrule[succ]{
+    \subsize{\Phi}{\hat{r}}{s} \\
+    \check{\Phi; \Gamma}{e}{\N{r}}
+  }{
+    \infer{\Phi; \Gamma}{\succ{s}{r}{e}}{\N{s}}
+  }
+  \and
+  \inferrule[W]{
+    \wf{\Phi}{s} \\
+    \infer{\Phi; \Gamma}{\sigma}{U} \\\\
+    \infer{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{U}
+  }{
+    \infer{\Phi; \Gamma}{\W{x}{\sigma}{\tau}{s}}{\axioms{U}}
+  }
+  \and
+  \inferrule[sup]{
+    \subsize{\Phi}{\hat{r}}{s} \\
+    \check{\Phi; \Gamma}{e_1}{\sigma} \\\\
+    \check{\Phi; \Gamma}{e_2}{\arr*{\subst{\tau}{x}{e_1}}{\W{x}{\sigma}{\tau}{r}}}
+  }{
+    \infer{\Phi; \Gamma}{\sup{x}{\sigma}{\tau}{s}{r}{e_1}{e_2}}{\W{x}{\sigma}{\tau}{s}}
+  }
+  \and
+  \inferrule[match-nat]{
+    \infer{\Phi; \Gamma}{e}{\N{s}} \\
+    z \notin \FV{P} \\
+    \infer{\Phi; \Gamma, \annot{x}{\N{s}}}{P}{U} \\\\
+    \check{\Phi, \bound{\alpha}{s}; \Gamma}{e_z}{\subst{P}{x}{\zero{s}{\alpha}}} \\
+    \check{\Phi, \bound{\beta}{s}; \Gamma, \annot{z}{\N{\beta}}}{e_s}{\subst{P}{x}{\succ{s}{\beta}{z}}}
+  }{
+    \infer{\Phi; \Gamma}{\match{e}{\fun*{x}{P}}{(\App{\zero*}{\alpha} \Rightarrow e_z)(\app{\App{\succ*}{\beta}}{z} \Rightarrow e_s)}}{\subst{P}{x}{e}}
+  }
+  \and
+  \inferrule[match-sup]{
+    \infer{\Phi; \Gamma}{e}{\W{y}{\sigma}{\tau}{s}} \\
+    z_1, z_2 \notin \FV{P} \\
+    \infer{\Phi; \Gamma, \annot{x}{\W{y}{\sigma}{\tau}{s}}}{P}{U} \\
+    \check{\Phi, \bound{\alpha}{s}; \Gamma, \annot{z_1}{\sigma}, \annot{z_2}{\arr*{\subst{\tau}{y}{z_1}}{\W{y}{\tau}{\sigma}{\alpha}}}}{e_s}{\subst{P}{x}{\sup{y}{\sigma}{\tau}{s}{\alpha}{z_1}{z_2}}}
+  }{
+    \infer{\Phi; \Gamma}{\match{e}{\fun*{x}{P}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s)}}{\subst{P}{x}{e}}
+  }
+  \and
+  \inferrule[fix]{
+    \infer{\Phi, \alpha; \Gamma}{\sigma}{U} \\
+    \fresh{\beta} \\
+    \check{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\sigma}{\alpha}{\beta}}}}{e}{\sigma}
+  }{
+    \infer{\Phi; \Gamma}{\fix{}{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}
+  }
+  \end{mathpar}
+  \caption{Typing rules (naturals, well-founded trees, \\ and $\kw{case}$ and fixpoint expressions)}
   \label{#1}
   \end{figure}
 }
