@@ -158,7 +158,7 @@ it can be manually uncurried for a specific universe $U$ as the function
 $$\fun{\tau}{U}{\fun{e_1}{\tau}{\fun{e_2}{\tau}{\fun{P}{(\funtype{y}{\tau}{\funtype{z}{\eq{e_1}{}{y}}{U}})}{\fun{d}{\app{P}{e_1}{\refl{}}}{\fun{p}{\eq{e_1}{}{e_2}}{\J{P}{d}{p}}}}}}},$$
 and similarly for $\refl{}$.
 
-\section{Inductive Types}
+\section{Inductive Types: Naturals and Well-Founded Trees}
 
 \FigSyntaxInd{fig:syntax-ind}
 \cref{fig:syntax-ind} extends the grammar with sized naturals, sized well-founded trees,
@@ -189,6 +189,39 @@ the \emph{target}\index{target} $e$ it destructs,
 the motive\index{motive} $P$ denoting the return type of the expression abstracted over a target,
 and the \emph{branches}\index{branch} $e_c$, one for each constructor of the target's type,
 abstracted over the constructor's size and term arguments.
-Its reduction rules for each constructor are given in \cref{fig:reduction-ind};
+Its reduction rules for each constructor are given in \cref{fig:reduction-ind},
+along with the reduction rule for fixpoint expressions;
 irrelevant syntactic elements are omitted with $\any$.
+By convention, the reduction rules for $\kw{case}$ expressions are also referred to as $\iota$-reduction,
+and for fixpoint expressions as $\mu$-reduction.
 \FigRedInd{fig:reduction-ind}
+
+Fixpoints reduce when applied to some size $s$ by substitution of itself into its own body.
+Fixpoints' bodies are well typed when recursive applications occur only on smaller sizes,
+so the substitution wraps itself in a bound size abstraction.
+Most importantly, they reduce only when there exists some size strictly smaller than $s$;
+intuitively, this restriction prevents fixpoints from reducing indefinitely
+because subsizing is well founded, and there cannot be an infinite chain of smaller sizes.
+
+This reduction strategy supersedes the usual restriction that fixpoints only reduce
+when applied to a constructor,
+since all sized constructors carry a smaller size argument
+that will statisfy the subsizing premise.
+Furthermore, reduction can also occur when the fixpoint is applied to a successor size
+by reflexivity of subsizing,
+making the rule a strict supersession.
+
+\FigTypingInd{fig:typing-ind}
+
+The typing rules for all new constructs are given in \cref{fig:typing-ind}.
+One additional metafunction $\FV{\mt}$ produces the free variables in the given term.
+The type of naturals and well-founded trees are well typed
+when the sizes they are applied to are well formed;
+their constructors are well typed when applied to smaller sizes;
+and $\kw{case}$ expressions match on these size arguments in addition to the usual term arguments,
+asserting within their branches that they are strictly smaller than the target's size.
+As discussed, the bodies of fixpoints are only well typed
+when the fixpoint is recursively applied to a smaller size,
+as enforced by its type in the environment when type checking the body.
+
+% TODO: mention why the type of naturals is in Type₁ and the type of wf trees are in axiom(U)
