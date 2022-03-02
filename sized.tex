@@ -158,7 +158,7 @@ it can be manually uncurried for a specific universe $U$ as the function
 $$\fun{\tau}{U}{\fun{e_1}{\tau}{\fun{e_2}{\tau}{\fun{P}{(\funtype{y}{\tau}{\funtype{z}{\eq{e_1}{}{y}}{U}})}{\fun{d}{\app{P}{e_1}{\refl{}}}{\fun{p}{\eq{e_1}{}{e_2}}{\J{P}{d}{p}}}}}}},$$
 and similarly for $\refl{}$.
 
-\section{Inductive Types: Naturals and Well-Founded Trees}
+\section{Inductive Types: Naturals and Well-Founded Trees}\label{sec:ind-types}
 
 \FigSyntaxInd{fig:syntax-ind}
 \cref{fig:syntax-ind} extends the grammar with sized naturals, sized well-founded trees,
@@ -184,14 +184,15 @@ the variable $x$ is bound within $\tau$ in the type $\W{x}{\sigma}{\tau}{s}$.
 
 The expression
 $\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{z_1}{\seq}{z_m} \Rightarrow e_c) \seq}$
-contains three parts:
+contains three parts (using \new{\meta{\ldots}}
+to denote a repeated sequence of some syntactic construct):
 the \emph{target}\index{target} $e$ it destructs,
 the motive\index{motive} $P$ denoting the return type of the expression abstracted over a target,
 and the \emph{branches}\index{branch} $e_c$, one for each constructor of the target's type,
 abstracted over the constructor's size and term arguments.
 Its reduction rules for each constructor are given in \cref{fig:reduction-ind},
 along with the reduction rule for fixpoint expressions;
-irrelevant syntactic elements are omitted with $\any$.
+irrelevant syntactic elements are omitted with \new{$\any$}.
 By convention, the reduction rules for $\kw{case}$ expressions are also referred to as $\iota$-reduction,
 and for fixpoint expressions as $\mu$-reduction.
 \FigRedInd{fig:reduction-ind}
@@ -216,12 +217,210 @@ making the rule a strict supersession.
 The typing rules for all new constructs are given in \cref{fig:typing-ind}.
 One additional metafunction $\FV{\mt}$ produces the free variables in the given term.
 The type of naturals and well-founded trees are well typed
-when the sizes they are applied to are well formed;
-their constructors are well typed when applied to smaller sizes;
-and $\kw{case}$ expressions match on these size arguments in addition to the usual term arguments,
+when the sizes they are applied to are well formed, and
+their constructors are well typed when applied to smaller sizes.
+
+$\kw{case}$ expressions match on these size arguments in addition to the usual term arguments,
 asserting within their branches that they are strictly smaller than the target's size.
-As discussed, the bodies of fixpoints are only well typed
+The motive is dependent on the target,
+and the type of a branch is the motive with its target as the constructor being destructed.
+In other words, $\kw{case}$ expressions are induction principles:
+for instance, one proves $P$ for some natural $x$ when one can prove it
+for the base case where $x$ is some $\zero*$
+and for the step case where $x$ is some $\succ*$.
+
+As discussed, the body of a fixpoint is only well typed
 when the fixpoint is recursively applied to a smaller size,
 as enforced by its type in the environment when type checking the body.
 
-% TODO: mention why the type of naturals is in Type₁ and the type of wf trees are in axiom(U)
+Sizes aside, the only difference from regular, unsized naturals and well-founded trees
+is that their types live in a universe one level higher than they usually are.
+$\N{s}$ lives in $\Type{1}$ rather than in $\Type{0}$,
+and $\W{x}{\sigma}{\tau}{s}$ lives in $\axioms{U}$ rather than in $U$.
+This is a direct consequence of the way that the translation is defined,
+and is necessary to maintain its type preservation properties.
+While not incorrect, inductive types living in the ``wrong'' universe is aesthetically unpleasant
+and removes some of the impredicativity of their parameters
+by preventing them from quantifying over the inductive types themselves.
+I discuss potential methods of circumventing this undesirable trait to varying degrees of success
+later in \TODO.
+% TODO: forward reference to the chapter
+
+\section{Examples}
+
+Now that the rules of \lang have been establish,
+this section presents examples of using \lang
+for programming and proving.
+Although it only has naturals and well-founded trees,
+I also use other sized inductive types as examples,
+informally defining them similarly to \cref{sec:ind-types}.
+
+\subsection{Concrete natural numbers}
+
+Concrete numbers can be constructed easily using the base size $\circ$ as a starting point
+and its successors as strictly larger sizes.
+For convenience, I use the notation \new{$s+n$} for some fixed $n$ to mean the $n$th size successor of $s$.
+The same number can be represented as terms of different types by changing the annotation since,
+for instance, both $\circ+2$ and $\circ+3$ are strictly larger than $\sss{\circ}$.
+Similarly, two different numbers can have the same size
+because the size of an inductive type represents \emph{at most}
+how many layers of constructors deep an element is.
+%
+\begin{alignat*}{4}
+&\Let{\const{0}&&}{\N{\sss{\circ}}&&}{\zero{\hat{\circ}}{\circ}} \\
+&\Let{\const{0'}&&}{\N{\circ+2}&&}{\zero{\circ+2}{\circ}} \\
+&\Let{\const{1}&&}{\N{\circ+2}&&}{\succ{\circ+2}{\hat{\circ}}{\const{0}}} \\
+&\Let{\const{1'}&&}{\N{\circ+3}&&}{\succ{\circ+3}{\hat{\circ}}{\const{0}}} \\
+\end{alignat*}
+
+Two terms representing the same number might not be definitionally equal,
+as shown by the terms $\const{0}$ and $\const{0'}$,
+or by $\const{1}$ and $\const{1'}$;
+this requires \emph{shape irrelevance}\index{shape irrelevance}~\citep{NbE},
+which is beyond the scope of this thesis.
+However, any number can be ``lifted'' to a larger size
+simply by recursively reconstructing the number with different sizes.
+
+\begin{align*}
+&\Let{\const{liftN}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}}{\\
+&\fix{}{\mathit{lift}}{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}{\\
+&\quad \Fun<{\beta}{\alpha}{\fun{n}{\N{\beta}}{\\
+&\quad \match{n}{\fun*{\any}{\N{\alpha}}}{\\
+&\qquad \App{\zero*}{\gamma} \Rightarrow \zero{\alpha}{\beta} \\
+&\qquad \app{\App{\succ*}{\gamma}}{z} \Rightarrow \succ{\alpha}{\beta}{(\app{\App{\mathit{lift}}{\beta}{\gamma}}{z})}}}}}}
+\end{align*}
+
+A lifting function can also be defined for well-founded trees,
+and for strictly-positive inductive types in general.
+%
+\begin{align*}
+&\Let{\const{liftW}}{\funtype{A}{\Type{i}}{\funtype{B}{\arr*{A}{\Type{i}}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\beta}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}}}}{\\
+&\fun{A}{\Type{i}}{\fun{B}{\arr*{A}{\Type{i}}}{\\
+&\fix{}{\mathit{lift}}{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\beta}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}{\\
+&\quad \Fun<{\beta}{\alpha}{\fun{w}{\W{x}{A}{\app{B}{x}}{\beta}}{\\
+&\quad \match{w}{\fun*{\any}{\W{x}{A}{\app{B}{x}}{\alpha}}}{\\
+&\qquad \app{\App{\sup*}{\gamma}}{a}{f} \Rightarrow \sup{x}{A}{\app{B}{x}}{\alpha}{\beta}{a}{(\fun{x}{A}{\app{\App{\mathit{lift}}{\beta}{\gamma}}{(\app{f}{x})}})}}}}}}}}
+\end{align*}
+
+\iffalse
+\begin{align*}
+\Let{&\const{liftW}}{\funtype{A}{\Type{i}}{\funtype{B}{\arr*{A}{\Type{i}}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\beta}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}}}}{\\
+&\const{liftW} \: A \: B \: [\alpha] \: [\beta] \: (\app{\App{\sup*}{\gamma}}{a}{f}) = \sup* \: [\beta] \: a \: (\fun{x}{A}{\const{liftW} \: A \: B \: [\beta] \: [\gamma] \: (\app{f}{x})})}
+\end{align*}
+\fi
+
+\subsection{Size-preserving functions}
+
+One of the most important uses of sized types is the ability to define
+\emph{size-preserving}\index{size preservation} functions,
+where the sizes of the input and output are the same.
+This guarantees that the output is never larger than the input,
+and size-preserving functions can be used in recursive calls of fixpoints.
+For instance, the predecessor function $\const{pred}$ which computes
+$\maximum{0, n - 1}$ for some number $n$ is size preserving.
+%
+\begin{align*}
+&\Let{\const{pred}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}}}{\\
+&\Fun{\alpha}{\fun{n}{\N{\alpha}}{\match*{n}{\\
+&\quad \App{\zero*}{\beta} \Rightarrow \zero{\alpha}{\beta} \\
+&\quad \app{\App{\succ*}{\beta}}{m} \Rightarrow \app{\App{\const{liftN}}{\alpha}{\beta}}{m}}}}}
+\end{align*}
+
+The $\const{monus}$ function, which computes $\maximum{0, n - m}$ given numbers $n, m$,
+is similarly size preserving in its first argument,
+since $n - m$ is never greater than $n$.
+
+\begin{align*}
+&\Let{\const{monus}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}}{\\
+&\fix{}{\mathit{monus}}{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}{\\
+&\quad \Fun{\beta}{\fun{n}{\N{\beta}}{\fun{m}{\N{\alpha}}{\match*{m}{\\
+&\qquad \App{\zero*}{\gamma} \Rightarrow n \\
+&\qquad \app{\App{\succ*}{\gamma}}{k} \Rightarrow \app{\App{\mathit{monus}}{\gamma}{\beta}}{(\app{\App{\const{pred}}{\beta}}{n})}{k}}}}}}}
+\end{align*}
+
+We see the benefit of size preservation with $\const{div}$,
+which computes Euclidean division of $n$ by $m$, or $\left\lceil\frac{n}{m+1}\right\rceil$.
+This is computed recursively by subtracting $m$ from the numerator using $\const{monus}$
+until $\zero*$ is reached, and counting the number of times the subtraction is performed.
+The recursive call is done on the result of $\const{monus}$;
+$\const{div}$ then only type checks because $\const{monus}$ is size preserving.
+Because the first argument of the recursive call to $\const{div}$ isn't \emph{structurally}
+a subterm with the call to $\const{monus}$ in the way,
+the corresponding unsized function in a language whose fixpoints
+check for structurally-decreasing arguments (such as CIC)
+would not be accepted.
+
+\begin{align*}
+&\Let{\const{div}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}}{\\
+&\fix{}{\mathit{div}}{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}{\\
+&\quad \Fun{\beta}{\fun{n}{\N{\alpha}}{\fun{m}{\N{\beta}}{\match*{n}{\\
+&\qquad \App{\zero*}{\gamma} \Rightarrow \zero{\alpha}{\gamma} \\
+&\qquad \app{\App{\succ*}{\gamma}}{k} \Rightarrow
+\succ{\alpha}{\gamma}{
+  (\underbrace{\app{\App{\const{div}}{\gamma}{\beta}}{
+    (\underbrace{\app{\App{\const{monus}}{\beta}{\gamma}}{k}{
+      (\underbrace{\app{\App{\const{pred}}{\beta}}{m}}_{\N{\beta}})
+    }}_{\N{\gamma}})
+  }{m}}_{\N{\gamma}})
+}}}}}}}
+\end{align*}
+
+\subsection{Large sized functions}
+
+So far, none of these examples have made use of dependent types:
+their unsized variants could have all been written in System F.
+We therefore now turn to the $n$-ary size-preserving function type,
+which does \emph{large elimination}\index{large elimination}
+on a natural $n$, \ie returns a type.
+This example is due to \citet{MiniAgda}.
+
+\begin{align*}
+&\Let{\const{Nary}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\Funtype{\beta}{\Type{1}}}}}{\\
+&\fix{}{\mathit{nary}}{\alpha}{\arr*{\N{\alpha}}{\Funtype{\beta}{\Type{1}}}}{\\
+&\quad \fun{n}{\N{\alpha}}{\Funtype{\beta}{\match{n}{\fun*{\any}{\Type{1}}}{\\
+&\qquad \App{\zero*}{\beta} \Rightarrow \N{\beta} \\
+&\qquad \app{\App{\succ*}{\beta}}{m} \Rightarrow \arr*{\N{\beta}}{\App{\app{\mathit{nary}}{m}}{\beta}}}}}}}
+\end{align*}
+
+Intuitively, $\const{Nary}$ constructs the function type
+
+$$\App{\app{\App{\const{Nary}}{\alpha}}{n}}{\beta} = \arr*{\underbrace{\arr*{\N{\beta}}{\seq}{\N{\beta}}}_{\text{$n$ arguments}}}{\N{\beta}}.$$
+
+$n$-ary size-preserving functions can then be typed using $\const{Nary}$,
+such as a $\const{maximum}$ function that takes the maximum of $n+1$ numbers
+all of the same size.
+For concision I define $\const{max}$ in a pattern-matching style of syntax,
+but it can easily be translated to proper \lang as a fixpoint and two $\kw{case}$ expressions.
+
+\begin{align*}
+\Let{&\const{max}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}}{\\
+&\const{max} \: \sqbr{\alpha} \: n \: (\App{\zero*}{\beta}) = n \\
+&\const{max} \: \sqbr{\alpha} \: (\App{\zero*}{\beta}) \: m = m \\
+&\const{max} \: \sqbr{\alpha} \: (\app{\App{\succ*}{\beta}}{n'}) \: (\app{\App{\succ*}{\beta}}{m'}) = \succ{\alpha}{\beta}{(\app{\App{\const{max}}{\beta}}{n'}{m'})}}
+\end{align*}
+\iffalse
+\begin{align*}
+&\Let{\const{max}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}}{\\
+&\fix{}{\mathit{max}}{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}{\\
+&\quad \fun{n}{\N{\alpha}}{\fun{m}{\N{\alpha}}{\\
+&\quad \match*{n}{\\
+&\qquad \App{\zero*}{\beta} \Rightarrow m \\
+&\qquad \app{\App{\succ*}{\beta}}{n'} \Rightarrow \\
+&\qquad \quad \match*{m}{\\
+&\qquad \qquad \App{\zero*}{\beta} \Rightarrow n \\
+&\qquad \qquad \app{\App{\succ*}{\beta}}{m'} \Rightarrow \succ{\alpha}{\beta}{(\app{\App{\mathit{max}}{\beta}}{n'}{m'})}}}}}}}
+\end{align*}
+\fi
+%
+\begin{align*}
+&\Let{\const{maximum}}{\Funtype{\alpha}{\funtype{k}{\N{\alpha}}{\Funtype{\beta}{\arr*{\N{\beta}}{\App{\app{\App{\const{Nary}}{\alpha}}{k}}{\beta}}}}}}{\\
+&\fix{}{\mathit{maximum}}{\alpha}{\funtype{k}{\N{\alpha}}{\Funtype{\beta}{\arr*{\N{\beta}}{\App{\app{\App{\const{Nary}}{\alpha}}{k}}{\beta}}}}}{\\
+&\quad \fun{k}{\N{\alpha}}{\Fun{\beta}{\fun{n}{\N{\beta}}{\match{k}{\fun*{x}{\App{\app{\App{\const{Nary}}{\alpha}}{x}}{\beta}}}{\\
+&\qquad \App{\zero*}{\gamma} \Rightarrow n \\
+&\qquad \app{\App{\succ*}{\gamma}}{k'} \Rightarrow \fun{m}{\N{\beta}}{\app{\App{\app{\App{\const{maximum}}{\gamma}}{k'}}{\beta}}{(\app{\App{\const{max}}{\beta}}{n}{m})}}}}}}}}
+\end{align*}
+
+% TODO: example with higher rank sizes
+% TODO: "example" using variable substitution
+% TODO: Abel's n == n + zero example?
+% TODO: one other example using ==
