@@ -108,8 +108,8 @@
   \mathtt{{\textcolor{targetcolour}{#1}}}
 \endgroup}
 \newcommand{\new}[1]{%
-  \setlength{\fboxsep}{2pt}%
-  \colorbox{newcolour}{#1}%
+  \setlength{\fboxsep}{3pt}%
+  \colorbox{newcolour}{\rule{0em}{0.5\baselineskip}#1}%
   \setlength{\fboxsep}{\fboxsepdefault}%
 }
 
@@ -127,6 +127,7 @@
 \newcommand{\metafun}[2]{\meta{\texttt{#1(}}#2\meta{\texttt{)}}}
 \newcmd*{\metafun}[1]{\meta{\texttt{#1}}}
 \newcommand{\maximum}[1]{\metafun{max}{#1}}
+\newcommand{\minimum}[1]{\metafun{min}{#1}}
 \newcommand{\rules}[2]{\metafun{rule}{#1, #2}}
 \newcommand{\axioms}[1]{\metafun{axiom}{#1}}
 \newcommand{\fresh}[1]{\metafun{fresh}{#1}}
@@ -143,7 +144,7 @@
 \newcommand{\Prop}{\const{Prop}}
 \newcommand{\sss}[1]{\widehat{#1}}
 \newcommand{\app}[1]{#1\@ifnextchar\bgroup{\@et\app}{\xspace}}
-\newcommand{\@pp}[1]{\sqbr{#1}\@ifnextchar\bgroup{\@et\@app}{\xspace}}
+\newcommand{\@pp}[1]{\sqbr{#1}\@ifnextchar\bgroup{\@et\@pp}{\xspace}}
 \newcommand{\App}[1]{#1\@ifnextchar\bgroup{\@et\@pp}{\xspace}}
 \newcommand{\fun}[3]{\lambda \annot{#1}{#2} \mathpunct{.} #3}
 \newcmd*{\fun}[2]{\lambda #1 \mathpunct{.} #2}
