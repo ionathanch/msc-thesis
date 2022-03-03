@@ -423,8 +423,8 @@ but it can easily be translated to proper \lang as a fixpoint and two $\kw{case}
 
 \subsection{Sized lists}
 
-Implementing quicksort and mergesort are perhaps the most classic examples of the benefits of sized types,
-demonstrating ease of programming compared to na\"ive unsized implementations that otherwise
+Implementing sized quicksort~\citep{term-check} and mergesort~\citep{Abel-diss} are perhaps the most classic examples,
+demonstrating their ease of programming compared to na\"ive unsized implementations that otherwise
 impose a signficant termination proof burden to the programmer.
 Although \lang has no lists for simplicity's sake,
 they are no more complicated than naturals.
@@ -563,4 +563,20 @@ and differ in where $\const{ifleq}$ is applied ($\const{partition}$ or $\const{m
 \end{align*}
 \end{multicols}
 
-% TODO: example with higher rank sizes
+\subsection{Higher-rank sizes}
+
+The final example, demonstrating higher-rank size quantification,
+is a traversal of a well-founded tree with a size-preserving function,
+adapted from the rose tree traversal example by \citet{NbE}.
+Given some size-preserving function on a well-founded tree,
+the function is applied to subtrees prior to traversal.
+Suppose that $B$ here is some type operator on $A$.
+%
+\begin{align*}
+&\Let{\const{traverseW}}{\arr*{(\Funtype{\gamma}{\arr*{\W{x}{A}{\app{B}{x}}{\gamma}}{\W{x}{A}{\app{B}{x}}{\gamma}}})}{ \\
+&\phantom{\kw{let} \: \const{traverseW} \mathrel{:} (} \Funtype{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\alpha}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}}{ \\
+&\quad \fun{f}{\Funtype{\gamma}{\arr*{\W{x}{A}{\app{B}{x}}{\gamma}}{\W{x}{A}{\app{B}{x}}{\gamma}}}}{ \\
+&\quad \fix{}{\mathit{traverse}}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\alpha}}{\W{x}{A}{\app{B}{x}}{\alpha}}}{ \\
+&\qquad \fun{w}{\W{x}{A}{\app{B}{x}}{\alpha}}{\match*{w}{ \\
+&\qquad \quad \app{\App{\sup*}{\beta}}{a}{g} \Rightarrow \sup{x}{A}{\app{B}{x}}{\alpha}{\beta}{a}{(\fun{b}{\app{B}{a}}{\app{\App{\mathit{traverse}}{\beta}}{(\app{\App{f}{\beta}}{(\app{g}{b})})}})}}}}}}
+\end{align*}
