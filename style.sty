@@ -183,7 +183,7 @@
 \newcmd*{\List}[0]{\const{List}}
 \newcommand{\nil}[3]{\App{\constr{nil}_{\List{#1}{#2}}}{#3}}
 \newcmd*{\nil}[0]{\constr{nil}}
-\newcommand{\cons}[5]{\app{\App{\constr{nil}_{\List{#1}{#2}}}{#3}}{#4}{#5}}
+\newcommand{\cons}[5]{\app{\App{\constr{cons}_{\List{#1}{#2}}}{#3}}{#4}{#5}}
 \newcmd*{\cons}[0]{\constr{cons}}
 \newcommand{\match}[3]{\kw{case} \@et #1 \@et \kw{return} \@et #2 \@et \kw{of} \@et \phantom{} #3}
 \newcmd*{\match}[2]{\kw{case} \@et #1 \@et \kw{of} \@et \phantom{} #2}
