@@ -151,7 +151,7 @@ for instance, supposing we have cons lists parametrized over some sized type $\t
 one could write a size-preserving mapping function over a list
 that leaves the sizes untouched.
 The type of such a function might be
-$$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\List{(\App{\tau}{\alpha})}}{\List{(\App{\tau}{\alpha})}}}.$$
+$$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\app{\List*}{(\App{\tau}{\alpha})}}{\app{\List*}{(\App{\tau}{\alpha})}}}.$$
 
 Along with higher-rank sizes, I also include \emph{bounded} size quantification $\Funtype<{\alpha}{s}{\tau}$
 and abstraction $\Fun<{\alpha}{s}{e}$.
