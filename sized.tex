@@ -281,7 +281,7 @@ this requires \emph{shape irrelevance}\index{shape irrelevance}~\citep{NbE},
 which is beyond the scope of this thesis.
 However, any natural can be ``lifted'' to a larger size
 simply by recursively reconstructing the natural with different sizes.
-
+%
 \begin{align*}
 &\Let{\const{liftN}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}}{\\
 &\fix{}{\mathit{lift}}{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}{\\
@@ -293,7 +293,7 @@ simply by recursively reconstructing the natural with different sizes.
 
 A lifting function can also be defined for well-founded trees
 (and for strictly-positive sized inductive types in general).
-%
+
 \begin{align*}
 &\Let{\const{liftW}}{\funtype{A}{\Type{i}}{\funtype{B}{\arr*{A}{\Type{i}}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\beta}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}}}}{\\
 &\fun{A}{\Type{i}}{\fun{B}{\arr*{A}{\Type{i}}}{\\
@@ -321,8 +321,8 @@ For instance, the predecessor function $\const{pred}$ which computes
 $\maximum{0, n - 1}$ for some number $n$ is size preserving.
 %
 \begin{align*}
-&\Let{\const{pred}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}}}{\\
-&\Fun{\alpha}{\fun{n}{\N{\alpha}}{\match*{n}{\\
+&\Let{\const{pred}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}}}{ \\
+&\Fun{\alpha}{\fun{n}{\N{\alpha}}{\match*{n}{ \\
 &\quad \App{\zero*}{\beta} \Rightarrow \zero{\alpha}{\beta} \\
 &\quad \app{\App{\succ*}{\beta}}{m} \Rightarrow \app{\App{\const{liftN}}{\alpha}{\beta}}{m}}}}}
 \end{align*}
@@ -330,11 +330,11 @@ $\maximum{0, n - 1}$ for some number $n$ is size preserving.
 The $\const{monus}$ function, which computes $\maximum{0, n - m}$ given numbers $n, m$,
 is similarly size preserving in its first argument,
 since $n - m$ is never greater than $n$.
-
+%
 \begin{align*}
-&\Let{\const{monus}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}}{\\
-&\fix{}{\mathit{monus}}{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}{\\
-&\quad \Fun{\beta}{\fun{n}{\N{\beta}}{\fun{m}{\N{\alpha}}{\match*{m}{\\
+&\Let{\const{monus}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}}{ \\
+&\fix{}{\mathit{monus}}{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}{ \\
+&\quad \Fun{\beta}{\fun{n}{\N{\beta}}{\fun{m}{\N{\alpha}}{\match*{m}{ \\
 &\qquad \App{\zero*}{\gamma} \Rightarrow n \\
 &\qquad \app{\App{\succ*}{\gamma}}{k} \Rightarrow \app{\App{\mathit{monus}}{\gamma}{\beta}}{(\app{\App{\const{pred}}{\beta}}{n})}{k}}}}}}}
 \end{align*}
@@ -350,11 +350,11 @@ a subterm with the call to $\const{monus}$ in the way,
 the corresponding unsized function in a language whose fixpoints
 check for structurally-decreasing arguments (such as CIC)
 would not be accepted.
-
+%
 \begin{align*}
-&\Let{\const{div}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}}{\\
-&\fix{}{\mathit{div}}{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}{\\
-&\quad \Fun{\beta}{\fun{n}{\N{\alpha}}{\fun{m}{\N{\beta}}{\match*{n}{\\
+&\Let{\const{div}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}}{ \\
+&\fix{}{\mathit{div}}{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}{ \\
+&\quad \Fun{\beta}{\fun{n}{\N{\alpha}}{\fun{m}{\N{\beta}}{\match*{n}{ \\
 &\qquad \App{\zero*}{\gamma} \Rightarrow \zero{\alpha}{\gamma} \\
 &\qquad \app{\App{\succ*}{\gamma}}{k} \Rightarrow
 \succ{\alpha}{\gamma}{
@@ -374,7 +374,7 @@ We therefore now turn to the $n$-ary size-preserving function type,
 which does \emph{large elimination}\index{large elimination}
 on a natural $n$, \ie returns a type.
 This example is due to \citet{MiniAgda}.
-
+%
 \begin{align*}
 &\Let{\const{Nary}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\Funtype{\beta}{\Type{1}}}}}{\\
 &\fix{}{\mathit{nary}}{\alpha}{\arr*{\N{\alpha}}{\Funtype{\beta}{\Type{1}}}}{\\
@@ -394,20 +394,20 @@ For concision I define $\const{max}$ in a pattern-matching style of syntax,
 but it can easily be translated to proper \lang as a fixpoint and two $\kw{case}$ expressions.
 
 \begin{align*}
-\Let{&\const{max}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}}{\\
+\Let{&\const{max}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}}{ \\
 &\const{max} \: \sqbr{\alpha} \: n \: (\App{\zero*}{\beta}) = n \\
 &\const{max} \: \sqbr{\alpha} \: (\App{\zero*}{\beta}) \: m = m \\
 &\const{max} \: \sqbr{\alpha} \: (\app{\App{\succ*}{\beta}}{n'}) \: (\app{\App{\succ*}{\beta}}{m'}) = \succ{\alpha}{\beta}{(\app{\App{\const{max}}{\beta}}{n'}{m'})}}
 \end{align*}
 \iffalse
 \begin{align*}
-&\Let{\const{max}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}}{\\
-&\fix{}{\mathit{max}}{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}{\\
-&\quad \fun{n}{\N{\alpha}}{\fun{m}{\N{\alpha}}{\\
-&\quad \match*{n}{\\
+&\Let{\const{max}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}}{ \\
+&\fix{}{\mathit{max}}{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}{ \\
+&\quad \fun{n}{\N{\alpha}}{\fun{m}{\N{\alpha}}{ \\
+&\quad \match*{n}{ \\
 &\qquad \App{\zero*}{\beta} \Rightarrow m \\
 &\qquad \app{\App{\succ*}{\beta}}{n'} \Rightarrow \\
-&\qquad \quad \match*{m}{\\
+&\qquad \quad \match*{m}{ \\
 &\qquad \qquad \App{\zero*}{\beta} \Rightarrow n \\
 &\qquad \qquad \app{\App{\succ*}{\beta}}{m'} \Rightarrow \succ{\alpha}{\beta}{(\app{\App{\mathit{max}}{\beta}}{n'}{m'})}}}}}}}
 \end{align*}
@@ -455,9 +455,9 @@ This encoding is used in the $\const{append}$ function, written in pattern-match
 where the precise size of the resulting list should be the sum of the sizes of the input lists,
 but \lang has no addition operator for sizes.
 Suppose that $A$ here is some type.
-
+%
 \begin{align*}
-\Let{&\const{append}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\List{A}{\alpha}}{\List{A}{\beta}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}}{\\
+\Let{&\const{append}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\List{A}{\alpha}}{\List{A}{\beta}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}}{ \\
 &\const{append} \: \sqbr{\alpha} \: \sqbr{\beta} \: (\nil* \: \sqbr{\alpha'}) \: r = \Pair{\beta}{r} \\
 &\const{append} \: \sqbr{\alpha} \: \sqbr{\beta} \: (\cons* \: \sqbr{\alpha'} \: \mathit{hd} \: \mathit{tl}) \: r =
   \unpair*{\gamma}{x}{\const{append} \: \sqbr{\alpha'} \: \sqbr{\beta} \: \mathit{tl} \: r}{
@@ -487,15 +487,80 @@ but it can be translated to nested fixpoints~\citep{Abel-diss}.
 
 Quicksort and mergesort are both divide-and-conquer algorithms,
 so we need some way of dividing up a list.
-The simplest to write recursively is to simply $\const{split}$ it into two lists of alternating elements.
+The simplest to implement recursively is to simply $\const{split}$ it into two lists of alternating elements,
+written in continuation-passing style since \lang has no pairs.
+%
+\begin{align*}
+\Let{&\const{split}}{\Funtype{\alpha}{\funtype{C}{\Type{i}}{\arr*{\List{A}{\alpha}}{(\arr*{\List{A}{\alpha}}{\List{A}{\alpha}}{C})}{C}}}}{ \\
+&\const{split} \: \sqbr{\alpha} \: C \: (\nil* \: \sqbr{\beta}) \: k = \app{k}{(\nil* \: \sqbr{\beta})}{(\nil* \: \sqbr{\beta})} \\
+&\const{split} \: \sqbr{\alpha} \: C \: (\cons* \: \sqbr{\beta} \: \mathit{hd} \: \mathit{tl}) \: k = \\
+&\quad \const{split} \: \sqbr{\beta} \: C \: \mathit{tl} \:
+  (\fun{l}{\List{A}{\beta}}{\fun{r}{\List{A}{\beta}}{
+    \app{k}{(\cons* \: \sqbr{\beta} \: \mathit{hd} \: r)}{(\const{liftL} \: A \: \sqbr{\alpha} \: \sqbr{\beta} \: l)}
+  }})}
+\end{align*}
 
-Quicksort sorts a list by picking a pivot point,
-dividing the rest of the list up by elements smaller and greater than the pivot point,
-recursively sorting the two lists,
-and finally appending the lists with the pivot in the middle.
+\clearpage
+Alternatively, the list can be $\const{partition}$ed relative to some pivot element
+into two according to $\const{ifleq}$,
+such that one list contains only elements that are smaller or equal to the pivot
+and the other contains elements larger than it.
+%
+\begin{align*}
+\Let{&\const{partition}}{\Funtype{\alpha}{\funtype{C}{\Type{i}}{\arr*{A}{\List{A}{\alpha}}{(\arr*{\List{A}{\alpha}}{\List{A}{\alpha}}{C})}{C}}}}{ \\
+&\const{partition} \: \sqbr{\alpha} \: C \: a \: (\nil* \: \sqbr{\beta}) \: k = \app{k}{(\nil* \: \sqbr{\beta})}{(\nil* \: \sqbr{\beta})} \\
+&\const{partition} \: \sqbr{\alpha} \: C \: a \: (\cons* \: \sqbr{\beta} \: \mathit{hd} \: \mathit{tl}) \: k = \\
+&\quad \const{partition} \: \sqbr{\beta} \: C \: a \: \mathit{tl} \:
+  (\fun{l}{\List{A}{\beta}}{\fun{r}{\List{A}{\beta}}{ \\
+    &\qquad \const{ifleq} \: C \: \mathit{hd} \: a \\
+    &\qquad \quad (\app{k}{(\cons* \: \sqbr{\beta} \: \mathit{hd} \: l)}{(\const{liftL} \: A \: \sqbr{\alpha} \: \sqbr{\beta} \: r)}) \\
+    &\qquad \quad (\app{k}{(\const{liftL} \: A \: \sqbr{\alpha} \: \sqbr{\beta} \: l)}{(\cons* \: \sqbr{\beta} \: \mathit{hd} \: r)})
+  }})}
+\end{align*}
+
+Quicksort sorts a list by picking a pivot element,
+$\const{partition}$ing the rest of the list into sublists of elements smaller and greater than the pivot,
+recursively sorting them,
+then $\const{append}$ing the sorted lists with the pivot in the middle.
+Meanwhile, mergesort sorts a list by $\const{split}$ing the list into sublists,
+recursively sorting them,
+then $\const{merge}$ing the sorted lists while maintaining ordering.
+Both involve recursive calls on lists that are not structurally smaller,
+but do have smaller sizes,
+and differ in where $\const{ifleq}$ is applied ($\const{partition}$ or $\const{merge}$).
+
+\vspace{-\baselineskip}
+\begin{multicols}{2}
+\begin{align*}
+&\Let{\const{qsort}}{\Funtype{\alpha}{\arr*{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}{ \\
+&\fix{}{\mathit{qsort}}{\alpha}{\arr*{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}{ \\
+&\quad \fun{l}{\List{A}{\alpha}}{\match*{l}{ \\
+&\qquad \App{\nil*}{\beta} \Rightarrow \Pair{\alpha}{l} \\
+&\qquad \app{\App{\cons*}{\beta}}{\mathit{hd}}{\mathit{tl} \Rightarrow \\
+  &\qquad \quad \app{\App{\const{partition}}{\beta}}{(\Pairtype{\gamma}{\List{A}{\gamma}})}{\mathit{hd}}{\mathit{tl}}{ \\
+    &\qquad \quad (\fun{l}{\List{A}{\beta}}{\fun{r}{\List{A}{\beta}}{ \\
+      &\qquad \qquad \unpair{\delta}{x}{\gamma}{\List{A}{\gamma}}{\app{\App{\mathit{qsort}}{\beta}}{l}}{ \\
+      &\qquad \qquad \unpair{\varepsilon}{y}{\gamma}{\List{A}{\gamma}}{\app{\App{\mathit{qsort}}{\beta}}{r}}{ \\
+      &\qquad \qquad \app{\App{\const{append}}{\delta}{\sss{\varepsilon}}}{x}{(\cons{A}{\sss{\varepsilon}}{\varepsilon}{\mathit{hd}}{y})}}}
+    }})}}}}}}
+\end{align*}
+
+\begin{align*}
+&\Let{\const{msort'}}{\Funtype{\alpha}{\arr*{A}{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}{ \\
+&\fix{}{\mathit{msort}}{\alpha}{\arr*{A}{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}{ \\
+&\quad \fun{a}{A}{\fun{l}{\List{A}{\alpha}}{\match*{l}{ \\
+&\qquad \App{\nil*}{\beta} \Rightarrow \Pair{\sss{\alpha}}{\cons{A}{\sss{\alpha}}{\alpha}{a}{l}} \\
+&\qquad \app{\App{\cons*}{\beta}}{b}{\mathit{tl}} \Rightarrow \\
+&\qquad \quad \app{\App{\const{split}}{\beta}}{(\Pairtype{\gamma}{\List{A}{\gamma}})}{\mathit{tl}}{ \\
+&\qquad \quad (\fun{l}{\List{A}{\beta}}{\fun{r}{\List{A}{\beta}}{ \\
+&\qquad \qquad \unpair{\delta}{x}{\gamma}{\List{A}{\gamma}}{\app{\App{\mathit{msort}}{\beta}}{a}{l}}{ \\
+&\qquad \qquad \unpair{\varepsilon}{y}{\gamma}{\List{A}{\gamma}}{\app{\App{\mathit{msort}}{\beta}}{b}{r}}{ \\
+&\qquad \qquad \app{\App{\const{merge}}{\delta}{\varepsilon}}{x}{y}}}}})}}}}}} \\\\
+&\Let{\const{msort}}{\Funtype{\alpha}{\arr*{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}{ \\
+&\Fun{\alpha}{\fun{l}{\List{A}{\alpha}}{\match*{l}{ \\
+&\quad \App{\nil*}{\beta} \Rightarrow \Pair{\alpha}{l} \\
+&\quad \app{\App{\cons*}{\beta}}{\mathit{hd}}{\mathit{tl} \Rightarrow \app{\App{\const{msort'}}{\beta}}{\mathit{hd}}{\mathit{tl}}}}}}}
+\end{align*}
+\end{multicols}
 
 % TODO: example with higher rank sizes
-% TODO: quicksort/mergesort
-% TODO: "example" using variable substitution
-% TODO: Abel's n == n + zero example?
-% TODO: one other example using ==
