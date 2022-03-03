@@ -15,8 +15,7 @@ but also to show that the sublanguage is independent of the chosen inductive typ
 
 \FigSyntax{fig:syntax}
 \cref{fig:syntax} gives its syntax, which consists of universes $U$,
-sizes $s$, and terms $e$, which includes term functions, size abstractions,
-and the propositional equality type.
+sizes $s$, and terms $e$, which includes term functions and size abstractions.
 Most judgements use two environments: a term environment $\Gamma$ with assumptions $\annot{x}{\tau}$
 and definitions $\define{x}{e}$, and a size environment $\Phi$ with unbounded and bounded size variables.
 I also use the assumption environment%
@@ -127,12 +126,12 @@ of type $\Id$.
 from one type to a supertype as needed.
 If we were working in a bidirectional presentation,
 where the typing judgement is replaced by either
-\emph{type checking}, which checks an input term against and input type,
-or \emph{type synthesis}, which synthesizes an output type for an input type,
+\emph{type checking}, which checks an input term against an input type,
+or \emph{type synthesis}, which synthesizes an output type for an input term,
 this rule for $\type{\Phi; \Gamma}{e}{\tau}$ would be the sole checking rule,
 first synthesizing types $\sigma$ and $U$ for $e$ and $\tau$ respectively,
 then checking $\sigma$ against $U$,
-and at last asserting that $\sigma$ is indeed a subtype of $\tau$.
+and lastly asserting that $\sigma$ is indeed a subtype of $\tau$.
 This is why, despite $\type{\Phi; \Gamma}{\sigma}{U}$ being derivable,
 I choose to retain it as a premise.
 
@@ -143,6 +142,7 @@ which work similarly to functions.
 Of note is the bounded size application rule,
 which only allows applications to smaller sizes following the subsizing judgement.
 
+\iffalse
 Lastly are \rref{eq, refl, J} for propositional equality.
 The constructor $\refl{e}$ is a reflexive proof of $\eq{e}{\tau}{e}$,
 that $e$ of type $\tau$ is equal to itself.
@@ -157,6 +157,7 @@ it can be manually uncurried for a specific universe $U$ as the function
 \marginnote{The type annotation for the equality type and argument to $\refl{}$ may be omitted when evident from context.}
 $$\fun{\tau}{U}{\fun{e_1}{\tau}{\fun{e_2}{\tau}{\fun{P}{(\funtype{y}{\tau}{\funtype{z}{\eq{e_1}{}{y}}{U}})}{\fun{d}{\app{P}{e_1}{\refl{}}}{\fun{p}{\eq{e_1}{}{e_2}}{\J{P}{d}{p}}}}}}},$$
 and similarly for $\refl{}$.
+\fi
 
 \section{Inductive Types: Naturals and Well-Founded Trees}\label{sec:ind-types}
 
@@ -167,8 +168,8 @@ Informally, borrowing syntax from the definition of general inductives,
 sized naturals and well-founded trees can be thought of as being defined by the following:
 %
 \begin{align*}
-&\data*{\annot{\N{\alpha}}{\Type{1}}} && \data*{\annot{\app{\App{\W*}{\alpha}}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\Type{i}}} \\
-&\quad \annot{\zero*}{\Funtype<{\beta}{\alpha}{\N{\alpha}}} && \quad \annot{\sup*}{\Funtype<{\beta}{\alpha}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\beta}}{A}{B}})}{\app{\App{\W*}{\alpha}}{A}{B}}}}} \\
+&\data*{\annot{\N{\alpha}}{\Type{1}}} && \data*{\annot{\App{\app{\W*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\alpha}}{\Type{i}}} \\
+&\quad \annot{\zero*}{\Funtype<{\beta}{\alpha}{\N{\alpha}}} && \quad \annot{\sup*}{\Funtype<{\beta}{\alpha}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\beta}}{A}{B}})}{\App{\app{\W*}{A}{B}}{\alpha}}}}} \\
 &\quad \annot{\succ*}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}
 \end{align*}
 %
@@ -262,7 +263,7 @@ and its successors as strictly larger sizes.
 For convenience, I use the notation \new{$s+n$} for some fixed $n$ to mean the $n$th size successor of $s$.
 The same number can be represented as terms of different types by changing the annotation since,
 for instance, both $\circ+2$ and $\circ+3$ are strictly larger than $\sss{\circ}$.
-Similarly, two different numbers can have the same size
+Similarly, two different naturals can have the same size
 because the size of an inductive type represents \emph{at most}
 how many layers of constructors deep an element is.
 %
@@ -278,8 +279,8 @@ as shown by the terms $\const{0}$ and $\const{0'}$,
 or by $\const{1}$ and $\const{1'}$;
 this requires \emph{shape irrelevance}\index{shape irrelevance}~\citep{NbE},
 which is beyond the scope of this thesis.
-However, any number can be ``lifted'' to a larger size
-simply by recursively reconstructing the number with different sizes.
+However, any natural can be ``lifted'' to a larger size
+simply by recursively reconstructing the natural with different sizes.
 
 \begin{align*}
 &\Let{\const{liftN}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}}{\\
@@ -290,8 +291,8 @@ simply by recursively reconstructing the number with different sizes.
 &\qquad \app{\App{\succ*}{\gamma}}{z} \Rightarrow \succ{\alpha}{\beta}{(\app{\App{\mathit{lift}}{\beta}{\gamma}}{z})}}}}}}
 \end{align*}
 
-A lifting function can also be defined for well-founded trees,
-and for strictly-positive inductive types in general.
+A lifting function can also be defined for well-founded trees
+(and for strictly-positive sized inductive types in general).
 %
 \begin{align*}
 &\Let{\const{liftW}}{\funtype{A}{\Type{i}}{\funtype{B}{\arr*{A}{\Type{i}}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\beta}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}}}}{\\
@@ -420,7 +421,81 @@ but it can easily be translated to proper \lang as a fixpoint and two $\kw{case}
 &\qquad \app{\App{\succ*}{\gamma}}{k'} \Rightarrow \fun{m}{\N{\beta}}{\app{\App{\app{\App{\const{maximum}}{\gamma}}{k'}}{\beta}}{(\app{\App{\const{max}}{\beta}}{n}{m})}}}}}}}}
 \end{align*}
 
+\subsection{Sized lists}
+
+Implementing quicksort and mergesort are perhaps the most classic examples of the benefits of sized types,
+demonstrating ease of programming compared to na\"ive unsized implementations that otherwise
+impose a signficant termination proof burden to the programmer.
+Although \lang has no lists for simplicity's sake,
+they are no more complicated than naturals.
+Using the same informal syntax from \cref{sec:ind-types},
+they can be defined by the following:
+%
+\begin{align*}
+&\data*{\annot{\List{(\annot{A}{\Type{i}})}{\alpha}}{\Type{i+1}}} \\
+&\quad \annot{\nil*}{\Funtype<{\beta}{\alpha}{\List{A}{\alpha}}} \\
+&\quad \annot{\cons*}{\Funtype<{\beta}{\alpha}{\arr*{A}{\List{A}{\beta}}{\List{A}{\alpha}}}}
+\end{align*}
+
+A similar lifting function for lists can be defined, whose type is
+$$\annot{\const{liftL}}{\funtype{A}{\Type{i}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\List{A}{\beta}}{\List{A}{\alpha}}}}}}.$$
+
+I also use an encoding for \emph{weak dependent pairs}\index{weak dependent pairs}
+to express pairing a sized type with some particular size
+in situations where the size expressions of \lang aren't expressive enough
+to specify the exact size.
+%
+\begin{align*}
+\Pairtype{\alpha}{\tau} &= \funtype{\sigma}{\Type{i}}{\arr*{(\Funtype{\alpha}{(\arr*{\tau}{\sigma})})}{\sigma}} \\
+\Pair{s}{e}_{\Pairtype{\alpha}{\tau}} &= \fun{\sigma}{\Type{i}}{\fun{f}{\Funtype{\alpha}{(\arr*{\tau}{\sigma})}}{\app{\App{f}{s}}{e}}} \\
+\unpair{\alpha}{x}{\alpha}{\tau}{e_1}{\annot{e_2}{\sigma}} &= \app{e_1}{\sigma}{(\Fun{\alpha}{\fun{x}{\tau}{e_2}})}
+\end{align*}
+
+This encoding is used in the $\const{append}$ function, written in pattern-matching style,
+where the precise size of the resulting list should be the sum of the sizes of the input lists,
+but \lang has no addition operator for sizes.
+Suppose that $A$ here is some type.
+
+\begin{align*}
+\Let{&\const{append}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\List{A}{\alpha}}{\List{A}{\beta}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}}{\\
+&\const{append} \: \sqbr{\alpha} \: \sqbr{\beta} \: (\nil* \: \sqbr{\alpha'}) \: r = \Pair{\beta}{r} \\
+&\const{append} \: \sqbr{\alpha} \: \sqbr{\beta} \: (\cons* \: \sqbr{\alpha'} \: \mathit{hd} \: \mathit{tl}) \: r =
+  \unpair*{\gamma}{x}{\const{append} \: \sqbr{\alpha'} \: \sqbr{\beta} \: \mathit{tl} \: r}{
+    \cons* \: \sqbr{\gamma} \: hd \: x
+  }}
+\end{align*}
+
+Notice that $\const{append}$ retains the order of the elements of the lists.
+On the other hand, if given some ordering function on $A$
+$$\annot{\const{ifleq}}{\funtype{C}{\Type{i}}{\arr*{A}{A}{C}{C}{C}}}$$
+which selects one of two branches $C$ based on the order of the elements of $A$,
+we can define a similar $\const{merge}$ function that merges two lists such that
+the resulting list is sorted by with respect to $\const{ifleq}$
+if the input lists were.
+In pattern-matching style, the recusion appears lexicographical,
+but it can be translated to nested fixpoints~\citep{Abel-diss}.
+%
+\begin{align*}
+\Let{&\const{merge}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\List{A}{\alpha}}{\List{A}{\beta}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}}{ \\
+&\const{merge} \: \sqbr{\alpha} \: \sqbr{\beta} \: (\nil* \: \sqbr{\alpha'}) \: r = \Pair{\beta}{r} \\
+&\const{merge} \: \sqbr{\alpha} \: \sqbr{\beta} \: l \: (\nil* \: \sqbr{\beta'}) = \Pair{\alpha}{l} \\
+&\const{merge} \: \sqbr{\alpha} \: \sqbr{\beta} \: (\cons* \: \sqbr{\alpha'} \: a \: l) \: (\cons* \: \sqbr{\beta'} \: b \: r) = \\
+&\quad \const{ifleq} \: (\List{A}{\gamma}) \: a \: b \\
+&\qquad (\unpair*{\gamma}{x}{\const{merge} \: \sqbr{\alpha'} \: \sqbr{\beta} \: l \: (\cons* \: \sqbr{\beta'} \: b \: r)}{\Pair{\sss{\gamma}}{\cons* \: \sqbr{\gamma} \: a \: x}}) \\
+&\qquad (\unpair*{\gamma}{x}{\const{merge} \: \sqbr{\alpha} \: \sqbr{\beta'} \: (\cons* \: \sqbr{\alpha'} \: a \: l) \: r}{\Pair{\sss{\gamma}}{\cons* \: \sqbr{\gamma} \: b \: x}})}
+\end{align*}
+
+Quicksort and mergesort are both divide-and-conquer algorithms,
+so we need some way of dividing up a list.
+The simplest to write recursively is to simply $\const{split}$ it into two lists of alternating elements.
+
+Quicksort sorts a list by picking a pivot point,
+dividing the rest of the list up by elements smaller and greater than the pivot point,
+recursively sorting the two lists,
+and finally appending the lists with the pivot in the middle.
+
 % TODO: example with higher rank sizes
+% TODO: quicksort/mergesort
 % TODO: "example" using variable substitution
 % TODO: Abel's n == n + zero example?
 % TODO: one other example using ==
