@@ -3,8 +3,19 @@
 \input{figures/sized.tex}
 \input{figures/ind.tex}
 
-% TODO: explain metanotation (..., _, ·)
-% TODO: remember to mention that new notation not in a figure is highlighted in grey
+This chapter can be divided into two halves:
+the first gives the formal description of the syntax, judgements, and rules of \lang,
+while the second provides a number of examples written in \lang to show how sized types can be used.
+They are kept separate so that the examples do not detract from the formal description
+and vice versa, but can be read in parallel;
+the examples provide intuition for understanding the rules,
+while the rules ensure proper understanding of why the examples are correct.
+
+In the sections to follow, any new (meta)notation not introduced in a figure is \new{highlighted} in grey.
+I use ellipses \new{$\seq$} as metanotation for denoting a repeated sequence of some syntactic construct,
+and \new{$\mt$} for denoting an empty sequence (particularly in the context of environments).
+Irrelevant constructs are omitted using an underscore \new{$\any$}.
+Metafunctions are introduced in the prose as needed.
 
 \section{Base \lang}
 
@@ -23,12 +34,12 @@ I also use the assumption environment%
 $\Delta$ as a shorthand when writing nested expressions with assumptions;
 in particular, letting for instance $\Delta_{xy} = \annot{x}{\sigma_1}, \annot{y}{\sigma_2}$,
 I use \new{$\arr*{\Delta_{xy}}{\tau}$} to mean $\funtype{x}{\sigma_1}{\funtype{y}{\sigma_2}{\tau}}$.
+Similarly, I use \new{$\arr*{\sigma}{\tau}$} to mean the nondependent function type $\funtype{\any}{\sigma}{\tau}$
 As a loose convention, I use $\tau, \sigma$ for type-like terms,
 $P$ for the \emph{motive}\index{motive} of eliminators,
 $p$ for proofs of equality, and
 $f, g$ for variables representing functions.
 
-\clearpage % TODO: make sure this is still needed later
 As mentioned in \cref{ch:overview}, the judgement forms of \lang include
 reduction, its various closures, $\alpha$-cumulativity, subtyping, and typing.
 On top of those, there are also judgement forms for subsizing, sizes,
@@ -90,6 +101,7 @@ which would otherwise allow conversion between $\fun{x}{\tau}{\app{f}{x}}$ and $
 Mixing $\eta$-conversion and untyped converion is notoriously difficult~\citep{eta},
 and remains an unresolved problem in MetaCoq, so I exclude it here.
 
+\clearpage % TODO: clearpage
 \FigSubsize{fig:subsizing}
 \cref{fig:subsizing} describes a preorder on sizes such that
 the successor operator is monotonic with respect to the order.
@@ -110,6 +122,7 @@ $\rules{\mt}{\mt}$ for the type of a function type,
 defined in \cref{fig:rules-axioms},
 and $\fresh{\seq}$ for fresh variables.
 
+\clearpage % TODO: clearpage
 \rref{var, univ, let} are the usual rules for variables, universes, and $\kw{let}$ expressions
 in \GCC,\index{Calculus of Constructions!generalized \textasciitilde}
 while \rref{pi, lam, app} are the usual ones for functions.
@@ -135,7 +148,6 @@ and lastly asserting that $\sigma$ is indeed a subtype of $\tau$.
 This is why, despite $\type{\Phi; \Gamma}{\sigma}{U}$ being derivable,
 I choose to retain it as a premise.
 
-\clearpage % TODO: make sure this is still needed later
 \rref{forall, forall<, slam, slam<, sapp, sapp<} are the new rules relevant to sized types,
 describing bound and unbound size quantification, abstraction, and application,
 which work similarly to functions.
@@ -172,7 +184,8 @@ sized naturals and well-founded trees can be thought of as being defined by the 
 &\quad \annot{\zero*}{\Funtype<{\beta}{\alpha}{\N{\alpha}}} && \quad \annot{\sup*}{\Funtype<{\beta}{\alpha}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\beta}}{A}{B}})}{\App{\app{\W*}{A}{B}}{\alpha}}}}} \\
 &\quad \annot{\succ*}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}
 \end{align*}
-%
+
+\clearpage % TODO: clearpage
 The types of naturals and well-founded trees can then be considered to be (nonuniformly) parametrized by a size,
 and constructing an element of that type requires providing a strictly smaller size,
 which is the size of the constructor's recursive arguments.
@@ -185,15 +198,13 @@ the variable $x$ is bound within $\tau$ in the type $\W{x}{\sigma}{\tau}{s}$.
 
 The expression
 $\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{z_1}{\seq}{z_m} \Rightarrow e_c) \seq}$
-contains three parts (using \new{\meta{\ldots}}
-to denote a repeated sequence of some syntactic construct):
+contains three parts:
 the \emph{target}\index{target} $e$ it destructs,
 the motive\index{motive} $P$ denoting the return type of the expression abstracted over a target,
 and the \emph{branches}\index{branch} $e_c$, one for each constructor of the target's type,
 abstracted over the constructor's size and term arguments.
 Its reduction rules for each constructor are given in \cref{fig:reduction-ind},
-along with the reduction rule for fixpoint expressions;
-irrelevant syntactic elements are omitted with \new{$\any$}.
+along with the reduction rule for fixpoint expressions.
 By convention, the reduction rules for $\kw{case}$ expressions are also referred to as $\iota$-reduction,
 and for fixpoint expressions as $\mu$-reduction.
 \FigRedInd{fig:reduction-ind}
@@ -281,7 +292,7 @@ this requires \emph{shape irrelevance}\index{shape irrelevance}~\citep{NbE},
 which is beyond the scope of this thesis.
 However, any natural can be ``lifted'' to a larger size
 simply by recursively reconstructing the natural with different sizes.
-%
+
 \begin{align*}
 &\Let{\const{liftN}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}}{\\
 &\fix{}{\mathit{lift}}{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}{\\
@@ -293,7 +304,7 @@ simply by recursively reconstructing the natural with different sizes.
 
 A lifting function can also be defined for well-founded trees
 (and for strictly-positive sized inductive types in general).
-
+%
 \begin{align*}
 &\Let{\const{liftW}}{\funtype{A}{\Type{i}}{\funtype{B}{\arr*{A}{\Type{i}}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\beta}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}}}}{\\
 &\fun{A}{\Type{i}}{\fun{B}{\arr*{A}{\Type{i}}}{\\
@@ -330,7 +341,7 @@ $\maximum{0, n - 1}$ for some number $n$ is size preserving.
 The $\const{monus}$ function, which computes $\maximum{0, n - m}$ given numbers $n, m$,
 is similarly size preserving in its first argument,
 since $n - m$ is never greater than $n$.
-%
+
 \begin{align*}
 &\Let{\const{monus}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}}{ \\
 &\fix{}{\mathit{monus}}{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}{ \\
@@ -374,7 +385,7 @@ We therefore now turn to the $n$-ary size-preserving function type,
 which does \emph{large elimination}\index{large elimination}
 on a natural $n$, \ie returns a type.
 This example is due to \citet{MiniAgda}.
-%
+
 \begin{align*}
 &\Let{\const{Nary}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\Funtype{\beta}{\Type{1}}}}}{\\
 &\fix{}{\mathit{nary}}{\alpha}{\arr*{\N{\alpha}}{\Funtype{\beta}{\Type{1}}}}{\\
@@ -392,7 +403,7 @@ such as a $\const{maximum}$ function that takes the maximum of $n+1$ numbers
 all of the same size.
 For concision I define $\const{max}$ in a pattern-matching style of syntax,
 but it can easily be translated to proper \lang as a fixpoint and two $\kw{case}$ expressions.
-
+%
 \begin{align*}
 \Let{&\const{max}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}}{ \\
 &\const{max} \: \sqbr{\alpha} \: n \: (\App{\zero*}{\beta}) = n \\
@@ -430,7 +441,7 @@ Although \lang has no lists for simplicity's sake,
 they are no more complicated than naturals.
 Using the same informal syntax from \cref{sec:ind-types},
 they can be defined by the following:
-%
+
 \begin{align*}
 &\data*{\annot{\List{(\annot{A}{\Type{i}})}{\alpha}}{\Type{i+1}}} \\
 &\quad \annot{\nil*}{\Funtype<{\beta}{\alpha}{\List{A}{\alpha}}} \\
@@ -438,6 +449,7 @@ they can be defined by the following:
 \end{align*}
 
 A similar lifting function for lists can be defined, whose type is
+
 $$\annot{\const{liftL}}{\funtype{A}{\Type{i}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\List{A}{\beta}}{\List{A}{\alpha}}}}}}.$$
 
 I also use an encoding for \emph{weak dependent pairs}\index{weak dependent pairs}
@@ -474,7 +486,7 @@ the resulting list is sorted by with respect to $\const{ifleq}$
 if the input lists were.
 In pattern-matching style, the recusion appears lexicographical,
 but it can be translated to nested fixpoints~\citep{Abel-diss}.
-%
+
 \begin{align*}
 \Let{&\const{merge}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\List{A}{\alpha}}{\List{A}{\beta}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}}{ \\
 &\const{merge} \: \sqbr{\alpha} \: \sqbr{\beta} \: (\nil* \: \sqbr{\alpha'}) \: r = \Pair{\beta}{r} \\
@@ -500,7 +512,6 @@ written in continuation-passing style since \lang has no pairs.
   }})}
 \end{align*}
 
-\clearpage
 Alternatively, the list can be $\const{partition}$ed relative to some pivot element
 into two according to $\const{ifleq}$,
 such that one list contains only elements that are smaller or equal to the pivot
