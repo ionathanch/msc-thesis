@@ -5,15 +5,15 @@
 \section{Target Type Theory}
 
 \FigSyntaxCIC{fig:syntax-cic}
-The target langauge, \CICE, is CIC with a separate propositional equality construct
-that is reflected into definitional equality.
-Its syntax is given in \cref{fig:syntax-cic}.
-Aside from the standard dependent functions,
-it has a fixpoint expression with the 0-based index of the recursive argument explicitly given,
-a $\tg{case}$ expression whose motive is additionally abstracted over the indices of the target's inductive type,
-and an equality type with the reflexivity constructor and $\JT*$ eliminator.
+The syntax of \CICE is given in \cref{fig:syntax-cic};
+differences from \lang include a 0-based index for the recursive argument of fixpoint expressions,
+$\tg{case}$ expression motives abstracted over the target's inductive type indices,
+and a \emph{propositional equality}\index{propositional equality} type with the reflexivity constructor and $\JT*$ eliminator.
 New inductive types are defined using data definitions $\DT$,
 whose syntax resembles the informal presentation used in \cref{ch:sized-dep-types}.
+Metavariable usage convention is roughly the same as for \lang,
+with the addition of $\pT$ for inductive type parameters or proofs of equality
+and $\aT$ for inductive type indices.
 
 The well-formedness conditions on inductive data definitions,
 such as well-typedness and \emph{strict positivity}\index{strict positivity},

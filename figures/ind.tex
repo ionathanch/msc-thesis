@@ -6,7 +6,7 @@
   %t &\Coloneqq e \mid \mathopen{[} s \mathclose{]} &
   %\Theta &\Coloneqq \mt \mid \Theta, \annot{x}{\tau} \mid \Theta, \alpha \mid \Theta, \bound{\alpha}{s} & \\
   e &\Coloneqq \mathrlap{\cdots \mid \N{s} \mid \zero{s}{s} \mid \succ{s}{s}{e} \mid \W{x}{\tau}{\tau}{s} \mid \sup{x}{\tau}{\tau}{s}{s}{e}{e}} \\
-  &\mid \mathrlap{\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{z_1 \seq z_m} \Rightarrow e) \seq} \mid \fix{f}{\alpha}{\tau}{e}}
+  &\mid \mathrlap{\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{\vec{z}} \Rightarrow e) \seq} \mid \fix{f}{\alpha}{\tau}{e}}
   \end{align*}
   \caption{Syntax (naturals, well-founded trees, \\ and $\kw{case}$ and fixpoint expressions)}
   \label{#1}
