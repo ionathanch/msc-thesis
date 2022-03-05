@@ -225,24 +225,24 @@ we prove the consistency of \lang.
 belong to the target language \CICE.}
 
 \begin{fact}[Consistency of \CICE]\label{fact:consistency-cice}
-There exists no term $\target{e}$ such that
-$\type{\target{\mt}}{\target{e}}{\target{\funtype{P}{\Prop}{P}}}$.
+There exists no term $\eT$ such that
+$\type{\mt}{\eT}{\funtypeT{\PT}{\PropT}{\PT}}$.
 \end{fact}
 
 \begin{theorem}[Consistency of \lang]
-Suppose $\compile{\bot} = \target{\funtype{P}{\Prop}{P}}$.
+Suppose $\compile{\bot} = \funtypeT{\PT}{\PropT}{\PT}$.
 Then there exists no term $e$ such that \mbox{$\type{\mt \mathbin{;} \mt}{e}{\bot}$}.
 \end{theorem}
 \begin{proof}
 Suppose that there were such a term $e$.
 By the type-preserving translation, we would have that
-$\type{\target{\mt}}{\compile{e}}{\target{\funtype{P}{\Prop}{P}}}$ holds.
+$\type{\mt}{\compile{e}}{\funtypeT{\PT}{\PropT}{\PT}}$ holds.
 However, this contradicts \cref{fact:consistency-cice},
 so there must not be such a term.
 \end{proof}
 
 What remains, then, is to define $\bot$ and an appropriate translation from \lang to \CICE
-such that $\compile{\bot} = \target{\funtype{P}{\Prop}{P}}$,
+such that $\compile{\bot} = \funtypeT{\PT}{\PropT}{\PT}$,
 and to show that this translation is type preserving.
 I define my translation by induction on the typing derivations of \lang
 rather than merely over its syntax,
@@ -292,7 +292,7 @@ substitution, reduction, the closure of reduction, $\alpha$-cumulativity, and su
 in order to prove type preservation.
 In short, substitution satisfies a \emph{compositionality}\index{compositionality} principle,
 reduction of terms are equivalent by the \CICE equivalence judgement
-$\defeq{\target{\Gamma}}{\target{e_1}}{\target{e_2}}{\target{\tau}}$,
+$\defeq{\GammaT}{\eT_1}{\eT_2}{\tauT}$,
 and $\alpha$-cumulative terms and subtypes are correspondingly \CICE subtypes.
 I summarize them here, omitting some hypotheses and sublemmas,
 to outline the proof architecture,
@@ -324,14 +324,14 @@ and an application of equality reflection in the case for reduction of fixpoints
 
 \begin{lemma}[Preservation of $\alpha$-Cumulativity]\label{lem:pres-cumul}
 If $\acum{\tau_1}{\tau_2}$ and
-$\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\target{U_i}}$
+$\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\UT_i}$
 then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
 \end{lemma}
 
 \begin{proof}
 By induction on the derivation of $\acum{\tau_1}{\tau_2}$,
 using inversion on the derivations of $\type{\Phi; \Gamma}{\tau_i}{U_i}$ and
-$\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\target{U_i}}$.
+$\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\UT_i}$.
 \end{proof}
 
 The final three lemmas and theorem are proven mutually;
