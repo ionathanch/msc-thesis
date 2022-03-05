@@ -1,0 +1,117 @@
+\newcommand{\FigSyntaxCIC}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{align*}
+  \target{i}, \target{j}, \target{k}, \target{m}, \target{n} &\Coloneqq \meta{\textsf{naturals}} &
+  \target{\Gamma} &\Coloneqq \mt \mid \target{\Gamma}, \target{\annot{x}{\tau}} \mid \target{\Gamma}, \target{\define{x}{e}} \\
+  \target{f}, \target{g}, \target{x}, \target{y}, \target{z} &\Coloneqq \meta{\textsf{term variables}} &
+  \target{\Delta} &\Coloneqq \mt \mid \target{\Delta}, \target{\annot{x}{\tau}} \\
+  \target{X} &\Coloneqq \meta{\textsf{inductive type names}} &
+  \target{U} &\Coloneqq \target{\Prop} \mid \target{\Type{i}} \\
+  \target{c} &\Coloneqq \meta{\textsf{inductive constructor names}} &
+  \target{D} &\Coloneqq \target{\app{\data{\app{X}{\Delta}}{\arr*{\Delta}{U}}}{\Delta}} \\
+  \target{e}, \target{d}, \target{p}, \target{P}, \target{\tau}, \target{\sigma} &\Coloneqq
+    \mathrlap{\target{x} \mid \target{U} \mid \target{\funtype{x}{\tau}{\tau}} \mid \target{\fun{x}{\tau}{e}} \mid \target{\app{e}{e}} \mid \target{\letin{x}{\tau}{e}{e}} \mid \target{\fix*{i}{f}{\tau}{e}}} \\
+  &\mid \mathrlap{\target{\eq{e}{\tau}{e}} \mid \target{\refl{e}} \mid \target{\J{P}{d}{p}} \mid \target{\match{e}{\fun*{(y \seq).x}{P}}{(\app{c}{z}{\seq} \Rightarrow e) \seq}}}
+  \end{align*}
+  \caption{Syntax (\CICE)}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigEquiv}[1]{
+  \begin{figure}
+  \centering
+  \begin{mathpar}
+  \fbox{$\defeq{\target{\Gamma}}{\target{e}}{\target{e}}{\target{\tau}}$} \hfill \\
+  \inferrule[\rlabel{$\equiv$-refl}{equiv-refl}]{
+    \type{\target{\Gamma}}{\target{e}}{\target{\tau}}
+  }{
+    \defeq{\target{\Gamma}}{\target{e}}{\target{e}}{\target{\tau}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-sym}{equiv-sym}]{
+    \defeq{\target{\Gamma}}{\target{e_2}}{\target{e_1}}{\target{\tau}}
+  }{
+    \defeq{\target{\Gamma}}{\target{e_1}}{\target{e_2}}{\target{\tau}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-trans}{equiv-trans}]{
+    \defeq{\target{\Gamma}}{\target{e_1}}{\target{e_2}}{\target{\tau}} \\\\
+    \defeq{\target{\Gamma}}{\target{e_2}}{\target{e_3}}{\target{\tau}}
+  }{
+    \defeq{\target{\Gamma}}{\target{e_1}}{\target{e_3}}{\target{\tau}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-conv}{equiv-conv}]{
+    \subtype{\target{\Gamma}}{\target{\sigma}}{\target{\tau}} \\\\
+    \defeq{\target{\Gamma}}{\target{e_1}}{\target{e_2}}{\target{\sigma}}
+  }{
+    \defeq{\target{\Gamma}}{\target{e_1}}{\target{e_2}}{\target{\tau}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-reflect}{equiv-reflect}]{
+    \type{\target{\Gamma}}{\target{p}}{\eq{\target{e_1}}{\target{\tau}}{\target{e_2}}}
+  }{
+    \defeq{\target{\Gamma}}{\target{e_1}}{\target{e_2}}{\target{\tau}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-cong}{equiv-conv}]{
+    \textrm{For every $1 \leq i \leq n$:} \\
+    \defeq{\target{\Gamma'}}{\target{e_i}}{\target{e'_i}}{\target{\tau'}}
+  }{
+    \defeq{\target{\Gamma}}
+      {\subst{\target{e}}{\target{x_1}, \seq, \target{x_n}}{\target{e_1}, \seq, \target{e_n}}}
+      {\subst{\target{e}}{\target{x_1}, \seq, \target{x_n}}{\target{e'_1}, \seq, \target{e'_n}}}
+      {\target{\tau}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-$\delta$}{equiv-delta}]{
+    (\define{\target{x}}{\target{e}}) \in \target{\Gamma} \\
+    (\annot{\target{x}}{\target{\tau}}) \in \target{\Gamma}
+  }{
+    \defeq{\target{\Gamma}}{\target{x}}{\target{e}}{\target{\tau}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-$\beta$}{equiv-beta}]{
+    \type{\target{\Gamma}}{\target{\sigma}}{\target{U}} \\
+    \type{\target{\Gamma}, \target{\annot{x}{\sigma}}}{\target{e}}{\target{\tau}} \\
+    \type{\target{\Gamma}}{\target{e'}}{\target{\sigma}}
+  }{
+    \defeq{\target{\Gamma}}{\app{(\target{\fun{x}{\sigma}{e}})}{\target{e'}}}{\subst{\target{e}}{\target{x}}{\target{e'}}}{\target{\tau}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-$\eta$}{equiv-eta}]{
+    \defeq{\target{\Gamma}, \target{\annot{x}{\sigma}}}{\app{\target{e_1}}{\target{x}}}{\app{\target{e_2}}{\target{x}}}{\target{\tau}}
+  }{
+    \defeq{\target{\Gamma}}{\target{e_1}}{\target{e_2}}{\target{\funtype{x}{\sigma}{\tau}}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-$\zeta$}{equiv-zeta}]{
+    \type{\target{\Gamma}}{\target{e'}}{\target{\sigma}} \\
+    \type{\target{\Gamma}, \target{\annot{x}{\sigma}}, \target{\define{x}{e'}}}{\target{e}}{\target{\tau}}
+  }{
+    \defeq{\target{\Gamma}}{\target{\letin{\target{x}}{\target{\sigma}}{\target{e'}}{\target{e}}}}{\subst{\target{e}}{\target{x}}{\target{e'}}}{\subst{\target{\tau}}{\target{x}}{\target{e'}}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-$\rho$}{equiv-rho}]{
+    \type{\target{\Gamma}}{\target{e}}{\target{\tau}} \\
+    \fresh{{\target{y}, \target{z}}} \\
+    \type{\target{\Gamma}, \target{\annot{y}{\tau}}, \target{\annot{z}{\eq{e}{\tau}{y}}}}{\target{\app{P}{y}{z}}}{\target{U}} \\
+    \type{\target{\Gamma}}{\target{d}}{\target{\app{P}{e}{\refl{e}}}}
+  }{
+    \defeq{\target{\Gamma}}{\target{\J{P}{d}{\refl{e}}}}{\target{d}}{\target{\app{P}{e}{\refl{e}}}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-$\iota$}{equiv-iota}]{~}{
+    \defeq{\target{\Gamma}}{\target{\match{\app{c}{e_1}{\seq}{e_m}}{\any}{\seq(\app{c}{z_1}{\seq}{z_m} \Rightarrow e)\seq}}}{\subst{\target{e}}{\target{z_1}, \seq, \target{z_m}}{\target{e_1}, \seq, \target{e_m}}}{\target{\tau}}
+  }
+  \and
+  \inferrule[\rlabel{$\equiv$-$\mu$}{equiv-mu}]{~}{
+    \defeq{\target{\Gamma}}{\target{\app{(\fix*{i}{f}{\tau}{e})}{e'_1}{\seq}{e'_n}{(\app{c}{e_1}{\seq}{e_m})}}}{\target{\app{\subst{\target{e}}{\target{f}}{\target{\fix*{i}{f}{\tau}{e}}}}{e'_1}{\seq}{e'_n}{(\app{c}{e_1}{\seq}{e_m})}}}{\target{\tau}}
+  }
+  \end{mathpar}
+  \caption{Equivalence rules}
+  \label{#1}
+  \end{figure}
+}

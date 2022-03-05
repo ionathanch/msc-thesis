@@ -100,7 +100,7 @@
 \newcommand{\const}[1]{\mathsf{\textcolor{constcolour}{#1}}}
 \newcommand{\constr}[1]{\mathsf{\textcolor{constrcolour}{#1}}}
 \newcommand{\target}[1]{\begingroup%
-  \definecolor{metacolour}{named}{targetcolour}
+  %\definecolor{metacolour}{named}{targetcolour}
   \definecolor{kwcolour}{named}{targetcolour}
   \definecolor{constcolour}{named}{targetcolour}
   \definecolor{constrcolour}{named}{targetcolour}
@@ -168,6 +168,7 @@
 \newcmd*{\J}[0]{\constr{J}}
 
 % source inductives
+\newcommand{\data}[2]{\kw{data} \@et \annot{#1}{#2} \@et \kw{where}}
 \newcmd*{\data}[1]{\kw{data} \@et #1 \@et \kw{where}}
 \newcommand{\N}[1]{\App{\const{\mathbb{N}}}{#1}}
 \newcmd*{\N}[0]{\const{\mathbb{N}}}
@@ -187,7 +188,8 @@
 \newcmd*{\cons}[0]{\constr{cons}}
 \newcommand{\match}[3]{\kw{case} \@et #1 \@et \kw{return} \@et #2 \@et \kw{of} \@et \phantom{} #3}
 \newcmd*{\match}[2]{\kw{case} \@et #1 \@et \kw{of} \@et \phantom{} #2}
-\newcommand{\fix}[5]{\kw{fix}_{#1} \@et #2 \@et \sqbr{#3} \mathrel{:} #4 \mathrel{\coloneqq} \phantom{} #5}
+\newcommand{\fix}[4]{\kw{fix} \@et #1 \@et \sqbr{#2} \mathrel{:} #3 \mathrel{\coloneqq} \phantom{} #4}
+\newcmd*{\fix}[4]{\kw{fix}_{#1} \@et #2 \mathrel{:} #3 \mathrel{\coloneqq} \phantom{} #4}
 
 % source judgements
 \newcommand{\wf}[2]{#1 \mathrel{\vdash} #2}
