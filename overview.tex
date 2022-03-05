@@ -167,7 +167,7 @@ summarized by the below typing rule.
 \inferrule[]{
   \check{\Phi, \alpha; \Gamma, f: \Funtype<{\beta}{\alpha}{\subst{\tau}{\alpha}{\beta}}}{e}{\tau}
 }{
-  \infer{\Phi; \Gamma}{\fix{}{f}{\alpha}{\tau}{e}}{\Funtype{\alpha}{\tau}}
+  \infer{\Phi; \Gamma}{\fix{f}{\alpha}{\tau}{e}}{\Funtype{\alpha}{\tau}}
 }
 \end{mathpar}
 
