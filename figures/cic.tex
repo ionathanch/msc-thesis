@@ -6,13 +6,13 @@
   \GammaT &\Coloneqq \mt \mid \GammaT, \annotT{\xT}{\tauT} \mid \GammaT, \define{\xT}{\eT} \\
   \fT, \gT, \xT, \yT, \zT &\Coloneqq \meta{\textsf{term variables}} &
   \DeltaT &\Coloneqq \mt \mid \DeltaT, \annotT{\xT}{\tauT} \\
-  \xT &\Coloneqq \meta{\textsf{inductive type names}} &
+  \XT &\Coloneqq \meta{\textsf{inductive type names}} &
   \UT &\Coloneqq \PropT \mid \TypeT{\iT} \\
   \cT &\Coloneqq \meta{\textsf{inductive constructor names}} &
-  \dT &\Coloneqq \app{\dataT{\app{\XT}{\DeltaT}}{\arrT*{\DeltaT}{\UT}}}{\DeltaT} \\
-  \eT, \dT, \pT, \pT, \tauT, \sigmaT &\Coloneqq
+  \DT &\Coloneqq \app{\dataT{\app{\XT}{\DeltaT}}{\arrT*{\DeltaT}{\UT}}}{\DeltaT} \\
+  \eT, \aT, \dT, \pT, \PT, \tauT, \sigmaT &\Coloneqq
     \mathrlap{\xT \mid \UT \mid \funtypeT{\xT}{\tauT}{\tauT} \mid \funT{\xT}{\tauT}{\eT} \mid \app{\eT}{\eT} \mid \letinT{\xT}{\tauT}{\eT}{\eT} \mid \fixT{\iT}{\fT}{\tauT}{\eT}} \\
-  &\mid \mathrlap{\eqT{\eT}{\tauT}{\eT} \mid \reflT{\eT} \mid \JT{\PT}{\dT}{\pT} \mid \matchT{\eT}{\funT*{(\yT \seq).\xT}{\PT}}{(\app{\cT}{\zT}{\seq} \RightarrowT \eT) \seq}}
+  &\mid \mathrlap{\eqT{\eT}{\tauT}{\eT} \mid \reflT{\eT} \mid \JT{\PT}{\dT}{\pT} \mid \matchT{\eT}{\funT*{\vec{\yT}}{\xT}{\PT}}{(\app{\cT}{\vec{\zT}} \RightarrowT \eT) \seq}}
   \end{align*}
   \caption{Syntax (\CICE)}
   \label{#1}
