@@ -6,7 +6,7 @@
 This chapter can be divided into two halves:
 the first gives the formal description of the syntax, judgements, and rules of \lang,
 while the second provides a number of examples written in \lang to show how sized types can be used.
-They are kept separate so that the examples do not detract from the formal description
+They are kept separate so that the examples don't detract from the formal description
 and vice versa, but can be read in parallel;
 the examples provide intuition for understanding the rules,
 while the rules ensure proper understanding of why the examples are correct.
@@ -295,7 +295,7 @@ simply by recursively reconstructing the natural with different sizes.
 
 \begin{align*}
 &\Let{\const{liftN}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}}{\\
-&\fix{}{\mathit{lift}}{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}{\\
+&\fix{\mathit{lift}}{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}{\\
 &\quad \Fun<{\beta}{\alpha}{\fun{n}{\N{\beta}}{\\
 &\quad \match{n}{\fun*{\any}{\N{\alpha}}}{\\
 &\qquad \App{\zero*}{\gamma} \Rightarrow \zero{\alpha}{\beta} \\
@@ -308,7 +308,7 @@ A lifting function can also be defined for well-founded trees
 \begin{align*}
 &\Let{\const{liftW}}{\funtype{A}{\Type{i}}{\funtype{B}{\arr*{A}{\Type{i}}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\beta}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}}}}{\\
 &\fun{A}{\Type{i}}{\fun{B}{\arr*{A}{\Type{i}}}{\\
-&\fix{}{\mathit{lift}}{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\beta}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}{\\
+&\fix{\mathit{lift}}{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\beta}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}{\\
 &\quad \Fun<{\beta}{\alpha}{\fun{w}{\W{x}{A}{\app{B}{x}}{\beta}}{\\
 &\quad \match{w}{\fun*{\any}{\W{x}{A}{\app{B}{x}}{\alpha}}}{\\
 &\qquad \app{\App{\sup*}{\gamma}}{a}{f} \Rightarrow \sup{x}{A}{\app{B}{x}}{\alpha}{\beta}{a}{(\fun{x}{A}{\app{\App{\mathit{lift}}{\beta}{\gamma}}{(\app{f}{x})}})}}}}}}}}
@@ -344,7 +344,7 @@ since $n - m$ is never greater than $n$.
 
 \begin{align*}
 &\Let{\const{monus}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}}{ \\
-&\fix{}{\mathit{monus}}{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}{ \\
+&\fix{\mathit{monus}}{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}{ \\
 &\quad \Fun{\beta}{\fun{n}{\N{\beta}}{\fun{m}{\N{\alpha}}{\match*{m}{ \\
 &\qquad \App{\zero*}{\gamma} \Rightarrow n \\
 &\qquad \app{\App{\succ*}{\gamma}}{k} \Rightarrow \app{\App{\mathit{monus}}{\gamma}{\beta}}{(\app{\App{\const{pred}}{\beta}}{n})}{k}}}}}}}
@@ -364,7 +364,7 @@ would not be accepted.
 %
 \begin{align*}
 &\Let{\const{div}}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}}{ \\
-&\fix{}{\mathit{div}}{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}{ \\
+&\fix{\mathit{div}}{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}{ \\
 &\quad \Fun{\beta}{\fun{n}{\N{\alpha}}{\fun{m}{\N{\beta}}{\match*{n}{ \\
 &\qquad \App{\zero*}{\gamma} \Rightarrow \zero{\alpha}{\gamma} \\
 &\qquad \app{\App{\succ*}{\gamma}}{k} \Rightarrow
@@ -388,7 +388,7 @@ This example is due to \citet{MiniAgda}.
 
 \begin{align*}
 &\Let{\const{Nary}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\Funtype{\beta}{\Type{1}}}}}{\\
-&\fix{}{\mathit{nary}}{\alpha}{\arr*{\N{\alpha}}{\Funtype{\beta}{\Type{1}}}}{\\
+&\fix{\mathit{nary}}{\alpha}{\arr*{\N{\alpha}}{\Funtype{\beta}{\Type{1}}}}{\\
 &\quad \fun{n}{\N{\alpha}}{\Funtype{\beta}{\match{n}{\fun*{\any}{\Type{1}}}{\\
 &\qquad \App{\zero*}{\beta} \Rightarrow \N{\beta} \\
 &\qquad \app{\App{\succ*}{\beta}}{m} \Rightarrow \arr*{\N{\beta}}{\App{\app{\mathit{nary}}{m}}{\beta}}}}}}}
@@ -413,7 +413,7 @@ but it can easily be translated to proper \lang as a fixpoint and two $\kw{case}
 \iffalse
 \begin{align*}
 &\Let{\const{max}}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}}{ \\
-&\fix{}{\mathit{max}}{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}{ \\
+&\fix{\mathit{max}}{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}{\N{\alpha}}}{ \\
 &\quad \fun{n}{\N{\alpha}}{\fun{m}{\N{\alpha}}{ \\
 &\quad \match*{n}{ \\
 &\qquad \App{\zero*}{\beta} \Rightarrow m \\
@@ -426,7 +426,7 @@ but it can easily be translated to proper \lang as a fixpoint and two $\kw{case}
 %
 \begin{align*}
 &\Let{\const{maximum}}{\Funtype{\alpha}{\funtype{k}{\N{\alpha}}{\Funtype{\beta}{\arr*{\N{\beta}}{\App{\app{\App{\const{Nary}}{\alpha}}{k}}{\beta}}}}}}{\\
-&\fix{}{\mathit{maximum}}{\alpha}{\funtype{k}{\N{\alpha}}{\Funtype{\beta}{\arr*{\N{\beta}}{\App{\app{\App{\const{Nary}}{\alpha}}{k}}{\beta}}}}}{\\
+&\fix{\mathit{maximum}}{\alpha}{\funtype{k}{\N{\alpha}}{\Funtype{\beta}{\arr*{\N{\beta}}{\App{\app{\App{\const{Nary}}{\alpha}}{k}}{\beta}}}}}{\\
 &\quad \fun{k}{\N{\alpha}}{\Fun{\beta}{\fun{n}{\N{\beta}}{\match{k}{\fun*{x}{\App{\app{\App{\const{Nary}}{\alpha}}{x}}{\beta}}}{\\
 &\qquad \App{\zero*}{\gamma} \Rightarrow n \\
 &\qquad \app{\App{\succ*}{\gamma}}{k'} \Rightarrow \fun{m}{\N{\beta}}{\app{\App{\app{\App{\const{maximum}}{\gamma}}{k'}}{\beta}}{(\app{\App{\const{max}}{\beta}}{n}{m})}}}}}}}}
@@ -544,7 +544,7 @@ and differ in where $\const{ifleq}$ is applied ($\const{partition}$ or $\const{m
 \begin{multicols}{2}
 \begin{align*}
 &\Let{\const{qsort}}{\Funtype{\alpha}{\arr*{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}{ \\
-&\fix{}{\mathit{qsort}}{\alpha}{\arr*{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}{ \\
+&\fix{\mathit{qsort}}{\alpha}{\arr*{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}{ \\
 &\quad \fun{l}{\List{A}{\alpha}}{\match*{l}{ \\
 &\qquad \App{\nil*}{\beta} \Rightarrow \Pair{\alpha}{l} \\
 &\qquad \app{\App{\cons*}{\beta}}{\mathit{hd}}{\mathit{tl} \Rightarrow \\
@@ -558,7 +558,7 @@ and differ in where $\const{ifleq}$ is applied ($\const{partition}$ or $\const{m
 
 \begin{align*}
 &\Let{\const{msort'}}{\Funtype{\alpha}{\arr*{A}{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}{ \\
-&\fix{}{\mathit{msort}}{\alpha}{\arr*{A}{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}{ \\
+&\fix{\mathit{msort}}{\alpha}{\arr*{A}{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}{ \\
 &\quad \fun{a}{A}{\fun{l}{\List{A}{\alpha}}{\match*{l}{ \\
 &\qquad \App{\nil*}{\beta} \Rightarrow \Pair{\sss{\alpha}}{\cons{A}{\sss{\alpha}}{\alpha}{a}{l}} \\
 &\qquad \app{\App{\cons*}{\beta}}{b}{\mathit{tl}} \Rightarrow \\
@@ -587,7 +587,7 @@ Suppose that $B$ here is some type operator on $A$.
 &\Let{\const{traverseW}}{\arr*{(\Funtype{\gamma}{\arr*{\W{x}{A}{\app{B}{x}}{\gamma}}{\W{x}{A}{\app{B}{x}}{\gamma}}})}{ \\
 &\phantom{\kw{let} \: \const{traverseW} \mathrel{:} (} \Funtype{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\alpha}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}}{ \\
 &\quad \fun{f}{\Funtype{\gamma}{\arr*{\W{x}{A}{\app{B}{x}}{\gamma}}{\W{x}{A}{\app{B}{x}}{\gamma}}}}{ \\
-&\quad \fix{}{\mathit{traverse}}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\alpha}}{\W{x}{A}{\app{B}{x}}{\alpha}}}{ \\
+&\quad \fix{\mathit{traverse}}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\alpha}}{\W{x}{A}{\app{B}{x}}{\alpha}}}{ \\
 &\qquad \fun{w}{\W{x}{A}{\app{B}{x}}{\alpha}}{\match*{w}{ \\
 &\qquad \quad \app{\App{\sup*}{\beta}}{a}{g} \Rightarrow \sup{x}{A}{\app{B}{x}}{\alpha}{\beta}{a}{(\fun{b}{\app{B}{a}}{\app{\App{\mathit{traverse}}{\beta}}{(\app{\App{f}{\beta}}{(\app{g}{b})})}})}}}}}}
 \end{align*}

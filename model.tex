@@ -1,0 +1,28 @@
+\chapter{Syntactic Model of \lang}
+
+\input{figures/cic.tex}
+
+\section{Target Type Theory}
+
+\FigSyntaxCIC{fig:syntax-cic}
+The target langauge, \CICE, is CIC with a separate propositional equality construct
+that is reflected into definitional equality.
+Its syntax is given in \cref{fig:syntax-cic}.
+Aside from the standard dependent functions,
+it has a fixpoint expression with the 0-based index of the recursive argument explicitly given,
+a $\target{case}$ expression whose motive is additionally abstracted over the indices of the target's inductive type,
+and an equality type with the reflexivity constructor and $\target{\J*}$ eliminator.
+New inductive types are defined using data definitions $\target{D}$,
+whose syntax resembles the informal presentation used in \cref{ch:sized-dep-types}.
+
+The well-formedness conditions on inductive data definitions,
+such as well-typedness and \emph{strict positivity}\index{strict positivity},
+are entirely standard, so I don't detail them here;
+see pCuIC~\citep{pCuIC} for instance for a full description.
+Inductive definitions in their full generality are not needed,
+and nonmutual, nonnested inductives suffice.
+Indeed, only five inductive definitions are used for the translation,
+for representing sizes, their order, their well-foundedness,
+and naturals and well-founded trees.
+
+\FigEquiv{fig:equivalence}
