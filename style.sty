@@ -99,14 +99,7 @@
 \newcommand{\kw}[1]{\mathsf{\textcolor{kwcolour}{#1}}}
 \newcommand{\const}[1]{\mathsf{\textcolor{constcolour}{#1}}}
 \newcommand{\constr}[1]{\mathsf{\textcolor{constrcolour}{#1}}}
-\newcommand{\target}[1]{\begingroup%
-  %\definecolor{metacolour}{named}{targetcolour}
-  \definecolor{kwcolour}{named}{targetcolour}
-  \definecolor{constcolour}{named}{targetcolour}
-  \definecolor{constrcolour}{named}{targetcolour}
-  \renewcommand{\mathsf}{\mathtt}
-  \mathtt{{\textcolor{targetcolour}{#1}}}
-\endgroup}
+\newcommand{\tg}[1]{\mathtt{\textcolor{targetcolour}{#1}}}
 \newcommand{\new}[1]{%
   \setlength{\fboxsep}{3pt}%
   \colorbox{newcolour}{\rule{0em}{0.5\baselineskip}#1}%
@@ -169,7 +162,6 @@
 
 % source inductives
 \newcommand{\data}[2]{\kw{data} \@et \annot{#1}{#2} \@et \kw{where}}
-\newcmd*{\data}[1]{\kw{data} \@et #1 \@et \kw{where}}
 \newcommand{\N}[1]{\App{\const{\mathbb{N}}}{#1}}
 \newcmd*{\N}[0]{\const{\mathbb{N}}}
 \newcommand{\W}[4]{\App{\const{\mathbb{W}} \annot{#1}{#2} \mathpunct{.} #3}{#4}}
@@ -189,9 +181,42 @@
 \newcommand{\match}[3]{\kw{case} \@et #1 \@et \kw{return} \@et #2 \@et \kw{of} \@et \phantom{} #3}
 \newcmd*{\match}[2]{\kw{case} \@et #1 \@et \kw{of} \@et \phantom{} #2}
 \newcommand{\fix}[4]{\kw{fix} \@et #1 \@et \sqbr{#2} \mathrel{:} #3 \mathrel{\coloneqq} \phantom{} #4}
-\newcmd*{\fix}[4]{\kw{fix}_{#1} \@et #2 \mathrel{:} #3 \mathrel{\coloneqq} \phantom{} #4}
 
-% source judgements
+% source names
+\newcommand{\liftN}{\const{liftN}}
+\newcommand{\liftW}{\const{liftW}}
+\newcommand{\liftL}{\const{liftL}}
+\newcommand{\monus}{\const{monus}}
+\newcommand{\pred}{\const{pred}}
+\newcommand{\divv}{\const{div}}
+\newcommand{\Nary}{\const{Nary}}
+\newcommand{\maX}{\const{max}}
+\newcommand{\MaX}{\const{maximum}}
+\newcommand{\ifleq}{\const{ifleq}}
+\newcommand{\append}{\const{append}}
+\newcommand{\mrg}{\const{merge}}
+\newcommand{\spt}{\const{split}}
+\newcommand{\partition}{\const{partition}}
+\newcommand{\qsort}{\const{qsort}}
+\newcommand{\msort}{\const{msort}}
+\newcommand{\msorted}{\const{msort'}}
+\newcommand{\traverseW}{\const{traverseW}}
+
+% example names
+\newcommand{\id}{\mathit{id}}
+\newcommand{\Id}{\mathit{Id}}
+\newcommand{\hd}{\mathit{hd}}
+\newcommand{\tl}{\mathit{tl}}
+\newcommand{\lift}{\mathit{lift}}
+\newcommand{\nary}[0]{\mathit{nary}}
+\newcommand{\traverse}[0]{\mathit{traverse}}
+\newcmd*{\monus}[0]{\mathit{monus}}
+\newcmd*{\divv}[0]{\mathit{div}}
+\newcmd*{\MaX}[0]{\mathit{maximum}}
+\newcmd*{\qsort}[0]{\mathit{qsort}}
+\newcmd*{\msort}[0]{\mathit{msort}}
+
+% judgements
 \newcommand{\wf}[2]{#1 \mathrel{\vdash} #2}
 \renewcommand{\check}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
 \renewcommand{\infer}[3]{#1 \mathrel{\vdash} #2 \mathrel{:} #3}
@@ -203,6 +228,54 @@
 \newcommand{\red}[4][]{#2 \mathrel{\vdash} #3 \mathrel{\rhd}_{#1} #4}
 \newcmd*{\red}[3]{#1 \mathrel{\vdash} #2 \mathrel{\rhd^*} #3}
 
-% example names
-\newcommand{\id}{\mathit{id}}
-\newcommand{\Id}{\mathit{Id}}
+% target metavariables
+\newcommand{\GammaT}{\tg{\Gamma}}
+\newcommand{\DeltaT}{\tg{\Delta}}
+\newcommand{\iT}{\tg{i}}
+\newcommand{\jT}{\tg{j}}
+\newcommand{\kT}{\tg{k}}
+\newcommand{\mT}{\tg{m}}
+\newcommand{\nT}{\tg{n}}
+\newcommand{\UT}{\tg{U}}
+\newcommand{\DT}{\tg{D}}
+\newcommand{\eT}{\tg{e}}
+\newcommand{\dT}{\tg{d}}
+\newcommand{\pT}{\tg{p}}
+\newcommand{\PT}{\tg{P}}
+\newcommand{\tauT}{\tg{\tau}}
+\newcommand{\sigmaT}{\tg{\sigma}}
+\newcommand{\XT}{\tg{X}}
+\newcommand{\cT}{\tg{c}}
+\newcommand{\fT}{\tg{f}}
+\newcommand{\gT}{\tg{g}}
+\newcommand{\xT}{\tg{x}}
+\newcommand{\yT}{\tg{y}}
+\newcommand{\zT}{\tg{z}}
+\newcommand{\RightarrowT}{\mathrel{\tg{\Rightarrow}}}
+
+% target binders
+\newcommand{\annotT}[2]{#1 \mathrel{\tg{:}} #2}
+\newcommand{\defineT}[2]{#1 \mathrel{\tg{\coloneqq}} #2}
+\newcommand{\boundT}[2]{#1 \mathrel{\tg{<}} #2}
+
+% target language
+\newcommand{\PropT}{\tg{Prop}}
+\newcommand{\TypeT}[1]{\tg{Type}_{#1}}
+\newcommand{\sssT}[1]{\tg{\widehat{#1}}}
+\newcommand{\funT}[3]{\tg{\lambda} \annotT{#1}{#2} \mathpunct{\tg{.}} #3}
+\newcmd*{\funT}[2]{\tg{\lambda} #1 \mathpunct{\tg{.}} #2}
+\newcommand{\funtypeT}[3]{\tg{\Pi} \annotT{#1}{#2} \mathpunct{\tg{.}} #3}
+\newcommand{\arrT}[3]{\mathopen{\tg{(}} \annotT{#1}{#2} \mathclose{\tg{)}} \mathrel{\tg{\rightarrow}} \phantom{} #3}
+\newcmd*{\arrT}[1]{#1\@ifnextchar\bgroup{\mathrel{\tg{\rightarrow}}\arr*}{\xspace}}
+\newcommand{\letinT}[4]{\tg{let} \@et #1 \mathrel{\tg{\coloneqq}} \phantom{} #3 \@et \tg{in} \@et #4}
+\newcommand{\LetT}[3]{\tg{let} \@et \annotT{#1}{#2} \mathrel{\tg{\coloneqq}} \phantom{} #3}
+\newcommand{\eqT}[3]{#1 \stackrel{#2}{\tg{=\joinrel=}} #3}
+\newcommand{\reflT}[1]{\tg{refl}_{#1}}
+\newcommand{\JT}[3]{\tg{J}_{#1} \@et #2 \@et #3}
+\newcmd*{\JT}[0]{\tg{J}}
+
+% target inductives
+\newcommand{\dataT}[2]{\tg{data} \@et \annotT{#1}{#2} \@et \tg{where}}
+\newcommand{\matchT}[3]{\tg{case} \@et #1 \@et \tg{return} \@et #2 \@et \tg{of} \@et \phantom{} #3}
+\newcmd*{\matchT}[2]{\tg{case} \@et #1 \@et \tg{of} \@et \phantom{} #2}
+\newcommand{\fixT}[4]{\tg{fix}_{#1} \@et #2 \mathrel{\tg{:}} #3 \mathrel{\tg{\coloneqq}} \phantom{} #4}
