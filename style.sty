@@ -115,6 +115,7 @@
 \newcommand{\mt}{\,\meta{\cdot}\,}
 \newcommand{\seq}{\,\meta{\ldots}\,}
 \newcommand{\any}{\meta{\texttt{\_}}}
+\renewcommand{\vec}[1]{\meta{\overline{\textcolor{black}{#1}}}}
 \newcommand{\subst}[3]{#1\mathopen{\meta{[}}#2 \mathrel{\meta{\mapsto}} #3\mathclose{\meta{]}}}
 \newcommand{\card}[1]{\mathopen{\meta{\lvert}} #1 \mathclose{\meta{\rvert}}}
 \newcommand{\compile}[1]{\mathopen{\meta{\llbracket}} #1 \mathclose{\meta{\rrbracket}}}
@@ -239,6 +240,7 @@
 \newcommand{\UT}{\tg{U}}
 \newcommand{\DT}{\tg{D}}
 \newcommand{\eT}{\tg{e}}
+\newcommand{\aT}{\tg{a}}
 \newcommand{\dT}{\tg{d}}
 \newcommand{\pT}{\tg{p}}
 \newcommand{\PT}{\tg{P}}
@@ -263,7 +265,7 @@
 \newcommand{\TypeT}[1]{\tg{Type}_{#1}}
 \newcommand{\sssT}[1]{\tg{\widehat{#1}}}
 \newcommand{\funT}[3]{\tg{\lambda} \annotT{#1}{#2} \mathpunct{\tg{.}} #3}
-\newcmd*{\funT}[2]{\tg{\lambda} #1 \mathpunct{\tg{.}} #2}
+\newcmd*{\funT}[3]{\tg{\lambda} #1 \mathpunct{\tg{.}} #2 \mathpunct{\tg{.}} #3}
 \newcommand{\funtypeT}[3]{\tg{\Pi} \annotT{#1}{#2} \mathpunct{\tg{.}} #3}
 \newcommand{\arrT}[3]{\mathopen{\tg{(}} \annotT{#1}{#2} \mathclose{\tg{)}} \mathrel{\tg{\rightarrow}} \phantom{} #3}
 \newcmd*{\arrT}[1]{#1\@ifnextchar\bgroup{\mathrel{\tg{\rightarrow}}\arr*}{\xspace}}
