@@ -2,11 +2,20 @@
 
 \input{figures/cic.tex}
 
+In addition to the notation used in \cref{ch:sized-dep-types},
+given variables $\vec{\xT} = \xT_1 \seq \xT_n$,
+terms $\vec{\eT} = \eT_1 \seq \eT_n$,
+and types $\vec{\tauT} = \tauT_1 \seq \tauT_n$,
+\new{$\annotT{\vec{\xT}}{\vec{\tauT}}$} denotes the assumption environment
+$\annotT*{\xT_1}{\tauT_1}, \seq, \annotT*{\xT_n}{\tauT_n}$, and
+\new{$\subst{\eT}{\vec{\xT}}{\vec{\eT}}$} denotes the simultaneous substitution
+$\subst{\eT}{\xT_1, \seq, \xT_n}{\eT_1, \seq, \eT_n}$.
+
 \section{Target Type Theory}
 
 \FigSyntaxCIC{fig:syntax-cic}
 The syntax of \CICE is given in \cref{fig:syntax-cic};
-differences from \lang include a 0-based index for the recursive argument of fixpoint expressions,
+differences from \lang include a 1-based index for the recursive argument of fixpoint expressions,
 $\tg{case}$ expression motives abstracted over the target's inductive type indices,
 and a \emph{propositional equality}\index{propositional equality} type with the reflexivity constructor and $\JT*$ eliminator.
 New inductive types are defined using data definitions $\DT$,
@@ -26,3 +35,4 @@ for representing sizes, their order, their well-foundedness,
 and naturals and well-founded trees.
 
 \FigEquiv{fig:equivalence}
+\FigTypingCIC{fig:typing-cic}
