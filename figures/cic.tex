@@ -117,15 +117,11 @@
   \and
   \inferrule[\rlabel{$\equiv$-$\mu$}{equiv-mu}]{
     \type{\GammaT}{\tauT}{\UT} \\
-    \defeq{\GammaT}{\tauT}{\funtypeT{\xT_1}{\sigmaT_1}{\seq \funtypeT{\xT_{n-1}}{\sigmaT_{n-1}}{\funtypeT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\tauT'}}}}{\UT} \\
-    \type{\GammaT, \annotT{\fT}{\tauT}}{\eT}{\tauT} \\\\
-    \textrm{For every $1 \leq i \leq n - 1:$} \\
-    \vec{\xT}_i = \xT_1 \seq \xT_i \\
-    \vec{\eT}_i = \eT_1 \seq \eT_i \\\\
-    \type{\GammaT}{\eT_i}{\subst{\sigmaT_i}{\vec{\xT}_{i-1}}{\vec{\eT}_{i-1}}} \\
-    \type{\GammaT}{\app{\cT}{\vec{e}}}{\subst{(\app{\XT}{\vec{p}}{\vec{a}})}{\vec{\xT}_{n-1}}{\vec{\eT}_{n-1}}}
+    \defeq{\GammaT}{\tauT}{\arr*{\DeltaT}{\funtypeT{\any}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\tauT'}}}{\UT} \\
+    \card{\DeltaT} + 1 = \nT \\
+    \type{\GammaT, \annotT{\fT}{\tauT}}{\eT}{\tauT}
   }{
-    \defeq{\GammaT}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\eT_1}{\seq}{\eT_{n-1}}{(\app{\cT}{\vec{\eT}})}}{\app{\subst{\eT}{\fT}{\fixT{\iT}{\fT}{\tauT}{\eT}}}{\eT_1}{\seq}{\eT_{n-1}}{(\app{\cT}{\vec{\eT}})}}{\subst{\tauT'}{\vec{\xT}_{n-1}, \xT}{\vec{\eT}_{n-1}, \app{\cT}{\vec{\eT}}}}
+    \defeq{\GammaT}{\fixT{\nT}{\fT}{\tauT}{\eT}}{\subst{\eT}{\fT}{\fixT{\iT}{\fT}{\tauT}{\eT}}}{\tauT}
   }
   \end{mathpar}
   \caption{Equivalence rules}
