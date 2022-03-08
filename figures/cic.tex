@@ -20,7 +20,7 @@
 }
 
 \newcommand{\FigEquiv}[1]{
-  \begin{figure}
+  \begin{figure}[p]
   \centering
   \begin{mathpar}
   \fbox{$\defeq{\GammaT}{\eT}{\eT}{\tauT}$} \hfill \\
@@ -56,7 +56,7 @@
     \defeq{\GammaT}{\eT_1}{\eT_2}{\tauT}
   }
   \and
-  \inferrule[\rlabel{$\equiv$-cong}{equiv-conv}]{
+  \inferrule[\rlabel{$\equiv$-cong}{equiv-cong}]{
     \textrm{For every $1 \leq i \leq n$:} \\
     \defeq{\GammaT'}{\eT_i}{\eT'_i}{\tauT'}
   }{
@@ -102,6 +102,7 @@
   }{
     \defeq{\GammaT}{\JT{\PT}{\dT}{\reflT{\eT}}}{\dT}{\app{\PT}{\eT}{\reflT{\eT}}}
   }
+  \iffalse
   \and
   \inferrule[\rlabel{$\equiv$-$\iota$}{equiv-iota}]{
     \app{\dataT{\app{\XT}{(\annotT{\vec{\wT}}{\vec{\vphantom{\wT}\any}})}}{\arrT*{\DeltaT_I}{\UT}}}{\DeltaT_c} \\
@@ -113,6 +114,23 @@
     \type{\GammaT, \annotT{\vec{\zT}}{\vec{\tauT}}}{\eT}{\subst{\PT}{\vec{\yT}, \vec{\xT}}{\vec{\aT}, \app{\cT}{\vec{\pT}}{\vec{\zT}}}}
   }{
     \defeq{\GammaT}{\matchT{\app{\cT}{\vec{\pT}}{\vec{\eT}}}{\funT*{\vec{\yT}}{\xT}{\PT}}{\seq(\app{\cT}{\vec{\zT}} \RightarrowT \eT)\seq}}{\subst{\eT}{\vec{\zT}}{\vec{\eT}}}{\subst{\PT}{\vec{\yT}, \xT}{\vec{\aT}', \app{\cT}{\vec{\pT}}{\vec{\eT}}}}
+  }
+  \fi
+  \and
+  \inferrule[\rlabel{$\equiv$-$\iota$}{equiv-iota}]{
+    \app{\dataT{\app{\XT}{(\annotT{\vec{\wT}}{\vec{\sigmaT}_P})}}{\arrT*{\DeltaT_I}{\UT}}}{\DeltaT_c} \\
+    \type{\GammaT}{\vec{\pT}}{\vec{\sigmaT}_P} \\
+    \annotT{\vec{\yT}}{\vec{\sigmaT}_I} = \subst{\DeltaT_I}{\vec{\wT}}{\vec{\pT}} \\
+    \type{\GammaT, \annotT{\vec{\yT}}{\vec{\sigmaT}_I}, \annotT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\yT}}}}{\PT}{\UT} \\\\
+    \card{\DeltaT_c} = n \\
+    \textrm{For every $1 \leq i \leq n$:} \\
+    (\annotT{\cT_i}{\arrT*{(\annotT{\vec{\zT}_i}{\vec{\tauT}_i})}{\app{\XT}{\vec{\pT}}{\vec{\aT}_i}}}) \in \subst{\DeltaT_c}{\vec{\wT}}{\vec{\pT}} \\
+    \type{\GammaT, \annotT{\vec{\zT}_i}{\vec{\tauT}_i}}{\eT_i}{\subst{\PT}{\vec{\yT}, \vec{\xT}}{\vec{\aT}_i, \app{\cT_i}{\vec{\pT}}{\vec{\zT}_i}}} \\\\
+    j \in 1 \seq n \\
+    \type{\GammaT}{\vec{\eT}}{\vec{\tauT}_j} \\
+    \vec{\aT}'_j = \subst{\vec{\aT}_j}{\vec{\zT}_j}{\vec{\eT}}
+  }{
+    \defeq{\GammaT}{\matchT{\app{\cT_j}{\vec{\pT}}{\vec{\eT}}}{\funT*{\vec{\yT}}{\xT}{\PT}}{(\app{\cT_1}{\vec{\zT}_1} \RightarrowT \eT_1)\seq(\app{\cT_n}{\vec{\zT}_n} \RightarrowT \eT_n)}}{\subst{\eT_j}{\vec{\zT}_j}{\vec{\eT}}}{\subst{\PT}{\vec{\yT}, \xT}{\vec{\aT}'_j, \app{\cT_j}{\vec{\pT}}{\vec{\eT}}}}
   }
   \and
   \inferrule[\rlabel{$\equiv$-$\mu$}{equiv-mu}]{
