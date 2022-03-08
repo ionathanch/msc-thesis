@@ -34,18 +34,18 @@
   \edef\r@les{\zap@space #1 \@empty}%
   \@for\r@le:={#1}\do{\addtocounter{nrules}{1}}%
   \ifcase \value{nrules}
-  \or Rule~\textsc{\nameref{#1}}%
+  \or Rule~\mbox{\textsc{\nameref{#1}}}%
   \or Rules\@for\r@le:={\r@les}\do{
     \ifcase \value{nrules}
-    \or and \textsc{\nameref{\r@le}}%
-    \else \textsc{\nameref{\r@le}}%
+    \or and \mbox{\textsc{\nameref{\r@le}}}%
+    \else \mbox{\textsc{\nameref{\r@le}}}%
     \fi
     \addtocounter{nrules}{-1}%
   }%
   \else Rules\@for\r@le:={\r@les}\do{
     \ifcase \value{nrules}
-    \or and \textsc{\nameref{\r@le}}%
-    \else \textsc{\nameref{\r@le}},%
+    \or and \mbox{\textsc{\nameref{\r@le}}}%
+    \else \mbox{\textsc{\nameref{\r@le}}},%
     \fi
     \addtocounter{nrules}{-1}%
   }%
