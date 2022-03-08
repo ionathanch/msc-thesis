@@ -2,14 +2,45 @@
 
 \input{figures/cic.tex}
 
+The type theory in which \lang is modelled is \CICE,
+as briefly described in \cref{ch:overview}.
+The key idea is that sizes in \lang can themselves be represented as a inductive type in \CICE,
+and naturals and well-founded trees are then inductives with an additional size parameter.
+Sizes are represented as a (generalization of) the Brouwer notation for ordinals in type theory~\citep{ordinals},
+and their order as an inductive type indexed by sizes.
+The order is \emph{well-founded}:
+there is no infinite sequence of ever-smaller sizes,
+and there is always a ``smallest'' size (or many of them).
+This property allows for \emph{well-founded induction}\index{well founded!\textasciitilde induction},
+where to prove some property on sizes, one supposes that it holds for all strictly smaller sizes.
+
+Every fixpoint expression in \lang is modelled as an instance of well-founded induction in \CICE.
+To prove well-foundedness and in turn the induction principle,
+I show that sizes satisfy an \emph{accessiblity predicate}\index{accessibility predicate}~\citep{accessibility}.
+For the type preservation proof to go through,
+\emph{definitional proof irrelevance}\index{proof irrelevance}
+of accessibility predicates is required---that is,
+every proof of accessibility is definitionally equal to one another.
+This holds in extensional type theory via equality reflection\index{equality reflection}
+but not in intensional type theory,
+which is why an extensional CIC is used.
+
+The first half of this chapter provides the syntax and judgements of \CICE.
 In addition to the notation used in \cref{ch:sized-dep-types},
 given variables $\vec{\xT} = \xT_1 \seq \xT_n$,
 terms $\vec{\eT} = \eT_1 \seq \eT_n$,
 and types $\vec{\tauT} = \tauT_1 \seq \tauT_n$,
 \new{$\annotT{\vec{\xT}}{\vec{\tauT}}$} denotes the assumption environment
-$\annotT*{\xT_1}{\tauT_1}, \seq, \annotT*{\xT_n}{\tauT_n}$, and
+$\annotT*{\xT_1}{\tauT_1}, \seq, \annotT*{\xT_n}{\tauT_n}$,
 \new{$\subst{\eT}{\vec{\xT}}{\vec{\eT}}$} denotes the simultaneous substitution
-$\subst{\eT}{\xT_1, \seq, \xT_n}{\eT_1, \seq, \eT_n}$.
+$\subst{\eT}{\xT_1, \seq, \xT_n}{\eT_1, \seq, \eT_n}$, and
+\new{$\type{\GammaT}{\vec{\eT}}{\vec{\tauT}}$} denotes the $n$ typing judgements
+$(\type{\GammaT}{\eT_1}{\tauT_1})$, \seq, $(\type{\GammaT, \annotT{\eT_1}{\tauT_1}, \seq, \annotT{\eT_{n-1}}{\tauT_{n-1}}}{\eT_n}{\tauT_n})$.
+
+The second half then describes the translation from \lang to \CICE,
+which is a metafunction from typing derivations of \lang to terms of \CICE.
+Therefore, the translation is only defined for well-typed \lang terms,
+but the type preservation theorem only applies to well-typed terms anyway.
 
 \section{Target Type Theory}
 
@@ -34,5 +65,40 @@ Indeed, only five inductive definitions are used for the translation,
 for representing sizes, their order, their well-foundedness,
 and naturals and well-founded trees.
 
+The typed equivalence, subtyping, and typing judgements are defined mutually:
+equivalence depends on typing and subtyping,
+subtyping depends on equivalence,
+and typing depends on subtyping and equivalence.
+The mutual dependence is due to typed equivalence,
+since with untyped conversion as seen in \lang has no typing premises.
+I present first the equivalence rules in \cref{fig:equivalence},
+with the subtyping and typing rules to follow.
+
+Equivalence is, by definition, an equivalence relation,
+satisfying reflexivity, symmetry, and transitivity,
+and also congruent, using the same summary of congruence rules as for \lang via \rref{equiv-cong}.
+An equivalence judgement can also be converted to one annotated by a supertype via \rref{equiv-conv}.
+The key rule for extensionality is equality reflection\index{equality reflection} in \rref{equiv-reflect},
+which definitionally equates two terms whenever there exists some proof of their propositional equality.
+The remainder of the rules are the typed equivalence versions of the usual reduction rules,
+with typing premises to ensure well-typedness of both sides.
+I discuss these premises later when discussing the typing rules.
+
 \FigEquiv{fig:equivalence}
+
+Typed equivalence is required in the presence of equality reflection since
+inconsistencies are derivable when using untyped conversion.
+For instance, supposing that \lang had equality reflection and using \new{$\approx$} to denote conversion,
+in the empty context, freely using transivity,
+%
+\begin{align*}
+  \const{0'} &\approx \app{(\fun{p}{\eq{\const{0}}{\N{\hat{\hat{\circ}}}}{\const{1}}}{\const{0'}})}{\refl{\const{0'}}} &&\textrm{by $\beta$-reduction} \\
+  &\approx \app{(\fun{p}{\eq{\const{0}}{\N{\hat{\hat{\circ}}}}{\const{1}}}{\const{1}})}{\refl{\const{0'}}} &&\textrm{by congruence and reflection of $p$} \\
+  &\approx \const{1} &&\textrm{by $\beta$-reduction},
+\end{align*}
+since reduction and therefore conversion occurs even when its terms are ill-typed,
+as the second and third terms are.
+An alternate solution would be to disallow transitivity of conversion~\citep{CCE},
+but this is too limiting when trying to prove type preservation.
+
 \FigTypingCIC{fig:typing-cic}
