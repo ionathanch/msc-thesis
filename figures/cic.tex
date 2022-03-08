@@ -4,8 +4,8 @@
   \begin{align*}
   \iT, \jT, \kT, \mT, \nT &\Coloneqq \meta{\textsf{naturals}} &
   \GammaT &\Coloneqq \mt \mid \GammaT, \annotT{\xT}{\tauT} \mid \GammaT, \define{\xT}{\eT} \\
-  \fT, \gT, \xT, \yT, \zT &\Coloneqq \meta{\textsf{term variables}} &
-  \DeltaT &\Coloneqq \mt \mid \DeltaT, \annotT{\xT}{\tauT} \\
+  \fT, \gT, \wT, \xT, \yT, \zT &\Coloneqq \meta{\textsf{term variables}} &
+  \DeltaT &\Coloneqq \mt \mid \DeltaT, \annotT{\xT}{\tauT} \mid \DeltaT, \annotT{\cT}{\tauT} \\
   \XT &\Coloneqq \meta{\textsf{inductive type names}} &
   \UT &\Coloneqq \PropT \mid \TypeT{\iT} \\
   \cT &\Coloneqq \meta{\textsf{inductive constructor names}} &
@@ -103,15 +103,146 @@
     \defeq{\GammaT}{\JT{\PT}{\dT}{\reflT{\eT}}}{\dT}{\app{\PT}{\eT}{\reflT{\eT}}}
   }
   \and
-  \inferrule[\rlabel{$\equiv$-$\iota$}{equiv-iota}]{\cdots}{
-    \defeq{\GammaT}{\matchT{\app{\cT}{\eT_1}{\seq}{\eT_m}}{\any}{\seq(\app{\cT}{\zT_1}{\seq}{\zT_m} \RightarrowT \eT)\seq}}{\subst{\eT}{\zT_1, \seq, \zT_m}{\eT_1, \seq, \eT_m}}{\tauT}
+  \inferrule[\rlabel{$\equiv$-$\iota$}{equiv-iota}]{
+    \app{\dataT{\app{\XT}{(\annotT{\vec{\wT}}{\vec{\vphantom{\wT}\any}})}}{\arrT*{\DeltaT_I}{\UT}}}{\DeltaT_c} \\
+    \annotT{\vec{\yT}}{\vec{\sigmaT}} = \subst{\DeltaT_I}{\vec{\wT}}{\vec{\pT}} \\
+    (\annotT{\cT}{\arrT*{(\annotT{\vec{\zT}}{\vec{\tauT}})}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}}) \in \subst{\DeltaT_c}{\vec{\wT}}{\vec{\pT}} \\
+    \vec{\aT}' = \subst{\vec{\aT}}{\vec{\zT}}{\vec{\eT}} \\
+    \type{\GammaT}{\app{\cT}{\vec{\pT}}{\vec{\eT}}}{\app{\XT}{\vec{\pT}}{\vec{\aT}'}} \\
+    \type{\GammaT, \annotT{\vec{\yT}}{\vec{\sigmaT}}, \annotT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\yT}}}}{\PT}{\UT} \\
+    \type{\GammaT, \annotT{\vec{\zT}}{\vec{\tauT}}}{\eT}{\subst{\PT}{\vec{\yT}, \vec{\xT}}{\vec{\aT}, \app{\cT}{\vec{\pT}}{\vec{\zT}}}}
+  }{
+    \defeq{\GammaT}{\matchT{\app{\cT}{\vec{\pT}}{\vec{\eT}}}{\funT*{\vec{\yT}}{\xT}{\PT}}{\seq(\app{\cT}{\vec{\zT}} \RightarrowT \eT)\seq}}{\subst{\eT}{\vec{\zT}}{\vec{\eT}}}{\subst{\PT}{\vec{\yT}, \xT}{\vec{\aT}', \app{\cT}{\vec{\pT}}{\vec{\eT}}}}
   }
   \and
-  \inferrule[\rlabel{$\equiv$-$\mu$}{equiv-mu}]{\cdots}{
-    \defeq{\GammaT}{\app{(\fixT{\iT}{\fT}{\tauT}{\eT})}{\eT'_1}{\seq}{\eT'_n}{(\app{\cT}{\eT_1}{\seq}{\eT_m})}}{\app{\subst{\eT}{\fT}{\fixT{\iT}{\fT}{\tauT}{\eT}}}{\eT'_1}{\seq}{\eT'_n}{(\app{\cT}{\eT_1}{\seq}{\eT_m})}}{\tauT}
+  \inferrule[\rlabel{$\equiv$-$\mu$}{equiv-mu}]{
+    \type{\GammaT}{\tauT}{\UT} \\
+    \defeq{\GammaT}{\tauT}{\funtypeT{\xT_1}{\sigmaT_1}{\seq \funtypeT{\xT_{n-1}}{\sigmaT_{n-1}}{\funtypeT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\tauT'}}}}{\UT} \\
+    \type{\GammaT, \annotT{\fT}{\tauT}}{\eT}{\tauT} \\\\
+    \textrm{For every $1 \leq i \leq n - 1:$} \\
+    \vec{\xT}_i = \xT_1 \seq \xT_i \\
+    \vec{\eT}_i = \eT_1 \seq \eT_i \\\\
+    \type{\GammaT}{\eT_i}{\subst{\sigmaT_i}{\vec{\xT}_{i-1}}{\vec{\eT}_{i-1}}} \\
+    \type{\GammaT}{\app{\cT}{\vec{e}}}{\subst{(\app{\XT}{\vec{p}}{\vec{a}})}{\vec{\xT}_{n-1}}{\vec{\eT}_{n-1}}}
+  }{
+    \defeq{\GammaT}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\eT_1}{\seq}{\eT_{n-1}}{(\app{\cT}{\vec{\eT}})}}{\app{\subst{\eT}{\fT}{\fixT{\iT}{\fT}{\tauT}{\eT}}}{\eT_1}{\seq}{\eT_{n-1}}{(\app{\cT}{\vec{\eT}})}}{\subst{\tauT'}{\vec{\xT}_{n-1}, \xT}{\vec{\eT}_{n-1}, \app{\cT}{\vec{\eT}}}}
   }
   \end{mathpar}
   \caption{Equivalence rules}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigTypingCIC}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{mathpar}
+  \fbox{$\wf{}{\GammaT}$} \qquad
+  \fbox{$\type{\GammaT}{\eT}{\tauT}$} \hfill \\
+  \inferrule[\rlabel*{nil*}]{~}{\wf{}{\mt}}
+  \and
+  \inferrule[\rlabel*{cons*-ass}]{
+    \wf{}{\GammaT} \\\\
+    \type{\GammaT}{\tauT}{\UT}
+  }{
+    \wf{}{\GammaT, \annotT{\xT}{\tauT}}
+  }
+  \and
+  \inferrule[\rlabel*{cons*-def}]{
+    \wf{}{\GammaT} \\\\
+    \type{\GammaT}{\eT}{\tauT}
+  }{
+    \wf{}{\GammaT, \defineT{\xT}{\eT}}
+  }
+  \and
+  \inferrule[\rlabel*{conv*}]{
+    \type{\GammaT}{\eT}{\sigmaT} \\
+    \type{\GammaT}{\sigmaT}{\UT} \\\\
+    \type{\GammaT}{\tauT}{\UT} \\
+    \subtype{\GammaT}{\sigmaT}{\tauT}
+  }{
+    \type{\GammaT}{\eT}{\tauT}
+  } 
+  \and
+  \inferrule[\rlabel*{var*}]{
+    \wf{}{\GammaT} \\
+    (\annotT{\xT}{\tauT}) \in \GammaT
+  }{
+    \type{\GammaT}{\xT}{\tauT}
+  }
+  \and
+  \inferrule[\rlabel*{univ*}]{
+    \wf{}{\GammaT}
+  }{
+    \type{\GammaT}{\UT}{\axioms{\UT}}
+  }
+  \and
+  \inferrule[\rlabel*{pi*}]{
+    \type{\GammaT}{\sigmaT}{\UT_1} \\
+    \type{\GammaT, \annotT{\xT}{\sigmaT}}{\tauT}{\UT_2}
+  }{
+    \type{\GammaT}{\funtypeT{\xT}{\sigmaT}{\tauT}}{\rules{\UT_1}{\UT_2}}
+  }
+  \and
+  \inferrule[\rlabel*{lam*}]{
+    \type{\GammaT}{\sigmaT}{\UT} \\
+    \type{\GammaT, \annotT{\xT}{\sigmaT}}{\eT}{\tauT}
+  }{
+    \type{\GammaT}{\funT{\xT}{\sigmaT}{\eT}}{\funtypeT{\xT}{\sigmaT}{\tauT}}
+  }
+  \and
+  \inferrule[\rlabel*{app*}]{
+    \type{\GammaT}{\eT_1}{\funtypeT{\xT}{\sigmaT}{\tauT}} \\
+    \type{\GammaT}{\eT_2}{\sigmaT}
+  }{
+    \type{\GammaT}{\app{\eT_1}{\eT_2}}{\subst{\tauT}{\xT}{\eT_1}}
+  }
+  \and
+  \inferrule[\rlabel*{let*}]{
+    \type{\GammaT}{\eT_1}{\sigmaT} \\
+    \type{\GammaT, \annotT{\xT}{\sigmaT}, \defineT{\xT}{\eT_1}}{\eT_2}{\tauT}
+  }{
+    \type{\GammaT}{\letinT{\xT}{\sigmaT}{\eT_1}{\eT_2}}{\subst{\tauT}{\xT}{\eT_1}}
+  }
+  \and
+  \inferrule[\rlabel*{ind}]{
+    \wf{}{\GammaT} \\
+    \app{\dataT{\app{\XT}{\DeltaT_P}}{\tauT}}{\any}
+  }{
+    \type{\GammaT}{\XT}{\arrT*{\DeltaT_P}{\tauT}}
+  }
+  \and
+  \inferrule[\rlabel*{const}]{
+    \wf{}{\GammaT} \\
+    \app{\dataT{\app{\XT}{\DeltaT_P}}{\any}}{\DeltaT_c} \\
+    (\annotT{\cT}{\tauT}) \in \DeltaT_c
+  }{
+    \type{\GammaT}{\cT}{\arrT*{\DeltaT_P}{\tauT}}
+  }
+  \and
+  \inferrule[\rlabel*{case*}]{
+    \app{\dataT{\app{\XT}{(\annotT{\vec{\wT}}{\vec{\vphantom{\wT}\any}})}}{\arrT*{\DeltaT_I}{\UT}}}{\DeltaT_c} \\
+    \annotT{\vec{\yT}}{\vec{\sigmaT}} = \subst{\DeltaT_I}{\vec{\wT}}{\vec{\pT}} \\
+    \type{\GammaT}{\eT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}} \\
+    \type{\GammaT, \annotT{\vec{\yT}}{\vec{\sigmaT}}, \annotT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\yT}}}}{\PT}{\UT} \\\\
+    \card{\DeltaT_c} = n \\
+    \textrm{For every $1 \leq i \leq n$:} \\
+    (\annotT{\cT_i}{\arrT*{(\annotT{\vec{\zT}_i}{\vec{\tauT}_i})}{\app{\XT}{\vec{\pT}}{\vec{\aT}_i}}}) \in \subst{\DeltaT_c}{\vec{\wT}}{\vec{\pT}} \\
+    \type{\GammaT, \annotT{\vec{\zT}_i}{\vec{\tauT}_i}}{\eT_i}{\subst{\PT}{\vec{\yT}, \vec{\xT}}{\vec{\aT}_i, \app{\cT_i}{\vec{\pT}}{\vec{\zT}_i}}}
+  }{
+    \type{\GammaT}{\matchT{\eT}{\funT*{\vec{\yT}}{\xT}{\PT}}{(\app{\cT_1}{\vec{\zT}_1} \RightarrowT \eT_1)\seq(\app{\cT_n}{\vec{\zT}_n} \RightarrowT \eT_n)}}{\subst{\PT}{\vec{\yT}, \xT}{\vec{\aT}, \eT}}
+  }
+  \and
+  \inferrule[\rlabel*{fix*}]{
+    \type{\GammaT}{\tauT}{\UT} \\
+    \defeq{\GammaT}{\tauT}{\arr*{\DeltaT}{\funtypeT{\any}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\tauT'}}}{\UT} \\
+    \card{\DeltaT} + 1 = \nT \\
+    \type{\GammaT, \annotT{\fT}{\tauT}}{\eT}{\tauT}
+  }{
+    \type{\GammaT}{\fixT{\nT}{\fT}{\tauT}{\eT}}{\tauT}
+  }
+  \end{mathpar}
+  \caption{Typing rules (\CICE)}
   \label{#1}
   \end{figure}
 }
