@@ -139,7 +139,7 @@
     \card{\DeltaT} + 1 = \nT \\
     \type{\GammaT, \annotT{\fT}{\tauT}}{\eT}{\tauT}
   }{
-    \defeq{\GammaT}{\fixT{\nT}{\fT}{\tauT}{\eT}}{\subst{\eT}{\fT}{\fixT{\iT}{\fT}{\tauT}{\eT}}}{\tauT}
+    \defeq{\GammaT}{\fixT{\nT}{\fT}{\tauT}{\eT}}{\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}}}{\tauT}
   }
   \end{mathpar}
   \caption{Equivalence rules}
@@ -257,6 +257,46 @@
   }
   \end{mathpar}
   \caption{Typing rules (\CICE)}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigSubtypingCIC}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{mathpar}
+  \fbox{$\subtype{\GammaT}{\tauT}{\tauT}$} \hfill \\
+  \inferrule[\rlabel{$\preccurlyeq$-conv}{subtype-conv}]{
+    \defeq{\GammaT}{\tauT_1}{\tauT_2}{\UT}
+  }{
+    \subtype{\GammaT}{\tauT_1}{\tauT_2}
+  }
+  \and
+  \inferrule[\rlabel{$\preccurlyeq$-trans}{subtype-trans}]{
+    \subtype{\GammaT}{\tauT_1}{\tauT_2} \\
+    \subtype{\GammaT}{\tauT_2}{\tauT_3}
+  }{
+    \subtype{\GammaT}{\tauT_1}{\tauT_3}
+  }
+  \and
+  \inferrule[\rlabel{$\preccurlyeq$-prop}{subtype-prop}]{~}{
+    \subtype{\GammaT}{\PropT}{\TypeT{\iT}}
+  }
+  \and
+  \inferrule[\rlabel{$\preccurlyeq$-type}{subtype-type}]{
+    \iT \leq \jT
+  }{
+    \subtype{\GammaT}{\TypeT{\iT}}{\TypeT{\jT}}
+  }
+  \and
+  \inferrule[\rlabel{$\preccurlyeq$-pi}{subtype-pi}]{
+    \defeq{\GammaT}{\sigmaT_1}{\sigmaT_2}{\UT} \\
+    \subtype{\GammaT, \annotT{\xT}{\sigmaT_2}}{\tauT_1}{\tauT_2}
+  }{
+    \subtype{\GammaT}{\funtypeT{\xT}{\sigmaT_1}{\tauT_1}}{\funtypeT{\xT}{\sigmaT_2}{\tauT_2}}
+  }
+  \end{mathpar}
+  \caption{Subtyping rules (\CICE)}
   \label{#1}
   \end{figure}
 }
