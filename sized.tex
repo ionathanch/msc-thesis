@@ -592,3 +592,53 @@ Suppose that $B$ here is some type operator on $A$.
 &\qquad \fun{w}{\W{x}{A}{\app{B}{x}}{\alpha}}{\match*{w}{ \\
 &\qquad \quad \app{\App{\sup*}{\beta}}{a}{g} \Rightarrow \sup{x}{A}{\app{B}{x}}{\alpha}{\beta}{a}{(\fun{b}{\app{B}{a}}{\app{\App{\traverse}{\beta}}{(\app{\App{f}{\beta}}{(\app{g}{b})})}})}}}}}}
 \end{align*}
+
+\subsection{Limitations}
+
+As expressive as bounded, higher-rank sized types are,
+there still exist limitations to what can be expressed in comparison to ordinary inductive types
+or to sized type theories which have an infinite size\index{infinite size},
+such as the ones listed in \cref{sec:sized-types}.
+Limitations typically arise when dealing with inductive definitions where
+recursive arguments appear as the return type of a function.
+Consider, for instance, the following inductive definition
+representing the Brouwer notation for ordinals (see \eg \citet{ordinals})
+with zero, successor, and limit ordinals:
+%
+\begin{align*}
+&\data{\Ord{\alpha}}{\Type{1}} \\
+&\quad \annot{\zord*}{\Funtype<{\beta}{\alpha}{\Ord{\alpha}}} \\
+&\quad \annot{\sord*}{\Funtype<{\beta}{\alpha}{\arr*{\Ord{\beta}}{\Ord{\alpha}}}} \\
+&\quad \annot{\lord*}{\Funtype<{\beta}{\alpha}{\arr*{(\Funtype<{\gamma}{\beta}{\arr*{\N{\gamma}}{\Ord{\beta}}})}{\Ord{\alpha}}}}
+\end{align*}
+
+The limit ordinal, taking some function on naturals returning an ordinal,
+constructs an ordinal meant to be ``larger'' than any of the returned ordinals.
+Such a function should be able to return an ordinal far larger than any natural,
+hence the bounded size quantification in its domain.
+Conversely, the naturals embed quite naturally within the ordinals.
+%
+\begin{align*}
+&\Let{\natOrd}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\Ord{\alpha}}}}{ \\
+&\fix{\natOrd*}{\alpha}{\arr*{\N{\alpha}}{\Ord{\alpha}}}{ \\
+&\quad \fun{n}{\N{\alpha}}{\match*{n}{ \\
+&\qquad \App{\zero*}{\beta} \Rightarrow \zord{\alpha}{\beta} \\
+&\qquad \app{\App{\succ*}{\beta}}{m} \Rightarrow \sord{\alpha}{\beta}{(\app{\App{\natOrd*}{\beta}}{m})}}}}}
+\end{align*}
+
+In an unsized type theory, supposing that $\const{natOrd'}$ is an unsized version of $\natOrd$,
+the first limit ordinal $\const{\omega'}$ is easily defined as
+$\Let{\const{\omega'}}{\const{Ord}}{\app{\lord*}{\const{natOrd'}}}$.
+However, in \lang, things are not so easy; the na\"ive attempt yields:
+%
+\begin{align*}
+&\Let{\liftO}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\Ord{\beta}}{\Ord{\alpha}}}}}{\seq} \\
+&\Let{\omegaOrd}{\Ord{\sss{\hole}}}{\lord{\sss{\hole}}{\hole}{(\Fun<{\gamma}{\hole}{\fun{n}{\N{\gamma}}{\app{\App{\liftO}{\hole}{\gamma}}{(\app{\App{\natOrd}{\gamma}}{n})}}})}}
+\end{align*}
+
+Aside from the additional bounds and size lifting, there is one crucial problem: what size fills in the hole \new{$\hole$}?
+Intuitively, this size must be larger than the size of \emph{any} natural.
+Therefore, a corresponding ``limit size'' is needed;
+the infinite size in other sized type theories can fill this role since it's larger than all sizes
+and therefore the limit of \emph{all} sizes.
+I discuss more about the infinite size and its absence from \lang in \TODO. % TODO: forward ref
