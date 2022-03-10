@@ -1,7 +1,25 @@
 \newcommand{\FigData}[1]{
   \begin{figure}[h]
+  \newlength{\xspacing}
+  \setlength{\xspacing}{1.5ex}
   \centering
   \begin{align*}
+  &\dataT{\SizeT}{\TypeT{i+1}} \\
+  &\quad \annotT{\sucT}{\arrT*{\SizeT}{\SizeT}} \\
+  &\quad \annotT{\limT}{\funtypeT{A}{\TypeT{i}}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}} \\
+  &\LetT{\baseT}{\SizeT}{\app{\limT}{\botT}{(\funT{\mathit{false}}{\botT}{\matchT{\mathit{false}}{\funT*{()}{\any}{\SizeT}}{\mt}})}} \\[\xspacing]
+  &\dataT{\any \szleT \any}{\arrT*{\SizeT}{\SizeT}{\TypeT{i+1}}} \\
+  &\quad \annotT{\monoT}{\funtypeT{\alpha, \beta}{\SizeT}{\arrT*{\alpha \szleT \beta}{\app{\sucT}{\alpha} \szleT \app{\sucT}{\beta}}}} \\
+  &\quad \annotT{\coconeT}{\funtypeT{A}{\TypeT{i}}{\funtypeT{\beta}{\SizeT}{\funtypeT{f}{\arrT*{A}{\SizeT}}{\funtypeT{a}{A}{\arr*{\beta \szleT \app{f}{a}}{\beta \szleT \app{\limT}{A}{f}}}}}}} \\
+  &\quad \annotT{\limitT}{\funtypeT{A}{\TypeT{i}}{\funtypeT{\beta}{\SizeT}{\funtypeT{f}{\arrT*{A}{\SizeT}}{\arr*{(\funtypeT{a}{A}{\app{f}{a} \szleT \beta})}{\app{\limT}{A}{f} \szleT \beta}}}}} \\
+  &\LetT{\any \szltT \any}{\arrT*{\SizeT}{\SizeT}{\TypeT{i+1}}}{\funT{\alpha, \beta}{\SizeT}{\app{\sucT}{\alpha} \szltT \beta}} \\[\xspacing]
+  &\dataT{\app{\AccT}{(\annot{\alpha}{\SizeT})}}{\PropT} \\
+  &\quad \annot{\accT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szltT \alpha}{\app{\AccT}{\beta}}})}{\app{\AccT}{\alpha}}} \\[\xspacing]
+  &\dataT{\app{\NatT}{(\annot{\alpha}{\SizeT})}}{\TypeT{1}} \\
+  &\quad \annot{\zeroT}{\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szltT \alpha}{\app{\NatT}{\alpha}}}} \\
+  &\quad \annot{\succT}{\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szltT \alpha}{\app{\NatT}{\beta}}{\app{\NatT}{\alpha}}}} \\[\xspacing]
+  &\dataT{\app{\WT}{(\annot{A}{\TypeT{i}})}{(\annot{B}{\arrT*{A}{\TypeT{i}}})}{(\annot{\alpha}{\SizeT})}}{\TypeT{i+1}} \\
+  &\quad \annot{\supT}{\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szltT \alpha}{\funtypeT{a}{A}{\arrT*{(\arrT*{\app{B}{a}}{\app{\WT}{A}{B}{\beta}})}{\app{\WT}{A}{B}{\alpha}}}}}}
   \end{align*}
   \caption{Inductive data definitions}
   \label{#1}
