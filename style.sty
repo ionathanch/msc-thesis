@@ -115,6 +115,7 @@
 \newcommand{\mt}{\,\meta{\cdot}\,}
 \newcommand{\seq}{\,\meta{\ldots}\,}
 \newcommand{\any}{\meta{\texttt{\_}}}
+\newcommand{\hole}{\meta{?}}
 \renewcommand{\vec}[1]{\meta{\overline{\textcolor{black}{#1}}}}
 \newcommand{\subst}[3]{#1\mathopen{\meta{[}}#2 \mathrel{\meta{\mapsto}} #3\mathclose{\meta{]}}}
 \newcommand{\card}[1]{\mathopen{\meta{\lvert}} #1 \mathclose{\meta{\rvert}}}
@@ -179,6 +180,14 @@
 \newcmd*{\nil}[0]{\constr{nil}}
 \newcommand{\cons}[5]{\app{\App{\constr{cons}_{\List{#1}{#2}}}{#3}}{#4}{#5}}
 \newcmd*{\cons}[0]{\constr{cons}}
+\newcommand{\Ord}[1]{\App{\const{Ord}}{#1}}
+\newcmd*{\Ord}[0]{\const{Ord}}
+\newcommand{\zord}[2]{\App{\constr{z}_{\Ord{#1}}}{#2}}
+\newcmd*{\zord}[0]{\constr{z}}
+\newcommand{\sord}[3]{\app{\App{\constr{s}_{\Ord{#1}}}{#2}}{#3}}
+\newcmd*{\sord}[0]{\constr{s}}
+\newcommand{\lord}[3]{\app{\App{\constr{l}_{\Ord{#1}}}{#2}}{#3}}
+\newcmd*{\lord}[0]{\constr{l}}
 \newcommand{\match}[3]{\kw{case} \@et #1 \@et \kw{return} \@et #2 \@et \kw{of} \@et \phantom{} #3}
 \newcmd*{\match}[2]{\kw{case} \@et #1 \@et \kw{of} \@et \phantom{} #2}
 \newcommand{\fix}[4]{\kw{fix} \@et #1 \@et \sqbr{#2} \mathrel{:} #3 \mathrel{\coloneqq} \phantom{} #4}
@@ -187,6 +196,7 @@
 \newcommand{\liftN}{\const{liftN}}
 \newcommand{\liftW}{\const{liftW}}
 \newcommand{\liftL}{\const{liftL}}
+\newcommand{\liftO}{\const{liftO}}
 \newcommand{\monus}{\const{monus}}
 \newcommand{\pred}{\const{pred}}
 \newcommand{\divv}{\const{div}}
@@ -202,6 +212,8 @@
 \newcommand{\msort}{\const{msort}}
 \newcommand{\msorted}{\const{msort'}}
 \newcommand{\traverseW}{\const{traverseW}}
+\newcommand{\natOrd}{\const{natOrd}}
+\newcommand{\omegaOrd}{\const{\omega}}
 
 % example names
 \newcommand{\id}{\mathit{id}}
@@ -216,6 +228,7 @@
 \newcmd*{\MaX}[0]{\mathit{maximum}}
 \newcmd*{\qsort}[0]{\mathit{qsort}}
 \newcmd*{\msort}[0]{\mathit{msort}}
+\newcmd*{\natOrd}[0]{\mathit{natOrd}}
 
 % judgements
 \newcommand{\wf}[2]{#1 \mathrel{\vdash} #2}

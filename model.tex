@@ -1,6 +1,7 @@
 \chapter{Syntactic Model of \lang}
 
 \input{figures/cic.tex}
+\input{figures/definitions.tex}
 
 The type theory in which \lang is modelled is \CICE,
 as briefly described in \cref{ch:overview}.
@@ -178,9 +179,9 @@ where the left-hand side is variable as well.},
 to prove $\app{\PT}{\eT_2}{\pT}$ it suffices to provide to $\JT*$ a proof that
 $\app{\PT}{\eT_1}{\refl{\eT_1}}$ holds.
 Other usual functions on proofs of equality can be derived from it,
-such as coercion (when the motive is a constant function on types in its first argument)
+such as coercion (when the motive is \mbox{$\funT{A}{\UT}{\funT{\any}{\any}{A}}$})
 or substitution (when the motive ignores the second argument),
-as well as proofs of symmetry, transitivity, and congruence of equality.
+as well as its symmetry, transitivity, and congruence.
 The proof of type preservation eliminates propositional equalities mostly through reflection rather than using $\JT*$,
 but I retain $\JT*$ in \CICE for completeness.%
 \footnote{The combined presence of $\JT*$ and equality reflection also allows proving the
@@ -210,3 +211,5 @@ trivially ensuring that both sizes of these equivalences are well-typed with the
 (a property known as \emph{subject equivalence}\index{subject reduction}).
 
 \section{Preliminary Definitions}
+
+\FigData{fig:data-defns}
