@@ -152,4 +152,61 @@ It also has an explicit rule for transitivity of subtyping since judgements such
 $\subtype{\mt}{\app{(\funT{P}{\TypeT{\tg{1}}}{P})}{\PropT}}{\TypeT{\tg{0}}}$ would fail to hold otherwise.
 Like \rref{acum-pi}, \rref{subtype-pi} is invariant in the domain of function types.
 
+The typing and environment well-formedness rules are in \cref{fig:typing-cic}.
+Except for \rref{fix*}, the starred rules are the same as for \lang,
+with metafunctions $\axioms{\mt}$ and $\rules{\mt}{\mt}$ operating similarly on universes $\UT$
+as in \cref{fig:rules-axioms}.
+An additional premise to \rref{fix*} ensures that the $\nT$th argument is indeed an inductive type.
+% in addition to checking well-typedness of fixpoint bodies with possible recursive references.
+
+As previously mentioned, fixpoints must also be \emph{guarded}\index{guardedness}:
+recursive calls can only occur on structurally smaller arguments of elements of inductives.
+This \emph{guard condition} is well-studied~\citep{guard, guard-relax, Coq} and so omitted here.
+To justify uses of fixpoint expressions in the translation,
+I will provide either a mechanization or present a brief argument of guardedness.
+
 \FigTypingCIC{fig:typing-cic}
+
+The new \rref{eq, refl, J} are for the propositional equality\index{propositional equality} type,
+its constructor, and its eliminator.
+Given some equality proof $\pT$ of $\eqT{\eT_1}{\tauT}{\eT_2}$
+and a motive\index{motive} $\PT$ dependent on a proof of equality
+whose left-hand side is fixed at $\eT_1$ and right-hand side is variable%
+\footnote{Occasionally referred to as \emph{Paulin-Mohring}'s equality,
+as opposed to \emph{Martin-L\"of}'s equality
+where the left-hand side is variable as well.},
+to prove $\app{\PT}{\eT_2}{\pT}$ it suffices to provide to $\JT*$ a proof that
+$\app{\PT}{\eT_1}{\refl{\eT_1}}$ holds.
+Other usual functions on proofs of equality can be derived from it,
+such as coercion (when the motive is a constant function on types in its first argument)
+or substitution (when the motive ignores the second argument),
+as well as proofs of symmetry, transitivity, and congruence of equality.
+The proof of type preservation eliminates propositional equalities mostly through reflection rather than using $\JT*$,
+but I retain $\JT*$ in \CICE for completeness.%
+\footnote{The combined presence of $\JT*$ and equality reflection also allows proving the
+\emph{uniqueness of identity proofs} (UIP)\index{uniqueness of identity proofs},
+or that all proofs of an equality are themselves equal to one another.}
+
+\rref{ind, constr, case} assign types to inductive types, their constructors,
+and $\tg{case}$ expressions, under the premise that
+the relevant inductive data definition exists and is well-formed.
+Here, the difference between the parameters and the indices of inductive types becomes apparent:
+the motive\index{motive} of a $\tg{case}$ expression is abstracted over the indices by $\vec{\yT}$
+in addition to the target by $\xT$, while the parameters $\vec{\pT}$ are fixed throughout.
+Therefore, when dealing with the types of indices and constructor arguments,
+the parameters are first substituted in place of $\vec{\wT}$.
+
+A $\tg{case}$ expression is well typed if its target is, if its motive is for any indices and according target,
+and if each branch is well typed for that branch's constructor arguments,
+where its type is the motive with the appropriate indices and reconstructed target.
+For notational simplicity, the rule assumes that the binding variable names
+$\vec{\yT}$ and $\vec{\zT}$ are those found in the data definition,
+but of course these can be renamed at the expense of additional renaming substitutions.
+
+The typing premises of
+\rref{equiv-beta, equiv-zeta, equiv-rho, equiv-iota, equiv-mu}
+corresponding to some of the reduction rules duplicate the premises found in many of the typing rules,
+trivially ensuring that both sizes of these equivalences are well-typed with the same type
+(a property known as \emph{subject equivalence}\index{subject reduction}).
+
+\section{Preliminary Definitions}
