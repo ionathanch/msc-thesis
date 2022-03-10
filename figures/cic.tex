@@ -96,8 +96,7 @@
   \and
   \inferrule[\rlabel{$\equiv$-$\rho$}{equiv-rho}]{
     \type{\GammaT}{\eT}{\tauT} \\
-    \fresh{\yT, \zT} \\
-    \type{\GammaT, \annotT{\yT}{\tauT}, \annotT{\zT}{\eqT{\eT}{\tauT}{\yT}}}{\app{\PT}{\yT}{\zT}}{\UT} \\
+    \type{\GammaT}{\PT}{\funtypeT{\yT}{\tauT}{\funtypeT{\zT}{\eqT{\eT}{\tauT}{\yT}}{\UT}}} \\
     \type{\GammaT}{\dT}{\app{\PT}{\eT}{\reflT{\eT}}}
   }{
     \defeq{\GammaT}{\JT{\PT}{\dT}{\reflT{\eT}}}{\dT}{\app{\PT}{\eT}{\reflT{\eT}}}
@@ -125,6 +124,7 @@
     \card{\DeltaT_c} = n \\
     \textrm{For every $1 \leq i \leq n$:} \\
     (\annotT{\cT_i}{\arrT*{(\annotT{\vec{\zT}_i}{\vec{\tauT}_i})}{\app{\XT}{\vec{\pT}}{\vec{\aT}_i}}}) \in \subst{\DeltaT_c}{\vec{\wT}}{\vec{\pT}} \\
+    \vec{\zT}_i \notin \FV{\PT} \\
     \type{\GammaT, \annotT{\vec{\zT}_i}{\vec{\tauT}_i}}{\eT_i}{\subst{\PT}{\vec{\yT}, \vec{\xT}}{\vec{\aT}_i, \app{\cT_i}{\vec{\pT}}{\vec{\zT}_i}}} \\\\
     j \in 1 \seq n \\
     \type{\GammaT}{\vec{\eT}}{\vec{\tauT}_j} \\
@@ -148,7 +148,7 @@
 }
 
 \newcommand{\FigTypingCIC}[1]{
-  \begin{figure}[h]
+  \begin{figure}[p]
   \centering
   \begin{mathpar}
   \fbox{$\wf{}{\GammaT}$} \qquad
@@ -219,6 +219,28 @@
     \type{\GammaT}{\letinT{\xT}{\sigmaT}{\eT_1}{\eT_2}}{\subst{\tauT}{\xT}{\eT_1}}
   }
   \and
+  \inferrule[\rlabel*{eq}]{
+    \type{\GammaT}{\tauT}{\UT} \\
+    \type{\GammaT}{\eT_1}{\tauT} \\
+    \type{\GammaT}{\eT_2}{\tauT}
+  }{
+    \type{\GammaT}{\eqT{\eT_1}{\tauT}{\eT_2}}{\UT}
+  }
+  \and
+  \inferrule[\rlabel*{refl}]{
+    \type{\GammaT}{\eT}{\tauT}
+  }{
+    \type{\GammaT}{\reflT{\eT}}{\eqT{\eT}{\tauT}{\eT}}
+  }
+  \and
+  \inferrule[\rlabel*{J}]{
+    \type{\GammaT}{\pT}{\eqT{\eT_1}{\tauT}{\eT_2}} \\
+    \type{\GammaT}{\PT}{\funtypeT{\yT}{\tauT}{\funtypeT{\zT}{\eqT{\eT_1}{\tauT}{\yT}}{\UT}}} \\
+    \type{\GammaT}{\dT}{\app{\PT}{\eT_1}{\reflT{\eT_1}}}
+  }{
+    \type{\GammaT}{\JT{\PT}{\dT}{\pT}}{\app{\PT}{\eT_2}{\pT}}
+  }
+  \and
   \inferrule[\rlabel*{ind}]{
     \wf{}{\GammaT} \\
     \app{\dataT{\app{\XT}{\DeltaT_P}}{\tauT}}{\any}
@@ -226,7 +248,7 @@
     \type{\GammaT}{\XT}{\arrT*{\DeltaT_P}{\tauT}}
   }
   \and
-  \inferrule[\rlabel*{const}]{
+  \inferrule[\rlabel*{constr}]{
     \wf{}{\GammaT} \\
     \app{\dataT{\app{\XT}{\DeltaT_P}}{\any}}{\DeltaT_c} \\
     (\annotT{\cT}{\tauT}) \in \DeltaT_c
@@ -234,7 +256,7 @@
     \type{\GammaT}{\cT}{\arrT*{\DeltaT_P}{\tauT}}
   }
   \and
-  \inferrule[\rlabel*{case*}]{
+  \inferrule[\rlabel*{case}]{
     \app{\dataT{\app{\XT}{(\annotT{\vec{\wT}}{\vec{\vphantom{\wT}\any}})}}{\arrT*{\DeltaT_I}{\UT}}}{\DeltaT_c} \\
     \annotT{\vec{\yT}}{\vec{\sigmaT}} = \subst{\DeltaT_I}{\vec{\wT}}{\vec{\pT}} \\
     \type{\GammaT}{\eT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}} \\
@@ -242,6 +264,7 @@
     \card{\DeltaT_c} = n \\
     \textrm{For every $1 \leq i \leq n$:} \\
     (\annotT{\cT_i}{\arrT*{(\annotT{\vec{\zT}_i}{\vec{\tauT}_i})}{\app{\XT}{\vec{\pT}}{\vec{\aT}_i}}}) \in \subst{\DeltaT_c}{\vec{\wT}}{\vec{\pT}} \\
+    \vec{\zT}_i \notin \FV{\PT} \\
     \type{\GammaT, \annotT{\vec{\zT}_i}{\vec{\tauT}_i}}{\eT_i}{\subst{\PT}{\vec{\yT}, \vec{\xT}}{\vec{\aT}_i, \app{\cT_i}{\vec{\pT}}{\vec{\zT}_i}}}
   }{
     \type{\GammaT}{\matchT{\eT}{\funT*{\vec{\yT}}{\xT}{\PT}}{(\app{\cT_1}{\vec{\zT}_1} \RightarrowT \eT_1)\seq(\app{\cT_n}{\vec{\zT}_n} \RightarrowT \eT_n)}}{\subst{\PT}{\vec{\yT}, \xT}{\vec{\aT}, \eT}}
@@ -256,7 +279,7 @@
     \type{\GammaT}{\fixT{\nT}{\fT}{\tauT}{\eT}}{\tauT}
   }
   \end{mathpar}
-  \caption{Typing rules (\CICE)}
+  \caption{Typing and well-formedness rules (\CICE)}
   \label{#1}
   \end{figure}
 }
