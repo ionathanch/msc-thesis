@@ -64,9 +64,9 @@ are entirely standard, so I don't detail them here;
 see pCuIC~\citep{pCuIC} for instance for a full description.
 Inductive definitions in their full generality are not needed,
 and nonmutual, nonnested inductives suffice.
-Indeed, only five inductive definitions are used for the translation,
+Indeed, only six inductive definitions are used for the translation,
 for representing sizes, their order, their well-foundedness,
-and naturals and well-founded trees.
+and the empty type, naturals, and well-founded trees.
 
 The typed equivalence, subtyping, and typing judgements are defined mutually:
 equivalence depends on typing and subtyping,
@@ -203,6 +203,16 @@ where its type is the motive with the appropriate indices and reconstructed targ
 For notational simplicity, the rule assumes that the binding variable names
 $\vec{\yT}$ and $\vec{\zT}$ are those found in the data definition,
 but of course these can be renamed at the expense of additional renaming substitutions.
+
+Additionally, the motive of a $\tg{case}$ expression is restricted by the metarelation $\elim{\mt}{\mt}{\mt}$,
+which indicates when \emph{large elimination}\index{large elimination} is allowed.
+More precisely, $\elim{\any}{\TypeT{\iT}}{\any}$ and $\elim{\any}{\PropT}{\PropT}$ always hold,
+so that inductives in $\TypeT{}$ can be eliminated to any universe
+and inductives in $\PropT$ can be eliminated to $\PropT$,
+while $\elim{\XT}{\PropT}{\TypeT{\iT}}$ holds if the inductive $\XT$ in $\PropT$ satisfies further conditions.
+For the purposes of the translation, the only relevant conditions are that $\XT$ either have no constructors
+or have a single constructor whose arguments are all in $\PropT$.
+They can be loosened while still retaining consistency (see \eg \citet{SProp}).
 
 The typing premises of
 \rref{equiv-beta, equiv-zeta, equiv-rho, equiv-iota, equiv-mu}
