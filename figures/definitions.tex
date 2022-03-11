@@ -4,10 +4,11 @@
   \setlength{\xspacing}{1.5ex}
   \centering
   \begin{align*}
+  &\dataT{\botT}{\PropT} \\[\xspacing]
   &\dataT{\SizeT}{\TypeT{i+1}} \\
   &\quad \annotT{\sucT}{\arrT*{\SizeT}{\SizeT}} \\
   &\quad \annotT{\limT}{\funtypeT{A}{\TypeT{i}}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}} \\
-  &\LetT{\baseT}{\SizeT}{\app{\limT}{\botT}{(\funT{\mathit{false}}{\botT}{\matchT{\mathit{false}}{\funT*{()}{\any}{\SizeT}}{\mt}})}} \\[\xspacing]
+  &\LetT{\baseT}{\SizeT}{\app{\limT}{\botT}{(\funT{\mathit{false}}{\botT}{\matchT{\mathit{false}}{\funT*{\mt}{\any}{\SizeT}}{\mt}})}} \\[\xspacing]
   &\dataT{\any \szleT \any}{\arrT*{\SizeT}{\SizeT}{\TypeT{i+1}}} \\
   &\quad \annotT{\monoT}{\funtypeT{\alpha, \beta}{\SizeT}{\arrT*{\alpha \szleT \beta}{\app{\sucT}{\alpha} \szleT \app{\sucT}{\beta}}}} \\
   &\quad \annotT{\coconeT}{\funtypeT{A}{\TypeT{i}}{\funtypeT{\beta}{\SizeT}{\funtypeT{f}{\arrT*{A}{\SizeT}}{\funtypeT{a}{A}{\arr*{\beta \szleT \app{f}{a}}{\beta \szleT \app{\limT}{A}{f}}}}}}} \\

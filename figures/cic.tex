@@ -120,7 +120,8 @@
     \app{\dataT{\app{\XT}{(\annotT{\vec{\wT}}{\vec{\sigmaT}_P})}}{\arrT*{\DeltaT_I}{\UT}}}{\DeltaT_c} \\
     \type{\GammaT}{\vec{\pT}}{\vec{\sigmaT}_P} \\
     \annotT{\vec{\yT}}{\vec{\sigmaT}_I} = \subst{\DeltaT_I}{\vec{\wT}}{\vec{\pT}} \\
-    \type{\GammaT, \annotT{\vec{\yT}}{\vec{\sigmaT}_I}, \annotT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\yT}}}}{\PT}{\UT} \\\\
+    \type{\GammaT, \annotT{\vec{\yT}}{\vec{\sigmaT}_I}, \annotT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\yT}}}}{\PT}{\UT'} \\
+    \elim{\XT}{\UT}{\UT'} \\\\
     \card{\DeltaT_c} = n \\
     \textrm{For every $1 \leq i \leq n$:} \\
     (\annotT{\cT_i}{\arrT*{(\annotT{\vec{\zT}_i}{\vec{\tauT}_i})}{\app{\XT}{\vec{\pT}}{\vec{\aT}_i}}}) \in \subst{\DeltaT_c}{\vec{\wT}}{\vec{\pT}} \\
@@ -260,7 +261,8 @@
     \app{\dataT{\app{\XT}{(\annotT{\vec{\wT}}{\vec{\vphantom{\wT}\any}})}}{\arrT*{\DeltaT_I}{\UT}}}{\DeltaT_c} \\
     \annotT{\vec{\yT}}{\vec{\sigmaT}} = \subst{\DeltaT_I}{\vec{\wT}}{\vec{\pT}} \\
     \type{\GammaT}{\eT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}} \\
-    \type{\GammaT, \annotT{\vec{\yT}}{\vec{\sigmaT}}, \annotT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\yT}}}}{\PT}{\UT} \\\\
+    \type{\GammaT, \annotT{\vec{\yT}}{\vec{\sigmaT}}, \annotT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\yT}}}}{\PT}{\UT'} \\
+    \elim{\XT}{\UT}{\UT'} \\\\
     \card{\DeltaT_c} = n \\
     \textrm{For every $1 \leq i \leq n$:} \\
     (\annotT{\cT_i}{\arrT*{(\annotT{\vec{\zT}_i}{\vec{\tauT}_i})}{\app{\XT}{\vec{\pT}}{\vec{\aT}_i}}}) \in \subst{\DeltaT_c}{\vec{\wT}}{\vec{\pT}} \\
