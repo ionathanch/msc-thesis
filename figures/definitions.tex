@@ -26,3 +26,26 @@
   \label{#1}
   \end{figure}
 }
+
+\newcommand{\FigDefns}[1]{
+  \begin{figure}
+  \centering
+  \begin{align*}
+  &\LetT{\funext}{\funtypeT{A}{\TypeT{i}}{\funtypeT{B}{\arrT*{A}{\TypeT{i}}}{\funtypeT{f, g}{(\funtypeT{x}{A}{\app{B}{x}})}{ \\
+    &\phantom{\app{\tg{let}}{\funext} \mathrel{:} \phantom{}} \arrT*{(\funtypeT{x}{A}{\eqT{\app{f}{x}}{}{\app{g}{x}}})}{\eqT{f}{}{g}}}}}}{\seq} \\
+  &\LetT{\baseleq}{\funtypeT{\alpha}{\SizeT}{\baseT \szleT \alpha}}{\seq} \\
+  &\LetT{\reflleq}{\funtypeT{\alpha}{\SizeT}{\alpha \szleT \alpha}}{\seq} \\
+  &\LetT{\sucleq}{\funtypeT{\alpha}{\SizeT}{\alpha \szleT \app{\sucT}{\alpha}}} \\
+  &\LetT{\transleq}{\funtypeT{\alpha, \beta, \gamma}{\SizeT}{\arrT*{\alpha \szleT \beta}{\beta \szleT \gamma}{\alpha \szleT \gamma}}} \\
+  &\LetT{\accIsProp}{\funtypeT{\alpha}{\SizeT}{\funtypeT{\mathit{acc}_1, \mathit{acc}_2}{\app{\AccT}{\alpha}}{\eqT{\mathit{acc}_1}{}{\mathit{acc}_2}}}}{\seq} \\
+  &\LetT{\accleq}{\funtypeT{\alpha, \beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{\AccT}{\beta}}{\app{\AccT}{\alpha}}}}{\seq} \\
+  &\LetT{\accessible}{\funtypeT{\alpha}{\SizeT}{\app{\AccT}{\alpha}}}{\seq} \\
+  &\LetT{\wfacc}{\funtypeT{P}{(\arrT*{\SizeT}{\TypeT{i}})}{\arrT*{(\funtypeT{\alpha}{\SizeT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{P}{\beta}}})}{\app{P}{\alpha}}})}{ \\
+    &\phantom{\app{\tg{let}}{\wfacc} \mathrel{:} \phantom{}} \funtypeT{\alpha}{\SizeT}{\arrT*{\app{\AccT}{\alpha}}{\app{P}{\alpha}}}}}}{\seq} \\
+  &\LetT{\wfind}{\funtypeT{P}{(\arrT*{\SizeT}{\TypeT{i}})}{\arrT*{(\funtypeT{\alpha}{\SizeT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{P}{\beta}}})}{\app{P}{\alpha}}})}{ \\
+    &\phantom{\app{\tg{let}}{\wfind} \mathrel{:} \phantom{}} \funtypeT{\alpha}{\SizeT}{\app{P}{\alpha}}}}}{\seq}
+  \end{align*}
+  \caption{Definitions in \CICE}
+  \label{#1}
+  \end{figure}
+}
