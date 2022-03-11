@@ -128,6 +128,7 @@
 \newcommand{\axioms}[1]{\metafun{axiom}{#1}}
 \newcommand{\fresh}[1]{\metafun{fresh}{#1}}
 \newcommand{\FV}[1]{\metafun{FV}{#1}}
+\newcommand{\elim}[3]{\metafun{elim}{#1, #2, #3}}
 
 % source binders
 \newcommand{\annot}[2]{#1 \mathrel{:} #2}
@@ -280,7 +281,7 @@
 \newcommand{\TypeT}[1]{\tg{Type}_{#1}}
 \newcommand{\sssT}[1]{\tg{\widehat{#1}}}
 \newcommand{\funT}[3]{\tg{\lambda} \annotT{#1}{#2} \mathpunct{\tg{.}} #3}
-\newcmd*{\funT}[3]{\tg{\lambda} #1 \mathpunct{\tg{.}} #2 \mathpunct{\tg{.}} #3}
+\newcmd*{\funT}[3]{\tg{\lambda} #1 \mathord{\tg{.}} #2 \mathpunct{\tg{.}} #3}
 \newcommand{\funtypeT}[3]{\tg{\Pi} \annotT{#1}{#2} \mathpunct{\tg{.}} #3}
 \newcommand{\arrT}[3]{\mathopen{\tg{(}} \annotT{#1}{#2} \mathclose{\tg{)}} \mathrel{\tg{\rightarrow}} \phantom{} #3}
 \newcmd*{\arrT}[1]{#1\@ifnextchar\bgroup{\mathrel{\tg{\rightarrow}}\arr*}{\xspace}}
