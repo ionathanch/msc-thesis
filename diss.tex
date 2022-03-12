@@ -1,5 +1,5 @@
 %% The ubcdiss class provides several options:
-%%   gpscopy (aka fogscopy)
+%%   gpscopy
 %%       set parameters to exactly how GPS specifies
 %%         * single-sided
 %%         * page-numbering starts from title page
@@ -10,24 +10,18 @@
 %%       set default font size
 %%   oneside, twoside
 %%       whether to format for single-sided or double-sided printing
-%%   balanced
-%%       when double-sided, ensure page content is centred
-%%       rather than slightly offset (the default)
 %%   singlespacing, onehalfspacing, doublespacing
 %%       set default inter-line text spacing; the ubcdiss class
 %%       provides \textspacing to revert to this configured spacing
-%%   draft
-%%       disable more intensive processing, such as including
-%%       graphics, etc.
 
-\documentclass[gpscopy,twoside,balanced,onehalfspacing,11pt]{ubcdiss}
+\documentclass[oneside,onehalfspacing,11pt]{ubcdiss}
 
-\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{mlmodern}
 \usepackage[margin=1.25in, marginparwidth=7em]{geometry}
 \usepackage[numbers]{natbib}
 \usepackage[hang, sc, skip=1ex]{caption}
+\usepackage[nohyperlinks]{acronym} % acronyms for glossary
 \usepackage{marginnote} % margin notes
 \usepackage{checkend}	% indicate all unclosed envs
 \usepackage{epigraph} % add epigraphs
@@ -83,15 +77,11 @@
   pdflang={en-CA}
 }
 
-% idk if I'll have acronyms as opposed to just an index...
-\usepackage[printonlyused,nohyperlinks]{acronym}
-\renewcommand{\acsfont}[1]{{\scshape \MakeTextLowercase{#1}}}
-
 % custom style and macros
 \usepackage{style}
 
 \title{sszz}
-%\subtitle{}
+\subtitle{sized dependent types as dependent type sizes}
 \makeindex[intoc]
 
 \author{Jonathan Ho\hspace{0.1em}-\hspace{-0.1em}Wing Chan}
