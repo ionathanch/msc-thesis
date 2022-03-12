@@ -21,5 +21,6 @@
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+*_minted*/
 *~
 diss.pdf
