@@ -1,17 +1,12 @@
-name: thesis CI
-on:
-  push:
-    branches-ignore:
-      - master
-  pull_request:
-  workflow_dispatch:
+on: [push, workflow_dispatch]
 
 jobs:
   build_latex:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Git repository
-        uses: actions/checkout@v2
-      - name: Compile LaTeX document
-        run: |
-          docker run -v $(pwd):/workdir -w /workdir texlive/texlive latexmk
+      - uses: actions/checkout@v3
+      - run: docker run -v $(pwd):/workdir -w /workdir texlive/texlive latexmk
+      - uses: actions/upload-artifact@v3
+        with:
+          name: diss.pdf
+          path: diss.pdf
