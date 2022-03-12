@@ -7,7 +7,7 @@ The type theory in which \lang is modelled is \CICE,
 as briefly described in \cref{ch:overview}.
 The key idea is that sizes in \lang can themselves be represented as a inductive type in \CICE,
 and naturals and well-founded trees are then inductives with an additional size parameter.
-Sizes are represented as a (generalization of) the Brouwer notation for ordinals in type theory~\citep{ordinals},
+Sizes are represented as a (generalization of) the Brouwer notation for ordinals in type theory,
 and their order as an inductive type indexed by sizes.
 The order is \emph{well-founded}:
 there is no infinite sequence of ever-smaller sizes,
@@ -222,5 +222,78 @@ trivially ensuring that both sizes of these equivalences are well-typed with the
 
 \section{Preliminary Definitions}
 
+Before defining the translation from \lang terms to \CICE terms,
+in this section I describe how the \CICE terms are constructed,
+which comprises the aforementioned six inductive data definitions
+and well-founded induction principle
+as well as the various properties which the order on sizes satisfies.
+
 \FigData{fig:data-defns}
+
+The inductive definitions are listed in \cref{fig:data-defns}
+along with some basic definitions I treat as global.
+$\botT$ is the usual empty type.
+$\SizeT$ is a generalization of the $\Ord*$ type introduced in \cref{sec:examples},
+with the domain of the function passed to the limit size $\limT$ replaced by some arbitrary type.
+Although limit sizes aren't strictly necessary for the translation,
+since \lang only has successor sizes and size variables,
+I include them so that they validate the various extensions I add to \lang later in \TODO.
+% TODO: forward ref to chapter on extensions
+Furthermore, this allows for a simplification of the definition,
+since the zero size $\baseT$ can be defined as a limit size rather than as another constructor.
+
+The order on sizes $\mt \szleT \mt$ is defined by the three properties that must hold~\citep{ordinals}:
+\begin{itemize}[noitemsep]
+  \item $\monoT$: The successor operator $\sucT$ is monotone with respect to the order;
+  \item $\coconeT$: The limit operator $\limT$ constructs an upper bound in that
+    given some function $f$ returning a size,
+    any size smaller than any size returned by $f$ is also smaller that the limit of $f$;
+  \item $\limitT$: The limit operator on $f$ constructs a \emph{least} upper bound such that
+    if a size is larger than \emph{all} sizes returned by $f$
+    then it must also be larger than the limit of $f$.
+\end{itemize}
+
+Other properties of the order can be derived by induction from these constructors alone.
+A corresponding strict order $\mt \szltT \mt$ is also defined,
+and an accessibility predicate $\AccT$ is specialized to sizes and the strict order.
+Note that it lives in $\PropT$, as does the argument of its sole constructor $\accT$,
+so accessibility predicates are intended to be interpreted as proof-irrelevant\index{proof irrelevance},
+and their large elimination\index{large elimination} is allowed.
+
 \FigDefns{fig:defns}
+
+Before moving on to naturals and well-founded trees,
+\cref{fig:defns} lists the names and types of a number of provable definitions.
+First is \emph{function extensionality}\index{function extensionality},
+asserting that two functions $\annot{f, g}{\funtypeT{x}{A}{\app{B}{x}}}$ are propositionally equal if they are pointwise equal.
+In \CICE, they are in fact equivalent (\ie definitionally equal):
+given some proof $h$ of their pointwise equality,
+under the assumption $\annot{x}{A}$,
+the propositional equality $\eq{\app{f}{x}}{}{\app{g}{x}}$ by $\app{h}{x}$
+can be reflected into the corresponding definitional equality,
+which by \rref{equiv-eta} is then a definitional equality of $f$ and $g$.
+
+The remaining definitions have been mechanized in either Agda and Coq in \TODO,
+% TODO: forward ref to appendix with code
+under the assumption of function extensionality as an axiom
+(which cannot be proven in intensional CIC).
+The mechanizations don't use any additional type-theoretic features beyond CIC,
+and the proofs could theoretically be written in plain CIC,
+but they would be far less comprehensible without the ergonomics provided by the proof assistants.
+As an example, the Coq proof for $\accessible$ consists of a dozen lines of tactics,
+while the full proof term generated from the tactics is 129 lines long.
+
+The definitions themselves describe properties of the order on sizes
+and of the accessibility predicate:
+\begin{itemize}[noitemsep]
+  \item $\baseleq$, $\reflleq$, $\transleq$, and $\sucleq$:
+    The order is reflexive and transitive (\ie a preorder)
+    such that $\baseT$ is smaller than or equal to all sizes
+    and the successor of a size is greater or equal to itself.
+  \item $\accIsProp$: Accessibility predicates are \emph{mere propositions}\index{mere proposition}:
+    any two proofs of accessibility of a size are propositionally equal.
+  \item $\accleq$: Any size smaller or equal to an accessible size is itself accessible.
+  \item $\accessible$: All sizes are accessible; in other words, the order on sizes is well founded\index{well founded}.
+  \item $\wfind$ and $\wfacc$: The well-founded induction principle on sizes with respect to the order,
+    proven by structural induction on the accessibility of sizes.
+\end{itemize}

@@ -1,9 +1,167 @@
-\chapter{Supporting Materials}
+\chapter{Mechanized \CICE Definitions}
 
-This would be any supporting material not central to the dissertation.
-For example:
-\begin{itemize}
-\item additional details of methodology and/or data;
-\item diagrams of specialized equipment developed.;
-\item copies of questionnaires and survey instruments.
-\end{itemize}
+\iffalse
+\begin{minted}{coq}
+From Equations Require Import Equations.
+Require Import Coq.Program.Equality.
+Require Import Coq.Unicode.Utf8_core.
+
+Reserved Notation "r ≤ s" (at level 70, no associativity).
+
+Inductive Size : Type :=
+| suc : Size → Size
+| lim : ∀ {A : Type}, (A → Size) → Size.
+
+Inductive Leq : Size → Size → Type :=
+| mono : ∀ {r s}, r ≤ s → suc r ≤ suc s
+| cocone : ∀ {s A f} (a : A), s ≤ f a → s ≤ lim f
+| limiting : ∀ {s A f}, (∀ (a : A), f a ≤ s) → lim f ≤ s
+where "r ≤ s" := (Leq r s).
+
+Definition Lt (r s : Size) : Type := suc r ≤ s.
+Notation "r < s" := (Lt r s).
+
+Definition base : Size := lim (False_rect Size).
+
+Definition baseLeq (s : Size) : base ≤ s :=
+  limiting (λ a, (False_rect (_ ≤ s) a)).
+
+Fixpoint reflLeq (s : Size) : s ≤ s :=
+  match s with
+  | suc s => mono (reflLeq s)
+  | lim f => limiting (λ a, cocone a (reflLeq (f a)))
+  end.
+
+Property transLeq {r s t : Size} (rs : r ≤ s) (st : s ≤ t) : r ≤ t.
+Admitted.
+
+(*
+Derive NoConfusion for Size.
+Equations transLeq {r s t : Size} (rs : r ≤ s) (st : s ≤ t) : r ≤ t :=
+  transLeq (mono rs) (mono st) := mono (transLeq rs st);
+  transLeq rs (cocone a sfa) := cocone a (transLeq rs sfa);
+  transLeq (limiting fas) st := limiting (λ a, transLeq (fas a) st);
+  transLeq (cocone a rfa) (limiting fat) := transLeq rfa (fat a).
+*)
+
+Fixpoint sucLeq (s : Size) : s ≤ suc s :=
+  match s with
+  | suc s => mono (sucLeq s)
+  | lim f => limiting (λ a, transLeq (sucLeq (f a)) (mono (cocone a (reflLeq (f a)))))
+  end.
+
+Inductive Acc (s : Size) : Prop :=
+| acc : (∀ r, r < s → Acc r) → Acc s.
+
+Axiom funext : ∀ {A} {B : A → Type} {p q : ∀ x, B x},
+  (∀ x, p x = q x) → p = q.
+
+Equations accIsProp {s} (acc1 acc2 : Acc s) : acc1 = acc2 :=
+| acc _ p, acc _ q =>
+  f_equal _ (funext (λ r, funext (λ rs, accIsProp (p r rs) (q r rs)))).
+
+Lemma accLeq : ∀ r s, r ≤ s → Acc s → Acc r.
+Proof.
+  intros r s rs acc.
+  induction acc as [s p IH].
+  exact (acc r (λ t tr, p t (transLeq tr rs))).
+Qed.
+
+Theorem wf : ∀ s, Acc s.
+Proof.
+  intros s.
+  induction s as [s IH | A f IH].
+  - refine (acc (suc s) (λ r rsucs, accLeq r s _ IH)).
+    inversion rsucs as [r' s' rs | |].
+    exact rs.
+  - refine (acc (lim f) (λ r rlimf, _)).
+    inversion rlimf as [| r' A' f' a rfa eqr eqA |].
+    dependent destruction H.
+    destruct (IH a) as [p].
+    exact (p r rfa).
+Qed.
+
+Fixpoint wfAcc (P : Size → Type) (IH : ∀ s, (∀ r, r < s → P r) → P s) (s : Size) (acc : Acc s) : P s :=
+  let p r rs := wfAcc P IH r (match acc return Acc r with | acc _ p => p r rs end)
+  in IH s p.
+
+Definition wfInd (P : Size → Type) (IH : ∀ s, (∀ r, r < s → P r) → P s) (s : Size) : P s :=
+  wfAcc P IH s (wf s).
+\end{minted}
+
+\begin{minted}{agda}
+{-# OPTIONS --without-K #-}
+
+open import Agda.Primitive using (Level; lsuc)
+open import Agda.Builtin.Equality
+open import Data.Empty using (⊥; ⊥-elim)
+
+variable
+  ℓ ℓ′ : Level
+  A C : Set ℓ
+  B : A → Set ℓ
+
+infix 30 ↑_
+infix 30 ⊔_
+
+data Size {ℓ} : Set (lsuc ℓ) where
+  ↑_ : Size {ℓ} → Size
+  ⊔_ : {A : Set ℓ} → (A → Size {ℓ}) → Size
+
+data _≤_ {ℓ} : Size {ℓ} → Size {ℓ} → Set (lsuc ℓ) where
+  ↑s≤↑s : ∀ {r s} → r ≤ s → ↑ r ≤ ↑ s
+  s≤⊔f  : ∀ {s} f (a : A) → s ≤ f a → s ≤ ⊔ f
+  ⊔f≤s  : ∀ {s} f → (∀ (a : A) → f a ≤ s) → ⊔ f ≤ s
+
+◯ : Size
+◯ = ⊔ ⊥-elim
+
+◯≤s : ∀ {s} → ◯ ≤ s
+◯≤s = ⊔f≤s ⊥-elim λ ()
+
+s≤s : ∀ {s : Size {ℓ}} → s ≤ s
+s≤s {s = ↑ s} = ↑s≤↑s s≤s
+s≤s {s = ⊔ f} = ⊔f≤s f (λ a → s≤⊔f f a s≤s)
+
+s≤s≤s : ∀ {r s t : Size {ℓ}} → r ≤ s → s ≤ t → r ≤ t
+s≤s≤s (↑s≤↑s r≤s) (↑s≤↑s s≤t) = ↑s≤↑s (s≤s≤s r≤s s≤t)
+s≤s≤s r≤s (s≤⊔f f a s≤fa) = s≤⊔f f a (s≤s≤s r≤s s≤fa)
+s≤s≤s (⊔f≤s f fa≤s) s≤t = ⊔f≤s f (λ a → s≤s≤s (fa≤s a) s≤t)
+s≤s≤s (s≤⊔f f a s≤fa) (⊔f≤s f fa≤t) = s≤s≤s s≤fa (fa≤t a)
+
+s≤↑s : ∀ {s : Size {ℓ}} → s ≤ ↑ s
+s≤↑s {s = ↑ s} = ↑s≤↑s s≤↑s
+s≤↑s {s = ⊔ f} = ⊔f≤s f (λ a → s≤s≤s s≤↑s (↑s≤↑s (s≤⊔f f a s≤s)))
+
+_<_ : Size {ℓ} → Size {ℓ} → Set (lsuc ℓ)
+r < s = ↑ r ≤ s
+
+record Acc (s : Size {ℓ}) : Set (lsuc ℓ) where
+  inductive
+  pattern
+  constructor acc
+  field
+    acc< : (∀ r → r < s → Acc r)
+open Acc
+
+accIsProp : ∀ {s : Size {ℓ}} → (acc1 acc2 : Acc s) → acc1 ≡ acc2
+accIsProp (acc p) (acc q) = cong acc (funext p q (λ r → funext (p r) (q r) (λ r<s → accIsProp (p r r<s) (q r r<s))))
+  where
+    cong : ∀ (f : A → C) {a b} → a ≡ b → f a ≡ f b
+    cong f refl = refl
+    postulate funext : ∀ (p q : ∀ x → B x) → (∀ x → p x ≡ q x) → p ≡ q
+
+acc≤ : ∀ {r s : Size {ℓ}} → r ≤ s → Acc s → Acc r
+acc≤ r≤s (acc p) = acc (λ t t<r → p t (s≤s≤s t<r r≤s))
+
+wf : ∀ (s : Size {ℓ}) → Acc s
+wf (↑ s) = acc (λ { _ (↑s≤↑s r≤s) → acc≤ r≤s (wf s) })
+wf (⊔ f) = acc (λ { r (s≤⊔f f a r<fa) → (wf (f a)).acc< r r<fa })
+
+wfInd : ∀ (P : Size {ℓ} → Set ℓ′) → (∀ s → (∀ r → r < s → P r) → P s) → ∀ s → P s
+wfInd P f s = wfAcc s (wf s)
+  where
+  wfAcc : ∀ s → Acc s → P s
+  wfAcc s (acc p) = f s (λ r r<s → wfAcc r (p r r<s))
+\end{minted}
+\fi
