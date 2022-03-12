@@ -28,7 +28,7 @@
 }
 
 \newcommand{\FigDefns}[1]{
-  \begin{figure}
+  \begin{figure}[h]
   \centering
   \begin{align*}
   &\LetT{\funext}{\funtypeT{A}{\TypeT{i}}{\funtypeT{B}{\arrT*{A}{\TypeT{i}}}{\funtypeT{f, g}{(\funtypeT{x}{A}{\app{B}{x}})}{ \\
@@ -38,7 +38,7 @@
   &\LetT{\transleq}{\funtypeT{\alpha, \beta, \gamma}{\SizeT}{\arrT*{\alpha \szleT \beta}{\beta \szleT \gamma}{\alpha \szleT \gamma}}} \\
   &\LetT{\sucleq}{\funtypeT{\alpha}{\SizeT}{\alpha \szleT \app{\sucT}{\alpha}}} \\
   &\LetT{\accIsProp}{\funtypeT{\alpha}{\SizeT}{\funtypeT{\mathit{acc}_1, \mathit{acc}_2}{\app{\AccT}{\alpha}}{\eqT{\mathit{acc}_1}{}{\mathit{acc}_2}}}}{\seq} \\
-  &\LetT{\accleq}{\funtypeT{\alpha, \beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{\AccT}{\beta}}{\app{\AccT}{\alpha}}}}{\seq} \\
+  &\LetT{\accleq}{\funtypeT{\alpha, \beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{\AccT}{\alpha}}{\app{\AccT}{\beta}}}}{\seq} \\
   &\LetT{\accessible}{\funtypeT{\alpha}{\SizeT}{\app{\AccT}{\alpha}}}{\seq} \\
   &\LetT{\wfacc}{\funtypeT{P}{(\arrT*{\SizeT}{\TypeT{i}})}{\arrT*{(\funtypeT{\alpha}{\SizeT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{P}{\beta}}})}{\app{P}{\alpha}}})}{ \\
     &\phantom{\app{\tg{let}}{\wfacc} \mathrel{:} \phantom{}} \funtypeT{\alpha}{\SizeT}{\arrT*{\app{\AccT}{\alpha}}{\app{P}{\alpha}}}}}}{\seq} \\
