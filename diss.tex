@@ -1,11 +1,4 @@
 %% The ubcdiss class provides several options:
-%%   gpscopy
-%%       set parameters to exactly how GPS specifies
-%%         * single-sided
-%%         * page-numbering starts from title page
-%%         * the lists of figures and tables have each entry prefixed
-%%           with 'Figure' or 'Table'
-%%       This can be tested by `\ifgpscopy ... \else ... \fi'
 %%   10pt, 11pt, 12pt
 %%       set default font size
 %%   oneside, twoside
@@ -102,48 +95,34 @@
 \begin{document}
 \maketitle
 \makecommitteepage
+\textspacing
 
 \include{abstract}
 \include{laysummary}
 \include{preface}
 
 \tableofcontents
-\cleardoublepage
-
 \listoftables
-\cleardoublepage
-
 \listoffigures
-\cleardoublepage
 
 \input{glossary}
-
-\textspacing
-
 \include{acknowledgements}
 \include{dedication}
 
 \mainmatter
-\acresetall
-
 \include{introduction.tex}
 \include{overview.tex}
 \include{sized.tex}
 \include{model.tex}
 
-\singlespacing
-\raggedright
 \bibliographystyle{plainnat}
+\begin{singlespace}
+\raggedright
 \bibliography{biblio}
+\end{singlespace}
 
-\textspacing
 \appendix
 \include{appendix}
-
-% recursive entry in index (https://tex.stackexchange.com/a/367999/202877)
-\newcommand{\here}[2]{\label{#1}\pageref{#1}}
-\newcommand{\recindex}[2]{\index{#1|here{#2}}}
-\recindex{recursion}{sec:index:recursion}
 
 \backmatter
 \printindex
