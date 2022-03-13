@@ -2,7 +2,7 @@
 
 \section{Coq}
 
-\singlespacing
+\begin{singlespace}
 \begin{minted}{coq}
 From Equations Require Import Equations.
 Require Import Coq.Program.Equality.
@@ -90,11 +90,11 @@ Fixpoint wfAcc (P : Size → Type) (IH : ∀ s, (∀ r, r < s → P r) → P s) 
 Definition wfInd (P : Size → Type) (IH : ∀ s, (∀ r, r < s → P r) → P s) (s : Size) : P s :=
   wfAcc P IH s (wf s).
 \end{minted}
-\textspacing
+\end{singlespace}
 
 \section{Agda}
 
-\singlespacing
+\begin{singlespace}
 \begin{minted}{agda}
 {-# OPTIONS --without-K #-}
 
@@ -171,4 +171,4 @@ wfInd P f s = wfAcc s (wf s)
   wfAcc : ∀ s → Acc s → P s
   wfAcc s (acc p) = f s (λ r r<s → wfAcc r (p r r<s))
 \end{minted}
-\textspacing
+\end{singlespace}
