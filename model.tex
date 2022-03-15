@@ -301,7 +301,7 @@ and of the accessibility predicate:
 
 The only time equality reflection is needed is to prove $\accIsProp$ (via $\funext$),
 which in turn is the only other equality that is reflected for proving type preservation.
-Since $\AccT$ is in already $\PropT$, the target language could be replaced by an intensional CIC
+Since $\AccT$ is in already $\PropT$, \CICE could be replaced by an intensional CIC
 with a universe of \emph{strict propositions}\index{strict proposition} $\SPropT$
 of types whose elements are definitionally equal~\citep{SProp},
 then placing $\AccT$ in $\SPropT$.
@@ -363,4 +363,31 @@ while bounded ones have additional quantifications and abstractions over a proof
 Size applications translate to an additional application to a proof of $\szltT$
 when the size abstraction applied is bounded.
 
+Finally, \cref{fig:trans:ind} gives the translation for naturals, well-founded trees,
+$\kw{case}$ expressions, and fixpoint expressions from their typing derivations
+to a \CICE term (again omitting irrelevant premises).
+Aside from fixpoints, the translations are fairly straightforward,
+with an additional proof term from subsizing for constructors
+and dually an additional abstraction over such terms in the branches of $\tg{case}$ expressions.
+
 \FigTransInd{fig:trans:ind}
+
+\clearpage % TODO: clearpage
+Fixpoints in \lang are not translated as fixpoints in \CICE.
+Doing so while preserving types would mean that \lang fixpoints
+need to be subject to the same guard conditions as \CICE fixpoints,
+which is clearly undesirable and not the case in the examples from \cref{sec:examples}.
+Instead, every single \lang fixpoint, regardless of the inductive on which they recur,
+is translated to well-founded induction,
+which is defined via a \CICE fixpoint on accessibility predicates.
+Intuitively, the return type of a fixpoint corresponds to the motive of well-founded induction,
+while recursion on a strictly smaller size corresponds to the induction hypothesis,
+where the motive holds for all strictly smaller sizes.
+
+The main challenge with this translation is showing that the translations of a fixpoint
+and of its $\mu$-reduction are equivalent in \CICE,
+because this requires showing that the computational behaviour of well-founded induction
+is equivalent to the computational behaviour of the fixpoint.
+Once that has been established,
+showing type preservation of the translation is more or less going through the motions of the proof,
+since the remaining \lang terms translate almost directly to their syntactically corresponding terms.
