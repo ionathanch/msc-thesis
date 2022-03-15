@@ -81,7 +81,9 @@
   \and
   \inferrule[\rlabel*{sup}]{
     \subsize{\Phi}{\hat{r}}{s} \\
-    \check{\Phi; \Gamma}{e_1}{\sigma} \\\\
+    \infer{\Phi; \Gamma}{\sigma}{U} \\
+    \infer{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{U} \\\\
+    \check{\Phi; \Gamma}{e_1}{\sigma} \\
     \check{\Phi; \Gamma}{e_2}{\arr*{\subst{\tau}{x}{e_1}}{\W{x}{\sigma}{\tau}{r}}}
   }{
     \infer{\Phi; \Gamma}{\sup{x}{\sigma}{\tau}{s}{r}{e_1}{e_2}}{\W{x}{\sigma}{\tau}{s}}
