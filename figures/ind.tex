@@ -97,7 +97,7 @@
     \infer{\Phi; \Gamma}{\match{e}{\fun*{x}{P}}{(\App{\zero*}{\alpha} \Rightarrow e_z)(\app{\App{\succ*}{\beta}}{z} \Rightarrow e_s)}}{\subst{P}{x}{e}}
   }
   \and
-  \inferrule[\rlabel*{case-sup}]{
+  \inferrule[\rlabel*{case-wft}]{
     \infer{\Phi; \Gamma}{e}{\W{y}{\sigma}{\tau}{s}} \\
     z_1, z_2 \notin \FV{P} \\
     \infer{\Phi; \Gamma, \annot{x}{\W{y}{\sigma}{\tau}{s}}}{P}{U} \\

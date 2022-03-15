@@ -1,0 +1,195 @@
+\newcommand{\FigTransSize}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{multicols}{2}
+  \begin{align*}
+  \Aboxed{\compile{s} &= \eT} \\
+  \compile{\alpha} &= \alphaT \\
+  \compile{\circ} &= \baseT \\
+  \compile{\sss{s}} &= \app{\sucT}{\compile{s}}
+  \end{align*}
+
+  \begin{align*}
+  \Aboxed{\compile{\Phi} &= \GammaT} \\
+  \compile{\mt} &= \mt \\
+  \compile{\Phi, \alpha} &= \compile{\Phi}, \annot{\alphaT}{\SizeT} \\
+  \compile{\Phi, \bound{\alpha}{s}} &= \compile{\Phi}, \annot{\alphaT}{\SizeT}, \annot{\alphaT^*}{\alphaT \szltT \compile{s}}
+  \end{align*}
+  \end{multicols}
+  \caption{Translation of sizes and size environments}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigTransSubsize}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{mathpar}
+  \fbox{$\subsizeto{\Phi}{s}{s}{\eT}$} \hfill \\
+  \inferrule{
+    (\bound{\alpha}{s}) \in \Phi
+  }{
+    \subsizeto{\Phi}{\sss{\alpha}}{s}{\alphaT^*}
+  }
+  \and
+  \inferrule{~}{
+    \subsizeto{\Phi}{\circ}{s}{\app{\baseleq}{\compile{s}}}
+  }
+  \and
+  \inferrule{~}{
+    \subsizeto{\Phi}{s}{s}{\app{\reflleq}{\compile{s}}}
+  }
+  \and
+  \inferrule{~}{
+    \subsizeto{\Phi}{s}{\sss{s}}{\app{\sucleq}{\compile{s}}}
+  }
+  \and
+  \inferrule{
+    \subsizeto{\Phi}{r}{s}{\eT}
+  }{
+    \subsizeto{\Phi}{\sss{r}}{\sss{s}}{\app{\monoT}{\compile{r}}{\compile{s}}{\eT}}
+  }
+  \and
+  \inferrule{
+    \subsizeto{\Phi}{s_1}{s_2}{\eT_{12}} \\
+    \subsizeto{\Phi}{s_2}{s_3}{\eT_{23}}
+  }{
+    \subsizeto{\Phi}{s_1}{s_3}{\app{\transleq}{\compile{s_1}}{\compile{s_2}}{\compile{s_3}}{\eT_{12}}{\eT_{23}}}
+  }
+  \end{mathpar}
+  \caption{Translation of subsizing}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigTransTerm}[1]{
+  \begin{figure}[ht]
+  \centering
+  \begin{multicols}{2}
+  \begin{align*}
+  \Aboxed{\compile{e} &= \eT} \\
+  \compile{x} &= \xT \\
+  \compile{U} &= \UT \\
+  \compile{\funtype{x}{\sigma}{\tau}} &= \funtypeT{\xT}{\compile{\sigma}}{\compile{\tau}_{\annot{x}{\sigma}}} \\
+  \compile{\fun{x}{\sigma}{e}} &= \funT{\xT}{\compile{\sigma}}{\compile{e}_{\annot{x}{\sigma}}} \\
+  \compile{\app{e_1}{e_2}} &= \app{\compile{e_1}}{\compile{e_2}} \\
+  \compile{\Funtype{\alpha}{\tau}} &= \funtypeT{\alphaT}{\SizeT}{\compile{\tau}_{\alpha}} \\
+  \compile{\Funtype<{\alpha}{s}{\tau}} &= \funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau}_{\bound{\alpha}{s}}}} \\
+  \compile{\Fun{\alpha}{e}} &= \funT{\alphaT}{\SizeT}{\compile{e}_{\alpha}} \\
+  \compile{\Fun<{\alpha}{s}{e}} &= \funT{\alphaT}{\SizeT}{\funT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}_{\bound{\alpha}{s}}}} \\
+  \compile{\App{e}{s}} &= \app{\compile{e}}{\compile{s}} \qquad (\textrm{\rref{sapp}}) \\
+  \end{align*}
+
+  \begin{align*}
+  \Aboxed{\compile{\Gamma} &= \GammaT} \\
+  \compile{\mt} &= \mt \\
+  \compile{\Gamma, \annot{x}{\tau}} &= \compile{\Gamma}, \annotT{\xT}{\compile{\tau}} \\
+  \compile{\Gamma, \define{x}{e}} &= \compile{\Gamma}, \defineT{\xT}{\compile{e}}
+  \end{align*}
+  \end{multicols}
+  \vspace{-2\baselineskip}
+  \begin{mathpar}
+  \fbox{$\typeto{\Phi; \Gamma}{e}{\tau}{\eT}$} \quad \cdots \hfill \\
+  \inferrule[\nameref{conv}]{
+    \cdots \\
+    \typeto{\Phi; \Gamma}{e}{\sigma}{\eT} \\
+    \subtype{\Phi; \Gamma}{\sigma}{\tau}
+  }{
+    \typeto{\Phi; \Gamma}{e}{\tau}{\eT}
+  }
+  \and
+  \inferrule[\nameref{sapp<}]{
+    \subsizeto{\Phi}{\hat{s}}{r}{\eT'} \\
+    \typeto{\Phi; \Gamma}{e}{\Funtype<{\alpha}{r}{\tau}}{\eT}
+  }{
+    \typeto{\Phi; \Gamma}{\App{e}{s}}{\subst{\tau}{\alpha}{s}}{\app{\eT}{\compile{s}}{\eT'}}
+  }
+  \and
+  \inferrule[\nameref{let}]{
+    \typeto{\Phi; \Gamma}{e_1}{\sigma}{\eT_1} \\
+    \typeto{\Phi; \Gamma, \annot{x}{\sigma}, \define{x}{e_1}}{e_2}{\tau}{\eT_2}
+  }{
+    \typeto{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\subst{\tau}{x}{e_1}}{\letinT{\xT}{\sigmaT}{\eT_1}{\eT_2}}
+  }
+  \end{mathpar}
+  \caption{Translation of terms (base \lang) and term environments}
+  \label{#1}
+  \end{figure}
+}
+
+\newcommand{\FigTransInd}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{align*}
+  \Aboxed{\compile{e} &= \eT} \quad \cdots \\
+  \compile{\N{s}} &= \app{\NatT}{\compile{s}} \\
+  \compile{\W{s}{x}{\sigma}{\tau}} &= \app{\WT}{\compile{\sigma}}{\compile{\fun{x}{\sigma}{\tau}}}{\compile{s}}
+  \end{align*}
+  \begin{mathpar}
+  \setlength{\jot}{-1.5pt}
+  \fbox{$\typeto{\Phi; \Gamma}{e}{\tau}{\eT}$} \quad \cdots \hfill \\
+  \inferrule[\nameref{zero}]{
+    \wf{\Phi}{\Gamma} \\
+    \subsizeto{\Phi}{\hat{r}}{s}{}
+  }{
+    \typeto{\Phi; \Gamma}{\zero{s}{r}}{\N{s}}{}
+  }
+  \and
+  \inferrule[\nameref{succ}]{
+    \subsizeto{\Phi}{\hat{r}}{s}{} \\
+    \typeto{\Phi; \Gamma}{e}{\N{r}}{}
+  }{
+    \typeto{\Phi; \Gamma}{\succ{s}{r}{e}}{\N{s}}{}
+  }
+  \and
+  \inferrule[\nameref{sup}]{
+    \subsizeto{\Phi}{\hat{r}}{s}{} \\
+    \typeto{\Phi; \Gamma}{e_1}{\sigma}{} \\\\
+    \typeto{\Phi; \Gamma}{e_2}{\arr*{\subst{\tau}{x}{e_1}}{\W{x}{\sigma}{\tau}{r}}}{}
+  }{
+    \typeto{\Phi; \Gamma}{\sup{x}{\sigma}{\tau}{s}{r}{e_1}{e_2}}{\W{x}{\sigma}{\tau}{s}}{}
+  }
+  \and
+  \inferrule[\nameref{case-nat}]{
+    \typeto{\Phi; \Gamma}{e}{\N{s}}{} \\
+    z \notin \FV{P} \\
+    \typeto{\Phi; \Gamma, \annot{x}{\N{s}}}{P}{U}{} \\\\
+    \typeto{\Phi, \bound{\alpha}{s}; \Gamma}{e_z}{\subst{P}{x}{\zero{s}{\alpha}}}{} \\
+    \typeto{\Phi, \bound{\beta}{s}; \Gamma, \annot{z}{\N{\beta}}}{e_s}{\subst{P}{x}{\succ{s}{\beta}{z}}}{}
+  }{
+    \typeto{\Phi; \Gamma}{
+      \begin{aligned}
+      &\match{e}{\fun*{x}{P}}{ \\
+      &\quad \App{\zero*}{\alpha} \Rightarrow e_z \\
+      &\quad \app{\App{\succ*}{\beta}}{z} \Rightarrow e_s}
+      \end{aligned}
+    }{\subst{P}{x}{e}}{}
+  }
+  \and
+  \inferrule[\nameref{case-wft}]{
+    \typeto{\Phi; \Gamma}{e}{\W{y}{\sigma}{\tau}{s}}{} \\
+    z_1, z_2 \notin \FV{P} \\
+    \typeto{\Phi; \Gamma, \annot{x}{\W{y}{\sigma}{\tau}{s}}}{P}{U}{} \\
+    \typeto{\Phi, \bound{\alpha}{s}; \Gamma, \annot{z_1}{\sigma}, \annot{z_2}{\arr*{\subst{\tau}{y}{z_1}}{\W{y}{\tau}{\sigma}{\alpha}}}}{e_s}{\subst{P}{x}{\sup{y}{\sigma}{\tau}{s}{\alpha}{z_1}{z_2}}}{}
+  }{
+    \typeto{\Phi; \Gamma}{
+      \begin{aligned}
+      &\match{e}{\fun*{x}{P}}{ \\
+      &\quad \app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s}
+      \end{aligned}
+    }{\subst{P}{x}{e}}{}
+  }
+  \and
+  \inferrule[\nameref{fix}]{
+    \typeto{\Phi, \alpha; \Gamma}{\sigma}{U}{} \\
+    \fresh{\beta} \\
+    \typeto{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\sigma}{\alpha}{\beta}}}}{e}{\sigma}{}
+  }{
+    \typeto{\Phi; \Gamma}{\fix{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}{}
+  }
+  \end{mathpar}
+  \caption[Translation of naturals, well-founded trees, $\kw{case}$, fixpoints]{Translation of naturals, well-founded trees, \\
+    and $\kw{case}$ and fixpoint expressions}
+  \label{#1}
+  \end{figure}
+}

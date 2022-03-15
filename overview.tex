@@ -100,13 +100,14 @@ the \emph{Peano naturals}\index{naturals} and \emph{well-founded trees}\index{we
 As the simplest nontrivial inductive,
 the naturals make it easy to demonstrate intuitive uses of sized inductives.
 On the other hand, well-founded trees are an example of \emph{generalized} inductives,
-with recursive arguments that are functions that return well-founded trees,
-and can in fact encode all (nonmutual, nonnested) inductives---%
-although not so much their proper induction principles~\citep{W-types}.
+with recursive arguments that are functions that return well-founded trees.
+They can encode all (nonnested) inductives,
+as well as their induction principles \citep{whynotW} if there are dependent pair types
+and a \emph{propositional equality}\index{propositional equality} type.
 I don't add inductive types in general in their place
 because the syntactic baggage that comes with handling the generalization
 obscures the intuition behind sized inductive types and the syntactic model,
-while it's easy to see how one \emph{could} go from the naturals and from well-founded trees
+while it's easy to see how one \emph{could} go from the naturals and well-founded trees
 to inductive types in general.
 
 \iffalse

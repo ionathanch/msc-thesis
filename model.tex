@@ -2,6 +2,7 @@
 
 \input{figures/cic.tex}
 \input{figures/definitions.tex}
+\input{figures/translation.tex}
 
 The type theory in which \lang is modelled is \CICE,
 as briefly described in \cref{ch:overview}.
@@ -51,7 +52,7 @@ but the type preservation theorem only applies to well-typed terms anyway.
 The syntax of \CICE is given in \cref{fig:syntax-cic};
 differences from \lang include a 1-based index for the recursive argument of fixpoint expressions,
 $\tg{case}$ expression motives abstracted over the target's inductive type indices,
-and a \emph{propositional equality}\index{propositional equality} type with the reflexivity constructor and $\JT*$ eliminator.
+and a homogeneous propositional equality\index{propositional equality} type with the reflexivity constructor and $\JT*$ eliminator.
 New inductive types are defined using data definitions $\DT$,
 whose syntax resembles the informal presentation used in \cref{ch:sized-dep-types}.
 Metavariable usage convention is roughly the same as for \lang,
@@ -297,3 +298,69 @@ and of the accessibility predicate:
   \item $\wfind$ and $\wfacc$: The well-founded induction principle on sizes with respect to the order,
     proven by structural induction on the accessibility of sizes.
 \end{itemize}
+
+The only time equality reflection is needed is to prove $\accIsProp$ (via $\funext$),
+which in turn is the only other equality that is reflected for proving type preservation.
+Since $\AccT$ is in already $\PropT$, the target language could be replaced by an intensional CIC
+with a universe of \emph{strict propositions}\index{strict proposition} $\SPropT$
+of types whose elements are definitionally equal~\citep{SProp},
+then placing $\AccT$ in $\SPropT$.
+This is disallowed by \opcit because it breaks normalization,
+but likely not consistency,
+which as a target language of a syntactic model for proving consistency
+is the relevant metatheoretical property.
+In any case, I use \CICE because it's more established, more well-known,
+and definitely consistent.
+
+Finally, the naturals and the well-founded trees in \CICE are parametrized by a $\SizeT$.
+Their definitions respect the translation in the upcoming section,
+so that the types of $\NatT$ and $\WT$ and their constructors are preserved.
+
+\section{Translation}
+
+The key type preservation theorem states that well-typed terms of \lang translate to
+corresponding well-typed terms of CICE.
+However, terms are not the only thing requiring translation:
+well-typedness holds under some environment, so term environments need translations;
+sizes and their environments translate to terms and term environments as well;
+and derivations of size orders translate to terms which represent them.
+
+\FigTransSize{fig:trans:size}
+I begin with the translation of sizes and their environments in \cref{fig:trans:size},
+which are straightforward recursive metafunctions over their syntax.
+I use an asterisk superscript \new{$\mt^\ast$} on a variable $\alphaT$ to represent
+a fresh variable uniquely associated with $\alphaT$.
+Given some bound size variable $\alphaT$,
+$\alphaT^\ast$ represents the proof that the translated size is strictly smaller
+than its size bound.
+
+\FigTransSubsize{fig:trans:subsize}
+The translation of subsizing judgements, on the other hand,
+is a recursive metafunction over the \emph{subsizing derivation}.
+\cref{fig:trans:subsize} defines the translation to \CICE terms
+by induction on the subsizing rules, which recursively translates subderivations
+(omitting size well-scopedness premises).
+
+The translation of terms and term environments are similarly defined
+as recursive metafunctions over the typing and well-formedness derivations,
+denoted by
+\mbox{$\typeto{\Phi, \Gamma}{e}{\tau}{\eT}$} and \mbox{$\wfto{\Phi}{\Gamma}{\GammaT}$}
+respectively.
+However, for concision, I use $\compile{e}$ to mean the translation of $e$
+when well-typed under the current implicit environments,
+$\compile{e}_{\Phi}$ or $\compile{e}_{\Gamma}$ to mean the translation of $e$
+with the current implicit environments extended with $\Phi$ or $\Gamma$,
+and $\compile{\Gamma}$ to mean the translation of $\Gamma$
+when well-formed under the current implicit size environment.
+
+\clearpage % TODO: clearpage
+\FigTransTerm{fig:trans:term}
+The translation for base \lang without inductives is given in \cref{fig:trans:term}
+in the more concise notation when the intent is clear and in the usual notation otherwise.
+Terms not involving sizes are translated in a straightforward recursive manner.
+Unbounded size quantifications and abstractions translate to quantifications and abstractions over $\SizeT$,
+while bounded ones have additional quantifications and abstractions over a proof of $\szltT$.
+Size applications translate to an additional application to a proof of $\szltT$
+when the size abstraction applied is bounded.
+
+\FigTransInd{fig:trans:ind}
