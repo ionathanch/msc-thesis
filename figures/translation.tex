@@ -130,32 +130,33 @@
   \fbox{$\typeto{\Phi; \Gamma}{e}{\tau}{\eT}$} \quad \cdots \hfill \\
   \inferrule[\nameref{zero}]{
     \wf{\Phi}{\Gamma} \\
-    \subsizeto{\Phi}{\hat{r}}{s}{}
+    \subsizeto{\Phi}{\hat{r}}{s}{\eT'}
   }{
-    \typeto{\Phi; \Gamma}{\zero{s}{r}}{\N{s}}{}
+    \typeto{\Phi; \Gamma}{\zero{s}{r}}{\N{s}}{\app{\zeroT}{\compile{s}}{\compile{r}}{\eT'}}
   }
   \and
   \inferrule[\nameref{succ}]{
-    \subsizeto{\Phi}{\hat{r}}{s}{} \\
-    \typeto{\Phi; \Gamma}{e}{\N{r}}{}
+    \subsizeto{\Phi}{\hat{r}}{s}{\eT'} \\
+    \typeto{\Phi; \Gamma}{e}{\N{r}}{\eT}
   }{
-    \typeto{\Phi; \Gamma}{\succ{s}{r}{e}}{\N{s}}{}
+    \typeto{\Phi; \Gamma}{\succ{s}{r}{e}}{\N{s}}{\app{\succT}{\compile{s}}{\compile{r}}{\eT'}{\eT}}
   }
   \and
   \inferrule[\nameref{sup}]{
-    \subsizeto{\Phi}{\hat{r}}{s}{} \\
-    \typeto{\Phi; \Gamma}{e_1}{\sigma}{} \\\\
-    \typeto{\Phi; \Gamma}{e_2}{\arr*{\subst{\tau}{x}{e_1}}{\W{x}{\sigma}{\tau}{r}}}{}
+    \subsizeto{\Phi}{\hat{r}}{s}{\eT'} \\
+    \typeto{\Phi; \Gamma}{\sigma}{U}{\sigmaT} \\
+    \typeto{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{U}{\tauT} \\\\
+    \typeto{\Phi; \Gamma}{e_1}{\sigma}{\eT_1} \\
+    \typeto{\Phi; \Gamma}{e_2}{\arr*{\subst{\tau}{x}{e_1}}{\W{x}{\sigma}{\tau}{r}}}{\eT_2}
   }{
-    \typeto{\Phi; \Gamma}{\sup{x}{\sigma}{\tau}{s}{r}{e_1}{e_2}}{\W{x}{\sigma}{\tau}{s}}{}
+    \typeto{\Phi; \Gamma}{\sup{x}{\sigma}{\tau}{s}{r}{e_1}{e_2}}{\W{x}{\sigma}{\tau}{s}}{\app{\supT}{\sigmaT}{(\funT{\xT}{\sigmaT}{\tauT})}{\compile{s}}{\compile{r}}{\eT'}{\eT_1}{\eT_2}}
   }
   \and
   \inferrule[\nameref{case-nat}]{
-    \typeto{\Phi; \Gamma}{e}{\N{s}}{} \\
-    z \notin \FV{P} \\
-    \typeto{\Phi; \Gamma, \annot{x}{\N{s}}}{P}{U}{} \\\\
-    \typeto{\Phi, \bound{\alpha}{s}; \Gamma}{e_z}{\subst{P}{x}{\zero{s}{\alpha}}}{} \\
-    \typeto{\Phi, \bound{\beta}{s}; \Gamma, \annot{z}{\N{\beta}}}{e_s}{\subst{P}{x}{\succ{s}{\beta}{z}}}{}
+    \typeto{\Phi; \Gamma}{e}{\N{s}}{\eT} \\
+    \typeto{\Phi; \Gamma, \annot{x}{\N{s}}}{P}{U}{\PT} \\\\
+    \typeto{\Phi, \bound{\alpha}{s}; \Gamma}{e_z}{\subst{P}{x}{\zero{s}{\alpha}}}{\eT_z} \\
+    \typeto{\Phi, \bound{\beta}{s}; \Gamma, \annot{z}{\N{\beta}}}{e_s}{\subst{P}{x}{\succ{s}{\beta}{z}}}{\eT_s}
   }{
     \typeto{\Phi; \Gamma}{
       \begin{aligned}
@@ -163,29 +164,43 @@
       &\quad \App{\zero*}{\alpha} \Rightarrow e_z \\
       &\quad \app{\App{\succ*}{\beta}}{z} \Rightarrow e_s}
       \end{aligned}
-    }{\subst{P}{x}{e}}{}
+    }{\subst{P}{x}{e}}{
+      \begin{aligned}
+      &\matchT{\eT}{\funT*{\mt}{\xT}{\PT}}{\\
+      &\quad \app{\zeroT}{\alphaT}{\alphaT^*} \RightarrowT \eT_z \\
+      &\quad \app{\succT}{\betaT}{\betaT^*}{\zT} \RightarrowT \eT_s}
+      \end{aligned}
+    }
   }
   \and
   \inferrule[\nameref{case-wft}]{
-    \typeto{\Phi; \Gamma}{e}{\W{y}{\sigma}{\tau}{s}}{} \\
-    z_1, z_2 \notin \FV{P} \\
-    \typeto{\Phi; \Gamma, \annot{x}{\W{y}{\sigma}{\tau}{s}}}{P}{U}{} \\
-    \typeto{\Phi, \bound{\alpha}{s}; \Gamma, \annot{z_1}{\sigma}, \annot{z_2}{\arr*{\subst{\tau}{y}{z_1}}{\W{y}{\tau}{\sigma}{\alpha}}}}{e_s}{\subst{P}{x}{\sup{y}{\sigma}{\tau}{s}{\alpha}{z_1}{z_2}}}{}
+    \typeto{\Phi; \Gamma}{e}{\W{y}{\sigma}{\tau}{s}}{\eT} \\
+    \typeto{\Phi; \Gamma, \annot{x}{\W{y}{\sigma}{\tau}{s}}}{P}{U}{\PT} \\
+    \typeto{\Phi, \bound{\alpha}{s}; \Gamma, \annot{z_1}{\sigma}, \annot{z_2}{\arr*{\subst{\tau}{y}{z_1}}{\W{y}{\tau}{\sigma}{\alpha}}}}{e_s}{\subst{P}{x}{\sup{y}{\sigma}{\tau}{s}{\alpha}{z_1}{z_2}}}{\eT_s}
   }{
     \typeto{\Phi; \Gamma}{
       \begin{aligned}
       &\match{e}{\fun*{x}{P}}{ \\
       &\quad \app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s}
       \end{aligned}
-    }{\subst{P}{x}{e}}{}
+    }{\subst{P}{x}{e}}{
+      \begin{aligned}
+      &\matchT{\eT}{\funT*{\mt}{\xT}{\PT}}{ \\
+      &\quad \app{\supT}{\alphaT}{\alphaT^*}{\zT_1}{\zT_2} \RightarrowT \eT_s}
+      \end{aligned}
+    }
   }
   \and
   \inferrule[\nameref{fix}]{
-    \typeto{\Phi, \alpha; \Gamma}{\sigma}{U}{} \\
-    \fresh{\beta} \\
-    \typeto{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\sigma}{\alpha}{\beta}}}}{e}{\sigma}{}
+    \typeto{\Phi, \alpha; \Gamma}{\sigma}{U}{\sigmaT} \\
+    \typeto{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\sigma}{\alpha}{\beta}}}}{e}{\sigma}{\eT}
   }{
-    \typeto{\Phi; \Gamma}{\fix{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}{}
+    \typeto{\Phi; \Gamma}{\fix{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}{
+      \begin{aligned}
+      &\app{\wfind}{(\funT{\alphaT}{\SizeT}{\sigmaT})}{ \\
+      &\quad (\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\sigmaT}{\alphaT}{\betaT}}}}{\eT}})}
+      \end{aligned}
+    }
   }
   \end{mathpar}
   \caption[Translation of naturals, well-founded trees, $\kw{case}$, fixpoints]{Translation of naturals, well-founded trees, \\

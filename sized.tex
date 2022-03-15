@@ -330,7 +330,7 @@ where the sizes of the input and output are the same.
 This guarantees that the output is never larger than the input,
 and size-preserving functions can be used in recursive calls of fixpoints.
 For instance, the predecessor function $\pred$ which computes
-$\MaX{0, n - 1}$ for some number $n$ is size preserving.
+$\maximum{0, n - 1}$ for some number $n$ is size preserving.
 %
 \begin{align*}
 &\Let{\pred}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}}}{ \\
@@ -339,7 +339,7 @@ $\MaX{0, n - 1}$ for some number $n$ is size preserving.
 &\quad \app{\App{\succ*}{\beta}}{m} \Rightarrow \app{\App{\liftN}{\alpha}{\beta}}{m}}}}}
 \end{align*}
 
-The $\monus$ function, which computes $\MaX{0, n - m}$ given numbers $n, m$,
+The $\monus$ function, which computes $\maximum{0, n - m}$ given numbers $n, m$,
 is similarly size preserving in its first argument,
 since $n - m$ is never greater than $n$.
 
