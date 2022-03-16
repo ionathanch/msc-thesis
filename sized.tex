@@ -100,7 +100,7 @@ Notably, \lang does \emph{not} have a notion of $\eta$-conversion
 in either the reduction rules or in the subtyping rules,
 which would otherwise allow conversion between $\fun{x}{\tau}{\app{f}{x}}$ and $f$.
 Mixing $\eta$-conversion and untyped converion is notoriously difficult~\citep{eta},
-and remains an unresolved problem in MetaCoq, so I exclude it here.
+and remains to date an unresolved problem in MetaCoq, so I exclude it here.
 
 \clearpage % TODO: clearpage
 \FigSubsize{fig:subsizing}
@@ -189,8 +189,9 @@ sized naturals and well-founded trees can be thought of as being defined by the 
 \clearpage % TODO: clearpage
 The types of naturals and well-founded trees can then be considered to be (nonuniformly) parametrized by a size,
 and constructing an element of that type requires providing a strictly smaller size,
-which is the size of the constructor's recursive arguments.
-\marginnote{The ``size of'' some construction is more precisely the size by which its \emph{inductive type} is parametrized.}
+which is the size%
+\footnote{The ``size of'' some construction is more precisely the size by which its \emph{inductive type} is parametrized.}
+of the constructor's recursive arguments.
 Constructors therefore always construct elements whose sizes are larger than their arguments'.
 In \lang, the constructors are annotated with their types
 since the parameter-like sizes cannot otherwise be synthesized.
@@ -629,7 +630,7 @@ Conversely, the naturals embed quite naturally within the ordinals.
 In an unsized type theory, supposing that $\const{natOrd'}$ is an unsized version of $\natOrd$,
 the first limit ordinal $\const{\omega'}$ is easily defined as
 $\Let{\const{\omega'}}{\const{Ord}}{\app{\lord*}{\const{natOrd'}}}$.
-However, in \lang, things are not so easy; the na\"ive attempt yields:
+However, in \lang, things are not so easy; the na\"ive attempt yields the following:
 %
 \begin{align*}
 &\Let{\liftO}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\Ord{\beta}}{\Ord{\alpha}}}}}{\seq} \\
