@@ -67,7 +67,7 @@ It has the following features:
   \item A \textbf{cumulative hierarchy of universes}\index{cumulativity} such that $\Type{i}: \Type{i+1}$,
     any term in $\Type{i}$ is also in $\Type{j}$ given \emph{universe levels}\index{universe level} $i \leq j$,
     and there is a subtyping relation\index{subtyping} on types induced by this inclusion; and
-  \item \textbf{Untyped conversion}\index{conversion} stating when two terms are judgementally equal to one another.
+  \item \textbf{Untyped definitional equality} stating when two terms are judgementally equal to one another.
 \end{itemize}
 
 These features cover many modern proof assistants.
@@ -80,17 +80,17 @@ On the other hand, these proof assistants all have some form of
 but this is much more complex and largely orthogonal to sized types
 and the syntactic model.
 
-Perhaps the most contentious design decision so far is the use of untyped conversion,
-as can be found in Coq, over typed conversion or \emph{equivalence}\index{equivalence}%
-\marginnote{\emph{Conversion} refers to untyped judgemental equality
-while \emph{equivalence} refers to typed judgemental equality hereafter.},
-as can be found in Agda.
-Certain proponents%
-\footnote{This would be a fun place to link to someone's tweets.}
-will argue that equivalence is ``more correct'',
-since it never deals with ill-typed terms,
-but this means that the equivalence judgement depends on the typing judgement.
-Meanwhile, since types can depend on terms,
+Perhaps the most contentious design decision so far is the use of untyped equality
+or \emph{conversion}\index{conversion}, as can be found in Coq,
+over typed equality or \emph{equivalence}\index{equivalence},
+as can be found in Agda.%
+\footnote{The terminology in the literature varies
+(the conversion \citet{MetaCoq} refers to is untyped, while the one \citet{conversion} refer to is typed;
+the equivalence \citet{wjb} refer to is untyped, while the one \citet{equivalence} refers to is typed).
+Nevertheless, I use \emph{conversion} for untyped and \emph{equivalence} for typed equality.}
+While equivalence is considered to ``have clearer mathematical semantics''~\citep{typed-NbE},
+the equivalence judgement depends on the typing judgement;
+meanwhile, since types can depend on terms,
 typing itself depends on equivalence to check whether one type can be used in place of another.
 As we'll see in \cref{sec:syntactic-model}, these mutually-defined judgements would greatly complicate the proofs,
 so I settle for conversion instead.
