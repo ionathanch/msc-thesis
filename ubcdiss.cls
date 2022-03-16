@@ -64,8 +64,8 @@
 \setlength{\cftfigindent}{0em}
 \renewcommand{\cfttabpresnum}{Table }
 \renewcommand{\cftfigpresnum}{Figure }
-\addtolength{\cfttabnumwidth}{\widthof{\cfttabfont\cfttabpresnum}}
-\addtolength{\cftfignumwidth}{\widthof{\cfttabfont\cfttabpresnum}}
+\addtolength{\cfttabnumwidth}{\widthof{\cfttabfont\cfttabpresnum~}}
+\addtolength{\cftfignumwidth}{\widthof{\cfttabfont\cfttabpresnum~}}
 
 % From <http://dcwww.camd.dtu.dk/~schiotz/comp/LatexTips/LatexTips.html#figplacement>
 % LaTeX per default only allows a part of the top of a text-page

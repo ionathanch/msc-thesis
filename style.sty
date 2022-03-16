@@ -8,6 +8,9 @@
 \RequirePackage{stmaryrd}
 \RequirePackage{mathpartir}
 
+% font for code listings
+\newfontfamily{\codefont}{iosevka.ttf}
+
 % save default lengths
 \newlength{\fboxsepdefault}
 \setlength{\fboxsepdefault}{\fboxsep}
@@ -113,16 +116,16 @@
 \DeclarePairedDelimiter{\ang}{\langle}{\rangle}
 
 % metafunctions
-\newcommand{\mt}{\,\meta{\cdot}\,}
-\newcommand{\seq}{\,\meta{\ldots}\,}
+\newcommand{\mt}{\,\meta{\mathbf{\cdot}}\,}
+\newcommand{\seq}{\,\meta{\textbf{\ldots}}\,}
 \newcommand{\any}{\meta{\texttt{\_}}}
-\newcommand{\hole}{\meta{?}}
+\newcommand{\hole}{\meta{\mathbf{?}}}
 \renewcommand{\vec}[1]{\meta{\overline{\textcolor{black}{#1}}}}
-\newcommand{\subst}[3]{#1\mathopen{\meta{[}}#2 \mathrel{\meta{\mapsto}} #3\mathclose{\meta{]}}}
-\newcommand{\card}[1]{\mathopen{\meta{\lvert}} #1 \mathclose{\meta{\rvert}}}
-\newcommand{\compile}[1]{\mathopen{\meta{\llbracket}} #1 \mathclose{\meta{\rrbracket}}}
-\newcommand{\metafun}[2]{\meta{\texttt{#1(}}#2\meta{\texttt{)}}}
-\newcmd*{\metafun}[1]{\meta{\texttt{#1}}}
+\newcommand{\subst}[3]{#1\mathopen{\meta{\mathbf{[}}}#2 \mathrel{\meta{\mathbf{\mapsto}}} #3\mathclose{\meta{\mathbf{]}}}}
+\newcommand{\card}[1]{\mathopen{\meta{\mathbf{\lvert}}} #1 \mathclose{\meta{\mathbf{\rvert}}}}
+\newcommand{\compile}[1]{\mathopen{\meta{\mathbf{\llbracket}}} #1 \mathclose{\meta{\mathbf{\rrbracket}}}}
+\newcommand{\metafun}[2]{\meta{\textbf{#1(}}#2\meta{\textbf{)}}}
+\newcmd*{\metafun}[1]{\meta{\textbf{#1}}}
 \newcommand{\maximum}[1]{\metafun{max}{#1}}
 \newcommand{\minimum}[1]{\metafun{min}{#1}}
 \newcommand{\rules}[2]{\metafun{rule}{#1, #2}}
