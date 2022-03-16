@@ -2,13 +2,13 @@
   \begin{figure}[h]
   \centering
   \begin{align*}
-  \iT, \jT, \kT, \mT, \nT &\Coloneqq \meta{\textsf{naturals}} &
+  \iT, \jT, \kT, \mT, \nT &\Coloneqq \meta{\textrm{naturals}} &
   \GammaT &\Coloneqq \mt \mid \GammaT, \annotT{\xT}{\tauT} \mid \GammaT, \define{\xT}{\eT} \\
-  \fT, \gT, \wT, \xT, \yT, \zT, \alphaT, \betaT, \gammaT &\Coloneqq \meta{\textsf{term variables}} &
+  \fT, \gT, \wT, \xT, \yT, \zT, \alphaT, \betaT, \gammaT &\Coloneqq \meta{\textrm{term variables}} &
   \DeltaT &\Coloneqq \mt \mid \DeltaT, \annotT{\xT}{\tauT} \mid \DeltaT, \annotT{\cT}{\tauT} \\
-  \XT &\Coloneqq \meta{\textsf{inductive type names}} &
+  \XT &\Coloneqq \meta{\textrm{inductive type names}} &
   \UT &\Coloneqq \PropT \mid \TypeT{\iT} \\
-  \cT &\Coloneqq \meta{\textsf{inductive constructor names}} &
+  \cT &\Coloneqq \meta{\textrm{inductive constructor names}} &
   \DT &\Coloneqq \app{\dataT{\app{\XT}{\DeltaT}}{\arrT*{\DeltaT}{\UT}}}{\DeltaT} \\
   \eT, \aT, \dT, \pT, \PT, \tauT, \sigmaT &\Coloneqq
     \mathrlap{\xT \mid \UT \mid \funtypeT{\xT}{\tauT}{\tauT} \mid \funT{\xT}{\tauT}{\eT} \mid \app{\eT}{\eT} \mid \letinT{\xT}{\tauT}{\eT}{\eT} \mid \fixT{\iT}{\fT}{\tauT}{\eT}} \\
