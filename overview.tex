@@ -229,7 +229,7 @@ There exists no term $\eT$ such that
 $\type{\mt}{\eT}{\funtypeT{\PT}{\PropT}{\PT}}$.
 \end{fact}
 
-\begin{theorem}[Consistency of \lang]
+\begin{theorem}[Consistency of \lang]\label{thm:consistency}
 Suppose $\compile{\bot} = \funtypeT{\PT}{\PropT}{\PT}$.
 Then there exists no term $e$ such that \mbox{$\type{\mt \mathbin{;} \mt}{e}{\bot}$}.
 \end{theorem}
@@ -309,7 +309,7 @@ which roughly follows the structure of type-preserving compilation by~\citet{wjb
 By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
 \end{proof}
 
-\begin{lemma}[Preservation of Reduction]\label{lem:pres-red}
+\begin{lemma}[Preservation of reduction]\label{lem:pres-red}
 If $\red{\Phi; \Gamma}{e}{e'}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$
 then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$.
@@ -322,7 +322,7 @@ using \cref{lem:compositionality}
 and an application of equality reflection in the case for reduction of fixpoints.
 \end{proof}
 
-\begin{lemma}[Preservation of $\alpha$-Cumulativity]\label{lem:pres-cumul}
+\begin{lemma}[Preservation of $\alpha$-cumulativity]\label{lem:pres-cumul}
 If $\acum{\tau_1}{\tau_2}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\UT_i}$
 then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
@@ -337,7 +337,7 @@ $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\UT_i}$.
 The final three lemmas and theorem are proven mutually;
 I state them separately for clarity.
 
-\begin{lemma}[Preservation of Reflexive, Transitive, Congruent Closure of Reduction]\label{lem:pres-red*}
+\begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction]\label{lem:pres-red*}
 If $\red*{\Phi; \Gamma}{e}{e'}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$
 then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$.
@@ -349,7 +349,7 @@ and of $\type{\Phi; \Gamma}{e}{\tau}$,
 using \cref{lem:pres-red}, \cref{lem:pres-subtyping}, and \cref{lem:pres-typing}.
 \end{proof}
 
-\begin{lemma}[Preservation of Subtyping]\label{lem:pres-subtyping}
+\begin{lemma}[Preservation of subtyping]\label{lem:pres-subtyping}
 If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$
 then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\tau_2}$.
 \end{lemma}
@@ -359,7 +359,7 @@ By cases on the derivation of $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$,
 using \cref{lem:pres-cumul}, \cref{lem:pres-red*}, and subject reduction of \lang.
 \end{proof}
 
-\begin{theorem}[Type Preservation]\label{lem:pres-typing}\hfill
+\begin{theorem}[Type preservation]\label{lem:pres-typing}\hfill
 \begin{enumerate}[noitemsep]
   \item If $\wf{\Phi}{\Gamma}$ then $\wf{}{\compile{\Phi}\compile{\Gamma}}$.
   \item If $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
