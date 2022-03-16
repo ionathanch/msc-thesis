@@ -5,21 +5,21 @@
   \centering
   \begin{align*}
   &\dataT{\botT}{\PropT} \\[\xspacing]
-  &\dataT{\SizeT}{\TypeT{i+1}} \\
+  &\dataT{\SizeT}{\TypeT{\tg{i+1}}} \\
   &\quad \annotT{\sucT}{\arrT*{\SizeT}{\SizeT}} \\
-  &\quad \annotT{\limT}{\funtypeT{A}{\TypeT{i}}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}} \\
+  &\quad \annotT{\limT}{\funtypeT{A}{\TypeT{\iT}}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}} \\
   &\LetT{\baseT}{\SizeT}{\app{\limT}{\botT}{(\funT{\mathit{false}}{\botT}{\matchT{\mathit{false}}{\funT*{\mt}{\any}{\SizeT}}{\mt}})}} \\[\xspacing]
-  &\dataT{\any \szleT \any}{\arrT*{\SizeT}{\SizeT}{\TypeT{i+1}}} \\
+  &\dataT{\any \szleT \any}{\arrT*{\SizeT}{\SizeT}{\TypeT{\tg{i+1}}}} \\
   &\quad \annotT{\monoT}{\funtypeT{\alpha, \beta}{\SizeT}{\arrT*{\alpha \szleT \beta}{\app{\sucT}{\alpha} \szleT \app{\sucT}{\beta}}}} \\
-  &\quad \annotT{\coconeT}{\funtypeT{A}{\TypeT{i}}{\funtypeT{\beta}{\SizeT}{\funtypeT{f}{\arrT*{A}{\SizeT}}{\funtypeT{a}{A}{\arr*{\beta \szleT \app{f}{a}}{\beta \szleT \app{\limT}{A}{f}}}}}}} \\
-  &\quad \annotT{\limitT}{\funtypeT{A}{\TypeT{i}}{\funtypeT{\beta}{\SizeT}{\funtypeT{f}{\arrT*{A}{\SizeT}}{\arr*{(\funtypeT{a}{A}{\app{f}{a} \szleT \beta})}{\app{\limT}{A}{f} \szleT \beta}}}}} \\
-  &\LetT{\any \szltT \any}{\arrT*{\SizeT}{\SizeT}{\TypeT{i+1}}}{\funT{\alpha, \beta}{\SizeT}{\app{\sucT}{\alpha} \szltT \beta}} \\[\xspacing]
+  &\quad \annotT{\coconeT}{\funtypeT{A}{\TypeT{\iT}}{\funtypeT{\beta}{\SizeT}{\funtypeT{f}{\arrT*{A}{\SizeT}}{\funtypeT{a}{A}{\arr*{\beta \szleT \app{f}{a}}{\beta \szleT \app{\limT}{A}{f}}}}}}} \\
+  &\quad \annotT{\limitT}{\funtypeT{A}{\TypeT{\iT}}{\funtypeT{\beta}{\SizeT}{\funtypeT{f}{\arrT*{A}{\SizeT}}{\arr*{(\funtypeT{a}{A}{\app{f}{a} \szleT \beta})}{\app{\limT}{A}{f} \szleT \beta}}}}} \\
+  &\LetT{\any \szltT \any}{\arrT*{\SizeT}{\SizeT}{\TypeT{\tg{i+1}}}}{\funT{\alpha, \beta}{\SizeT}{\app{\sucT}{\alpha} \szltT \beta}} \\[\xspacing]
   &\dataT{\app{\AccT}{(\annot{\alpha}{\SizeT})}}{\PropT} \\
   &\quad \annot{\accT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szltT \alpha}{\app{\AccT}{\beta}}})}{\app{\AccT}{\alpha}}} \\[\xspacing]
-  &\dataT{\app{\NatT}{(\annot{\alpha}{\SizeT})}}{\TypeT{1}} \\
+  &\dataT{\app{\NatT}{(\annot{\alpha}{\SizeT})}}{\TypeT{\tg{1}}} \\
   &\quad \annot{\zeroT}{\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szltT \alpha}{\app{\NatT}{\alpha}}}} \\
   &\quad \annot{\succT}{\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szltT \alpha}{\app{\NatT}{\beta}}{\app{\NatT}{\alpha}}}} \\[\xspacing]
-  &\dataT{\app{\WT}{(\annot{A}{\TypeT{i}})}{(\annot{B}{\arrT*{A}{\TypeT{i}}})}{(\annot{\alpha}{\SizeT})}}{\TypeT{i+1}} \\
+  &\dataT{\app{\WT}{(\annot{A}{\TypeT{\iT}})}{(\annot{B}{\arrT*{A}{\TypeT{\iT}}})}{(\annot{\alpha}{\SizeT})}}{\TypeT{\tg{i+1}}} \\
   &\quad \annot{\supT}{\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szltT \alpha}{\funtypeT{a}{A}{\arrT*{(\arrT*{\app{B}{a}}{\app{\WT}{A}{B}{\beta}})}{\app{\WT}{A}{B}{\alpha}}}}}}
   \end{align*}
   \caption{Inductive data definitions}
@@ -31,7 +31,7 @@
   \begin{figure}[h]
   \centering
   \begin{align*}
-  &\LetT{\funext}{\funtypeT{A}{\TypeT{i}}{\funtypeT{B}{\arrT*{A}{\TypeT{i}}}{\funtypeT{f, g}{(\funtypeT{x}{A}{\app{B}{x}})}{ \\
+  &\LetT{\funext}{\funtypeT{A}{\TypeT{\iT}}{\funtypeT{B}{\arrT*{A}{\TypeT{\iT}}}{\funtypeT{f, g}{(\funtypeT{x}{A}{\app{B}{x}})}{ \\
     &\phantom{\app{\tg{let}}{\funext} \mathrel{:} \phantom{}} \arrT*{(\funtypeT{x}{A}{\eqT{\app{f}{x}}{}{\app{g}{x}}})}{\eqT{f}{}{g}}}}}}{\seq} \\
   &\LetT{\baseleq}{\funtypeT{\alpha}{\SizeT}{\baseT \szleT \alpha}}{\seq} \\
   &\LetT{\reflleq}{\funtypeT{\alpha}{\SizeT}{\alpha \szleT \alpha}}{\seq} \\
@@ -40,9 +40,9 @@
   &\LetT{\accIsProp}{\funtypeT{\alpha}{\SizeT}{\funtypeT{\mathit{acc}_1, \mathit{acc}_2}{\app{\AccT}{\alpha}}{\eqT{\mathit{acc}_1}{}{\mathit{acc}_2}}}}{\seq} \\
   &\LetT{\accleq}{\funtypeT{\alpha, \beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{\AccT}{\alpha}}{\app{\AccT}{\beta}}}}{\seq} \\
   &\LetT{\accessible}{\funtypeT{\alpha}{\SizeT}{\app{\AccT}{\alpha}}}{\seq} \\
-  &\LetT{\wfacc}{\funtypeT{P}{(\arrT*{\SizeT}{\TypeT{i}})}{\arrT*{(\funtypeT{\alpha}{\SizeT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{P}{\beta}}})}{\app{P}{\alpha}}})}{ \\
+  &\LetT{\wfacc}{\funtypeT{P}{(\arrT*{\SizeT}{\TypeT{\iT}})}{\arrT*{(\funtypeT{\alpha}{\SizeT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{P}{\beta}}})}{\app{P}{\alpha}}})}{ \\
     &\phantom{\app{\tg{let}}{\wfacc} \mathrel{:} \phantom{}} \funtypeT{\alpha}{\SizeT}{\arrT*{\app{\AccT}{\alpha}}{\app{P}{\alpha}}}}}}{\seq} \\
-  &\LetT{\wfind}{\funtypeT{P}{(\arrT*{\SizeT}{\TypeT{i}})}{\arrT*{(\funtypeT{\alpha}{\SizeT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{P}{\beta}}})}{\app{P}{\alpha}}})}{ \\
+  &\LetT{\wfind}{\funtypeT{P}{(\arrT*{\SizeT}{\TypeT{\iT}})}{\arrT*{(\funtypeT{\alpha}{\SizeT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{P}{\beta}}})}{\app{P}{\alpha}}})}{ \\
     &\phantom{\app{\tg{let}}{\wfind} \mathrel{:} \phantom{}} \funtypeT{\alpha}{\SizeT}{\app{P}{\alpha}}}}}{\seq}
   \end{align*}
   \caption{Definitions in \CICE}

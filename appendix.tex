@@ -1,4 +1,6 @@
-\chapter{Mechanized \CICE Definitions}
+\chapter{Mechanized \CICE Definitions}\label{app:mechanization}
+
+\setmonofont{iosevka.ttf}
 
 \section{Coq}
 
@@ -20,21 +22,21 @@ Inductive Leq : Size → Size → Type :=
 | limiting : ∀ {s A f}, (∀ (a : A), f a ≤ s) → lim f ≤ s
 where "r ≤ s" := (Leq r s).
 
-Definition Lt (r s : Size) : Type := suc r ≤ s.
+Definition Lt r s : Type := suc r ≤ s.
 Notation "r < s" := (Lt r s).
 
 Definition base : Size := lim (False_rect Size).
 
-Definition baseLeq (s : Size) : base ≤ s :=
+Definition baseLeq s : base ≤ s :=
   limiting (λ a, (False_rect (_ ≤ s) a)).
 
-Fixpoint reflLeq (s : Size) : s ≤ s :=
+Fixpoint reflLeq s : s ≤ s :=
   match s with
   | suc s => mono (reflLeq s)
   | lim f => limiting (λ a, cocone a (reflLeq (f a)))
   end.
 
-Property transLeq {r s t : Size} (rs : r ≤ s) (st : s ≤ t) : r ≤ t.
+Property transLeq {r s t} (rs : r ≤ s) (st : s ≤ t) : r ≤ t.
 Admitted.
 
 (*
@@ -46,7 +48,7 @@ Equations transLeq {r s t : Size} (rs : r ≤ s) (st : s ≤ t) : r ≤ t :=
   transLeq (cocone a rfa) (limiting fat) := transLeq rfa (fat a).
 *)
 
-Fixpoint sucLeq (s : Size) : s ≤ suc s :=
+Fixpoint sucLeq s : s ≤ suc s :=
   match s with
   | suc s => mono (sucLeq s)
   | lim f => limiting (λ a, transLeq (sucLeq (f a)) (mono (cocone a (reflLeq (f a)))))
@@ -83,12 +85,11 @@ Proof.
     exact (p r rfa).
 Qed.
 
-Fixpoint wfAcc (P : Size → Type) (IH : ∀ s, (∀ r, r < s → P r) → P s) (s : Size) (acc : Acc s) : P s :=
+Fixpoint wfAcc P (IH : ∀ s, (∀ r, r < s → P r) → P s) s (acc : Acc s) : P s :=
   let p r rs := wfAcc P IH r (match acc return Acc r with | acc _ p => p r rs end)
   in IH s p.
 
-Definition wfInd (P : Size → Type) (IH : ∀ s, (∀ r, r < s → P r) → P s) (s : Size) : P s :=
-  wfAcc P IH s (wf s).
+Definition wfInd P IH s : P s := wfAcc P IH s (wf s).
 \end{minted}
 \end{singlespace}
 
@@ -99,7 +100,7 @@ Definition wfInd (P : Size → Type) (IH : ∀ s, (∀ r, r < s → P r) → P s
 {-# OPTIONS --without-K #-}
 
 open import Agda.Primitive using (Level; lsuc)
-open import Agda.Builtin.Equality
+open import Relation.Binary.PropositionalEquality.Core using (_≡_; cong)
 open import Data.Empty using (⊥; ⊥-elim)
 
 variable
@@ -146,17 +147,13 @@ record Acc (s : Size {ℓ}) : Set (lsuc ℓ) where
   inductive
   pattern
   constructor acc
-  field
-    acc< : (∀ r → r < s → Acc r)
+  field acc< : (∀ r → r < s → Acc r)
 open Acc
 
 accIsProp : ∀ {s : Size {ℓ}} → (acc1 acc2 : Acc s) → acc1 ≡ acc2
 accIsProp (acc p) (acc q) =
   cong acc (funext p q (λ r → funext (p r) (q r) (λ r<s → accIsProp (p r r<s) (q r r<s))))
-  where
-    cong : ∀ (f : A → C) {a b} → a ≡ b → f a ≡ f b
-    cong f refl = refl
-    postulate funext : ∀ (p q : ∀ x → B x) → (∀ x → p x ≡ q x) → p ≡ q
+  where postulate funext : ∀ (p q : ∀ x → B x) → (∀ x → p x ≡ q x) → p ≡ q
 
 acc≤ : ∀ {r s : Size {ℓ}} → r ≤ s → Acc s → Acc r
 acc≤ r≤s (acc p) = acc (λ t t<r → p t (s≤s≤s t<r r≤s))

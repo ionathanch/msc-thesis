@@ -9,7 +9,9 @@
 
 \documentclass[oneside,onehalfspacing,11pt]{ubcdiss}
 
-\usepackage[T1]{fontenc}
+% https://tex.stackexchange.com/a/637286/202877
+\usepackage[no-math]{fontspec} % needs to come before fontenc
+\usepackage[OT1]{fontenc}
 \usepackage{mlmodern}
 \usepackage[margin=1.25in, marginparwidth=7em]{geometry}
 \usepackage[numbers]{natbib}
@@ -110,10 +112,13 @@
 \include{dedication}
 
 \mainmatter
+\setcounter{chapter}{-1}
+\include{typography.tex}
 \include{introduction.tex}
 \include{overview.tex}
 \include{sized.tex}
 \include{model.tex}
+\include{proofs.tex}
 
 \bibliographystyle{plainnat}
 \begin{singlespace}
