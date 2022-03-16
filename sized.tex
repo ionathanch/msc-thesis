@@ -11,7 +11,7 @@ and vice versa, but can be read in parallel;
 the examples provide intuition for understanding the rules,
 while the rules ensure proper understanding of why the examples are correct.
 
-In the sections to follow, any new (meta)notation not introduced in a figure is \new{highlighted} in grey.
+In the sections to follow,
 I use ellipses \new{$\seq$} as metanotation for denoting a repeated sequence of some syntactic construct,
 overlines \new{$\vec{\phantom{I}}$} for sequences of variables or terms specifically (\eg $\vec{z}$, $\vec{p}$),
 and \new{$\mt$} for denoting an empty sequence (particularly in the context of environments).
@@ -190,8 +190,8 @@ sized naturals and well-founded trees can be thought of as being defined by the 
 The types of naturals and well-founded trees can then be considered to be (nonuniformly) parametrized by a size,
 and constructing an element of that type requires providing a strictly smaller size,
 which is the size of the constructor's recursive arguments.
-Constructors therefore always construct elements whose sizes are larger than their arguments'.
 \marginnote{The ``size of'' some construction is more precisely the size by which its \emph{inductive type} is parametrized.}
+Constructors therefore always construct elements whose sizes are larger than their arguments'.
 In \lang, the constructors are annotated with their types
 since the parameter-like sizes cannot otherwise be synthesized.
 Additionally, the types of well-founded trees have explicit binders for convenience:
