@@ -4,12 +4,180 @@ In this section, I elaborate on the proofs of the lemmas and theorems listed in 
 culminating in type preservation, which by \cref{thm:consistency} proves the consistency of \lang.
 Prior to these proofs, I provide the required metatheoretical properties of both \lang and \CICE.
 
+\section{Metatheory of \lang}
+
+\TODO
+
+\subsection{Basic Properties}
+
+We begin with three basic properties that all judgements satisfy:
+\emph{weakening}\index{weakening}, which allows environments to be extended;
+\emph{replacement}\index{replacement}, which allows replacing assumptions by subtypes
+and definitions by reductions in the environment;
+and \emph{substitutivity}\index{substitutivity}, which allows the subsitution of an assumption by a well-typed term.
+Because term environments have definitions in addition to assumptions,
+substitutivity can only apply to variables that aren't already defined in the environment.
+
+\begin{lemma}[Weakening] \label{lem:weakening}
+Let $\Phi$ be a size environment,
+let $\Gamma$ and $\Gamma'$ be term environments
+where $\Gamma'$ does not shadow any variables of $\Gamma$,
+and suppose $\wf{\Phi}{\Gamma, \Gamma'}$.
+\begin{enumerate}
+  \item \label{item:weakening:red} If $\red{\Phi; \Gamma}{e_1}{e_2}$ then $\red{\Phi; \Gamma, \Gamma'}{e_1}{e_2}$.
+  \item \label{item:weakening:red*} If $\red*{\Phi; \Gamma}{e_1}{e_2}$ then $\red*{\Phi; \Gamma, \Gamma'}{e_1}{e_2}$.
+  \item \label{item:weakening:subtype} If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$ then $\subtype{\Phi; \Gamma, \Gamma'}{\tau_1}{\tau_2}$.
+  \item If $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\Phi; \Gamma, \Gamma'}{e}{\tau}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof} \hfill
+\begin{enumerate}
+  \item Trivial by cases on the derivation of $\red{\Phi; \Gamma}{e_1}{e_2}$.
+  \item By induction on the derivation of $\red*{\Phi; \Gamma}{e_1}{e_2}$,
+    using \cref{item:weakening:red} in \rref{red*-trans}.
+  \item Trivial by \cref{item:weakening:red*} in \rref{subtype-red}.
+  \item By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$,
+    using \cref{item:weakening:subtype} in \rref{conv}. \qedhere
+\end{enumerate}
+\end{proof}
+
+\begin{lemma}[Replacement by subtyping] \label{lem:replacement-subtyping}
+Suppose $\subtype{\Phi; \Gamma_1}{\sigma_1}{\sigma_2}$ where
+$\type{\Phi; \Gamma_1}{\sigma_1}{U}$ and $\type{\Phi; \Gamma_1}{\sigma_2}{U}$
+for some $U$.
+\begin{enumerate}
+  \item \label{item:replacement-subtyping:red}
+    If $\red{\Phi; \Gamma_1, \annot{x}{\sigma_2}, \Gamma_2}{e_1}{e_2}$
+    then $\red{\Phi; \Gamma_1, \annot{x}{\sigma_1}, \Gamma_2}{e_1}{e_2}$.
+  \item \label{item:replacement-subtyping:red*}
+    If $\red*{\Phi; \Gamma_1, \annot{x}{\sigma_2}, \Gamma_2}{e_1}{e_2}$
+    then $\red*{\Phi; \Gamma_1, \annot{x}{\sigma_1}, \Gamma_2}{e_1}{e_2}$.
+  \item \label{item:replacement-subtyping:subtyping}
+    If $\subtype{\Phi; \Gamma_1, \annot{x}{\sigma_2}, \Gamma_2}{\tau_1}{\tau_2}$
+    then $\subtype{\Phi; \Gamma_1, \annot{x}{\sigma_1}, \Gamma_2}{\tau_1}{\tau_2}$.
+  \item
+    \begin{enumerate}
+      \item \label{item:replacement-subtyping:typing} If $\type{\Phi; \Gamma_1, \annot{x}{\sigma_2}, \Gamma_2}{e}{\tau}$
+        then $\type{\Phi; \Gamma_1, \annot{x}{\sigma_1}, \Gamma_2}{e}{\tau}$.
+      \item \label{item:replacement-subtyping:wf} If $\wf{\Phi}{\Gamma_1, \annot{x}{\sigma_2}, \Gamma_2}$
+        then $\wf{\Phi}{\Gamma_1, \annot{x}{\sigma_1}, \Gamma_2}$.
+    \end{enumerate}
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  For \crefrange{item:replacement-subtyping:red}{item:replacement-subtyping:subtyping},
+  the proof structure is similar to that of \cref{lem:weakening}.
+  \begin{enumerate} \setcounter{enumi}{3}
+    \item By mutual induction on the derivations of
+      $\type{\Phi; \Gamma_1, \annot{x}{\sigma_2}, \Gamma_2}{e}{\tau}$ and
+      $\wf{\Phi}{\Gamma_1, \annot{x}{\sigma_2}, \Gamma_2}$.
+      For \rref{cons-ass}, if the variable is $x$ (\ie if $\Gamma_2 = \mt$), use $\type{\Phi; \Gamma_1}{\sigma_1}{U}$.
+      For \rref{var}, if the variable is $x$, apply \rref{conv}:
+      \begin{mathpar}
+      \inferrule{
+        \type{\Phi; \Gamma_1}{\sigma_1}{U} \\
+        \type{\Phi; \Gamma_1}{\sigma_2}{U} \\
+        \type{\Phi; \Gamma_1, \annot{x}{\sigma_1}, \Gamma_2}{x}{\sigma_1} \\
+        \subtype{\Phi; \Gamma_1}{\sigma_1}{\sigma_2}
+      }{
+        \type{\Phi; \Gamma_1, \annot{x}{\sigma_1}, \Gamma_2}{x}{\sigma_2}
+      }
+      \end{mathpar}
+  \end{enumerate}
+\end{proof}
+
+\begin{lemma}[Replacement by reduction]
+Suppose $\red*{\Gamma_1}{e_1}{e_2}$.
+\begin{enumerate}
+  \item If $\subtype{\Phi; \Gamma_1, \define{x}{e_1}, \Gamma_2}{\tau_1}{\tau_2}$
+    then $\subtype{\Phi; \Gamma_1, \define{x}{e_2}, \Gamma_2}{\tau_1}{\tau_2}$.
+  \item If $\type{\Phi; \Gamma_1, \define{x}{e_1}, \Gamma_2}{e}{\tau}$
+    then $\type{\Phi; \Gamma_1, \define{x}{e_2}, \Gamma_2}{e}{\tau}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\TODO: Ask William
+\end{proof}
+
+\begin{lemma}[Substitutivity]
+Suppose $\type{\Gamma_1}{e}{\sigma}$ and that there is no $e_x$
+such that $(\define{x}{e_x}) \in \Gamma_1, \Gamma_2$.
+\begin{enumerate}
+  \item If $\red{\Phi; \Gamma_1, \annot{x}{\sigma}, \Gamma_2}{e_1}{e_2}$
+    then $\red{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e}}{\subst{e_1}{x}{e}}{\subst{x}{e_2}{e}}$
+  \item If $\red*{\Phi; \Gamma_1, \annot{x}{\sigma}, \Gamma_2}{e_1}{e_2}$
+  then $\red*{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e}}{\subst{e_1}{x}{e}}{\subst{x}{e_2}{e}}$
+  \item If $\subtype{\Phi; \Gamma_1, \annot{x}{\sigma}, \Gamma_2}{\tau_1}{\tau_2}$
+    then $\subtype{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e}}{\subst{\tau_1}{x}{e}}{\subst{\tau_2}{x}{e}}$
+  \item \label{item:substitutivity:typing-wf}
+    \begin{enumerate}
+      \item \label{item:substitutivity:typing} If $\type{\Phi; \Gamma_1, \annot{x}{\sigma}, \Gamma_2}{e'}{\tau}$
+        then $\type{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e}}{\subst{e'}{x}{e}}{\subst{\tau}{x}{e}}$
+      \item \label{item:substitutivity:wf} If $\wf{\Phi}{\Gamma_1, \annot{x}{\sigma}, \Gamma_2}$
+        then $\wf{\Phi}{\Gamma_1, \subst{\Gamma_2}{x}{e}}$.
+    \end{enumerate}
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+The proof structure is similar to that of \cref{lem:replacement-subtyping}.
+For \rref{var} of \cref{item:substitutivity:typing}, if the variable is $x$,
+apply \nameref{lem:weakening} to $\type{\Gamma_1}{e}{\sigma}$
+using the extended environment from \cref{item:substitutivity:wf}.
+\end{proof}
+
+Substitutivity is crucial in proving \emph{regularity}\index{regularity},
+which states that the types of typing judgements are themselves well-typed.
+
+\begin{lemma}
+If $\wf{\Phi}{\Gamma}$ and $(\annot{x}{\tau}) \in \Gamma$
+then $\type{\Phi; \Gamma}{\tau}{U}$ for some $U$.
+\end{lemma}
+\begin{proof}
+By induction on the derivation of $\wf{\Phi}{\Gamma}$, using \nameref{lem:weakening} as needed.
+For \rref{cons-ass}, if the variable is $x$, the typing premise is the desired typing judgement.
+\end{proof}
+
+\begin{theorem}[Regularity]
+If $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\Phi; \Gamma}{\tau}{U}$.
+\end{theorem}
+
+\begin{proof}
+\TODO
+\end{proof}
+
+From here onwards, because it's used so often in uninteresting ways,
+I omit explicit references to uses of weakening.
+
+\subsection{Subject Reduction}
+
+% TODO: mention using replacement early on
+
+\subsection{Confluence}
+
+\subsection{Inversion}
+
+\iffalse
+The remaining properties we need are inversion principles,
+which allow for deducing the necessary premises for a typing derivation,
+with one principle for each syntactic form.
+In the presence of subtyping, these principles are a little more complex,
+relating the type derived from the premises to the desired type by a subtyping judgement.
+For concision, I prove all inversion principles for a general typing rule
+rather than handling each rule explicitly.
+When proving by induction or by cases,
+I omit all impossible cases.
+\fi
+
 \section{Metatheory of \CICE}
 
-The first three lemmas, which \citet{ECC} names \emph{weakening},
-\emph{context replacement}, and \emph{cut},
-are well-established properties, so I don't prove them here.
-See \opcit for instance for details on the proof structure.
+Fewer metatheoretical properties of \CICE are required for the type preservation proof,
+namely substitutivity\index{substitutivity} (which requires weakening\index{weakening})
+and the inversion principles\index{inversion principle}.
+I don't provide the proofs here, as they're very similar to the proofs for the analogous lemmas for \lang.
 
 \begin{lemma}[Weakening]
 Let $\GammaT$ and $\GammaT'$ be term environments where $\GammaT'$ does not shadow any variables of $\GammaT$,
@@ -21,17 +189,9 @@ and suppose that $\wf{}{\GammaT, \GammaT'}$.
 \end{itemize}
 \end{lemma}
 
-\begin{lemma}[Context replacement]
-Suppose $\subtype{\GammaT_1}{\sigmaT_1}{\sigmaT_2}$.
-\begin{itemize}[noitemsep]
-  \item If $\type{\GammaT_1, \annotT{\xT}{\sigmaT_2}, \GammaT_2}{\eT}{\tauT}$ then $\type{\GammaT_1, \annotT{\xT}{\sigmaT_1}, \GammaT_2}{\eT}{\tauT}$.
-  \item If $\subtype{\GammaT_1, \annotT{\xT}{\sigmaT_2}, \GammaT_2}{\tauT_1}{\tauT_2}$ then $\subtype{\GammaT_1, \annotT{\xT}{\sigmaT_1}, \GammaT_2}{\tauT_1}{\tauT_2}$.
-  \item If $\defeq{\GammaT_1, \annotT{\xT}{\sigmaT_2}, \GammaT_2}{\eT_1}{\eT_2}{\tauT}$ then $\defeq{\GammaT_1, \annotT{\xT}{\sigmaT_1}, \GammaT_2}{\eT_1}{\eT_2}{\tauT}$.
-\end{itemize}
-\end{lemma}
-
-\begin{lemma}[Cut]
-Suppose $\type{\GammaT_1}{\eT}{\sigmaT}$.
+\begin{lemma}[Substitutivity]
+Suppose $\type{\GammaT_1}{\eT}{\sigmaT}$ and that there is no $\eT_x$ such that
+$(\defineT{\xT}{\eT_x}) \in \GammaT_1, \GammaT_2$.
 \begin{itemize}[noitemsep]
   \item If $\type{\GammaT_1, \annot{\xT}{\sigmaT}, \GammaT_2}{\eT'}{\tauT}$ then $\type{\GammaT_1, \subst{\GammaT_2}{\xT}{\eT}}{\subst{\eT'}{\xT}{\eT}}{\subst{\xT}{\tauT}{\eT}}$.
   \item If $\subtype{\GammaT_1, \annot{\xT}{\sigmaT}, \GammaT_2}{\tauT_1}{\tauT_2}$ then $\type{\GammaT_1, \subst{\GammaT_2}{\xT}{\eT}}{\subst{\tauT_1}{\xT}{\eT}}{\subst{\tauT_2}{\tauT}{\eT}}$.
@@ -39,25 +199,9 @@ Suppose $\type{\GammaT_1}{\eT}{\sigmaT}$.
 \end{itemize}
 \end{lemma}
 
-The well-typedness of types in typing and well-formedness judgements can then be proven.
-I again omit the proof and defer to \opcit for further details.
-
-\begin{lemma} \hfill
-\begin{itemize}[noitemsep]
-  \item If $\type{\GammaT}{\eT}{\tauT}$ then $\type{\GammaT}{\tauT}{\UT}$ for some $\UT$.
-  \item If $\wf{}{\GammaT}$ and $(\annot{\xT}{\tauT}) \in \GammaT$ then $\type{\GammaT}{\tauT}{\UT}$ for some $\UT$.
-\end{itemize}
-\end{lemma}
-
-The remaining properties we need are inversion principles,
-which allow for deducing the necessary premises for a typing derivation,
-with one principle for each syntactic form.
-In the presence of subtyping, these principles are a little more complex,
-relating the type derived from the premises to the desired type by a subtyping judgement.
-For concision, I prove all inversion principles for a general typing rule
-rather than handling each rule explicitly.
-When proving by induction or by cases,
-I omit all impossible cases.
+The inversion principles for \CICE typing judgements is similar to those of \lang,
+albeit with fewer intermediate steps since transitivity of subtyping holds
+directly by \rref{subtype-trans}.
 
 \begin{lemma}[Inversion]
 Given a syntactic form $\eT$ and a typing rule $\mathcal{R} \neq \text{\upshape \rref*{conv*}}$ for that form,
@@ -93,7 +237,5 @@ By induction on the derivation of $\type{\GammaT}{\eT}{\tauT}$.
     holds by \rref{subtype-trans}.
 \end{itemize}
 \end{proof}
-
-\section{Metatheory of \lang}
 
 \section{Proof of Type Preservation}

@@ -268,6 +268,8 @@ for programming and proving.
 Although it only has naturals and well-founded trees,
 I also use other sized inductive types as examples,
 informally defining them similarly to \cref{sec:ind-types}.
+Additionally, I omit the type annotation of $\kw{let}$-bound expressions
+when the type is evident or deducible from context.
 
 \subsection{Concrete natural numbers}
 
@@ -287,6 +289,7 @@ how many layers of constructors deep an element is.
 &\Let{\const{1'}&&}{\N{\circ+3}&&}{\succ{\circ+3}{\hat{\circ}}{\const{0}}} \\
 \end{alignat*}
 
+\clearpage % TODO: clearpage
 Two terms representing the same number might not be definitionally equal,
 as shown by the terms $\const{0}$ and $\const{0'}$,
 or by $\const{1}$ and $\const{1'}$;
