@@ -157,7 +157,7 @@
 \newcmd<{\Funtype}[3]{\forall \bound{#1}{#2} \mathpunct{.} #3}
 \newcommand{\arr}[3]{\mathopen{(} \annot{#1}{#2} \mathclose{)} \mathrel{\rightarrow} \phantom{} #3}
 \newcmd*{\arr}[1]{#1\@ifnextchar\bgroup{\mathrel{\rightarrow}\arr*}{\xspace}}
-\newcommand{\letin}[4]{\kw{let} \@et #1 \mathrel{\coloneqq} \phantom{} #3 \@et \kw{in} \@et #4}
+\newcommand{\letin}[4]{\kw{let} \@et #1 \mathrel{:} #2 \mathrel{\coloneqq} \phantom{} #3 \@et \kw{in} \@et #4}
 \newcommand{\Let}[3]{\kw{let} \@et \annot{#1}{#2} \mathrel{\coloneqq} \phantom{} #3}
 \newcommand{\Pairtype}[2]{\exists #1 \mathpunct{.} #2}
 \newcommand{\Pair}[2]{\ang{#1 \mathpunct{,} #2}}
@@ -297,7 +297,7 @@
 \newcommand{\funtypeT}[3]{\tg{\Pi} \annotT{#1}{#2} \mathpunct{\tg{.}} #3}
 \newcommand{\arrT}[3]{\mathopen{\tg{(}} \annotT{#1}{#2} \mathclose{\tg{)}} \mathrel{\tg{\rightarrow}} \phantom{} #3}
 \newcmd*{\arrT}[1]{#1\@ifnextchar\bgroup{\mathrel{\tg{\rightarrow}}\arr*}{\xspace}}
-\newcommand{\letinT}[4]{\tg{let} \@et #1 \mathrel{\tg{\coloneqq}} \phantom{} #3 \@et \tg{in} \@et #4}
+\newcommand{\letinT}[4]{\tg{let} \@et #1 \mathrel{\tg{:}} #2 \mathrel{\tg{\coloneqq}} \phantom{} #3 \@et \tg{in} \@et #4}
 \newcommand{\LetT}[3]{\tg{let} \@et \annotT{#1}{#2} \mathrel{\tg{\coloneqq}} \phantom{} #3}
 \newcommand{\eqT}[3]{#1 \stackrel{#2}{\tg{=\joinrel=}} #3}
 \newcommand{\reflT}[1]{\tg{refl}_{#1}}

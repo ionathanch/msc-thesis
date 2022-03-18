@@ -106,6 +106,7 @@
   }
   \and
   \inferrule[\nameref{let}]{
+    \typeto{\Phi; \Gamma}{\sigma}{\UT}{\sigmaT} \\
     \typeto{\Phi; \Gamma}{e_1}{\sigma}{\eT_1} \\
     \typeto{\Phi; \Gamma, \annot{x}{\sigma}, \define{x}{e_1}}{e_2}{\tau}{\eT_2}
   }{

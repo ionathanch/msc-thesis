@@ -88,6 +88,7 @@
   }
   \and
   \inferrule[\rlabel{$\equiv$-$\zeta$}{equiv-zeta}]{
+    \type{\GammaT}{\sigmaT}{\UT} \\
     \type{\GammaT}{\eT'}{\sigmaT} \\
     \type{\GammaT, \annotT{\xT}{\sigmaT}, \defineT{\xT}{\eT'}}{\eT}{\tauT}
   }{
@@ -214,6 +215,7 @@
   }
   \and
   \inferrule[\rlabel*{let*}]{
+    \type{\GammaT}{\sigmaT}{\UT} \\
     \type{\GammaT}{\eT_1}{\sigmaT} \\
     \type{\GammaT, \annotT{\xT}{\sigmaT}, \defineT{\xT}{\eT_1}}{\eT_2}{\tauT}
   }{

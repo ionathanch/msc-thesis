@@ -276,10 +276,9 @@ Below are the relevant rules showing these dependencies and an example reduction
 }
 
 \inferrule[]{
-  \red{\Phi; \Gamma}{e_1}{e_2} \\\\
-  \red*{\Phi; \Gamma}{e_2}{e_3}
+  \red{\Phi; \Gamma}{e_1}{e_2}
 }{
-  \red*{\Phi; \Gamma}{e_1}{e_3}
+  \red*{\Phi; \Gamma}{e_1}{e_2}
 }
 
 \inferrule[]{~}{
