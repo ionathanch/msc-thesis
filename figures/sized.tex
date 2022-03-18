@@ -39,10 +39,16 @@
   \and \inferrule[]{~}{\red{\Phi; \Gamma}{\letin{x}{\tau}{e'}{e}}{\subst{e}{x}{e'}}}
   %\and \inferrule[]{~}{\red{\Phi; \Gamma}{\unpair{\alpha}{x}{\Pair{s}{e'}}{e}}{\subst{e}{\alpha, x}{s, e'}}}
   \\\\
+  \inferrule[\rlabel{$\rhd^*$-once}{red*-once}]{
+    \red{\Phi; \Gamma}{e_1}{e_2}
+  }{
+    \red*{\Phi; \Gamma}{e_1}{e_2}
+  }
+  \and
   \inferrule[\rlabel{$\rhd^*$-refl}{red*-refl}]{~}{\red*{\Phi; \Gamma}{e}{e}}
   \and
   \inferrule[\rlabel{$\rhd^*$-trans}{red*-trans}]{
-    \red{\Phi; \Gamma}{e_1}{}{e_2} \\
+    \red*{\Phi; \Gamma}{e_1}{e_2} \\
     \red*{\Phi; \Gamma}{e_2}{e_3}
   }{
     \red*{\Phi; \Gamma}{e_1}{e_3}
@@ -66,7 +72,7 @@
   \begin{mathpar}
   \fbox{$\subtype{\Phi; \Gamma}{\tau}{\tau}$} \qquad
   \fbox{$\acum{e}{e}$} \hfill \\
-  \inferrule[$\preccurlyeq$-red]{
+  \inferrule[\rlabel{$\preccurlyeq$-red}{subtype-red}]{
     \red*{\Phi; \Gamma}{\tau_1}{\sigma_1} \\
     \red*{\Phi; \Gamma}{\tau_2}{\sigma_2} \\
     \acum{\sigma_1}{\sigma_2}
@@ -279,7 +285,8 @@
   }
   \and
   \inferrule[\rlabel*{let}]{
-    \infer{\Phi; \Gamma}{e_1}{\sigma} \\
+    \infer{\Phi; \Gamma}{\sigma}{U} \\
+    \check{\Phi; \Gamma}{e_1}{\sigma} \\\\
     \infer{\Phi; \Gamma, \annot{x}{\sigma}, \define{x}{e_1}}{e_2}{\tau}
   }{
     \infer{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\subst{\tau}{x}{e_1}}
