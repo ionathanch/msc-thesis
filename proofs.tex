@@ -216,8 +216,145 @@ if $\alpha = r_1$ and $s_2 = r_2$ (\ie $\Phi_2 = \mt$),
 use $\subsize{\Phi_1}{\sss{r}_1}{r_2}$.
 \end{proof}
 
-Substitutivity is crucial in proving \emph{regularity}\index{regularity},
-which states that the types of typing judgements are themselves well-typed.
+From here onwards, because it's used so often in uninteresting ways,
+I omit explicit references to uses of weakening.
+
+\subsection{Confluence}
+
+\TODO
+
+\begin{theorem}[Confluence] \label{thm:confluence}
+If $\red*{\Phi; \Gamma}{e}{e_1}$ and $\red*{\Phi; \Gamma}{e}{e_2}$
+then there is some term $e'$ such that
+$\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
+\end{theorem}
+
+\begin{proof}
+\TODO
+\end{proof}
+
+\subsection{Inversion}
+
+\emph{Inversion principles}\index{inversion principle}
+allow for deducing from a typing judgement the necessary premises for a typing derivation,
+with one principle for each syntactic form.
+In the presence of subtyping, these principles are a little more complex,
+relating the type derived from the premises to the desired type by a subtyping judgement.
+For concision, I prove all inversion principles for a general typing rule
+rather than handling each rule explicitly.
+
+Before we can prove the inversion principles,
+we need transitivity of the subtyping judgement,
+which in turn requires both confluence and transitivity of $\alpha$-cumulativity\index{$\alpha$-cumulativity}.
+
+\begin{lemma}[Transitivity of $\alpha$-cumulativity] \label{lem:transitivity-acum}
+If $\acum{e_1}{e_2}$ and $\acum{e_2}{e_3}$ then $\acum{e_1}{e_3}$.
+\end{lemma}
+
+\begin{proof}
+By nested induction on the derivations of $\acum{e_1}{e_2}$ and $\acum{e_2}{e_3}$.
+\begin{enumerate}[noitemsep, label=\textbf{Cases}, leftmargin=*, labelindent=\parindent]
+  \item \rref*{acum-refl} and $\mathcal{R}$, $\mathcal{R}$ and \rref*{acum-refl}.
+    Trivial by the $\mathcal{R}$ derivation.
+  \item \rref*{acum-prop} and \rref*{acum-type}, \rref*{acum-type} and \rref*{acum-type}.
+    Trivial by \rref*{acum-prop} or \rref*{acum-type} respectively.
+  \item \rref*{acum-pi} and \rref*{acum-pi}, \rref*{acum-forall} and \rref*{acum-forall}, \rref*{acum-forall<} and \rref*{acum-forall<}.
+    By \rref*{acum-pi}, \rref*{acum-forall}, or \rref*{acum-forall<}, respectively,
+    using the induction hypothesis as premise.
+\end{enumerate}
+\end{proof}
+
+\begin{lemma}[Confluence up to $\alpha$-cumulativity] \label{lem:confluence-acum}
+If $\acum{e_1}{e_2}$ and $\red*{\Phi; \Gamma}{e_1}{e'_1}$ then there is some term $e'_2$ such that
+$\red*{\Phi; \Gamma}{e_2}{e'_2}$ and $\acum{e'_1}{e'_2}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\acum{e_1}{e_2}$.
+\begin{enumerate}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item \rref*{acum-refl}. Trivial by \rref*{acum-refl} with the same reduction judgement.
+  \item[\textbf{Cases}] \rref*{acum-prop}, \rref*{acum-type}. Since $\Prop$ and $\Type{}$ can't reduce any further,
+    trivial by \rref*{acum-prop} or \rref*{acum-type} respectively with \cref{red*-refl}.
+  \item \rref*{acum-pi}. \vspace{-\baselineskip}
+    \begin{mathpar}
+      \inferrule{
+        \acum{\tau_1}{\tau_2}
+      }{
+        \acum{\funtype{x}{\sigma}{\tau_1}}{\funtype{x}{\sigma}{\tau_2}}
+      }
+    \end{mathpar}
+    By inversion on the closure of reduction, we have
+    $\red*{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau_1}}{\funtype{x}{\sigma'}{\tau'_1}}$.
+    where $\red*{\Phi; \Gamma}{\sigma}{\sigma'}$ and $\red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau_1}{\tau'_1}$.
+    By the induction hypothesis, we can conclude that there is some term $\tau'_2$ such that
+    $\red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau_2}{\tau'_2}$ and $\acum{\tau'_1}{\tau'_2}$.
+    Then by \rref{red*-cong} we conclude that $\red*{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau_2}}{\funtype{x}{\sigma'}{\tau'_2}}$,
+    and by \rref{acum-pi} that $\acum{\funtype{x}{\sigma'}{\tau'_1}}{\funtype{x}{\sigma'}{\tau'_2}}$.
+  \item \rref*{acum-forall}, \rref*{acum-forall<}. Similar to the case for \rref*{acum-pi}. \qedhere
+\end{enumerate}
+\end{proof}
+
+\begin{corollary}[Confluence up to $\alpha$-cumulativity]
+If $\acum{e_1}{e_2}$ and $\red*{\Phi; \Gamma}{e_2}{e'_2}$ then there is some $e'_1$ such that
+$\red*{\Phi; \Gamma}{e_1}{e'_1}$ and $\acum{e'_1}{e'_2}$,
+using the symmetric argument to \cref{lem:confluence-acum}.
+\end{corollary}
+
+\begin{theorem}[Transitivity of subtyping]
+If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$ and $\subtype{\Phi; \Gamma}{\tau_2}{\tau_3}$
+then $\subtype{\Phi; \Gamma}{\tau_1}{\tau_3}$.
+\end{theorem}
+
+\begin{proof}
+By cases on the derivations of $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$
+and $\subtype{\Phi; \Gamma}{\tau_2}{\tau_3}$.
+\begin{mathpar}
+\inferrule{
+  \acum{\sigma_1}{\sigma_{21}} \\\\
+  \red*{\Phi; \Gamma}{\tau_1}{\sigma_1} \\
+  \red*{\Phi; \Gamma}{\tau_2}{\sigma_{21}}
+}{
+  \subtype{\Phi; \Gamma}{\tau_1}{\tau_2}
+}
+\and
+\inferrule{
+  \acum{\sigma_{22}}{\sigma_3} \\\\
+  \red*{\Phi; \Gamma}{\tau_2}{\sigma_{22}} \\
+  \red*{\Phi; \Gamma}{\tau_3}{\sigma_3}
+}{
+  \subtype{\Phi; \Gamma}{\tau_2}{\tau_3}
+}
+\end{mathpar}
+By \nameref{thm:confluence}, there is some term $\tau'_2$ such that
+\begin{itemize}[noitemsep]
+  \item $\red*{\Phi; \Gamma}{\sigma_{21}}{\tau'_2}$ and
+  \item $\red*{\Phi; \Gamma}{\sigma_{22}}{\tau'_2}$.
+\end{itemize}
+By \nameref{lem:confluence-acum}, there are terms $\tau'_1$ and $\tau'_3$ such that
+\begin{itemize}[noitemsep]
+  \item $\red*{\Phi; \Gamma}{\sigma_1}{\tau'_1}$,
+  \item $\acum{\tau'_1}{\tau'_2}$; and
+  \item $\red*{\Phi; \Gamma}{\sigma_3}{\tau'_3}$,
+  \item $\acum{\tau'_2}{\tau'_3}$.
+\end{itemize}
+By \rref{red*-trans} and \nameref{lem:transitivity-acum}, we have
+\begin{itemize}[noitemsep]
+  \item $\red*{\Phi; \Gamma}{\tau_1}{\tau'_1}$,
+  \item $\red*{\Phi; \Gamma}{\tau_3}{\tau'_3}$, and
+  \item $\acum{\tau'_1}{\tau'_3}$.
+\end{itemize}
+Then finally by \rref{subtype-red}, we have $\subtype{\Phi; \Gamma}{\tau_1}{\tau_3}$.
+\end{proof}
+
+\TODO
+
+% Inversion
+
+\subsection{Regularity}
+
+\emph{Regularity}\index{regularity}
+states that the types of typing judgements are themselves well-typed.
+Proving this requires the substitutivity lemmas as well as a few inversion principles.
 
 \begin{lemma}
 If $\wf{\Phi}{\Gamma}$ and $(\annot{x}{\tau}) \in \Gamma$
@@ -247,31 +384,17 @@ By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
   \item[\textbf{Cases}] \rref*{lam}, \rref*{slam}, \rref*{slam<}.
     By \rref{pi, forall, forall<} respectively,
     using the induction hypothesis as premise.
+  \item \TODO
 \end{itemize}
 \end{proof}
 
-From here onwards, because it's used so often in uninteresting ways,
-I omit explicit references to uses of weakening.
-
 \subsection{Subject Reduction}
 
-% TODO: mention using replacement early on
+The final metatheoretical property required is \emph{subject reduction}\index{subject reduction},
+which states that what a well-typed term reduces to is also well-typed with the same type.
+The proof requires using the replacement lemmas.
 
-\subsection{Confluence}
-
-\subsection{Inversion}
-
-\iffalse
-The remaining properties we need are inversion principles,
-which allow for deducing the necessary premises for a typing derivation,
-with one principle for each syntactic form.
-In the presence of subtyping, these principles are a little more complex,
-relating the type derived from the premises to the desired type by a subtyping judgement.
-For concision, I prove all inversion principles for a general typing rule
-rather than handling each rule explicitly.
-When proving by induction or by cases,
-I omit all impossible cases.
-\fi
+\TODO
 
 \section{Metatheory of \CICE}
 
