@@ -54,7 +54,7 @@
   }%
   \fi
 }
-\newcmd*{\rref}[1]{\textsc{\nameref{#1}}}
+\newcmd*{\rref}[1]{\mbox{\textsc{\nameref{#1}}}}
 
 % colours for:
 % - metafunctions (pale magenta)
@@ -74,6 +74,7 @@
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{fact}[theorem]{Fact}
+\newtheorem{corollary}[theorem]{Corollary}
 
 % foreign phrases
 \newcommand{\eg}{\emph{e.g.}\xspace}
