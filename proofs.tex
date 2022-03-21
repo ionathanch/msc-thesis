@@ -300,7 +300,7 @@ $\red*{\Phi; \Gamma}{e_1}{e'_1}$ and $\acum{e'_1}{e'_2}$,
 using the symmetric argument to \cref{lem:confluence-acum}.
 \end{corollary}
 
-\begin{theorem}[Transitivity of subtyping]
+\begin{theorem}[Transitivity of subtyping] \label{thm:transivity-subtyping}
 If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$ and $\subtype{\Phi; \Gamma}{\tau_2}{\tau_3}$
 then $\subtype{\Phi; \Gamma}{\tau_1}{\tau_3}$.
 \end{theorem}
@@ -346,9 +346,79 @@ By \rref{red*-trans} and \nameref{lem:transitivity-acum}, we have
 Then finally by \rref{subtype-red}, we have $\subtype{\Phi; \Gamma}{\tau_1}{\tau_3}$.
 \end{proof}
 
-\TODO
+\begin{figure}
+\centering
+\begin{tikzcd}
+\tau_1
+  \arrow[rr, dotted, no head, "{\mathlarger\preccurlyeq}" description]
+  % \arrow[dd, dashrightarrow, bend right]
+  \arrow[d, dashrightarrow]
+&&\tau_2
+  \arrow[rr, dotted, no head, "\mathlarger\preccurlyeq" description]
+  \arrow[dl, dashrightarrow]
+  \arrow[dr, dashrightarrow]
+&&\tau_3
+  % \arrow[dd, dashrightarrow, bend left]
+  \arrow[d, dashrightarrow] \\
+\sigma_1
+  \arrow[r, dotted, no head, "\sqsubseteq" description]
+  \arrow[d, dashrightarrow]
+&\sigma_{21}
+  \arrow[dr, dashrightarrow]
+&&\sigma_{22}
+  \arrow[r, dotted, no head, "\sqsubseteq" description]
+  \arrow[dl, dashrightarrow]
+&\sigma_3
+  \arrow[d, dashrightarrow] \\
+\tau'_1
+  \arrow[rr, dotted, no head, "\sqsubseteq" description]
+  % \arrow[rrrr, dotted, no head, bend right, "\sqsubseteq" description]
+&&\tau'_2
+  \arrow[rr, dotted, no head, "\sqsubseteq" description]
+&&\tau'_3
+\end{tikzcd}
+\caption{Diagramme of proof of \nameref{thm:transivity-subtyping}.}
+\label{fig:transitivity-subtyping}
+\end{figure}
 
-% Inversion
+A diagramme representing the proof is shown in \cref{fig:transitivity-subtyping},
+where the dashed arrows represent closure of reduction $\rhd^*$.
+
+\begin{theorem}[Inversion] \label{thm:inversion}
+Given a syntactic form $e$ and a typing rule $\mathcal{R} \neq \text{\upshape \rref*{conv*}}$ for that form,
+if $\mathcal{D}$ is a derivation ending in $\type{\Gamma}{e}{\tau}$
+and $\mathcal{J}_i$ are the judgement forms in the premises of $\mathcal{R}$,
+then there exist derivations $\mathcal{D}_i$ ending in $\mathcal{J}_i$
+such that $\mathcal{R}$ builds a derivation ending in $\type{\Gamma}{e}{\sigma}$,
+and $\subtype{\Gamma}{\sigma}{\tau}$ holds.
+\end{theorem}
+
+\begin{proof}
+By induction on the derivation of $\type{\Gamma}{e}{\tau}$.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item $\mathcal{R}$. The premises of the derivation are the desired ones,
+    building a derivation ending in $\type{\Gamma}{e}{\tau}$,
+    and $\subtype{\Gamma}{\tau}{\tau}$ holds by
+    \rref{subtype-conv, acum-refl, red*-refl}.
+  \item \rref*{conv*}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \type{\Gamma}{d}{\sigma} \\
+      \type{\Gamma}{\sigma}{U} \\
+      \type{\Gamma}{\tau}{U} \\
+      \subtype{\Gamma}{\sigma}{\tau}
+    }{
+      \type{\Gamma}{e}{\tau}
+    }
+    \end{mathpar}
+    Induction hypothesis: there are derivations $\mathcal{D}_i$ ending in $\mathcal{J}_i$
+    such that $\mathcal{R}$ builds a derivation ending in $\type{\Gamma}{e}{\sigma'}$
+    and $\subtype{\Gamma}{\sigma'}{\sigma}$ holds. \\
+    The desired derivations are $\mathcal{D}_i$, and $\subtype{\Gamma}{\sigma'}{\tau}$
+    holds by \nameref{thm:transivity-subtyping}.
+\end{itemize}
+\end{proof}
 
 \subsection{Regularity}
 
@@ -427,14 +497,15 @@ The inversion principles for \CICE typing judgements is similar to those of \lan
 albeit with fewer intermediate steps since transitivity of subtyping holds
 directly by \rref{subtype-trans}.
 
-\begin{lemma}[Inversion]
+\begin{theorem}[Inversion]
 Given a syntactic form $\eT$ and a typing rule $\mathcal{R} \neq \text{\upshape \rref*{conv*}}$ for that form,
 if $\mathcal{D}$ is a derivation ending in $\type{\GammaT}{\eT}{\tauT}$
 and $\mathcal{J}_i$ are the judgement forms in the premises of $\mathcal{R}$,
 then there exist derivations $\mathcal{D}_i$ ending in $\mathcal{J}_i$
 such that $\mathcal{R}$ builds a derivation ending in $\type{\GammaT}{\eT}{\sigmaT}$,
 and $\subtype{\GammaT}{\sigmaT}{\tauT}$ holds.
-\end{lemma}
+\end{theorem}
+
 \begin{proof}
 By induction on the derivation of $\type{\GammaT}{\eT}{\tauT}$.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
