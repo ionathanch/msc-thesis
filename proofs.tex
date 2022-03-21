@@ -178,7 +178,7 @@ the proof structure is similar to that of \nameref{lem:substitutivity-terms}.
 \end{enumerate}
 \end{proof}
 
-\begin{lemma}[Substitutivity by bounded sizes]
+\begin{lemma}[Substitutivity by bounded sizes] \label{lem:substitutivity-bounded}
 Suppose $\subsize{\Phi_1}{\sss{r}_1}{r_2}$.
 \begin{enumerate}[noitemsep]
   \item \label{item:substitutivity:bounded:red}
@@ -426,16 +426,24 @@ By induction on the derivation of $\type{\Gamma}{e}{\tau}$.
 states that the types of typing judgements are themselves well-typed.
 Proving this requires the substitutivity lemmas as well as a few inversion principles.
 
-\begin{lemma}
+\begin{lemma} \label{lem:wf-subsize}
+If $\subsize{\Phi}{r}{s}$ then $\wf{\Phi}{r}$ and $\wf{\Phi}{s}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\subsize{\Phi}{r}{s}$.
+\end{proof}
+
+\begin{lemma} \label{lem:typed-env}
 If $\wf{\Phi}{\Gamma}$ and $(\annot{x}{\tau}) \in \Gamma$
 then $\type{\Phi; \Gamma}{\tau}{U}$ for some $U$.
 \end{lemma}
 \begin{proof}
-By induction on the derivation of $\wf{\Phi}{\Gamma}$, using \nameref{lem:weakening} as needed.
+By induction on the derivation of $\wf{\Phi}{\Gamma}$.
 For \rref{cons-ass}, if the variable is $x$, the typing premise is the desired typing judgement.
 \end{proof}
 
-\begin{lemma}\label{lem:wf-env}
+\begin{lemma} \label{lem:wf-env}
 If $\type{\Phi; \Gamma}{e}{\tau}$ then $\wf{\Phi}{\Gamma}$.
 \end{lemma}
 \begin{proof}
@@ -449,12 +457,54 @@ If $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\Phi; \Gamma}{\tau}{U}$.
 \begin{proof}
 By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
-  \item[\textbf{Cases}] \rref*{univ}, \rref*{pi}, \rref*{forall}, \rref*{forall<}.
+  \item \rref*{var}. By \cref{lem:typed-env}.
+  \item[\textbf{Cases}] \rref*{univ}, \rref*{pi}, \rref*{forall}, \rref*{forall<}, \rref*{nat}, \rref*{wft}.
     By \rref{univ}, using \cref{lem:wf-env} when needed.
   \item[\textbf{Cases}] \rref*{lam}, \rref*{slam}, \rref*{slam<}.
     By \rref{pi, forall, forall<} respectively,
     using the induction hypothesis as premise.
-  \item \TODO
+  \item[\textbf{Cases}] \rref*{zero}, \rref*{succ}, \rref*{sup}.
+    By \rref{nat, nat, wft} respectively,
+    using \cref{lem:wf-subsize} to get a size judgement from the subsizing premise.
+  \item \rref*{app}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+      \inferrule{
+        \infer{\Phi; \Gamma}{e_1}{\funtype{x}{\sigma}{\tau}} \\
+        \check{\Phi; \Gamma}{e_2}{\sigma}
+      }{
+        \infer{\Phi; \Gamma}{\app{e_1}{e_2}}{\subst{\tau}{x}{e_1}}
+      }
+    \end{mathpar}
+    By the induction hypothesis, $\funtype{x}{\sigma}{\tau}$ is well typed with some universe $U$.
+    By \nameref{thm:inversion} on \rref{pi},
+    we have that $\type{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{U'}$ for some $U'$.
+    By \nameref{lem:substitutivity-terms}, we conclude that $\type{\Phi; \Gamma}{\subst{\tau}{x}{e_1}}{U'}$.
+  \item[\textbf{Cases}] \rref*{case-nat}, \rref*{case-wft}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+      \inferrule{
+        \type{\Phi; \Gamma}{e}{\N{s}} \\
+        \type{\Phi; \Gamma, \annot{x}{\N{s}}}{P}{U} \\
+        \seq
+      }{
+        \infer{\Phi; \Gamma}{\match{e}{\fun*{x}{P}}{\any \any}}{\subst{P}{x}{e}}
+      }
+      \and
+      \inferrule{
+        \type{\Phi; \Gamma}{e}{\W{x}{\sigma}{\tau}{s}} \\
+        \type{\Phi; \Gamma, \annot{x}{\W{x}{\sigma}{\tau}{s}}}{P}{U} \\
+        \seq
+      }{
+        \infer{\Phi; \Gamma}{\match{e}{\fun*{x}{P}}{\any}}{\subst{P}{x}{e}}
+      }
+    \end{mathpar}
+    By \nameref{lem:substitutivity-terms} of $e$ in $P$.
+  \item[\textbf{Cases}] \rref*{sapp}, \rref*{sapp<}.
+    By the same argument as for case \rref*{app},
+    using instead inversion on \rref{forall, forall<} respectively,
+    followed by \nameref{lem:substitutivity-unbounded} and \nameref{lem:substitutivity-bounded} respectively.
+  \item \rref*{fix}. By \rref{forall} on the first premise.
 \end{itemize}
 \end{proof}
 
