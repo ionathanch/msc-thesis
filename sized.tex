@@ -29,7 +29,8 @@ but also to show that the sublanguage is independent of the chosen inductive typ
 \cref{fig:syntax} gives its syntax, which consists of universes $U$,
 sizes $s$, and terms $e$, which includes term functions and size abstractions.
 Most judgements use two environments: a term environment $\Gamma$ with assumptions $\annot{x}{\tau}$
-and definitions $\define{x}{e}$, and a size environment $\Phi$ with unbounded and bounded size variables.
+and type-annotated definitions $\define{x}{\tau}{e}$,
+and a size environment $\Phi$ with unbounded and bounded size variables.
 I also use the assumption environment%
 \footnote{These are conventionally called \emph{telescopes}\index{telescopes} due to \citet{telescope}.}
 $\Delta$ as a shorthand when writing nested expressions with assumptions;
