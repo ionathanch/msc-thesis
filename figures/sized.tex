@@ -3,7 +3,7 @@
   \centering
   \begin{align*}
   i, j, k, m, n &\Coloneqq \meta{\textrm{naturals}} &
-  \Gamma &\Coloneqq \mt \mid \Gamma, \annot{x}{\tau} \mid \Gamma, \define{x}{e} &
+  \Gamma &\Coloneqq \mt \mid \Gamma, \annot{x}{\tau} \mid \Gamma, \define{x}{\tau}{e} &
   r, s &\Coloneqq \alpha \mid \sss{s} \mid \circ \\
   f, g, x, y, z &\Coloneqq \meta{\textrm{term variables}} &
   \Delta &\Coloneqq \mt \mid \Delta, \annot{x}{\tau} &
@@ -27,8 +27,7 @@
   \fbox{$\red{\Phi; \Gamma}{e}{e}$} \qquad
   \fbox{$\red*{\Phi; \Gamma}{e}{e}$} \hfill \\
   \inferrule[]{
-    (\annot{x}{\tau}) \in \Gamma \\\\
-    (\define{x}{e}) \in \Gamma
+    (\define{x}{\tau}{e}) \in \Gamma
   }{
     \red{\Phi; \Gamma}{x}{e}
   }
@@ -213,7 +212,7 @@
     \wf{\Phi}{\Gamma} \\\\
     \infer{\Phi; \Gamma}{e}{\tau}
   }{
-    \wf{\Phi}{\Gamma, \define{x}{e}}
+    \wf{\Phi}{\Gamma, \define{x}{\tau}{e}}
   }
   \end{mathpar}
   \caption{Well-formedness rules}
@@ -252,7 +251,8 @@
   \and
   \inferrule[\rlabel*{var}]{
     \wf{\Phi}{\Gamma} \\
-    (\annot{x}{\tau}) \in \Gamma
+    (\annot{x}{\tau}) \in \Gamma \\\\
+    \textit{or } (\define{x}{\tau}{e}) \in \Gamma
   }{
     \infer{\Phi; \Gamma}{x}{\tau}
   }
@@ -287,7 +287,7 @@
   \inferrule[\rlabel*{let}]{
     \infer{\Phi; \Gamma}{\sigma}{U} \\
     \check{\Phi; \Gamma}{e_1}{\sigma} \\\\
-    \infer{\Phi; \Gamma, \annot{x}{\sigma}, \define{x}{e_1}}{e_2}{\tau}
+    \infer{\Phi; \Gamma, \define{x}{\sigma}{e_1}}{e_2}{\tau}
   }{
     \infer{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\subst{\tau}{x}{e_1}}
   }

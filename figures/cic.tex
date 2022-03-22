@@ -3,7 +3,7 @@
   \centering
   \begin{align*}
   \iT, \jT, \kT, \mT, \nT &\Coloneqq \meta{\textrm{naturals}} &
-  \GammaT &\Coloneqq \mt \mid \GammaT, \annotT{\xT}{\tauT} \mid \GammaT, \define{\xT}{\eT} \\
+  \GammaT &\Coloneqq \mt \mid \GammaT, \annotT{\xT}{\tauT} \mid \GammaT, \define{\xT}{\tauT}{\eT} \\
   \fT, \gT, \wT, \xT, \yT, \zT, \alphaT, \betaT, \gammaT &\Coloneqq \meta{\textrm{term variables}} &
   \DeltaT &\Coloneqq \mt \mid \DeltaT, \annotT{\xT}{\tauT} \mid \DeltaT, \annotT{\cT}{\tauT} \\
   \XT &\Coloneqq \meta{\textrm{inductive type names}} &
@@ -67,8 +67,7 @@
   }
   \and
   \inferrule[\rlabel{$\equiv$-$\delta$}{equiv-delta}]{
-    (\defineT{\xT}{\eT}) \in \GammaT \\
-    (\annotT{\xT}{\tauT}) \in \GammaT
+    (\defineT{\xT}{\tauT}{\eT}) \in \GammaT
   }{
     \defeq{\GammaT}{\xT}{\eT}{\tauT}
   }
@@ -90,7 +89,7 @@
   \inferrule[\rlabel{$\equiv$-$\zeta$}{equiv-zeta}]{
     \type{\GammaT}{\sigmaT}{\UT} \\
     \type{\GammaT}{\eT'}{\sigmaT} \\
-    \type{\GammaT, \annotT{\xT}{\sigmaT}, \defineT{\xT}{\eT'}}{\eT}{\tauT}
+    \type{\GammaT, \defineT{\xT}{\sigmaT}{\eT'}}{\eT}{\tauT}
   }{
     \defeq{\GammaT}{\letinT{\xT}{\sigmaT}{\eT'}{\eT}}{\subst{\eT}{\xT}{\eT'}}{\subst{\tauT}{\xT}{\eT'}}
   }
@@ -168,7 +167,7 @@
     \wf{}{\GammaT} \\\\
     \type{\GammaT}{\eT}{\tauT}
   }{
-    \wf{}{\GammaT, \defineT{\xT}{\eT}}
+    \wf{}{\GammaT, \defineT{\xT}{\tauT}{\eT}}
   }
   \and
   \inferrule[\rlabel*{conv*}]{
@@ -217,7 +216,7 @@
   \inferrule[\rlabel*{let*}]{
     \type{\GammaT}{\sigmaT}{\UT} \\
     \type{\GammaT}{\eT_1}{\sigmaT} \\
-    \type{\GammaT, \annotT{\xT}{\sigmaT}, \defineT{\xT}{\eT_1}}{\eT_2}{\tauT}
+    \type{\GammaT, \defineT{\xT}{\sigmaT}{\eT_1}}{\eT_2}{\tauT}
   }{
     \type{\GammaT}{\letinT{\xT}{\sigmaT}{\eT_1}{\eT_2}}{\subst{\tauT}{\xT}{\eT_1}}
   }

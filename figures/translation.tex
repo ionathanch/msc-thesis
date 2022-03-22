@@ -84,7 +84,7 @@
   \Aboxed{\compile{\Gamma} &= \GammaT} \\
   \compile{\mt} &= \mt \\
   \compile{\Gamma, \annot{x}{\tau}} &= \compile{\Gamma}, \annotT{\xT}{\compile{\tau}} \\
-  \compile{\Gamma, \define{x}{e}} &= \compile{\Gamma}, \defineT{\xT}{\compile{e}}
+  \compile{\Gamma, \define{x}{\tau}{e}} &= \compile{\Gamma}, \defineT{\xT}{\compile{\tau}}{\compile{e}}
   \end{align*}
   \end{multicols}
   \vspace{-2\baselineskip}
@@ -108,7 +108,7 @@
   \inferrule[\nameref{let}]{
     \typeto{\Phi; \Gamma}{\sigma}{\UT}{\sigmaT} \\
     \typeto{\Phi; \Gamma}{e_1}{\sigma}{\eT_1} \\
-    \typeto{\Phi; \Gamma, \annot{x}{\sigma}, \define{x}{e_1}}{e_2}{\tau}{\eT_2}
+    \typeto{\Phi; \Gamma, \define{x}{\sigma}{e_1}}{e_2}{\tau}{\eT_2}
   }{
     \typeto{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\subst{\tau}{x}{e_1}}{\letinT{\xT}{\sigmaT}{\eT_1}{\eT_2}}
   }
