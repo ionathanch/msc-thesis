@@ -92,10 +92,10 @@ for some $U$.
 \begin{lemma}[Replacement by reduction]
 Suppose $\red*{\Gamma_1}{e_1}{e_2}$.
 \begin{enumerate}[noitemsep]
-  \item If $\subtype{\Phi; \Gamma_1, \define{x}{e_1}, \Gamma_2}{\tau_1}{\tau_2}$
-    then $\subtype{\Phi; \Gamma_1, \define{x}{e_2}, \Gamma_2}{\tau_1}{\tau_2}$.
-  \item If $\type{\Phi; \Gamma_1, \define{x}{e_1}, \Gamma_2}{e}{\tau}$
-    then $\type{\Phi; \Gamma_1, \define{x}{e_2}, \Gamma_2}{e}{\tau}$.
+  \item If $\subtype{\Phi; \Gamma_1, \define{x}{\sigma}{e_1}, \Gamma_2}{\tau_1}{\tau_2}$
+    then $\subtype{\Phi; \Gamma_1, \define{x}{\sigma}{e_2}, \Gamma_2}{\tau_1}{\tau_2}$.
+  \item If $\type{\Phi; \Gamma_1, \define{x}{\sigma}{e_1}, \Gamma_2}{e}{\tau}$
+    then $\type{\Phi; \Gamma_1, \define{x}{\sigma}{e_2}, \Gamma_2}{e}{\tau}$.
 \end{enumerate}
 \end{lemma}
 
@@ -104,8 +104,7 @@ Suppose $\red*{\Gamma_1}{e_1}{e_2}$.
 \end{proof}
 
 \begin{lemma}[Substitutivity by terms] \label{lem:substitutivity-terms}
-Suppose $\type{\Phi; \Gamma_1}{e}{\sigma}$ and that there is no $e_x$
-such that $(\define{x}{e_x}) \in \Gamma_1, \Gamma_2$.
+Suppose $\type{\Phi; \Gamma_1}{e}{\sigma}$.
 \begin{enumerate}[noitemsep]
   \item If $\red{\Phi; \Gamma_1, \annot{x}{\sigma}, \Gamma_2}{e_1}{e_2}$
     then $\red{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e}}{\subst{e_1}{x}{e}}{\subst{x}{e_2}{e}}$
@@ -450,7 +449,7 @@ If $\type{\Phi; \Gamma}{e}{\tau}$ then $\wf{\Phi}{\Gamma}$.
 By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
 \end{proof}
 
-\begin{theorem}[Regularity]
+\begin{theorem}[Regularity] \label{thm:regularity}
 If $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\Phi; \Gamma}{\tau}{U}$.
 \end{theorem}
 
@@ -514,7 +513,75 @@ The final metatheoretical property required is \emph{subject reduction}\index{su
 which states that what a well-typed term reduces to is also well-typed with the same type.
 The proof requires using the replacement lemmas.
 
-\TODO
+\begin{lemma} \label{lem:wf-defs}
+If $\wf{\Phi}{\Gamma}$ and $(\define{x}{\tau}{e}) \in \Gamma$ then $\type{\Gamma}{e}{\tau}$.
+\end{lemma}
+\begin{proof}
+By induction on the derivation of $\wf{\Phi}{\Gamma}$,
+using the typing premise of \rref{cons-def} when the variable is $x$.
+\end{proof}
+
+\begin{lemma} \label{lem:sr}
+If $\type{\Phi; \Gamma}{e}{\tau}$ and $\red{\Phi; \Gamma}{e}{e'}$ then $\type{\Phi; \Gamma}{e'}{\tau}$.
+\end{lemma}
+
+\begin{proof}
+By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$ and \nameref{thm:inversion} of the right-hand term.
+The case for $\delta$-reduction follows by \cref{lem:wf-defs}.
+The remaining cases are all similar to one another;
+I cover only $\beta$-reduction for the application of bounded sizes here.
+\vspace{-\baselineskip}
+\begin{mathpar}
+\inferrule{~}{
+  \red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}
+}
+\end{mathpar}
+By inversion on \rref{sapp<}, we have
+\begin{itemize}[noitemsep]
+  \item $\type{\Phi; \Gamma}{\Fun<{\alpha}{r}{e}}{\Funtype<{\alpha}{r}{\sigma}}$,
+  \item $\subsize{\Phi}{\sss{s}}{r}$, and
+  \item $\subtype{\Phi; \Gamma}{\subst{\sigma}{\alpha}{s}}{\tau}$.
+\end{itemize}
+By inversion again on \rref{slam}, we have
+\begin{itemize}[noitemsep]
+  \item $\wf{\Phi}{s}$,
+  \item $\type{\Phi, \bound{\alpha}{s}; \Gamma}{e}{\sigma'}$, and
+  \item $\subtype{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\sigma'}}{\Funtype<{\alpha}{s}{\sigma}}$.
+\end{itemize}
+By inversion on subtyping, $\alpha$-cumulativity, and closure of reduction,
+we also have $\subtype{\Phi, \bound{\alpha}{s}; \Gamma}{\sigma'}{\sigma}$.
+% TODO: please don't make me explicitly list the inversion principles
+By \nameref{lem:substitutivity-bounded}, we have
+\begin{itemize}[noitemsep]
+  \item $\subtype{\Phi; \Gamma}{\subst{\sigma'}{\alpha}{s}}{\subst{\sigma}{\alpha}{s}}$ and
+  \item $\type{\Phi; \Gamma}{\subst{e}{\alpha}{s}}{\subst{\sigma'}{\alpha}{s}}$.
+\end{itemize}
+By \nameref{thm:transivity-subtyping} and \nameref{thm:regularity}, we have
+\begin{itemize}[noitemsep]
+  \item $\subtype{\Phi; \Gamma}{\subst{\sigma'}{\alpha}{s}}{\tau}$,
+  \item $\type{\Phi; \Gamma}{\subst{\sigma'}{\alpha}{s}}{U_1}$, and
+  \item $\type{\Phi; \Gamma}{\tau}{U_2}$.
+\end{itemize}
+By \rref{conv}, both $\subst{\sigma'}{\alpha}{s}$ and $\tau$ have type $\rules{U_1}{U_2}$.
+Finally, by \rref{conv} again, we have $\type{\Phi; \Gamma}{\subst{e}{\alpha}{s}}{\tau}$.
+\end{proof}
+
+\begin{theorem}[Subject reduction]
+If $\type{\Phi; \Gamma}{e}{\tau}$ and $\red*{\Phi; \Gamma}{e}{e'}$ then $\type{\Phi; \Gamma}{e'}{\tau}$.
+\end{theorem}
+
+\begin{proof}
+By lexicographical induction on the derivations of $\red*{\Phi; \Gamma}{e}{e'}$ and $\type{\Phi; \Gamma}{e}{\tau}$.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item \rref*{red*-once}. By \cref{lem:sr}.
+  \item \rref*{red*-refl}. Trivial.
+  \item \rref*{red*-trans}. By the induction hypothesis on the first premise we have
+    $\type{\Phi; \Gamma}{e_2}{\tau}$;
+    by the induction hypothesis again on the second premise we have
+    $\type{\Phi; \Gamma}{e_3}{\tau}$.
+  \item \rref*{red*-cong}. \TODO
+\end{itemize}
+\end{proof}
 
 \section{Metatheory of \CICE}
 
@@ -534,8 +601,7 @@ and suppose that $\wf{}{\GammaT, \GammaT'}$.
 \end{lemma}
 
 \begin{lemma}[Substitutivity]
-Suppose $\type{\GammaT_1}{\eT}{\sigmaT}$ and that there is no $\eT_x$ such that
-$(\defineT{\xT}{\eT_x}) \in \GammaT_1, \GammaT_2$.
+Suppose $\type{\GammaT_1}{\eT}{\sigmaT}$.
 \begin{itemize}[noitemsep]
   \item If $\type{\GammaT_1, \annot{\xT}{\sigmaT}, \GammaT_2}{\eT'}{\tauT}$ then $\type{\GammaT_1, \subst{\GammaT_2}{\xT}{\eT}}{\subst{\eT'}{\xT}{\eT}}{\subst{\xT}{\tauT}{\eT}}$.
   \item If $\subtype{\GammaT_1, \annot{\xT}{\sigmaT}, \GammaT_2}{\tauT_1}{\tauT_2}$ then $\type{\GammaT_1, \subst{\GammaT_2}{\xT}{\eT}}{\subst{\tauT_1}{\xT}{\eT}}{\subst{\tauT_2}{\tauT}{\eT}}$.
