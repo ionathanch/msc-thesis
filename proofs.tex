@@ -89,7 +89,13 @@ for some $U$.
   \end{enumerate}
 \end{proof}
 
-\begin{lemma}[Replacement by reduction]
+\begin{corollary}
+\nameref{lem:replacement-subtyping} also applies when the environment contains
+$\define{x}{\sigma_2}{e'}$ rather than $\annot{x}{\sigma_2}$
+by the exact same arguments.
+\end{corollary}
+
+\begin{lemma}[Replacement by reduction] \label{lem:replacement-reduction}
 Suppose $\red*{\Gamma_1}{e_1}{e_2}$.
 \begin{enumerate}[noitemsep]
   \item If $\subtype{\Phi; \Gamma_1, \define{x}{\sigma}{e_1}, \Gamma_2}{\tau_1}{\tau_2}$
@@ -107,9 +113,9 @@ Suppose $\red*{\Gamma_1}{e_1}{e_2}$.
 Suppose $\type{\Phi; \Gamma_1}{e}{\sigma}$.
 \begin{enumerate}[noitemsep]
   \item If $\red{\Phi; \Gamma_1, \annot{x}{\sigma}, \Gamma_2}{e_1}{e_2}$
-    then $\red{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e}}{\subst{e_1}{x}{e}}{\subst{x}{e_2}{e}}$
+    then $\red{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e}}{\subst{e_1}{x}{e}}{\subst{e_2}{x}{e}}$
   \item If $\red*{\Phi; \Gamma_1, \annot{x}{\sigma}, \Gamma_2}{e_1}{e_2}$
-  then $\red*{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e}}{\subst{e_1}{x}{e}}{\subst{x}{e_2}{e}}$
+  then $\red*{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e}}{\subst{e_1}{x}{e}}{\subst{e_2}{x}{e}}$
   \item If $\subtype{\Phi; \Gamma_1, \annot{x}{\sigma}, \Gamma_2}{\tau_1}{\tau_2}$
     then $\subtype{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e}}{\subst{\tau_1}{x}{e}}{\subst{\tau_2}{x}{e}}$
   \item \label{item:substitutivity:typing-wf}
@@ -128,6 +134,12 @@ For \rref{var} of \cref{item:substitutivity:typing}, if the variable is $x$,
 apply \nameref{lem:weakening} to $\type{\Gamma_1}{e}{\sigma}$
 using the extended environment from \cref{item:substitutivity:wf}.
 \end{proof}
+
+\begin{corollary}
+\nameref{lem:substitutivity-terms} also applies when the environment contains $\define{x}{\sigma}{e}$
+rather than $\annot{x}{\sigma}$ by the exact same arguments.
+Note that the term being substituted in must be the one defined as $x$.
+\end{corollary}
 
 \begin{lemma}[Substitutivity by unbounded sizes] \label{lem:substitutivity-unbounded}
 Suppose $\wf{\Phi_1}{s}$.
@@ -571,7 +583,7 @@ If $\type{\Phi; \Gamma}{e}{\tau}$ and $\red*{\Phi; \Gamma}{e}{e'}$ then $\type{\
 \end{theorem}
 
 \begin{proof}
-By lexicographical induction on the derivations of $\red*{\Phi; \Gamma}{e}{e'}$ and $\type{\Phi; \Gamma}{e}{\tau}$.
+By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
   \item \rref*{red*-once}. By \cref{lem:sr}.
   \item \rref*{red*-refl}. Trivial.
@@ -579,7 +591,48 @@ By lexicographical induction on the derivations of $\red*{\Phi; \Gamma}{e}{e'}$ 
     $\type{\Phi; \Gamma}{e_2}{\tau}$;
     by the induction hypothesis again on the second premise we have
     $\type{\Phi; \Gamma}{e_3}{\tau}$.
-  \item \rref*{red*-cong}. \TODO
+  \item \rref*{red*-cong}. The various congruence cases are all similar to one another;
+    I cover only the case of \rref*{let} as example.
+    \begin{mathpar}
+      \inferrule{
+        \red*{\Phi; \Gamma}{\sigma}{\sigma'} \\
+        \red*{\Phi; \Gamma}{e_1}{e'_1} \\
+        \red*{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{e_2}{e'_2}
+      }{
+        \red*{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\letin{x}{\sigma'}{e'_1}{e'_2}}
+      }
+    \end{mathpar}
+    By \nameref{thm:inversion} on \rref{let}, we have
+    \begin{itemize}[noitemsep]
+      \item $\type{\Phi; \Gamma}{\sigma}{U}$,
+      \item $\type{\Phi; \Gamma}{e_1}{\sigma}$,
+      \item $\type{\Phi; \Gamma, \define{x}{\sigma}{e_1}}{e_2}{\tau'}$, and
+      \item $\subtype{\Phi; \Gamma}{\subst{\tau'}{x}{e_1}}{\tau}$.
+    \end{itemize}
+    By \rref{red*-refl, red*-cong, acum-refl, subtype-red} and
+    \nameref{thm:transivity-subtyping}, we have
+    \begin{itemize}[noitemsep]
+      \item $\subtype{\Phi; \Gamma}{\sigma'}{\sigma}$,
+      \item $\subtype{\Phi; \Gamma}{\subst{\tau'}{x}{e'_1}}{\subst{\tau'}{x}{e_1}}$, and
+      \item $\subtype{\Phi; \Gamma}{\subst{\tau'}{x}{e'_1}}{\tau}$.
+    \end{itemize}
+    Then by \nameref{lem:replacement-subtyping} and by \nameref{lem:replacement-reduction},
+    we have $\type{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{e_2}{\tau'}$.
+    The induction hypotheses then give
+    \begin{itemize}[noitemsep]
+      \item $\type{\Phi; \Gamma}{\sigma'}{U}$,
+      \item $\type{\Phi; \Gamma}{e'_1}{\sigma}$, and
+      \item $\type{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{e'_2}{\tau'}$.
+    \end{itemize}
+    By \nameref{thm:regularity} and \nameref{lem:substitutivity-terms}, we have
+    \begin{itemize}[noitemsep]
+      \item $\type{\Phi; \Gamma}{\tau}{U_1}$,
+      \item $\type{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{\tau'}{U_2}$, and
+      \item $\type{\Phi; \Gamma}{\subst{\tau'}{x}{e'_1}}{U_2}$.
+    \end{itemize}
+    By \rref{conv}, both $\tau$ and $\subst{\tau'}{x}{e'_1}$ have type $\rules{U_1}{U_2}$.
+    Finally, by \rref{let} and by \rref{conv} again,
+    we have $\type{\Phi; \Gamma}{\letin{x}{\sigma'}{e'_1}{e'_2}}{\tau}$.
 \end{itemize}
 \end{proof}
 
