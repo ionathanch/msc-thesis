@@ -86,7 +86,7 @@ over typed equality or \emph{equivalence}\index{equivalence},
 as can be found in Agda.%
 \footnote{The terminology in the literature varies
 (the conversion \citet{MetaCoq} refers to is untyped, while the one \citet{conversion} refer to is typed;
-the equivalence \citet{wjb} refer to is untyped, while the one \citet{equivalence} refers to is typed).
+the equivalence \citet{wjb} refers to is untyped, while the one \citet{equivalence} refer to is typed).
 Nevertheless, I use \emph{conversion} for untyped and \emph{equivalence} for typed equality.}
 While equivalence is considered to ``have clearer mathematical semantics''~\citep{typed-NbE},
 the equivalence judgement depends on the typing judgement;
@@ -96,7 +96,10 @@ As we'll see in \cref{sec:syntactic-model}, these mutually-defined judgements wo
 so I settle for conversion instead.
 
 On top of \GCC, I add two inductive definitions featured in Martin--L\"of type theory (MLTT)~\citep{mltt}\index{Martin--L\"of type theory}:
-the \emph{Peano naturals}\index{naturals} and \emph{well-founded trees}\index{well founded!\textasciitilde~trees}, augmented with sizes.
+the \emph{Peano naturals}\index{naturals} and \emph{well-founded trees}\index{well founded!\textasciitilde~trees}%
+\footnote{The types of well-founded trees are also known as \emph{W types},
+but I don't refer to them as such any more than I refer to the type of naturals as ``N types''.},
+augmented with sizes.
 As the simplest nontrivial inductive,
 the naturals make it easy to demonstrate intuitive uses of sized inductives.
 On the other hand, well-founded trees are an example of \emph{generalized} inductives,
@@ -350,7 +353,8 @@ using \cref{lem:pres-red}, \cref{lem:pres-subtyping}, and \cref{lem:pres-typing}
 
 \begin{lemma}[Preservation of subtyping]\label{lem:pres-subtyping}
 If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$
-then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\tau_2}$.
+and $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\compile{U}}$
+then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
 \end{lemma}
 
 \begin{proof}
