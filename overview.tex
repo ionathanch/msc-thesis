@@ -388,7 +388,11 @@ and the above lemmas would circularly depend on one another~\citep{wjb}. \\
 
 \GCC \index{Calculus of Constructions!Generalized \textasciitilde}
 was originally proposed by \citet{GCC-Coquand},
-adding a universe hierarchy to CC with the below rule for cumulativity.
+adding a universe hierarchy to CC and using \rref{cum} for cumulativity.
+The \emph{Extended Calculus of Constructions}\index{Calculus of Constructions!Extended \textasciitilde}
+(ECC) by \citet{ECC} adds a dependent pair type
+and uses a subtyping relation instead for cumulativity;
+\rref{untyped-subtype-pi} is the most notable subtyping rule.
 
 \vspace{-\baselineskip}
 \begin{mathpar}
@@ -397,21 +401,30 @@ adding a universe hierarchy to CC with the below rule for cumulativity.
 }{
   \type{\Gamma}{e}{\Type{i+1}}
 }
+\and
+\inferrule[\rlabel{$\preccurlyeq$-pi}{untyped-subtype-pi}]{
+  \Gamma \vdash \sigma_1 \approx \sigma_2 \\
+  \subtype{\Gamma, \annot{x}{\sigma_2}}{\tau_1}{\tau_2}
+}{
+  \subtype{\Gamma}{\funtype{x}{\sigma_1}{\tau_1}}{\funtype{x}{\sigma_2}{\tau_2}}
+}
 \end{mathpar}
 
-The \emph{Extended Calculus of Constructions}\index{Calculus of Constructions!Extended \textasciitilde}
-(ECC) by \citet{ECC} uses a subtyping relation rather than this rule,
-adding also a dependent pair type,
-and he proves ECC to be strongly normalizing.
 \citet{universes} introduce ways of adding universe polymorphism to \GCC
 as well as to a version of \GCC with definitions.
 All of these type theories use an untyped equality judgement.
 
 The \emph{Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions} (CIC) \citep{CIC}
 adds inductive types to CC,
-although in colloquial usage CIC usually refers to \GCC with definitions, inductive types, and subtyping.
-\citet{pCIC} give a set-theoretic model for the \emph{Predicative Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions!Predicative \textasciitilde} (pCIC),
-a variant of CIC that uses a typed equality judgement.
+while the \emph{Predicative Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions!Predicative \textasciitilde} (pCIC)
+further adds definitions and a cumulative universe hierarchy via subtyping.%
+\footnote{More precisely, pCIC refers to Coq's core CIC with the cumulative universe hierarchy
+and without an \emph{impredicative $\Set$} universe from version 8 onwards \citep{Coq-manual}.
+The Coq Reference Manual from version 8.5 onwards refers to it simply as CIC,
+as do many others, \eg \citet{CIC-unifier}.
+I prefer to use the specific name pCIC,
+since most seem to use CIC to refer to whatever Coq's core calculus happens to be at the moment.}
+\citet{pCIC} give a set-theoretic model for a variant of pCIC with a typed equality judgement.
 The \emph{Predicative Calculus of Cumulative Inductive Constructions}
 \index{Predicative Calculus of Cumulative Inductive Constructions} (pCuIC) \citep{pCuIC}
 further extends pCIC with additional cumulativity between inductive types,
@@ -422,11 +435,11 @@ which mechanizes pCuIC and various of its metatheorems within Coq itself,
 with additional alternate untyped equality and subtyping judgements,
 since Coq's implementation of definitional equality is untyped.
 
-\citet{CCE} adds a propositional equality type with equality reflection to \GCC with \rref{cum},
+\citet{CCE} adds a propositional equality type with equality reflection to \GCC with \rref{cum} in \CCE,
 although transitivity of definitional equality only holds for well-typed terms,
 and gives a syntactic model in an extension of CIC.
 Following that, \citet{CICE} improve upon the translation,
-working with ECC with a propositional equality type, a typed equality judgement,
+using ECC with a propositional equality type, a typed equality judgement,
 and two extensional axioms,
 translating from this type theory with equality reflection (ETT) to one without (ITT).
 They implement the translation in Template Coq \citep{TemplateCoq},
