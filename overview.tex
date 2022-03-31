@@ -71,7 +71,7 @@ These features cover many modern proof assistants.
 To name a few, in terms of universes,
 Coq and Arend have all of the above;
 Lean lacks cumulativity; and
-Agda and \Fstar lack cumulativity and impredicative universe.
+Agda and \Fstar lack cumulativity and an impredicative universe.
 On the other hand, these proof assistants all have some form of
 \emph{universe level polymorphism},
 but this is much more complex and largely orthogonal to sized types
@@ -205,7 +205,7 @@ since its properties and its use are known to be inconsistent in Agda%
 To show that \lang is consistent and therefore a suitable type theory for proofs,
 I define for it a \emph{syntactic model}\index{syntactic model}~\citep{syntactic-models}.
 This involves defining a translation from \lang into some target type theory
-that is known to be consistent---in this case,
+in whose consistency we have more confidence---in this case,
 the \emph{Extensional Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions!Extensional \textasciitilde}
 (\CICE)~\citep{CICE}.
 It, too, has a cumulative hierarchy of universes \ala Russell and an impredicative universe,
@@ -220,13 +220,13 @@ if some term $e$ is well typed under some environments $\Phi; \Gamma$ with some 
 then the translated term $\compile{e}$ must also be well typed
 under the translated environment $\compile{\Phi}\compile{\Gamma}$
 with the translated type $\compile{\tau}$.
-With the consistency of \CICE and a type-preserving translation to it,
+By the consistency of \CICE and a type-preserving translation to it,
 we prove the consistency of \lang.
 
-\begin{fact}[Consistency of \CICE]\label{fact:consistency-cice}
+\begin{postulate}[Consistency of \CICE]\label{fact:consistency-cice}
 There exists no term $\eT$ such that
 $\type{\mt}{\eT}{\funtypeT{\PT}{\PropT}{\PT}}$.
-\end{fact}
+\end{postulate}
 
 \begin{theorem}[Consistency of \lang]\label{thm:consistency}
 Suppose $\compile{\bot} = \funtypeT{\PT}{\PropT}{\PT}$.
