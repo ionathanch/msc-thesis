@@ -62,7 +62,7 @@ and $\aT$ for inductive type indices.
 The well-formedness conditions on inductive data definitions,
 such as well-typedness and \emph{strict positivity}\index{strict positivity},
 are entirely standard, so I don't detail them here;
-see pCuIC~\citep{pCuIC} for instance for a full description.
+see pCIC~\citep{pCuIC} for instance for a full description.
 Inductive definitions in their full generality are not needed,
 and nonmutual, nonnested inductives suffice.
 Indeed, only six inductive definitions are used for the translation,
@@ -148,7 +148,7 @@ Since \rref{equiv-mu} and \rref{equiv-mu-guarded} are metatheoretically equivale
 I choose to use \rref{equiv-mu} for its simplicity.
 
 \FigSubtypingCIC{fig:subtyping-cic}
-As opposed to \lang, for \CICE I use pCuIC's presentation of subtyping,
+As opposed to \lang, for \CICE I use pCIC's presentation of subtyping,
 which has a typed equivalence premise in \rref{subtype-conv}.
 It also has an explicit rule for transitivity of subtyping since judgements such as
 $\subtype{\mt}{\app{(\funT{P}{\TypeT{\tg{1}}}{P})}{\PropT}}{\TypeT{\tg{0}}}$ would fail to hold otherwise.
