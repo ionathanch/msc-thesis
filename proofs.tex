@@ -269,7 +269,7 @@ By nested induction on the derivations of $\acum{e_1}{e_2}$ and $\acum{e_2}{e_3}
     Trivial by \rref*{acum-prop} or \rref*{acum-type} respectively.
   \item \rref*{acum-pi} and \rref*{acum-pi}, \rref*{acum-forall} and \rref*{acum-forall}, \rref*{acum-forall<} and \rref*{acum-forall<}.
     By \rref*{acum-pi}, \rref*{acum-forall}, or \rref*{acum-forall<}, respectively,
-    using the induction hypothesis as premise.
+    using the induction hypothesis as premise. \qedhere
 \end{enumerate}
 \end{proof}
 
@@ -425,7 +425,7 @@ By induction on the derivation of $\type{\Gamma}{e}{\tau}$.
     such that $\mathcal{R}$ builds a derivation ending in $\type{\Gamma}{e}{\sigma'}$
     and $\subtype{\Gamma}{\sigma'}{\sigma}$ holds. \\
     The desired derivations are $\mathcal{D}_i$, and $\subtype{\Gamma}{\sigma'}{\tau}$
-    holds by \nameref{thm:transivity-subtyping}.
+    holds by \nameref{thm:transivity-subtyping}. \qedhere
 \end{itemize}
 \end{proof}
 
@@ -466,6 +466,7 @@ If $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\Phi; \Gamma}{\tau}{U}$.
 \begin{proof}
 By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item \rref*{conv}. Trivial.
   \item \rref*{var}. By \cref{lem:typed-env}.
   \item[\textbf{Cases}] \rref*{univ}, \rref*{pi}, \rref*{forall}, \rref*{forall<}, \rref*{nat}, \rref*{wft}.
     By \rref{univ}, using \cref{lem:wf-env} when needed.
@@ -513,7 +514,7 @@ By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
     By the same argument as for case \rref*{app},
     using instead inversion on \rref{forall, forall<} respectively,
     followed by \nameref{lem:substitutivity-unbounded} and \nameref{lem:substitutivity-bounded} respectively.
-  \item \rref*{fix}. By \rref{forall} on the first premise.
+  \item \rref*{fix}. By \rref{forall} on the first premise. \qedhere
 \end{itemize}
 \end{proof}
 
@@ -630,7 +631,7 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
     \end{itemize}
     By \rref{conv}, both $\tau$ and $\subst{\tau'}{x}{e'_1}$ have type $\rules{U_1}{U_2}$.
     Finally, by \rref{let} and by \rref{conv} again,
-    we have $\type{\Phi; \Gamma}{\letin{x}{\sigma'}{e'_1}{e'_2}}{\tau}$.
+    we have $\type{\Phi; \Gamma}{\letin{x}{\sigma'}{e'_1}{e'_2}}{\tau}$. \qedhere
 \end{itemize}
 \end{proof}
 
