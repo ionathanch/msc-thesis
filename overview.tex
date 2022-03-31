@@ -51,11 +51,8 @@ and briefly outlining the structure of the proof.
 \section{Dependent Types}
 
 As a simple but expressive foundation for dependent types,
-I start with the generalized Calculus of Constructions (\GCC)\index{Calculus of Constructions!generalized \textasciitilde},
-originally proposed by \citet{GCC-Coquand},
-proven strongly normalizing by \citet{GCC-Luo},
-and extended to include definitions by \citet{universes}.
-It has the following features:
+I start with the Generalized Calculus of Constructions (\GCC)\index{Calculus of Constructions!Generalized \textasciitilde} \citep{GCC-Coquand},
+which has the following features:
 
 \begin{itemize}
   \item \textbf{Dependent function types}, as is standard in the Calculus of Constructions (CC)~\citep{CoC}\index{Calculus of Constructions};
@@ -209,14 +206,13 @@ To show that \lang is consistent and therefore a suitable type theory for proofs
 I define for it a \emph{syntactic model}\index{syntactic model}~\citep{syntactic-models}.
 This involves defining a translation from \lang into some target type theory
 that is known to be consistent---in this case,
-the \emph{extensional Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions}
-(\CICE)~\citep{CCE, CICE}.
+the \emph{Extensional Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions!Extensional \textasciitilde}
+(\CICE)~\citep{CICE}.
 It, too, has a cumulative hierarchy of universes \ala Russell and an impredicative universe,
 augmented with inductive types and \emph{equality reflection}\index{equality reflection},
 where a definitional equality between terms can be derived from a propositional one between them.
 The most notable difference from \lang, aside from these features and sized types,
-is that \CICE must use the typed equivalence rather than the untyped conversion
-to accomodate equality reflection.
+is that \CICE uses typed rather than untyped equality to accomodate equality reflection.
 % TODO: forward ref to discussion on inconsistency of untyped conversion + equality reflection
 
 This translation from \lang to \CICE must be \emph{type preserving}\index{type preservation}:
@@ -384,6 +380,75 @@ due to the use of untyped conversion (and hence untyped reduction).
 If it were instead typed, then it would mutually depend on typing and subtyping as well,
 and the above lemmas would circularly depend on one another~\citep{wjb}. \\
 
+\section{Related Work}
+
+\TODO
+
+\subsection{Dependent Types}
+
+\GCC \index{Calculus of Constructions!Generalized \textasciitilde}
+was originally proposed by \citet{GCC-Coquand},
+adding a universe hierarchy to CC with the below rule for cumulativity.
+
+\vspace{-\baselineskip}
+\begin{mathpar}
+\inferrule[\rlabel*{cum}]{
+  \type{\Gamma}{e}{\Type{i}}
+}{
+  \type{\Gamma}{e}{\Type{i+1}}
+}
+\end{mathpar}
+
+The \emph{Extended Calculus of Constructions}\index{Calculus of Constructions!Extended \textasciitilde}
+(ECC) by \citet{ECC} uses a subtyping relation rather than this rule,
+adding also a dependent pair type,
+and he proves ECC to be strongly normalizing.
+\citet{universes} introduce ways of adding universe polymorphism to \GCC
+as well as to a version of \GCC with definitions.
+All of these type theories use an untyped equality judgement.
+
+The \emph{Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions} (CIC) \citep{CIC}
+adds inductive types to CC,
+although in colloquial usage CIC usually refers to \GCC with definitions, inductive types, and subtyping.
+\citet{pCIC} give a set-theoretic model for the \emph{Predicative Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions!Predicative \textasciitilde} (pCIC),
+a variant of CIC that uses a typed equality judgement.
+The \emph{Predicative Calculus of Cumulative Inductive Constructions}
+\index{Predicative Calculus of Cumulative Inductive Constructions} (pCuIC) \citep{pCuIC}
+further extends pCIC with additional cumulativity between inductive types,
+also providing a set-theoretic model,
+and it serves as the modern core calculus of Coq.
+Closely related is the MetaCoq project \citep{MetaCoq},
+which mechanizes pCuIC and various of its metatheorems within Coq itself,
+with additional alternate untyped equality and subtyping judgements,
+since Coq's implementation of definitional equality is untyped.
+
+\citet{CCE} adds a propositional equality type with equality reflection to \GCC with \rref{cum},
+although transitivity of definitional equality only holds for well-typed terms,
+and gives a syntactic model in an extension of CIC.
+Following that, \citet{CICE} improve upon the translation,
+working with ECC with a propositional equality type, a typed equality judgement,
+and two extensional axioms,
+translating from this type theory with equality reflection (ETT) to one without (ITT).
+They implement the translation in Template Coq \citep{TemplateCoq},
+extending it to include inductive types.
+
+% TODO: mention MLTT somewhere above
+
+The source language \lang and target language \CICE in this thesis aren't exactly
+a single type theory from the literature augmented with sized types.
+In short, \lang is based on \GCC but with MetaCoq's alternate subtyping rules
+and augmented with naturals and well-founded trees,
+while \CICE is based on pCIC with extensionality inspired by ETT.
+
+\subsection{Sized Types}
+
+\TODO
+
+\subsection{Syntactic Modelling}
+
+\TODO
+
+\hfill \newline
 \noindent In the next chapter, I describe the syntax and judgements of \lang in detail,
 provide example programs in \lang that make use of sized types,
 and prove various necessary metatheoretical properties including subject reduction and confluence.

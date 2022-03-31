@@ -74,11 +74,8 @@ and the cases for the congruence rules require extra hypotheses that those of th
 This is also the convention for untyped reduction used by \eg \citet{wjb}.
 
 \FigSubtype{fig:subtyping}
-Rather than a single subtyping judgement, such as in the
-predicative Calculus of Cumulative Inductive Constructions
-\index{predicative Calculus of Cumulative Inductive Constructions}
-(pCuIC)~\citep{pCuIC},
-I use the same presentation as MetaCoq\index{MetaCoq}~\citep{MetaCoq}
+Rather than a single subtyping judgement like in \GCC,
+I use the same presentation as MetaCoq\index{MetaCoq}
 and split it into a subtyping judgement
 and a separate $\alpha$-cumulativity\index{$\alpha$-cumulativity} judgement,
 listed in \cref{fig:subtyping}.
@@ -100,8 +97,8 @@ A term is then a subtype of another if they are confluent up to $\alpha$-cumulat
 Notably, \lang does \emph{not} have a notion of $\eta$-conversion
 in either the reduction rules or in the subtyping rules,
 which would otherwise allow conversion between $\fun{x}{\tau}{\app{f}{x}}$ and $f$.
-Mixing $\eta$-conversion and untyped converion is notoriously difficult~\citep{eta},
-and remains to date an unresolved problem in MetaCoq, so I exclude it here.
+Mixing $\eta$-conversion and untyped conversion is notoriously difficult~\citep{eta},
+and remains to date an unresolved problem in MetaCoq\index{MetaCoq}, so I exclude it here.
 
 \clearpage % TODO: clearpage
 \FigSubsize{fig:subsizing}
@@ -126,7 +123,7 @@ and $\fresh{\seq}$ for fresh variables.
 
 \clearpage % TODO: clearpage
 \rref{var, univ, let} are the usual rules for variables, universes, and $\kw{let}$ expressions
-in \GCC,\index{Calculus of Constructions!generalized \textasciitilde}
+in \GCC,\index{Calculus of Constructions!Generalized \textasciitilde}
 while \rref{pi, lam, app} are the usual ones for functions.
 The $\Prop$ universe is impredicative\index{impredicativity} because
 a function type quantifying over any type is itself in $\Prop$
