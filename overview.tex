@@ -206,7 +206,9 @@ The most notable difference from \lang, aside from these features and sized type
 is that \CICE uses typed rather than untyped equality to accomodate equality reflection.
 % TODO: forward ref to discussion on inconsistency of untyped conversion + equality reflection
 
-This translation from \lang to \CICE must be \emph{type preserving}\index{type preservation}:
+This translation from \lang to \CICE must be \emph{type preserving}\index{type preservation}%
+\footnote{This terminology comes from compilation;
+in the context of syntactic modelling, this is rather unhelpfully known as \emph{soundness}.}:
 if some term $e$ is well typed under some environments $\Phi; \Gamma$ with some type $\tau$,
 then the translated term $\compile{e}$ must also be well typed
 under the translated environment $\compile{\Phi}\compile{\Gamma}$
@@ -443,7 +445,12 @@ translating from this type theory with equality reflection (ETT) to one without 
 They implement the translation in Template Coq \citep{TemplateCoq},
 extending it to include inductive types.
 
-% TODO: mention MLTT somewhere above
+In contrast to these type systems based on CC,
+MLTT is a dependent type theory with a noncumulative universe hierarchy without $\Prop$,
+typed equality, and some basic types: the empty type, the unit type,
+dependent pair types, disjoint sum types, and a propositional equality type,
+as well as the types of naturals and well-founded trees as mentioned.
+They can all be implemented as inductive types in pCIC.
 
 The source language \lang and target language \CICE in this thesis aren't exactly
 a single type theory from the literature augmented with sized types.
@@ -470,7 +477,7 @@ Other sized type systems and more extensive discussions can be found in disserta
 \citet{lambda-hat-diss} and \citet{Abel-diss}.
 
 % TODO: fix manual footnote number
-\footnotetext[5]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
+\footnotetext[6]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
 
 \begin{table}[h]
 \centering
@@ -518,14 +525,12 @@ has all three properties \emph{and} has been proven to be strongly normalizing.)
 One of the goals of \lang, as mentioned, is to fill in this gap
 with a consistent sized dependent type theory with all of the desired features.
 
-\subsection{Syntactic Modelling}
+\begin{center}
+\mbox{* * *}
+\end{center}
 
-\TODO
-
-\hfill \newline
-\noindent In the next chapter, I describe the syntax and judgements of \lang in detail,
+\noindent In the upcoming \cref{ch:sized-dep-types}, I describe the syntax and judgements of \lang in detail,
 provide example programs in \lang that make use of sized types,
 and prove various necessary metatheoretical properties including subject reduction and confluence.
-Next, in \TODO I describe \CICE and define the translation from \lang to \CICE.
-Following that, I elaborate on the proof of type preservation and its associated lemmas.
-% TODO: forward ref to sections mentioned
+Next, in \cref{ch:model} I describe \CICE and define the translation from \lang to \CICE.
+Following that, in \cref{ch:proofs} I elaborate on the proof of type preservation and its associated lemmas.
