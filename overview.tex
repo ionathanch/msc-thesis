@@ -386,13 +386,14 @@ and the above lemmas would circularly depend on one another~\citep{wjb}. \\
 
 \subsection{Dependent Types}
 
-\GCC \index{Calculus of Constructions!Generalized \textasciitilde}
+\GCC\index{Calculus of Constructions!Generalized \textasciitilde}
 was originally proposed by \citet{GCC-Coquand},
-adding a universe hierarchy to CC and using \rref{cum} for cumulativity.
+adding a universe hierarchy to CC with untyped equality
+and using \rref{cum} for cumulativity.
 The \emph{Extended Calculus of Constructions}\index{Calculus of Constructions!Extended \textasciitilde}
 (ECC) by \citet{ECC} adds a dependent pair type
 and uses a subtyping relation instead for cumulativity;
-\rref{untyped-subtype-pi} is the most notable subtyping rule.
+\rref{untyped-subtype-prop, untyped-subtype-pi} are the most notable subtyping rules.
 
 \vspace{-\baselineskip}
 \begin{mathpar}
@@ -400,6 +401,10 @@ and uses a subtyping relation instead for cumulativity;
   \type{\Gamma}{e}{\Type{i}}
 }{
   \type{\Gamma}{e}{\Type{i+1}}
+}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-prop}{untyped-subtype-prop}]{~}{
+  \subtype{\Gamma}{\Prop}{\Type{i}}
 }
 \and
 \inferrule[\rlabel{$\preccurlyeq$-pi}{untyped-subtype-pi}]{
@@ -412,19 +417,21 @@ and uses a subtyping relation instead for cumulativity;
 
 \citet{universes} introduce ways of adding universe polymorphism to \GCC
 as well as to a version of \GCC with definitions.
-All of these type theories use an untyped equality judgement.
+For the purposes of this thesis, I use \GCC to refer to the type theory
+with subtyping and definitions.
 
 The \emph{Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions} (CIC) \citep{CIC}
 adds inductive types to CC,
 while the \emph{Predicative Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions!Predicative \textasciitilde} (pCIC)
 further adds definitions and a cumulative universe hierarchy via subtyping.%
 \footnote{More precisely, pCIC refers to Coq's core CIC with the cumulative universe hierarchy
-and without an \emph{impredicative $\Set$} universe from version 8 onwards \citep{Coq-manual}.
+and without an \emph{impredicative $\Set$} universe from version 8 onwards \citep[Chapter~4]{Coq-manual}.
 The Coq Reference Manual from version 8.5 onwards refers to it simply as CIC,
 as do many others, \eg \citet{CIC-unifier}.
 I prefer to use the specific name pCIC,
-since most seem to use CIC to refer to whatever Coq's core calculus happens to be at the moment.}
-\citet{pCIC} give a set-theoretic model for a variant of pCIC with a typed equality judgement.
+since most seem to use CIC to refer to whatever Coq's core calculus happens to be at the moment,
+which is currently pCuIC.}
+\citet{pCIC} give a set-theoretic model for a variant of pCIC with typed equality.
 The \emph{Predicative Calculus of Cumulative Inductive Constructions}
 \index{Predicative Calculus of Cumulative Inductive Constructions} (pCuIC) \citep{pCuIC}
 further extends pCIC with additional cumulativity between inductive types,
@@ -439,7 +446,7 @@ since Coq's implementation of definitional equality is untyped.
 although transitivity of definitional equality only holds for well-typed terms,
 and gives a syntactic model in an extension of CIC.
 Following that, \citet{CICE} improve upon the translation,
-using ECC with a propositional equality type, a typed equality judgement,
+using ECC with a propositional equality type, typed equality,
 and two extensional axioms,
 translating from this type theory with equality reflection (ETT) to one without (ITT).
 They implement the translation in Template Coq \citep{TemplateCoq},
@@ -455,7 +462,70 @@ while \CICE is based on pCIC with extensionality inspired by ETT.
 
 \subsection{Sized Types}
 
-\TODO
+Sized dependent type systems date all the way back to \CCR by \citet{CCR},
+although its sized types are formulated quite differently from ``modern'' sized types.
+The first sized dependent type theory recognized as such is \CIChat by \citet{CIC-hat},
+which adds prenex\index{polymorphism!prenex/rank-1 \textasciitilde} sizes
+and a size inference algorithm to CIC.
+In the intervening years, several nondependent sized type systems were developed,
+notably the ML-like type system by \citet{hughes} (independently of \CCR),
+\lambdahat~\citep{lambda-hat, lambda-hat-diss},
+\Fhat~\citep{F-hat}, and
+\Fhattimes~\citep{F-hat-times},
+all of which focus on prenex, fully-inferrable sizes.
+\Fhatomega~\citep{Abel-diss}, on the other hand,
+has higher-rank, explicitly-quantified sizes.
+Other sized type systems and more extensive discussions can be found in dissertations by
+\citet{lambda-hat-diss} and \citet{Abel-diss}.
+
+% TODO: fix manual footnote number
+\footnotetext[5]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
+
+\begin{table}[h]
+\centering
+\iffalse
+\begin{tabular}{l c c c l}
+Type system & Explicit sizes? & Higher-rank? & Bounded? & Size algebra \\
+\hline
+\citet{hughes} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & $\sss{s}, s + s, n \times s$ \\
+\lambdahat~\citep{lambda-hat, lambda-hat-diss} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & $\sss{s}$ \\
+\Fhat~\citep{F-hat} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & $\sss{s}$ \\
+\Fhattimes~\citep{F-hat-times} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & $\sss{s}, s + s$ \\
+\Fhatomega~\citep{Abel-diss} & \emoji{check-mark} & \emoji{check-mark} & \emoji{cross-mark} & $\sss{s}$ \\
+\Fcopomega~\citep{F-omega-cop} & \emoji{check-mark} & \emoji{check-mark} & \emoji{check-mark} & $\sss{s}$ \\
+\end{tabular}
+\fi
+
+\begin{tabular}{l c c c c}
+Type theory & Explicit sizes? & Higher-rank? & Bounded? & Consistent? \\
+\hline
+\CIChat~\citep{CIC-hat} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{red-question-mark} \\
+\CIChatminus~\citep{CIC-hat-minus-nat, CIC-hat-minus} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{check-mark} \\
+\CChatomega~\citep{CC-hat-omega} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{check-mark} \\
+\CIChatl~\citep{CIC-hat-l} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{check-mark} \\
+\CIChatsub~\citep{CIC-hat-sub} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{check-mark} & \emoji{check-mark} \\
+\CIChatstar~\citep{CIC-hat-star} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{red-question-mark} \\
+\citet{NbE} & \emoji{check-mark} & \emoji{check-mark} & \emoji{cross-mark} & \emoji{check-mark} \\
+MiniAgda~\citep{MiniAgda, flationary} & \emoji{check-mark} & \emoji{check-mark} & \emoji{check-mark} & \emoji{cross-mark} \\
+\textbf{\lang} & \emoji{check-mark} & \emoji{check-mark} & \emoji{check-mark} & \emoji{check-mark}%
+\textsuperscript{\labelcref{foot:CICE-consistency}}
+\end{tabular}
+\caption{Sized dependent type theories and their properties}
+\label{tab:sized-types}
+\end{table}
+
+\cref{tab:sized-types} lists the sized dependent type theories that follow \CIChat,
+along with the main features I focus on:
+explicit, higher-rank, bounded size quantification,
+and with whether the type theory has been proven consistent.
+The type theory of MiniAgda, on which the sized types implemented in Agda are based,
+is the only prior one with all three sized type features,
+but is known to be inconsistent%
+\textsuperscript{\labelcref{foot:agda-inconsistent}}.
+(Interestingly, \Fcopomega~\citep{F-omega-cop}, which extends System F$_\omega$ with sized types,
+has all three properties \emph{and} has been proven to be strongly normalizing.)
+One of the goals of \lang, as mentioned, is to fill in this gap
+with a consistent sized dependent type theory with all of the desired features.
 
 \subsection{Syntactic Modelling}
 
