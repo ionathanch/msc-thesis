@@ -375,9 +375,12 @@ and the above lemmas would circularly depend on one another~\citep{wjb}. \\
 
 \section{Related Work}
 
-\TODO
+The history and development of sized types spans over two decades of past work,
+and that of dependent types far more than that.
+I therefore mention here only past work that are directly relevant
+or that I refer to again in later chapters.
 
-\subsection{Dependent Types}
+\subsection{Dependent type theories}
 
 \GCC\index{Calculus of Constructions!Generalized \textasciitilde}
 was originally proposed by \citet{GCC-Coquand},
@@ -458,7 +461,7 @@ In short, \lang is based on \GCC but with MetaCoq's alternate subtyping rules
 and augmented with naturals and well-founded trees,
 while \CICE is based on pCIC with extensionality inspired by ETT.
 
-\subsection{Sized Types}
+\subsection{Sized type systems}
 
 Sized dependent type systems date all the way back to \CCR by \citet{CCR},
 although its sized types are formulated quite differently from ``modern'' sized types.
@@ -475,9 +478,6 @@ all of which focus on prenex, fully-inferrable sizes.
 has higher-rank, explicitly-quantified sizes.
 Other sized type systems and more extensive discussions can be found in dissertations by
 \citet{lambda-hat-diss} and \citet{Abel-diss}.
-
-% TODO: fix manual footnote number
-\footnotetext[6]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
 
 \begin{table}[h]
 \centering
@@ -520,17 +520,28 @@ The type theory of MiniAgda, on which the sized types implemented in Agda are ba
 is the only prior one with all three sized type features,
 but is known to be inconsistent%
 \textsuperscript{\labelcref{foot:agda-inconsistent}}.
-(Interestingly, \Fcopomega~\citep{F-omega-cop}, which extends System F$_\omega$ with sized types,
+(Interestingly, \Fcopomega~\citep{F-omega-cop}, which extends System F$_\omega$ with (co)inductive types and sized types,
 has all three properties \emph{and} has been proven to be strongly normalizing.)
 One of the goals of \lang, as mentioned, is to fill in this gap
 with a consistent sized dependent type theory with all of the desired features.
+However, it's missing two properties that all of these type theories do have:
+inductive types in the ``correct'' universes,
+and the existence of an ``infinite'' size.
+
+% TODO: fix manual footnote number
+\footnotetext[6]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
 
 \begin{center}
 \mbox{* * *}
 \end{center}
+
+\noindent \TODO: This paragraph should probably go at the end of the introduction.
 
 \noindent In the upcoming \cref{ch:sized-dep-types}, I describe the syntax and judgements of \lang in detail,
 provide example programs in \lang that make use of sized types,
 and prove various necessary metatheoretical properties including subject reduction and confluence.
 Next, in \cref{ch:model} I describe \CICE and define the translation from \lang to \CICE.
 Following that, in \cref{ch:proofs} I elaborate on the proof of type preservation and its associated lemmas.
+In \TODO, I discuss some of the shortcomings of \lang, namely the universe levels of the inductive types
+and the lack of an infinite size,
+and in \TODO, I propose some possible extensions for \lang.
