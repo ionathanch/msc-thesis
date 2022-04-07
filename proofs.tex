@@ -577,7 +577,7 @@ By \rref{conv}, both $\subst{\sigma'}{\alpha}{s}$ and $\tau$ have type $\rules{U
 Finally, by \rref{conv} again, we have $\type{\Phi; \Gamma}{\subst{e}{\alpha}{s}}{\tau}$.
 \end{proof}
 
-\begin{theorem}[Subject reduction]
+\begin{theorem}[Subject reduction]\label{thm:subject-reduction}
 If $\type{\Phi; \Gamma}{e}{\tau}$ and $\red*{\Phi; \Gamma}{e}{e'}$ then $\type{\Phi; \Gamma}{e'}{\tau}$.
 \end{theorem}
 
@@ -692,7 +692,7 @@ By induction on the derivation of $\type{\GammaT}{\eT}{\tauT}$.
 \end{proof}
 \fi
 
-\begin{theorem}[Subject equivalence]
+\begin{theorem}[Subject equivalence]\label{thm:subject-equivalence}
 If $\defeq{\GammaT}{\eT_1}{\eT_2}{\tauT}$
 then $\type{\GammaT}{\eT_1}{\tauT}$ and $\type{\GammaT}{\eT_2}{\tauT}$.
 \end{theorem}
@@ -705,3 +705,209 @@ $\type{\mt}{\eT}{\funtypeT{\PT}{\PropT}{\PT}}$.
 \end{postulate}
 
 \section{Proof of Type Preservation}
+
+As was outlined in \cref{sec:syntactic-model},
+the proof of type preservation involves an additional five lemmas
+demonstrating that the translation respects substitution, reduction,
+$\alpha$-cumulativity, the closure of reduction, subtyping, and typing itself.
+These lemmas require further sublemmas;
+the subsequent subsections group the sublemmas with their lemma or theorem.
+
+Many of these lemmas make use of the translation of terms $e$ and term environments $\Gamma$
+using the shorthand $\compile{e}$ and $\compile{\Gamma}$.
+If not specified, the well-formedness of $\Gamma$ and well-typedness of $e$
+needed for the translations are derived when possible
+(\eg $\wf{\Phi}{\Gamma}$ and $\type{\Phi; \Gamma}{\tau}{U}$ from $\type{\Phi; \Gamma}{e}{\tau}$
+by \cref{lem:wf-env} and \nameref{thm:regularity}, respectively)
+and otherwise assumed as hypotheses.
+
+\subsection{Compositionality}
+
+\subsection{Preservation of reduction}
+
+\subsection{Preservation of \texorpdfstring{$\alpha$}{alpha}-cumulativity}
+
+This lemma is proven independently of compositionality and preservation of reduction.
+Like preservation of reduction, the well-typedness of the translation of the $\alpha$-cumulative terms
+is required to derive various equivalences,
+but their types need not even be the same,
+since the \CICE subtyping judgement itself is untyped.
+
+\begin{lemma}[Preservation of $\alpha$-cumulativity]\label{lem:pres-acum}
+Suppose we have the following:
+\begin{itemize}[noitemsep]
+  \item $\acum{\tau_1}{\tau_2}$,
+  \item $\type{\Phi; \Gamma}{\tau_1}{U_1}$,
+  \item $\type{\Phi; \Gamma}{\tau_2}{U_2}$,
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\UT_1}$, and
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_2}}{\UT_2}$.
+\end{itemize}
+Then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item \rref*{acum-refl}.
+    Trivial by \rref{equiv-refl, subtype-conv} using well-typedness of the translated term.
+  \item[\textbf{Cases}] \rref*{acum-prop}, \rref*{acum-type}.
+    Trivial by \rref{subtype-prop} and \rref{subtype-type}, respectively.
+  \item \rref{acum-pi}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \acum{\tau_1}{\tau_2}
+    }{
+      \acum{\funtype{x}{\sigma}{\tau_1}}{\funtype{x}{\sigma}{\tau_2}}
+    }
+    \end{mathpar}
+    By inversion on $\type{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau_i}}{U_i}$ and on
+    $\type{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_i}_{\annot{x}{\sigma}}}}{\compile{U_i}}$
+    for $i = 1, 2$, omitting unneeded judgements, we have
+    \begin{itemize}[noitemsep]
+      %\item $\type{\Phi; \Gamma}{\sigma}{U'}$,
+      \item $\type{\Phi; \Gamma, \annot{x}{\sigma}}{\tau_i}{U''_i}$,
+      %\item $\subtype{\Phi; \Gamma}{\rules{U'}{U''_i}}{U'_i}$,
+      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\UT'}$, and
+      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{\tau_i}_{\annot{x}{\sigma}}}{\UT''_i}$.
+      %\item $\subtype{\compile{\Phi}\compile{\Gamma}}{\rules{\UT'}{\UT''_i}}{\UT_i}$.
+    \end{itemize}
+    By the induction hypothesis on the premise using the above, we have
+    $\subtype{\compile{\Phi}\compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{\tau_1}_{\annot{x}{\sigma}}}{\compile{\tau_2}_{\annot{x}{\sigma}}}$.
+    By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma}}{\UT'}$.
+    Then by \rref{subtype-pi}, we have
+    $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_1}_{\annot{x}{\sigma}}}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_2}_{\annot{x}{\sigma}}}}$.
+  \item \rref{acum-forall}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \acum{\tau_1}{\tau_2}
+    }{
+      \acum{\Funtype{\alpha}{\tau_1}}{\Funtype{\alpha}{\tau_2}}
+    }
+    \end{mathpar}
+    By inversion on $\type{\Phi; \Gamma}{\Funtype{\alpha}{\tau_i}}{U_i}$ and on
+    $\type{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_i}_{\alpha}}}{\UT_i}$
+    for $i = 1, 2$, omitting unneeded judgements, we have
+    \begin{itemize}[noitemsep]
+      \item $\type{\Phi, \alpha; \Gamma}{\tau_i}{U''_i}$,
+      \item $\type{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\UT'}$, and
+      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{\tau_i}_{\alpha}}{\UT''_i}$.
+    \end{itemize}
+    By the induction hypothesis on the premise using the above, we have
+    $\subtype{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{\tau_1}_{\alpha}}{\compile{\tau_2}_{\alpha}}$.
+    By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\SizeT}{\UT'}$.
+    Then by \rref{subtype-pi}, we have
+    $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_1}_{\alpha}}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_2}_{\alpha}}}$.
+  \item \rref{acum-forall<}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \acum{\tau_1}{\tau_2}
+    }{
+      \acum{\Funtype<{\alpha}{s}{\tau_1}}{\Funtype<{\alpha}{s}{\tau_2}}
+    }
+    \end{mathpar}
+    By inversion on $\type{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau_i}}{U_i}$ and on
+    $\type{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_i}_{\bound{\alpha}{s}}}}}{\UT_i}$
+    for $i = 1, 2$, omitting unneeded judgements, we have
+    \begin{itemize}[noitemsep]
+      \item $\type{\Phi; \Gamma, \bound{\alpha}{s}}{\tau_i}{U''_I}$,
+      \item $\type{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\UT'}$,
+      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\UT''}$, and
+      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_i}_{\bound{\alpha}{s}}}{\UT'''_i}$.
+    \end{itemize}
+    By the induction hypothesis on the premise using the above, we have
+    $\subtype{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_1}_{\bound{\alpha}{s}}}{\compile{\tau_2}_{\bound{\alpha}{s}}}$.
+    By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\SizeT}{\UT'}$
+    and $\defeq{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\alphaT \szltT \compile{s}}{\UT''}$.
+    Then by \rref{subtype-pi} twice, we have $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_1}_{\bound{\alpha}{s}}}}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_2}_{\bound{\alpha}{s}}}}}$.
+    \qedhere
+\end{itemize}
+\end{proof}
+
+\subsection{Preservation of closure of reduction}
+
+\hyperref[lem:pres-red*]{Preservation of closure of reduction},
+\nameref{lem:pres-subtyping}, and
+\nameref{thm:pres-typing}
+are proven by mutual structural induction,
+but for clarity are stated separately.
+This means that each lemma or theorem is proven by induction on the relevant derivation,
+but we can appeal to the other lemmas or theorem when applied \emph{only} to a subderivation.
+This guarantees that we aren't using circular reasoning, since derivations are finite.
+In this case, \nameref{thm:pres-typing} appeals to \nameref{lem:pres-subtyping}
+in the \rref*{conv} case with the subtyping premise, and
+\nameref{lem:pres-subtyping} appeals to \hyperref[lem:pres-red*]{Preservation of closure of reduction}
+with its reduction premises.
+\hyperref[lem:pres-red*]{Preservation of closure of reduction} is proven by induction on both a reduction derivation
+and on a typing derivation, and appeals to \nameref{thm:pres-typing} only with typing premises.
+
+\begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction]\label{lem:pres-red*}
+Suppose we have the following:
+\begin{itemize}[noitemsep]
+  \item $\red*{\Phi; \Gamma}{e}{e'}$ and
+  \item $\type{\Phi; \Gamma}{e}{\tau}$.
+\end{itemize}
+Then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$,
+where \nameref{thm:subject-reduction} gives us $\type{\Phi; \Gamma}{e'}{\tau}$
+in order to translate $\compile{e'}$.
+\end{lemma}
+
+\begin{proof}
+
+\end{proof}
+
+\subsection{Preservation of subtyping}
+
+Most of the heavy lifting in proving preservation of subtyping is done by
+preservation of $\alpha$-cumulativity and preservation of the closure of reduction.
+Use of preservation of the closure of reduction is justified because it's applied only
+to a direct subderivation of the subtyping derivation.
+This lemma, too, requires that the translation of the subtyped terms specifically is type-preserving.
+
+\begin{lemma}[Preservation of subtyping]\label{lem:pres-subtyping}
+Suppose we have the following:
+\begin{itemize}[noitemsep]
+  \item $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$,
+  \item $\type{\Phi; \Gamma}{\tau_1}{U}$,
+  \item $\type{\Phi; \Gamma}{\tau_2}{U}$,
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{U}}$, and
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_2}}{\compile{U}}$.
+\end{itemize}
+Then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
+\end{lemma}
+
+\begin{proof}
+By cases on the derivation of $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$,
+there being only one case.
+\begin{mathpar}
+\inferrule{
+  \red*{\Phi; \Gamma}{\tau_1}{\sigma_1} \\
+  \red*{\Phi; \Gamma}{\tau_2}{\sigma_2} \\
+  \acum{\sigma_1}{\sigma_2}
+}{
+  \subtype{\Phi; \Gamma}{\tau_1}{\tau_2}
+}
+\end{mathpar}
+By \hyperref[lem:pres-red*]{Preservation of closure of reduction} on the first two premises, we have
+\begin{itemize}[noitemsep]
+  \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\sigma_1}}{\compile{U}}$ and
+  \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_2}}{\compile{\sigma_2}}{\compile{U}}$.
+\end{itemize}
+By \nameref{thm:subject-reduction} and \nameref{thm:subject-equivalence}, we have
+\begin{itemize}[noitemsep]
+  \item $\type{\Phi; \Gamma}{\sigma_1}{U}$,
+  \item $\type{\Phi; \Gamma}{\sigma_2}{U}$,
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma_1}}{\compile{U}}$, and
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma_2}}{\compile{U}}$.
+\end{itemize}
+Using the above and the final premise, by \nameref{lem:pres-acum}, we have
+$\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma_1}}{\compile{\sigma_2}}$.
+Then by \rref{equiv-sym, subtype-conv, subtype-trans}, we have
+$\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
+\end{proof}
+
+\subsection{Type preservation}
+
+\label{thm:pres-typing}

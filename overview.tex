@@ -289,7 +289,7 @@ I summarize them here, omitting some hypotheses and sublemmas,
 to outline the proof architecture,
 which roughly follows the structure of type-preserving compilation by~\citet{wjb}.
 
-\begin{lemma}[Compositionality]\label{lem:compositionality}\hfill
+\begin{lemma}[Compositionality]\label{lem:overview:compositionality}\hfill
 \begin{enumerate}[noitemsep]
   \item $\compile{\subst{e}{x}{e'}} = \subst{\compile{e}}{x}{\compile{e'}}$.
   \item $\compile{\subst{e}{\alpha}{s}} = \subst{\compile{e}}{\alpha}{\compile{s}}$
@@ -300,7 +300,7 @@ which roughly follows the structure of type-preserving compilation by~\citet{wjb
 By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
 \end{proof}
 
-\begin{lemma}[Preservation of reduction]\label{lem:pres-red}
+\begin{lemma}[Preservation of reduction]\label{lem:overview:pres-red}
 If $\red{\Phi; \Gamma}{e}{e'}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$
 then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$.
@@ -309,11 +309,11 @@ then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile
 \begin{proof}
 By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$
 and inversion on the derivation of $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$,
-using \cref{lem:compositionality}
+using \cref{lem:overview:compositionality}
 and an application of equality reflection in the case for reduction of fixpoints.
 \end{proof}
 
-\begin{lemma}[Preservation of $\alpha$-cumulativity]\label{lem:pres-cumul}
+\begin{lemma}[Preservation of $\alpha$-cumulativity]\label{lem:overview:pres-acum}
 If $\acum{\tau_1}{\tau_2}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\UT_i}$
 then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
@@ -328,7 +328,7 @@ $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\UT_i}$.
 The final three lemmas and theorem are proven mutually;
 I state them separately for clarity.
 
-\begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction]\label{lem:pres-red*}
+\begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction]\label{lem:overview:pres-red*}
 If $\red*{\Phi; \Gamma}{e}{e'}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$
 then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$.
@@ -337,10 +337,10 @@ then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile
 \begin{proof}
 By lexicographical induction on the derivations of $\red*{\Phi; \Gamma}{e}{e'}$
 and of $\type{\Phi; \Gamma}{e}{\tau}$,
-using \cref{lem:pres-red}, \cref{lem:pres-subtyping}, and \cref{lem:pres-typing}.
+using \cref{lem:overview:pres-red}, \cref{lem:overview:pres-subtyping}, and \cref{lem:overview:pres-typing}.
 \end{proof}
 
-\begin{lemma}[Preservation of subtyping]\label{lem:pres-subtyping}
+\begin{lemma}[Preservation of subtyping]\label{lem:overview:pres-subtyping}
 If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$
 and $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\compile{U}}$
 then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
@@ -348,10 +348,10 @@ then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2
 
 \begin{proof}
 By cases on the derivation of $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$,
-using \cref{lem:pres-cumul}, \cref{lem:pres-red*}, and subject reduction of \lang.
+using \cref{lem:overview:pres-acum}, \cref{lem:overview:pres-red*}, and subject reduction of \lang.
 \end{proof}
 
-\begin{theorem}[Type preservation]\label{lem:pres-typing}\hfill
+\begin{theorem}[Type preservation]\label{lem:overview:pres-typing}\hfill
 \begin{enumerate}[noitemsep]
   \item If $\wf{\Phi}{\Gamma}$ then $\wf{}{\compile{\Phi}\compile{\Gamma}}$.
   \item If $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
@@ -360,11 +360,11 @@ using \cref{lem:pres-cumul}, \cref{lem:pres-red*}, and subject reduction of \lan
 
 \begin{proof}
 By mutual induction on the derivations of $\wf{\Phi}{\Gamma}$ and $\type{\Phi; \Gamma}{e}{\tau}$,
-using \cref{lem:pres-subtyping}.
+using \cref{lem:overview:pres-subtyping}.
 \end{proof}
 
 The most important properties required of \lang are subject reduction,
-used in \cref{lem:pres-subtyping},
+used in \cref{lem:overview:pres-subtyping},
 and confluence, which is used to show that subtyping is transitive,
 which in turn is used to prove the inversion principles for the typing judgement.
 
