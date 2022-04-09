@@ -72,7 +72,9 @@
 
 % various theorem environments
 \newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
 \newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{sublemma}[theorem]{Sublemma}
 \newtheorem{postulate}[theorem]{Postulate}
 \newtheorem{corollary}[theorem]{Corollary}
 
@@ -248,6 +250,7 @@
 \newcommand{\type}[3]{#1 \mathrel{\vdash} \annot{#2}{#3}}
 \newcommand{\defeq}[4]{#1 \mathrel{\vdash} \annot{#2 \mathrel{\equiv} #3}{#4}}
 \newcommand{\subsize}[3]{#1 \mathrel{\vdash} #2 \mathrel{\leqslant} #3}
+\newcmd*{\subsize}[2]{#1 \mathrel{\leqslant} #2}
 \newcommand{\subtype}[3]{#1 \mathrel{\vdash} #2 \mathrel{\preccurlyeq} #3}
 \newcommand{\acum}[2]{#1 \mathrel{\sqsubseteq} #2}
 \newcommand{\red}[4][]{#2 \mathrel{\vdash} #3 \mathrel{\rhd}_{#1} #4}

@@ -532,7 +532,7 @@ By induction on the derivation of $\wf{\Phi}{\Gamma}$,
 using the typing premise of \rref{cons-def} when the variable is $x$.
 \end{proof}
 
-\begin{lemma} \label{lem:sr}
+\begin{lemma}[Subject reduction] \label{lem:sr}
 If $\type{\Phi; \Gamma}{e}{\tau}$ and $\red{\Phi; \Gamma}{e}{e'}$ then $\type{\Phi; \Gamma}{e'}{\tau}$.
 \end{lemma}
 
@@ -577,7 +577,7 @@ By \rref{conv}, both $\subst{\sigma'}{\alpha}{s}$ and $\tau$ have type $\rules{U
 Finally, by \rref{conv} again, we have $\type{\Phi; \Gamma}{\subst{e}{\alpha}{s}}{\tau}$.
 \end{proof}
 
-\begin{theorem}[Subject reduction]\label{thm:subject-reduction}
+\begin{theorem}[Subject reduction] \label{thm:subject-reduction}
 If $\type{\Phi; \Gamma}{e}{\tau}$ and $\red*{\Phi; \Gamma}{e}{e'}$ then $\type{\Phi; \Gamma}{e'}{\tau}$.
 \end{theorem}
 
@@ -692,7 +692,7 @@ By induction on the derivation of $\type{\GammaT}{\eT}{\tauT}$.
 \end{proof}
 \fi
 
-\begin{theorem}[Subject equivalence]\label{thm:subject-equivalence}
+\begin{theorem}[Subject equivalence] \label{thm:subject-equivalence}
 If $\defeq{\GammaT}{\eT_1}{\eT_2}{\tauT}$
 then $\type{\GammaT}{\eT_1}{\tauT}$ and $\type{\GammaT}{\eT_2}{\tauT}$.
 \end{theorem}
@@ -721,7 +721,271 @@ needed for the translations are derived when possible
 by \cref{lem:wf-env} and \nameref{thm:regularity}, respectively)
 and otherwise assumed as hypotheses.
 
+\iffalse
+Because judgements in \lang are untyped while equivalence in \CICE is typed
+and defined mutually with the other judgements,
+when deriving \CICE judgements from \lang judgements,
+additional typing derivations are required.
+For preservation of reduction and $\alpha$-cumulativity,
+simply having \CICE typing judgements of the relevant terms is sufficient.
+For the other proofs, however, a ``deeper'' property is required.
+
+\begin{definition}
+A typing derivation is \emph{strongly type preserved} if,
+for every subderivation $\type{\Phi; \Gamma}{e}{\tau}$ and itself,
+$\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$ holds.
+\end{definition}
+
+This lets us avoid a complex proof by mutual induction over all lemmas and theorems
+by instead passing up typing judgements as needed.
+\fi
+
 \subsection{Compositionality}
+
+\begin{sublemma} \label{sublem:subsize-FV}
+If $\subsizeto{\Phi}{s_1}{s_2}{\eT}$ and $x$ is a term variable
+then $\xT \notin \FV{\eT}$.
+\end{sublemma}
+
+\begin{proof}
+By induction on the derivation of $\subsizeto{\Phi}{s_1}{s_2}{\eT}$.
+Intuitively, the only variables resulting from translating a size expression
+or a subsizing judgement are size variables $\alphaT$ or fresh variables $\alpha^*$,
+so they couldn't contain any translated term variables.
+\end{proof}
+
+\begin{lemma}[Term compositionality] \label{lem:term-compositionality}
+If $\type{\Phi; \Gamma_1, \annot{x}{\tau'}, \Gamma_2}{e}{\tau}$
+and $\type{\Phi; \Gamma_1}{e'}{\tau'}$ then
+$\subst{\compile{e}}{\xT}{\compile{e'}} = \compile{\subst{e}{x}{e'}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$,
+where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item \rref*{conv}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \dots \\
+      \type{\Phi; \Gamma}{e}{\sigma} \\
+      \subtype{\Phi; \Gamma}{\sigma}{\tau} \\
+    }{
+      \type{\Phi; \Gamma}{e}{\tau}
+    }
+    \end{mathpar}
+    Induction hypothesis: $\subst{\compile{e}}{\xT}{\compile{e'}} = \compile{\subst{e}{x}{e'}}$. \\
+    Trivial by the induction hypothesis.
+  \item \rref*{var}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \wf{\Phi}{\Gamma} \\
+      (\annot{y}{\tau}) \in \Gamma
+    }{
+      \type{\Phi; \Gamma}{y}{\tau}
+    }
+    \end{mathpar}
+    If $x = y$, then $\subst{\xT}{\xT}{\compile{e'}} = \compile{e'} = \compile{\subst{x}{x}{e'}}$. \\
+    If $x \neq y$, then $\subst{\yT}{\xT}{\compile{e'}} = \yT = \compile{\subst{y}{x}{e'}}$.
+  \item[\textbf{Cases}] \rref*{univ}, \rref*{nat}. Trivial.
+  \item[\textbf{Cases}] \rref*{pi}, \rref*{lam}, \rref*{app}, \rref*{let}, \rref*{forall}, \rref*{slam}, \rref*{sapp}, \rref*{forall<}, \rref*{slam<}, \rref*{wft}, \rref*{case-nat}, \rref*{case-wft}.
+    Straightforward by the induction hypotheses.
+    As example, I prove only the case for \rref*{case-wft}.
+    \begin{mathpar}
+    \inferrule{
+      \infer{\Phi; \Gamma}{e}{\W{y}{\sigma}{\tau}{s}} \\
+      z_1, z_2 \notin \FV{P} \\
+      \infer{\Phi; \Gamma, \annot{w}{\W{y}{\sigma}{\tau}{s}}}{P}{U} \\
+      \check{\Phi, \bound{\alpha}{s}; \Gamma, \annot{z_1}{\sigma}, \annot{z_2}{\arr*{\subst{\tau}{y}{z_1}}{\W{y}{\tau}{\sigma}{\alpha}}}}{e_s}{\subst{P}{w}{\sup{y}{\sigma}{\tau}{s}{\alpha}{z_1}{z_2}}}
+    }{
+      \infer{\Phi; \Gamma}{\match{e}{\fun*{w}{P}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s)}}{\subst{P}{w}{e}}
+    }
+    \end{mathpar}
+    Induction hypotheses (omitting environment extensions for concision):
+    \begin{itemize}[noitemsep]
+      \item $\subst{\compile{e}}{\xT}{\compile{e'}} = \compile{\subst{e}{x}{e'}}$,
+      \item $\subst{\compile{P}}{\xT}{\compile{e'}} = \compile{\subst{P}{x}{e'}}$, and
+      \item $\subst{\compile{e_s}}{\xT}{\compile{e'}} = \compile{\subst{e_s}{x}{e'}}$.
+    \end{itemize}
+    Suppose first that $x \neq w$, $x \neq z_1$, and $x \neq z_2$.
+    Then we have
+    \begin{align*}
+    &\subst{\compile{\match{e}{\fun*{w}{P}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s)}}}{\xT}{\compile{e'}} \\
+    &= \subst{(\matchT{\compile{e}}{\funT*{\mt}{\wT}{\compile{P}}}{(\app{\supT}{\alphaT}{\alphaT^*}{\zT_1}{\zT_2} \RightarrowT \compile{e_s})})}{\xT}{\compile{e'}} && \textit{by translation} \\
+    &= \matchT{\subst{\compile{e}}{\xT}{\compile{e'}}}{\funT*{\mt}{\wT}{\subst{\compile{P}}{\xT}{\compile{e'}}}}{\\ & \quad \qquad \app{\supT}{\alphaT}{\alphaT^*}{\zT_1}{\zT_2} \RightarrowT \subst{\compile{e_s}}{\xT}{\compile{e'}}} && \textit{by substitution} \\
+    &= \matchT{\compile{\subst{e}{x}{e'}}}{\funT*{\mt}{\wT}{\compile{\subst{P}{x}{e'}}}}{\\ & \quad \qquad \app{\supT}{\alphaT}{\alphaT^*}{\zT_1}{\zT_2} \RightarrowT \compile{\subst{e_s}{x}{e'}}} && \textit{by IHs} \\
+    &= \compile{\match{\subst{e}{x}{e'}}{\fun*{w}{\subst{P}{x}{e'}}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow \subst{e_s}{x}{e'})}} && \textit{by translation} \\
+    &= \compile{\subst{\match{e}{\fun*{w}{P}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s)}}{x}{e'}} && \textit{by substitution}.
+    \end{align*}
+    If $x$ is any of the binders $w, z_1, z_2$,
+    then neither substitution of the subterms in \lang nor in \CICE would occur,
+    giving the exact same equality.
+  \item[\textbf{Cases}] \rref*{sapp<}, \rref*{zero}, \rref*{succ}, \rref*{sup}.
+    Similar to the above, but with an additional term generated from translating subsizing judgements to deal with.
+    I prove only the case for \rref*{sapp<} as example.
+    \begin{mathpar}
+    \inferrule{
+      \infer{\Phi; \Gamma}{e}{\Funtype<{\alpha}{r}{\tau}} \\
+      \subsize{\Phi}{\hat{s}}{r}
+    }{
+      \infer{\Phi; \Gamma}{\App{e}{s}}{\subst{\tau}{\alpha}{s}}
+    }
+    \end{mathpar}
+    Induction hypothesis: $\subst{\compile{e}}{\xT}{\compile{e'}} = \compile{\subst{e}{x}{e'}}$.
+    By the translation, we have $\subsizeto{\Phi}{\sss{s}}{r}{\eT''}$.
+    Then we have
+    \begin{align*}
+    \subst{\compile{\App{e}{s}}}{\xT}{\compile{e'}}
+    &= \subst{(\app{\compile{e}}{\compile{s}}{\eT''})}{\xT}{\compile{e'}} && \textit{by translation} \\
+    &= \app{(\subst{\compile{e}}{\xT}{\compile{e'}})}{\compile{s}}{(\subst{\eT''}{\xT}{\compile{e'}})} && \textit{by substitution} \\
+    &= \app{(\subst{\compile{e}}{\xT}{\compile{e'}})}{\compile{s}}{\eT''} && \textit{by \cref{sublem:subsize-FV}} \\
+    &= \app{\compile{\subst{e}{x}{e'}}}{\compile{s}}{\eT''} && \textit{by IH} \\
+    &= \compile{\App{\subst{e}{x}{e'}}{s}} && \textit{by translation} \\
+    &= \compile{\subst{\App{e}{s}}{x}{e'}} && \textit{by substitution},
+    \end{align*}
+    noting that substitution of a term variable in the translation of a size expression
+    has no effect since they produce no term variables.
+  \item \rref*{fix}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \dots \\
+      \infer{\Phi, \alpha; \Gamma}{\sigma}{U} \\
+      \check{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\sigma}{\alpha}{\beta}}}}{e}{\sigma}
+    }{
+      \infer{\Phi; \Gamma}{\fix{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}
+    }
+    \end{mathpar}
+    Induction hypotheses:
+    \begin{itemize}[noitemsep]
+      \item $\subst{\compile{\sigma}}{\xT}{\compile{e'}} = \compile{\subst{\sigma}{x}{e'}}$ and
+      \item $\subst{\compile{e}}{\xT}{\compile{e'}} = \compile{\subst{e}{x}{e'}}$.
+    \end{itemize}
+    We then have
+    \begin{align*}
+    &\subst{\compile{\fix{f}{\alpha}{\sigma}{e}}}{\xT}{\compile{e'}} \\
+    &= \subst{(\app{\wfind}{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{ \\
+    & \quad \qquad (\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\sigmaT}{\alphaT}{\betaT}}}}{\compile{e}}})})}{\xT}{e'} \\
+    & \quad \textit{by translation} \\
+    &= \app{\wfind}{(\funT{\alphaT}{\SizeT}{\subst{\compile{\sigma}}{\xT}{\compile{e'}}})}{ \\
+    & \quad \qquad (\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\sigmaT}{\alphaT}{\betaT}}}}{\subst{\compile{e}}{\xT}{\compile{e'}}}})} \\
+    & \quad \textit{by substitution} \\
+    &= \app{\wfind}{(\funT{\alphaT}{\SizeT}{\compile{\subst{\sigma}{x}{e'}}})}{ \\
+    & \quad \qquad (\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\sigmaT}{\alphaT}{\betaT}}}}{\compile{\subst{e}{x}{e'}}}})} \\
+    & \quad \textit{by IHs} \\
+    &= \compile{\fix{f}{\alpha}{\subst{\sigma}{x}{e'}}{\subst{e}{x}{e'}}} \quad \textit{by translation} \\
+    &= \compile{\subst{\fix{f}{\alpha}{\sigma}{e}}{x}{e'}} \quad \textit{by substitution}.
+    \end{align*}
+    Substitution of $x$ has no effect on $\wfind$ since it's defined independently of the translation
+    and has no variables originating from the source expression. \qedhere
+\end{itemize}
+\end{proof}
+
+In addition to compositionality when substituting terms,
+we also need compositionality when substitution sizes.
+This is not as simple when substituting bounded sizes into terms,
+since a single substitution in the source
+would correspond to two substitutions in the target,
+the second being a term exhibiting boundedness,
+but the proofs have the same structure.
+
+\begin{sublemma}\label{sublem:compos-size}
+$\subst{\compile{s}}{\alpha}{\compile{r}} = \compile{\subst{s}{\alpha}{r}}$.
+\end{sublemma}
+
+\begin{proof}
+By induction on the structure of $s$.
+\end{proof}
+
+\begin{sublemma}
+If $\subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{s}{r}{\eT}$
+and $\subsizeto{\Phi_1}{\sss{s}'}{r'}{\eT'}$
+then $\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s}{\alpha}{s'}}{\subst{r}{\alpha}{s'}}{\subst{\eT}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}$.
+\end{sublemma}
+
+\begin{proof}
+By induction on the derivation of $\subsizeto{\Phi}{s}{r}{\eT}$,
+where $\Phi = \Phi_1, \bound{\alpha}{r'}, \Phi_2$.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item $\subsize*{\sss{\beta}}{s}$.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule[]{
+      (\bound{\beta}{s}) \in \Phi
+    }{
+      \subsizeto{\Phi}{\sss{\beta}}{s}{\betaT^*}
+    }
+    \end{mathpar}
+    If $\beta = \alpha$, then $s = r'$, and the goal holds by
+    $\subsizeto{\Phi_1}{\sss{s}'}{r'}{\eT'}$.
+    If $\beta \neq \alpha$, then the goal holds by the same rule.
+    \begin{mathpar}
+    \inferrule[]{
+      (\bound{\beta}{\subst{s}{\alpha}{s'}}) \in \subst{\Phi}{\alpha}{s'}
+    }{
+      \subsizeto{\subst{\Phi}{\alpha}{s'}}{\sss{\beta}}{\subst{s}{\alpha}{s'}}{\betaT^*}
+    }
+    \end{mathpar}
+  \item[\textbf{Cases}] $\subsize*{\circ}{s}$, $\subsize*{s}{s}$, $\subsize*{s}{\sss{s}}$.
+    By \cref{sublem:compos-size}, noting that the fresh variable $\alphaT^*$
+    never appears in the translation of a size expression.
+  \item $\subsize*{\sss{s}}{\sss{r}}$.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{s}{r}{\eT}
+    }{
+      \subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{\sss{s}}{\sss{r}}{\app{\monoT}{\compile{s}}{\compile{r}}{\eT}}
+    }
+    \end{mathpar}
+    Induction hypothesis: $$\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s}{\alpha}{s'}}{\subst{r}{\alpha}{s'}}{\subst{\eT}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}.$$
+    By the same rule, we can derive
+    \begin{align*}
+      &\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{\sss{s}}{\alpha}{s'}}{\subst{\sss{r}}{\alpha}{s'}}
+      {\\ & \qquad \app{\monoT}{\compile{\subst{s}{\alpha}{s'}}}{\compile{\subst{r}{\alpha}{s'}}}{(\subst{\eT}{\alphaT, \alphaT^*}{\compile{s'}, \eT'})}}.
+    \end{align*}
+    By \cref{sublem:compos-size}, again noting that $\alphaT^*$ never appears in $\compile{s}$ or $\compile{r}$,
+    this becomes
+    \begin{align*}
+      &\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{\sss{s}}{\alpha}{s'}}{\subst{\sss{r}}{\alpha}{s'}}
+      {\\ & \qquad \app{\monoT}{\subst{\compile{s}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}{\subst{\compile{r}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}{(\subst{\eT}{\alphaT, \alphaT^*}{\compile{s'}, \eT'})}}.
+    \end{align*}
+    By substitution, the result of translation above is exactly $\subst{(\app{\monoT}{\compile{s}}{\compile{r}}{\eT})}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}$,
+    as desired.
+  \item \textbf{for transitivity}.
+    \begin{mathpar}
+    \inferrule{
+      \subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{s_1}{s_2}{\eT_{12}} \\
+      \subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{s_2}{s_3}{\eT_{23}}
+    }{
+      \subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{s_1}{s_3}{\app{\transleq}{\compile{s_1}}{\compile{s_2}}{\compile{s_3}}{\eT_{12}}{\eT_{23}}}
+    }
+    \end{mathpar}
+    Induction hypotheses:
+    \begin{itemize}[noitemsep]
+      \item $\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s_1}{\alpha}{s'}}{\subst{s_2}{\alpha}{s'}}{\subst{\eT_{12}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}$ and
+      \item $\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s_2}{\alpha}{s'}}{\subst{s_3}{\alpha}{s'}}{\subst{\eT_{23}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}$.
+    \end{itemize}
+    By the same rule, we can derive
+    \begin{align*}
+    &\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s_1}{\alpha}{s'}}{\subst{s_3}{\alpha}{s'}}
+    {\\ & \qquad \app{\transleq}{\compile{\subst{s_1}{\alpha}{s'}}}{\compile{\subst{s_2}{\alpha}{s'}}}{\compile{\subst{s_3}{\alpha}{s'}}}
+    {\\ & \qquad \phantom{\app{\transleq}{}} (\subst{\eT_{12}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'})}{(\subst{\eT_{23}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'})}}
+    \end{align*}
+    By \cref{sublem:compos-size}, again noting that $\alphaT^*$ never appears in
+    $\compile{s_1}$, $\compile{s_2}$, or $\compile{s_3}$, this becomes
+    \begin{align*}
+    &\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s_1}{\alpha}{s'}}{\subst{s_3}{\alpha}{s'}}
+    {\\ & \qquad \app{\transleq}{\subst{\compile{s_1}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}{\subst{\compile{s_2}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}{\subst{\compile{s_3}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}
+    {\\ & \qquad \phantom{\app{\transleq}{}} (\subst{\eT_{12}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'})}{(\subst{\eT_{23}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'})}}
+    \end{align*}
+    By substitution, the result of translation above is exactly
+    $$\subst{(\app{\transleq}{\compile{s_1}}{\compile{s_2}}{\compile{s_3}}{\eT_{12}}{\eT_{23}})}{\alphaT, \alphaT^*}{\compile{s'}, \eT'},$$
+    as desired.
+\end{itemize}
+\end{proof}
 
 \subsection{Preservation of reduction}
 
@@ -733,7 +997,7 @@ is required to derive various equivalences,
 but their types need not even be the same,
 since the \CICE subtyping judgement itself is untyped.
 
-\begin{lemma}[Preservation of $\alpha$-cumulativity]\label{lem:pres-acum}
+\begin{lemma}[Preservation of $\alpha$-cumulativity] \label{lem:pres-acum}
 Suppose we have the following:
 \begin{itemize}[noitemsep]
   \item $\acum{\tau_1}{\tau_2}$,
@@ -821,33 +1085,20 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
     $\subtype{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_1}_{\bound{\alpha}{s}}}{\compile{\tau_2}_{\bound{\alpha}{s}}}$.
     By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\SizeT}{\UT'}$
     and $\defeq{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\alphaT \szltT \compile{s}}{\UT''}$.
-    Then by \rref{subtype-pi} twice, we have $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_1}_{\bound{\alpha}{s}}}}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_2}_{\bound{\alpha}{s}}}}}$.
+    Then by \rref{subtype-pi} twice, we have
+    $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_1}_{\bound{\alpha}{s}}}}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_2}_{\bound{\alpha}{s}}}}}$.
     \qedhere
 \end{itemize}
 \end{proof}
 
 \subsection{Preservation of closure of reduction}
 
-\hyperref[lem:pres-red*]{Preservation of closure of reduction},
-\nameref{lem:pres-subtyping}, and
-\nameref{thm:pres-typing}
-are proven by mutual structural induction,
-but for clarity are stated separately.
-This means that each lemma or theorem is proven by induction on the relevant derivation,
-but we can appeal to the other lemmas or theorem when applied \emph{only} to a subderivation.
-This guarantees that we aren't using circular reasoning, since derivations are finite.
-In this case, \nameref{thm:pres-typing} appeals to \nameref{lem:pres-subtyping}
-in the \rref*{conv} case with the subtyping premise, and
-\nameref{lem:pres-subtyping} appeals to \hyperref[lem:pres-red*]{Preservation of closure of reduction}
-with its reduction premises.
-\hyperref[lem:pres-red*]{Preservation of closure of reduction} is proven by induction on both a reduction derivation
-and on a typing derivation, and appeals to \nameref{thm:pres-typing} only with typing premises.
-
-\begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction]\label{lem:pres-red*}
+\begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction] \label{lem:pres-red*}
 Suppose we have the following:
 \begin{itemize}[noitemsep]
-  \item $\red*{\Phi; \Gamma}{e}{e'}$ and
-  \item $\type{\Phi; \Gamma}{e}{\tau}$.
+  \item $\red*{\Phi; \Gamma}{e}{e'}$,
+  \item $\type{\Phi; \Gamma}{e}{\tau}$, and
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
 \end{itemize}
 Then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$,
 where \nameref{thm:subject-reduction} gives us $\type{\Phi; \Gamma}{e'}{\tau}$
@@ -855,18 +1106,23 @@ in order to translate $\compile{e'}$.
 \end{lemma}
 
 \begin{proof}
-
+By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
+Note that we have $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item \rref*{red*-once}. By \TODO. % Preservation of reduction
+  \item \rref*{red*-refl}. Trivial by \rref{equiv-refl}.
+  \item \rref*{red*-trans}.
+\end{itemize}
 \end{proof}
 
 \subsection{Preservation of subtyping}
 
 Most of the heavy lifting in proving preservation of subtyping is done by
 preservation of $\alpha$-cumulativity and preservation of the closure of reduction.
-Use of preservation of the closure of reduction is justified because it's applied only
-to a direct subderivation of the subtyping derivation.
-This lemma, too, requires that the translation of the subtyped terms specifically is type-preserving.
+% This lemma requires strongly type preserved typing judgements only to apply
+% \hyperref[lem:pres-red*]{Preservation of closure of reduction}.
 
-\begin{lemma}[Preservation of subtyping]\label{lem:pres-subtyping}
+\begin{lemma}[Preservation of subtyping] \label{lem:pres-subtyping}
 Suppose we have the following:
 \begin{itemize}[noitemsep]
   \item $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$,
