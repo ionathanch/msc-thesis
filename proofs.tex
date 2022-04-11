@@ -913,19 +913,31 @@ where $\Phi = \Phi_1, \bound{\alpha}{r'}, \Phi_2$.
     \vspace{-\baselineskip}
     \begin{mathpar}
     \inferrule[]{
-      (\bound{\beta}{s}) \in \Phi
+      (\bound{\beta}{s}) \in \Phi_1, \bound{\alpha}{r'}, \Phi_2
     }{
-      \subsizeto{\Phi}{\sss{\beta}}{s}{\betaT^*}
+      \subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{\sss{\beta}}{s}{\betaT^*}
     }
     \end{mathpar}
-    If $\beta = \alpha$, then $s = r'$, and the goal holds by
+    If $\beta = \alpha$, then $\betaT^* = \alphaT^*$ and $s = r'$, and the goal holds by
     $\subsizeto{\Phi_1}{\sss{s}'}{r'}{\eT'}$.
-    If $\beta \neq \alpha$, then the goal holds by the same rule.
+    If $\beta \neq \alpha$ and $\bound{\beta}{s} \in \Phi_1$,
+    then $\alpha \notin \FV{s}$ and $\bound{\beta}{s} \in \Phi_1, \subst{\Phi_2}{\alpha}{s}$,
+    so we have the following.
+    \begin{mathpar}
+    \inferrule{
+      \bound{\beta}{s} \in \Phi_1, \subst{\Phi_2}{\alpha}{s}
+    }{
+      \subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s}}{\sss{\beta}}{s}{\betaT^*}
+    }
+    \end{mathpar}
+    Otherwise, if $\bound{\beta}{s} \in \Phi_2$,
+    then $\bound{\beta}{\subst{s}{\alpha}{r'}} \in \Phi_1, \subst{\Phi_2}{\alpha}{r'}$,
+    and we have the following.
     \begin{mathpar}
     \inferrule[]{
-      (\bound{\beta}{\subst{s}{\alpha}{s'}}) \in \subst{\Phi}{\alpha}{s'}
+      (\bound{\beta}{\subst{s}{\alpha}{s'}}) \in \Phi_1, \subst{\Phi_2}{\alpha}{r'}
     }{
-      \subsizeto{\subst{\Phi}{\alpha}{s'}}{\sss{\beta}}{\subst{s}{\alpha}{s'}}{\betaT^*}
+      \subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{r'}}{\sss{\beta}}{\subst{s}{\alpha}{s'}}{\betaT^*}
     }
     \end{mathpar}
   \item[\textbf{Cases}] $\subsize*{\circ}{s}$, $\subsize*{s}{s}$, $\subsize*{s}{\sss{s}}$.
