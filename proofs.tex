@@ -742,6 +742,18 @@ by instead passing up typing judgements as needed.
 
 \subsection{Compositionality}
 
+Compositionality is the key to proving preservation of reduction in the next section,
+since reduction rules are defined in terms of substitution.
+In essence, we need to show that the translation commutes with substitution,
+so that translating a term with a substitution is the same as
+translating both terms and then applying the substitution.
+Since there are three different forms of substitution,
+substituting a term variable for a term,
+an bounded size variable for a size,
+and an unbounded size variable for a size,
+we need to handle each separately,
+and we end up with three individual compositionality lemmas.
+
 \begin{sublemma} \label{sublem:subsize-FV}
 If $\subsizeto{\Phi}{s_1}{s_2}{\eT}$ and $x$ is a term variable
 then $\xT \notin \FV{\eT}$.
@@ -883,6 +895,15 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
 \end{itemize}
 \end{proof}
 
+\iffalse % this isn't used anywhere??
+\begin{corollary}[Term environment compositionality]
+If $\wf{\Phi}{\Gamma_1, \annot{x}{\tau}, \Gamma_2}$ and $\type{\Phi; \Gamma_1}{e}{\tau}$
+then $\compile{\Gamma_1}, \subst{\compile{\Gamma_2}}{\xT}{\compile{e}} = \compile{\Gamma_1, \subst{\Gamma_2}{x}{e}}$
+by induction on $\wf{\Phi}{\Gamma_1, \annot{x}{\tau}, \Gamma_2}$
+using \nameref{lem:term-compositionality}.
+\end{corollary}
+\fi
+
 In addition to compositionality when substituting terms,
 we also need compositionality when substitution sizes.
 This is not as simple when substituting bounded sizes into terms,
@@ -899,15 +920,14 @@ $\subst{\compile{s}}{\alpha}{\compile{r}} = \compile{\subst{s}{\alpha}{r}}$.
 By induction on the structure of $s$.
 \end{proof}
 
-\begin{sublemma}
+\begin{sublemma} \label{sublem:compos-subsize-bounded}
 If $\subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{s}{r}{\eT}$
 and $\subsizeto{\Phi_1}{\sss{s}'}{r'}{\eT'}$
 then $\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s}{\alpha}{s'}}{\subst{r}{\alpha}{s'}}{\subst{\eT}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}$.
 \end{sublemma}
 
 \begin{proof}
-By induction on the derivation of $\subsizeto{\Phi}{s}{r}{\eT}$,
-where $\Phi = \Phi_1, \bound{\alpha}{r'}, \Phi_2$.
+By induction on the derivation of $\subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{s}{r}{\eT}$.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
   \item $\subsize*{\sss{\beta}}{s}$.
     \vspace{-\baselineskip}
@@ -997,6 +1017,48 @@ where $\Phi = \Phi_1, \bound{\alpha}{r'}, \Phi_2$.
     $$\subst{(\app{\transleq}{\compile{s_1}}{\compile{s_2}}{\compile{s_3}}{\eT_{12}}{\eT_{23}})}{\alphaT, \alphaT^*}{\compile{s'}, \eT'},$$
     as desired.
 \end{itemize}
+\end{proof}
+
+\begin{sublemma} \label{sublem:compos-subsize-unbounded}
+If $\subsizeto{\Phi_1, \alpha, \Phi_2}{s}{r}{\eT}$ and $\wf{\Phi_1}{s'}$ then
+$\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s}{\alpha}{s'}}{\subst{r}{\alpha}{s'}}{\subst{\eT}{\alphaT}{\compile{s'}}}$.
+\end{sublemma}
+
+\begin{proof}
+By induction on the derivation of $\subsizeto{\Phi_1, \alpha, \Phi_2}{s}{r}{\eT}$.
+The proof structure follows that of \cref{sublem:compos-subsize-bounded}.
+\end{proof}
+
+Just as compositionality for subsizing is split into substitution of bounded and unbounded sizes,
+so is size compositionality with respect to terms.
+Of note is that the right-hand side only has a single substitution,
+while the left-hand side has two,
+since the proof $\eT'$ now needs to be handled explicitly.
+
+\begin{lemma}[Size compositionality (bounded)] \label{lem:compos-size-bounded}
+If $\type{\Phi_1, \bound{\alpha}{r}, \Phi_2; \Gamma}{e}{\tau}$
+and $\subsizeto{\Phi_1}{\sss{s}}{r}{\eT'}$ then
+$\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{e}{\alpha}{s}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$,
+where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item \TODO
+\end{itemize}
+\end{proof}
+
+\begin{lemma}[Size compositionality (unbounded)] \label{lem:compos-size-unbounded}
+If $\type{\Phi_1, \alpha, \Phi_2; \Gamma}{e}{\tau}$
+and $\wf{\Phi_1}{s}$ then
+$\subst{\compile{e}}{\alphaT}{\compile{s}} = \compile{\subst{e}{\alpha}{s}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\type{\Phi_1, \alpha, \Phi_2; \Gamma}{e}{\tau}$.
+The proof structure follows that of \nameref{lem:compos-size-bounded},
+using \cref{sublem:compos-subsize-unbounded} in place of \cref{sublem:compos-subsize-bounded}.
 \end{proof}
 
 \subsection{Preservation of reduction}
@@ -1109,8 +1171,10 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
 Suppose we have the following:
 \begin{itemize}[noitemsep]
   \item $\red*{\Phi; \Gamma}{e}{e'}$,
-  \item $\type{\Phi; \Gamma}{e}{\tau}$, and
-  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
+  \item $\type{\Phi; \Gamma}{e}{\tau}$,
+  \item $\type{\Phi; \Gamma}{\tau}{U}$,
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$, and
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau}}{\compile{U}}$.
 \end{itemize}
 Then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$,
 where \nameref{thm:subject-reduction} gives us $\type{\Phi; \Gamma}{e'}{\tau}$
@@ -1119,7 +1183,6 @@ in order to translate $\compile{e'}$.
 
 \begin{proof}
 By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
-Note that we have $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
   \item \rref*{red*-once}. By \TODO. % Preservation of reduction
   \item \rref*{red*-refl}. Trivial by \rref{equiv-refl}.
@@ -1158,7 +1221,9 @@ there being only one case.
   \subtype{\Phi; \Gamma}{\tau_1}{\tau_2}
 }
 \end{mathpar}
-By \hyperref[lem:pres-red*]{Preservation of closure of reduction} on the first two premises, we have
+By \rref{conv, conv*}, we have both $\type{\Phi; \Gamma}{U}{\axioms{U}}$
+and $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{U}}{\compile{\axioms{U}}}$.
+Then \hyperref[lem:pres-red*]{Preservation of closure of reduction} on the first two premises yields
 \begin{itemize}[noitemsep]
   \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\sigma_1}}{\compile{U}}$ and
   \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_2}}{\compile{\sigma_2}}{\compile{U}}$.
