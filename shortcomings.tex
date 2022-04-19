@@ -1,0 +1,95 @@
+\chapter{Design Shortcomings}\label{sec:shortcomings}
+
+With \lang and its syntactic model come shortcomings in the design decisions that make it work.
+Most notable are the lack of an infinite size
+and the fact that the type of naturals and well-founded trees live in a universe
+higher than that in which their corresponding unsized types in, say, pCIC would live.
+Another shortcoming is the lack of coinductive types,
+which is a common use case of sized types in the Agda standard library.
+In this chapter, I elaborate on these features and the problems that arise from them, if any.
+
+\section{The Infinite Size}
+
+In prior sized type systems, the infinite size $\infty$ is applied to sized inductive types
+to represent a ``full'' inductive type encompassing that inductive at all sizes,
+which essentially corresponds to the usual unsized inductive.
+Whereas an inductive of some size $s$ can be thought of as the type of elements
+with at most $s$ many layers of constructors,
+the full inductive can be thought of as the type of elements with any number of layers of constructors.
+
+The infinite size is characterized by its subsizing behaviour:
+$\subsize*{s}{\infty}$ holds for \emph{any} $s$.
+This includes its own successor, \ie $\subsize*{\sss{\infty}}{\infty}$,
+leading to non--well-founded sequences of strictly ``decreasing'' sizes:
+$\dots < \infty < \infty < \infty$.
+Naturally, there's no way to model the infinite size as an element of $\SizeT$
+given that I've shown that $\SizeT$s \emph{are} well founded.
+If there were, then it'd be possible to prove an inconsistency.
+Let $\inftyT$ be the translation of $\infty$,
+and let $\inftyltinfty$ be the translation of $\subsize*{\sss{\infty}}{\infty}$.
+\begin{align*}
+&\LetT{\tg{{\neg}wf\inftyT}}{\arrT*{\app{\AccT}{\inftyT}}{\botT}}{\funT{\mathit{acc}}{\app{\AccT}{\inftyT}}{\matchT*{\mathit{acc}}{\app{\accT}{p} \RightarrowT \app{p}{\inftyT}{\inftyltinfty}}}} \\
+&\LetT{\tg{false}}{\botT}{\app{\tg{{\neg}wf\inftyT}}{(\app{\accessible}{\inftyT})}}
+\end{align*}
+
+In set-theoretic models of sized type systems with an infinite size,
+sizes are modelled as set-theoretic (transfinite) ordinals,
+the infinite size isn't modelled as a single ordinal;
+instead, for each use of the infinite size,
+its set-theoretic interpretation is an ordinal that is ``large enough'' in that context.
+For instance, the interpretation of the infinite size of $\N{\infty}$
+is the first limit ordinal $\omega$.
+
+This strategy doesn't adapt well to \lang with its size abstractions and syntactic model,
+since it requires a non-local translation of sizes.
+For instance, given the size application $\App{e}{\infty}$,
+what $\infty$ translates to would hypothetically depend on what $e$ translates to,
+and likely require further static analysis of $\compile{e}$ beyond a simple translation
+over typing derivations.
+
+Since the motivation for having the infinite size is specifically for representing full inductives,
+one alternative could be to define the full inductive separately
+and provide functions to and from the corresponding sized inductive.
+The following does so for $\W*$.
+\begin{align*}
+& \data{\App{\app{\W*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\infty}}{\Type{i+1}} \\
+& \quad \annot{\constr{sup\infty}}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\infty}}{A}{B}})}{\App{\app{\W*}{A}{B}}{\infty}}}}
+\end{align*}
+
+Defining a function from $\W{x}{A}{B}{s}$ to $\W{x}{A}{B}{\infty}$ is trivial,
+since we're discarding size information.
+What about going from $\W{x}{A}{B}{\infty}$ to $\W{x}{A}{B}{s}$?
+What should $s$ be?
+The size algebra could be augmented to be able to represent transfinite ordinals
+so that $s$ is again a size that is ``large enough'',
+but we can hardly expect programmers to be able to manipulate ordinals,
+and I conjecture that we would lose any hope of deciding $\subsize*{}{}$
+without any user intervention.
+
+The key insight is that what's important about an element of a full inductive
+isn't its precise size and depth of constructors,
+but merely that it has \emph{some} unknown size.
+Another alternative to the infinite size, then, could be to represent a full inductive
+as an existentially-quantified sized inductive,
+\ie $\Pairtype{\alpha}{\N{\alpha}}$ and $\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}$.
+We've already seen existential sizes in action: they're in the return types of $\qsort$ and $\msort$.
+
+There is still a limitation similar to that in \cref{sec:examples:limitations}
+when trying to represent the constructors of full inductives.
+For $\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}$, we need a ``constructor'' of the following type.
+\begin{align*}
+\annot{\const{sup'}}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}}}}
+\end{align*}
+All we need is a function
+$$\annot{\const{ac}}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{(\Pairtype{\alpha}{\arr*{\app{B}{x}}{\W{x}{A}{B}{\alpha}}})}}}$$
+and we're good to go.
+\begin{align*}
+\app{\const{sup'}}{x}{f} =
+\unpair*{\alpha}{f'}{\app{\const{ac}}{x}{f}}{\Pair{\sss{\alpha}}{\sup{x}{A}{B}{\sss{\alpha}}{\alpha}{x}{f'}}}
+\end{align*}
+
+Unfortunately, as the name might suggest,
+$\const{ac}$ is an instance of the axiom of choice,
+which for weak existentials\index{weak dependent pair} (whose elements we can't project out)
+is nonconstructive,
+so there's no hope of implementing $\const{ac}$.

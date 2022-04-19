@@ -199,8 +199,8 @@
 \newcmd*{\zord}[0]{\constr{z}}
 \newcommand{\sord}[3]{\app{\App{\constr{s}_{\Ord{#1}}}{#2}}{#3}}
 \newcmd*{\sord}[0]{\constr{s}}
-\newcommand{\lord}[3]{\app{\App{\constr{l}_{\Ord{#1}}}{#2}}{#3}}
-\newcmd*{\lord}[0]{\constr{l}}
+\newcommand{\lord}[3]{\app{\App{\constr{\ell}_{\Ord{#1}}}{#2}}{#3}}
+\newcmd*{\lord}[0]{\constr{\ell}}
 \newcommand{\match}[3]{\kw{case} \@et #1 \@et \kw{return} \@et #2 \@et \kw{of} \@et \phantom{} #3}
 \newcmd*{\match}[2]{\kw{case} \@et #1 \@et \kw{of} \@et \phantom{} #2}
 \newcommand{\fix}[4]{\kw{fix} \@et #1 \@et \sqbr{#2} \mathrel{:} #3 \mathrel{\coloneqq} \phantom{} #4}
@@ -311,6 +311,7 @@
 \newcommand{\reflT}[1]{\tg{refl}_{#1}}
 \newcommand{\JT}[3]{\tg{J}_{#1} \@et #2 \@et #3}
 \newcmd*{\JT}[0]{\tg{J}}
+\newcommand{\inftyT}{\tg{\infty}}
 
 % target inductives
 \newcommand{\dataT}[2]{\tg{data} \@et \annotT{#1}{#2} \@et \tg{where}}
@@ -346,3 +347,4 @@
 \newcommand{\accessible}{\tg{wf}}
 \newcommand{\wfacc}{\tg{wfAcc}}
 \newcommand{\wfind}{\tg{wfInd}}
+\newcommand{\inftyltinfty}{\tg{\infty\text{<}\infty}}
