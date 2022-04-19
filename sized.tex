@@ -179,7 +179,7 @@ Informally, borrowing syntax from the definition of general inductives,
 sized naturals and well-founded trees can be thought of as being defined by the following:
 %
 \begin{align*}
-&\data{\N{\alpha}}{\Type{1}} && \data{\App{\app{\W*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\alpha}}{\Type{i}} \\
+&\data{\N{\alpha}}{\Type{1}} && \data{\App{\app{\W*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\alpha}}{\Type{i+1}} \\
 &\quad \annot{\zero*}{\Funtype<{\beta}{\alpha}{\N{\alpha}}} && \quad \annot{\sup*}{\Funtype<{\beta}{\alpha}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\beta}}{A}{B}})}{\App{\app{\W*}{A}{B}}{\alpha}}}}} \\
 &\quad \annot{\succ*}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}
 \end{align*}
@@ -455,7 +455,7 @@ A similar lifting function for lists can be defined, whose type is
 
 $$\annot{\liftL}{\funtype{A}{\Type{i}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\List{A}{\beta}}{\List{A}{\alpha}}}}}}.$$
 
-I also use an encoding for \emph{weak dependent pairs}\index{weak dependent pairs}
+I also use an encoding for \emph{weak dependent pairs}\index{weak dependent pair}
 to express pairing a sized type with some particular size
 in situations where the size expressions of \lang aren't expressive enough
 to specify the exact size.
@@ -595,7 +595,7 @@ Suppose that $B$ here is some type operator on $A$.
 &\qquad \quad \app{\App{\sup*}{\beta}}{a}{g} \Rightarrow \sup{x}{A}{\app{B}{x}}{\alpha}{\beta}{a}{(\fun{b}{\app{B}{a}}{\app{\App{\traverse}{\beta}}{(\app{\App{f}{\beta}}{(\app{g}{b})})}})}}}}}}
 \end{align*}
 
-\subsection{Limitations}
+\subsection{Limitations} \label{sec:examples:limitations}
 
 As expressive as bounded, higher-rank sized types are,
 there still exist limitations to what can be expressed in comparison to ordinary inductive types
