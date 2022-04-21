@@ -97,6 +97,20 @@ Definition wfInd P IH s : P s := wfAcc P IH s (wf s).
 
 \subsection{\texorpdfstring{$\WT$}{W} Types} \label{app:mechanization:coq:W}
 
+\begin{singlespace}
+\begin{minted}{coq}
+Inductive W (A : Type) (B : A → Type) (s : Size) : Type :=
+| sup : ∀ r, r < s → ∀ a, (B a → W A B r) → W A B s.
+
+Definition ac {A B} a (f : B a → { s & W A B s }) : { s & B a → W A B s} :=
+  let f' b :=
+    match projT2 (f b) with
+    | sup _ _ _ r rs a f => sup _ _ _ r (transLeq rs (cocone b (reflLeq _))) a f
+    end
+  in existT _ (lim (λ b, projT1 (f b))) f'.
+\end{minted}
+\end{singlespace}
+
 \section{Agda}
 
 \subsection{Preliminary definitions} \label{app:mechanization:agda:prelim}
