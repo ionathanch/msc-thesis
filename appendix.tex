@@ -4,6 +4,8 @@
 
 \section{Coq}
 
+The following type check on Coq 8.15.1.
+
 \subsection{Preliminary definitions} \label{app:mechanization:coq:prelim}
 
 \begin{singlespace}
@@ -32,10 +34,10 @@ Definition base : Size := lim (False_rect Size).
 Definition baseLeq s : base ≤ s :=
   limiting (λ a, (False_rect (_ ≤ s) a)).
 
-Fixpoint reflLeq s : s ≤ s :=
+Fixpoint reflLeq {s} : s ≤ s :=
   match s with
-  | suc s => mono (reflLeq s)
-  | lim f => limiting (λ a, cocone a (reflLeq (f a)))
+  | suc s => mono reflLeq
+  | lim f => limiting (λ a, cocone a reflLeq)
   end.
 
 Property transLeq {r s t} (rs : r ≤ s) (st : s ≤ t) : r ≤ t.
@@ -53,7 +55,7 @@ Equations transLeq {r s t : Size} (rs : r ≤ s) (st : s ≤ t) : r ≤ t :=
 Fixpoint sucLeq s : s ≤ suc s :=
   match s with
   | suc s => mono (sucLeq s)
-  | lim f => limiting (λ a, transLeq (sucLeq (f a)) (mono (cocone a (reflLeq (f a)))))
+  | lim f => limiting (λ a, transLeq (sucLeq (f a)) (mono (cocone a reflLeq)))
   end.
 
 Inductive Acc (s : Size) : Prop :=
@@ -99,19 +101,24 @@ Definition wfInd P IH s : P s := wfAcc P IH s (wf s).
 
 \begin{singlespace}
 \begin{minted}{coq}
+Import SigTNotations.
+
 Inductive W (A : Type) (B : A → Type) (s : Size) : Type :=
 | sup : ∀ r, r < s → ∀ a, (B a → W A B r) → W A B s.
+Arguments sup {_ _ _}.
 
-Definition ac {A B} a (f : B a → { s & W A B s }) : { s & B a → W A B s} :=
+Definition ac {A B} a (f : B a → {s & W A B s}) : {s & B a → W A B s} :=
   let f' b :=
-    match projT2 (f b) with
-    | sup _ _ _ r rs a f => sup _ _ _ r (transLeq rs (cocone b (reflLeq _))) a f
+    match (f b).2 with
+    | sup r rs a f => sup r (transLeq rs (cocone b reflLeq)) a f
     end
-  in existT _ (lim (λ b, projT1 (f b))) f'.
+  in (lim (λ b, (f b).1) ; f').
 \end{minted}
 \end{singlespace}
 
 \section{Agda}
+
+The following type check on Agda 2.6.2.
 
 \subsection{Preliminary definitions} \label{app:mechanization:agda:prelim}
 
