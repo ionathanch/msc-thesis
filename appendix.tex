@@ -4,6 +4,8 @@
 
 \section{Coq}
 
+\subsection{Preliminary definitions} \label{app:mechanization:coq:prelim}
+
 \begin{singlespace}
 \begin{minted}{coq}
 From Equations Require Import Equations.
@@ -93,7 +95,11 @@ Definition wfInd P IH s : P s := wfAcc P IH s (wf s).
 \end{minted}
 \end{singlespace}
 
+\subsection{\texorpdfstring{$\WT$}{W} Types} \label{app:mechanization:coq:W}
+
 \section{Agda}
+
+\subsection{Preliminary definitions} \label{app:mechanization:agda:prelim}
 
 \begin{singlespace}
 \begin{minted}{agda}
@@ -167,5 +173,23 @@ wfInd P f s = wfAcc s (wf s)
   where
   wfAcc : ∀ s → Acc s → P s
   wfAcc s (acc p) = f s (λ r r<s → wfAcc r (p r r<s))
+\end{minted}
+\end{singlespace}
+
+\subsection{\texorpdfstring{$\WT$}{W} Types} \label{app:mechanization:agda:W}
+
+\begin{singlespace}
+\begin{minted}{agda}
+open import Data.Product using (proj₁; proj₂; Σ-syntax; _,_)
+
+data W (A : Set ℓ) (B : A → Set ℓ) (s : Size {ℓ}) : Set (lsuc ℓ) where
+  sup : ∀ r → r < s → (a : A) → (B a → W A B r) → W A B s
+
+ac : ∀ a → (B a → Σ[ s ∈ Size ] W A B s) → Σ[ s ∈ Size ] (B a → W A B s)
+ac a f = ⊔ (λ b → proj₁ (f b)) , f′
+  where
+  f′ : _
+  f′ b with proj₂ (f b)
+  ... | sup r r<s a f = sup r (s≤s≤s r<s (s≤⊔f _ b s≤s)) a f
 \end{minted}
 \end{singlespace}

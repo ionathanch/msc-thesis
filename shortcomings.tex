@@ -78,10 +78,10 @@ There is still a limitation similar to that in \cref{sec:examples:limitations}
 when trying to represent the constructors of full inductives.
 For $\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}$, we need a ``constructor'' of the following type.
 \begin{align*}
-\annot{\const{sup'}}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}}}}
+\annot{\const{sup'}}{\arr{x}{A}{\arr*{(\arr*{B}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}}}}
 \end{align*}
 All we need is a function
-$$\annot{\const{ac}}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{(\Pairtype{\alpha}{\arr*{\app{B}{x}}{\W{x}{A}{B}{\alpha}}})}}}$$
+$$\annot{\const{ac}}{\arr{x}{A}{\arr*{(\arr*{B}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{(\Pairtype{\alpha}{\arr*{B}{\W{x}{A}{B}{\alpha}}})}}}$$
 and we're good to go.
 \begin{align*}
 \app{\const{sup'}}{x}{f} =
@@ -93,3 +93,10 @@ $\const{ac}$ is an instance of the axiom of choice,
 which for weak existentials\index{weak dependent pair} (whose elements we can't project out)
 is nonconstructive,
 so there's no hope of implementing $\const{ac}$.
+However, if we take weak existentials as a primitive of \lang
+rather than being defined as an encoding,
+and model them by strong dependent pairs in \CICE,
+then the translation of $\const{ac}$ \emph{can} be implemented as a function.
+In other words, the syntactic model justifies the axiom $\const{ac}$ in the source.
+The mechanization of $\const{ac}$ in Agda and Coq are given in
+\cref{app:mechanization:agda:W} and \cref{app:mechanization:coq:W}, respectively.
