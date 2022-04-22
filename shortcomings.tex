@@ -49,8 +49,8 @@ over typing derivations.
 
 Since the motivation for having the infinite size is specifically for representing full inductives,
 one alternative could be to define the full inductive separately
-and provide functions to and from the corresponding sized inductive.
-The following does so for $\W*$.
+and provide functions to and from the corresponding sized inductive,
+such as the following for $\W*$.
 \begin{align*}
 & \data{\App{\app{\W*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\infty}}{\Type{i+1}} \\
 & \quad \annot{\constr{sup\infty}}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\infty}}{A}{B}})}{\App{\app{\W*}{A}{B}}{\infty}}}}
@@ -81,7 +81,7 @@ For $\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}$, we need a ``constructor'' of the f
 \annot{\const{sup'}}{\arr{x}{A}{\arr*{(\arr*{B}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}}}}
 \end{align*}
 All we need is a function
-$$\annot{\const{ac}}{\arr{x}{A}{\arr*{(\arr*{B}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{(\Pairtype{\alpha}{\arr*{B}{\W{x}{A}{B}{\alpha}}})}}}$$
+$$\annot{\const{ac}}{\arr{x}{A}{\arr*{(\arr*{B}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{\Pairtype{\alpha}{(\arr*{B}{\W{x}{A}{B}{\alpha}})}}}}$$
 and we're good to go.
 \begin{align*}
 \app{\const{sup'}}{x}{f} =
@@ -89,14 +89,109 @@ and we're good to go.
 \end{align*}
 
 Unfortunately, as the name might suggest,
-$\const{ac}$ is an instance of the axiom of choice,
+$\const{ac}$ is an instance of the axiom of choice%
+\footnote{The ``choice'' made here is the existentially-quantified size in the consequent:
+the axiom asserts that there's always a way to choose a size such that
+all of the well-founded trees returned have that size.},
 which for weak existentials\index{weak dependent pair} (whose elements we can't project out)
 is nonconstructive,
 so there's no hope of implementing $\const{ac}$.
 However, if we take weak existentials as a primitive of \lang
 rather than being defined as an encoding,
 and model them by strong dependent pairs in \CICE,
-then the translation of $\const{ac}$ \emph{can} be implemented as a function.
+then the translation of $\const{ac}$ \emph{can} be implemented as a function,
+also making use of the limit operator.
 In other words, the syntactic model justifies the axiom $\const{ac}$ in the source.
-The mechanization of $\const{ac}$ in Agda and Coq are given in
+The mechanization of $\compile{\const{ac}}$ in Agda and Coq are given in
 \cref{app:mechanization:agda:W} and \cref{app:mechanization:coq:W}, respectively.
+
+Nevertheless, $\const{ac}$ remains a noncomputing axiom
+unless the size algebra is augmented to include a limit operator
+and size expressions consequently treated as regular terms.
+There is no way to represent generalized full inductives as
+sized inductives existentially quantified by sizes
+and faithfully define their constructors without losing either
+decidability of subsizing or canonicity.
+Representing ordinary full inductives (namely naturals) this way,
+however, has been previously explored~\citep{guarded, modal-sizes}.
+
+\section{Universe Levels of Inductives}
+
+The universes in which the type of natural numbers
+and the types of well-founded trees in \lang live
+are, in a sense, one level higher than is usually expected;
+their typing rules are reproduced below.
+$\N*$ is typically in $\Type{0}$,
+while $\W*$ is typically in $U$ rather than $\axioms{U}$.
+\begin{mathpar}
+\inferrule[\rref*{nat}]{
+  \wf{\Phi}{\Gamma} \\
+  \wf{\Phi}{s}
+}{
+  \infer{\Phi; \Gamma}{\N{s}}{\Type{1}}
+}
+\and
+\inferrule[\rref*{wft}]{
+  \wf{\Phi}{s} \\
+  \infer{\Phi; \Gamma}{\sigma}{U} \\\\
+  \infer{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{U}
+}{
+  \infer{\Phi; \Gamma}{\W{x}{\sigma}{\tau}{s}}{\axioms{U}}
+}
+\end{mathpar}
+
+This is due to how the translation is defined:
+$\NatT$ and $\WT$ have a $\SizeT$ as parameter,
+the $\limT$ operator quantifies over the type of the domain of its function argument,
+and that type must be ``large'' enough to accomodate the correct type.
+For $\app{\WT}{\sigmaT}{\tauT}{\sT}$,
+the domain is $\app{\tauT}{\aT}$ for some $\aT$%
+\footnote{For generalized inductives, given a recursive argument in the form of a function,
+the domain of $\limT$ should emcompass the domain of that function.},
+as is the case for the definition of $\compile{\const{ac}}$,
+so if its universe is $\TypeT{\iT}$,
+then the universe of the type of $\sT$ must be $\TypeT{\tg{i+1}}$,
+according to the definition of $\SizeT$, reproduced below.
+
+\begin{align*}
+&\dataT{\SizeT}{\TypeT{\tg{i+1}}} \\
+&\quad \annotT{\sucT}{\arrT*{\SizeT}{\SizeT}} \\
+&\quad \annotT{\limT}{\funtypeT{A}{\TypeT{\iT}}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}}
+\end{align*}
+
+This is a nonnegotiable condition:
+defining $\SizeT$ to be in the same universe as that which $\limT$ quantifies over
+leads to $\szltT$ no longer being well founded,
+since in this hypothetical scenario $\SizeT$ itself could be applied to $\limT$
+to define an $\inftyT$ size.
+\begin{align*}
+&\LetT{\inftyT}{\SizeT}{\app{\limT}{\SizeT}{(\funT{\xT}{\SizeT}{\xT})}} \\
+&\LetT{\inftyltinfty}{\inftyT \szltT \inftyT}{\app{\coconeT}{\SizeT}{(\app{\sucT}{\inftyT})}{(\funT{\xT}{\SizeT}{\xT})}{(\app{\sucT}{\inftyT})}{(\app{\reflleq}{(\app{\sucT}{\inftyT})})}}
+\end{align*}
+
+One way to ``shrink'' the universe of $\SizeT$, so to speak,
+could be to parametrize it over the type over which $\limT$ currently quantifies over,
+yielding the following inductive definition.
+\begin{align*}
+&\dataT{\app{\SizeT}{(\annotT{A}{\TypeT{\iT}})}}{\TypeT{\iT}} \\
+&\quad \annotT{\sucT}{\arrT*{\SizeT}{\SizeT}} \\
+&\quad \annotT{\limT}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}
+\end{align*}
+
+The problem with this alternative is that for $\app{\WT}{\sigmaT}{\tauT}$,
+the parameter of its size parameter would be $\app{\tauT}{\aT}$,
+where $\annotT{\aT}{\sigmaT}$ is the third formal argument to its constructor $\supT$,
+but this argument is only part of the constructor, not the type.
+The intuition is that the parametrized $\SizeT$ is too restrictive
+and there aren't ``enough'' sizes to cover all well-founded trees of any particular type.
+
+In a sense, it's reasonable to expect that $\SizeT$ needs to live in a larger universe.
+The r\^ole of $\SizeT$ is to represent all of the possible sizes of a given full inductive,
+so we would expect $\SizeT$ to be just as large as the inductive itself.
+Aside from situations where the inductive is impredicative, \ie in $\PropT$,
+parametrizing over $\SizeT$ then necessarily requires moving up a universe
+so that it's not essentially quantifying over itself.
+
+\section{Streams and Coinductives}
+
+\section{Future Directions}
