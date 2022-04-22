@@ -10,7 +10,7 @@
   \UT &\Coloneqq \PropT \mid \TypeT{\iT} \\
   \cT &\Coloneqq \meta{\textrm{inductive constructor names}} &
   \DT &\Coloneqq \app{\dataT{\app{\XT}{\DeltaT}}{\arrT*{\DeltaT}{\UT}}}{\DeltaT} \\
-  \eT, \aT, \dT, \pT, \PT, \tauT, \sigmaT &\Coloneqq
+  \eT, \aT, \dT, \pT, \PT, \rT, \sT, \tauT, \sigmaT &\Coloneqq
     \mathrlap{\xT \mid \UT \mid \funtypeT{\xT}{\tauT}{\tauT} \mid \funT{\xT}{\tauT}{\eT} \mid \app{\eT}{\eT} \mid \letinT{\xT}{\tauT}{\eT}{\eT} \mid \fixT{\iT}{\fT}{\tauT}{\eT}} \\
   &\mid \mathrlap{\eqT{\eT}{\tauT}{\eT} \mid \reflT{\eT} \mid \JT{\PT}{\dT}{\pT} \mid \matchT{\eT}{\funT*{\vec{\yT}}{\xT}{\PT}}{(\app{\cT}{\vec{\zT}} \RightarrowT \eT) \seq}}
   \end{align*}
