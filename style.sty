@@ -206,11 +206,14 @@
 \newcommand{\fix}[4]{\kw{fix} \@et #1 \@et \sqbr{#2} \mathrel{:} #3 \mathrel{\coloneqq} \phantom{} #4}
 
 % source coinductives
+\newcmd*{\M}[0]{\const{M}}
+\newcmd*{\inf}[0]{\constr{inf}}
 \newcommand{\Stream}[2]{\App{\app{\const{Stream}}{#1}}{{#2}}}
 \newcmd*{\Stream}[0]{\const{Stream}}
 \newcommand{\shd}[1]{#1\mathord{.}\constr{hd}}
 \newcommand{\stl}[1]{#1\mathord{.}\constr{tl}}
 \newcommand{\scons}[6]{\set{\constr{hd} \mathrel{\coloneqq} #3 \mathpunct{;} \app{\constr{tl}}{[\bound{#4}{#5}]} \mathrel{\coloneqq} #6}}
+\newcmd*{\scons}[0]{\constr{scons}}
 \newcommand{\cofix}[4]{\kw{cofix} \@et #1 \@et \sqbr{#2} \mathrel{:} #3 \mathrel{\coloneqq} \phantom{} #4}
 \newcommand{\Thunk}[2]{\App{\app{\const{Thunk}}{#1}}{#2}}
 \newcmd*{\Thunk}[0]{\const{Thunk}}
