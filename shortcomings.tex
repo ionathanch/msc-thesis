@@ -118,7 +118,7 @@ however, has been previously explored~\citep{guarded, modal-sizes}.
 \section{Universe Levels of Inductives}
 
 The universes in which the type of natural numbers
-and the types of well-founded trees in \lang live
+and W types in \lang live
 are, in a sense, one level higher than is usually expected;
 their typing rules are reproduced below.
 $\N*$ is typically in $\Type{0}$,
@@ -257,7 +257,12 @@ The natural correspondence of guardedness in sized types
 is that cofixpoint bodies must construct coinductives larger than
 their own occurrences inside the body,
 which coincides with the structure of \rref{fix}.
-We can then construct an infinite stream of some single element.
+Cofixpoints also reduce when applied to a size that has some subsize,
+just like fixpoints.
+Interestingly, this suggests that cofixpoints might also be translated in the syntactic model
+to well-founded induction on sizes despite constructing a coinductive type.
+
+With cofixpoints, we can then construct an infinite stream of some single element.
 Let $A$ in the definitions to follow be some type.
 \begin{align*}
 & \Let{\repeat}{\arr*{A}{\Funtype{\alpha}{\Stream{A}{\alpha}}}}{\\
@@ -302,7 +307,14 @@ Suppose we have a function $\annot{f}{\arr*{A}{A}{A}}$ and some element $\annot{
 & \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\scons{\gamma}{\beta}{a}{\gamma}{\beta}{\app{\App{\zip}{\gamma}}{(\App{\fibs*}{\gamma})}{(\App{\stl{(\App{\fibs*}{\beta})}}{\gamma})}}}}}
 \end{align*}
 
-\TODO
+Coinductive types in general can be implemented as record definitions
+just as inductive types can be implemented as data definitions.
+However, sized coinductives in Agda's standard library are implemented
+in terms of a single coinductive $\Thunk{F}{s}$ record%
+\footnote{See \textsf{Codata.Sized.Thunk} from the Agda standard library, URL \url{https://agda.github.io/agda-stdlib/Codata.Sized.Thunk.html}.}
+with sized parameter $F$ and size $s$,
+and all other coinductives are implemented as nested inductives,
+where occurrences of the type in its constructors' types are wrapped around a $\Thunk*$.
 
 \begin{mathpar}
 \inferrule[\rlabel*{thunk}]{
@@ -324,5 +336,15 @@ Suppose we have a function $\annot{f}{\arr*{A}{A}{A}}$ and some element $\annot{
   \infer{\Phi; \Gamma}{\thunk{\alpha}{s}{e}}{\Thunk{F}{s}}
 }
 \end{mathpar}
+
+This alternate technique is equally expressive,
+since it allows encoding M types, the dual of W types, not just streams.
+\begin{align*}
+& \data{\Stream{(\annot{A}{\Type{i}})}{\alpha}}{\Type{i+1}} \\
+& \quad \annot{\scons*}{\arr*{A}{\Thunk{(\app{\Stream*}{A})}{\alpha}}{\Stream{A}{\alpha}}} \\
+\hfill \\
+& \data{\App{\app{\M*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\alpha}}{\Type{i+1}} \\
+& \quad \annot{\inf*}{\arr{a}{A}{\arr*{(\arr*{\app{B}{a}}{\Thunk{(\app{\M*}{A}{B})}{\alpha}})}{\App{\app{\M*}{A}{B}}{\alpha}}}}
+\end{align*}
 
 \section{Future Directions}
