@@ -194,4 +194,135 @@ so that it's not essentially quantifying over itself.
 
 \section{Streams and Coinductives}
 
+Dually to inductive types, coinductive types allow for constructing
+potentially infinitely large elements in a principled manner,
+and are present in many proof assistants such as Coq, Agda, and Idris.
+Conventionally, while fixpoints are guarded by destructors
+and destruct elements of inductives by recurring only on syntactically smaller elements,
+cofixpoints are guarded by constructors and occur only as a syntactic argument to a constructor~\citep{guard}.
+Since coinductives aren't present in pCIC, upon which \CICE is based,
+I don't include them in \lang either, as they would lack a translation in the syntactic model.
+Nevertheless, we can speculate on how they might appear and interact with sizes.
+Here, I define the classic example of coinductive streams,
+composed of a head element and a tail stream.
+
+\begin{mathpar}
+\inferrule[\rlabel*{stream}]{
+  \wf{\Phi}{s} \\
+  \infer{\Phi; \Gamma}{\tau}{U}
+}{
+  \infer{\Phi; \Gamma}{\Stream{\tau}{s}}{U}
+}
+\and
+\inferrule[\rlabel*{hd}]{
+  \infer{\Phi; \Gamma}{e}{\Stream{\tau}{s}}
+}{
+  \infer{\Phi; \Gamma}{\shd{e}}{\tau}
+}
+\and
+\inferrule[\rlabel*{tl}]{
+  \infer{\Phi; \Gamma}{e}{\Stream{\tau}{s}}
+}{
+  \infer{\Phi; \Gamma}{\stl{e}}{\Funtype<{\alpha}{s}{\Stream{\tau}{\alpha}}}
+}
+\and
+\inferrule[\rlabel*{scons}]{
+  \infer{\Phi; \Gamma}{e_1}{\tau} \\
+  \infer{\Phi, \bound{\alpha}{s}; \Gamma}{e_2}{\Stream{\tau}{\alpha}}
+}{
+  \infer{\Phi; \Gamma}{\scons{\alpha}{s}{e_1}{\alpha}{s}{e_2}}{\Stream{\tau}{s}}
+}
+\and
+\inferrule[\rlabel*{cofix}]{
+  \infer{\Phi, \alpha; \Gamma}{\sigma}{U} \\
+  \fresh{\beta} \\
+  \check{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\sigma}{\alpha}{\beta}}}}{e}{\sigma}
+}{
+  \infer{\Phi; \Gamma}{\cofix{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}
+}
+\end{mathpar}
+
+Just as the size of an inductive informally indicates at most how many layers of constructors its elements contain,
+the size of a coinductive informally indicates \emph{at least} how many layers,
+and in the case of $\app{\Stream*}{A}$, at least how many elements of $A$ it contains.
+Of course, streams may contain an infinite number of elements,
+so the analogy works better in the relative sense:
+if a stream contains at least $s$ elements,
+then its tail must contain at least $\bound{\alpha}{s}$, strictly fewer, elements.
+The reduction rules of streams, omitted here, operate as expected:
+$\shd{}$ projects out the head and $\stl{}$ projects out the tail.
+
+To actually construct infinite streams, we need cofixpoint expressions.
+The natural correspondence of guardedness in sized types
+is that cofixpoint bodies must construct coinductives larger than
+their own occurrences inside the body,
+which coincides with the structure of \rref{fix}.
+We can then construct an infinite stream of some single element.
+Let $A$ in the definitions to follow be some type.
+\begin{align*}
+& \Let{\repeat}{\arr*{A}{\Funtype{\alpha}{\Stream{A}{\alpha}}}}{\\
+& \quad \fun{a}{A}{\cofix{\repeat*}{\alpha}{\Stream{A}{\alpha}}{\\
+& \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\App{\repeat*}{\beta}}}}}
+\end{align*}
+
+Notice that the stream produced has \emph{any} size,
+which can be interpreted as having ``at least'' any number of elements---a
+truly infinite stream.
+More generally, a coinductive universally quantified by size corresponds to a full coinductive,
+dual to a inductive existentially quantified by a size corresponding to a full inductive.
+
+We can manipulate sized streams as expected,
+such as taking only the odd elements of a stream
+or interleaving two streams by alternation.
+
+\begin{align*}
+& \Let{\odds}{\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\Stream{A}{\beta}})}{\Stream{A}{\alpha}}}}{ \\
+& \quad \cofix{\odds*}{\alpha}{\arr*{(\Funtype{\beta}{\Stream{A}{\beta}})}{\Stream{A}{\alpha}}}{ \\
+& \qquad \fun{s}{\Funtype{\beta}{\Stream{A}{\beta}}}{\scons{\beta}{\alpha}{\shd{(\App{s}{\alpha})}}{\beta}{\alpha}{\app{\App{\odds*}{\beta}}{(\Fun{\gamma}{\App{\stl{(\App{\stl{(\App{s}{\sss{\sss{\gamma}}})}}{\sss{\gamma}})}}{\gamma}})}}}}} \\
+\hfill \\
+& \Let{\interleave}{\Funtype{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}}{ \\
+& \quad \cofix{\interleave*}{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}{ \\
+& \qquad \fun{s_1}{\Stream{A}{\alpha}}{\fun{s_2}{\Stream{A}{\alpha}}{\scons{\beta}{\alpha}{\shd{s_1}}{\beta}{\alpha}{ \\
+& \qquad \quad \scons{\gamma}{\beta}{\shd{s_2}}{\gamma}{\beta}{\app{\App{\interleave*}{\alpha}}{(\App{\stl{s_1}}{\gamma})}{(\App{\stl{s_2}}{\gamma})}}}}}}}
+\end{align*}
+
+Just as with lists, we can write size-preserving functions on streams
+and use them to define cofixpoints that would otherwise not pass syntactic guard checking.
+One common example from Haskell is defining a stream of Fibonacci numbers using,
+in our case, a size-preserving zipping function.
+Suppose we have a function $\annot{f}{\arr*{A}{A}{A}}$ and some element $\annot{a}{A}$.
+(For the actual Fibonacci numbers, $A$ would be the naturals, $f$ would be addition, and $a$ would be 1.)
+\begin{align*}
+& \Let{\zip}{\Funtype{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}}{ \\
+& \quad \cofix{\zip*}{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}{ \\
+& \qquad \fun{s_1}{\Stream{A}{\alpha}}{\fun{s_2}{\Stream{A}{\alpha}}{\scons{\beta}{\alpha}{\app{f}{\shd{s_1}}{\shd{s_2}}}{\beta}{\alpha}{\app{\App{\zip*}{\beta}}{(\App{\stl{s_1}}{\beta})}{(\App{\stl{s_2}}{\beta})}}}}}} \\
+\hfill \\
+& \Let{\fibs}{\Funtype{\alpha}{\Stream{A}{\alpha}}}{ \\
+& \quad \cofix{\fibs*}{\alpha}{\Stream{A}{\alpha}}{ \\
+& \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\scons{\gamma}{\beta}{a}{\gamma}{\beta}{\app{\App{\zip}{\gamma}}{(\App{\fibs*}{\gamma})}{(\App{\stl{(\App{\fibs*}{\beta})}}{\gamma})}}}}}
+\end{align*}
+
+\TODO
+
+\begin{mathpar}
+\inferrule[\rlabel*{thunk}]{
+  \wf{\Phi}{s} \\
+  \infer{\Phi; \Gamma}{F}{\Funtype{\alpha}{U}}
+}{
+  \infer{\Phi; \Gamma}{\Thunk{F}{s}}{U}
+}
+\and
+\inferrule[\rlabel*{force}]{
+  \infer{\Phi; \Gamma}{e}{\Thunk{F}{s}}
+}{
+  \infer{\Phi; \Gamma}{\force{e}}{\Funtype<{\alpha}{s}{\App{F}{\alpha}}}
+}
+\and
+\inferrule[\rlabel*{think}]{
+  \infer{\Phi, \bound{\alpha}{s}; \Gamma}{e}{\App{F}{\alpha}}
+}{
+  \infer{\Phi; \Gamma}{\thunk{\alpha}{s}{e}}{\Thunk{F}{s}}
+}
+\end{mathpar}
+
 \section{Future Directions}
