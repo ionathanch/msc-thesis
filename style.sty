@@ -205,6 +205,18 @@
 \newcmd*{\match}[2]{\kw{case} \@et #1 \@et \kw{of} \@et \phantom{} #2}
 \newcommand{\fix}[4]{\kw{fix} \@et #1 \@et \sqbr{#2} \mathrel{:} #3 \mathrel{\coloneqq} \phantom{} #4}
 
+% source coinductives
+\newcommand{\Stream}[2]{\App{\app{\const{Stream}}{#1}}{{#2}}}
+\newcmd*{\Stream}[0]{\const{Stream}}
+\newcommand{\shd}[1]{#1\mathord{.}\constr{hd}}
+\newcommand{\stl}[1]{#1\mathord{.}\constr{tl}}
+\newcommand{\scons}[6]{\set{\constr{hd} \mathrel{\coloneqq} #3 \mathpunct{;} \app{\constr{tl}}{[\bound{#4}{#5}]} \mathrel{\coloneqq} #6}}
+\newcommand{\cofix}[4]{\kw{cofix} \@et #1 \@et \sqbr{#2} \mathrel{:} #3 \mathrel{\coloneqq} \phantom{} #4}
+\newcommand{\Thunk}[2]{\App{\app{\const{Thunk}}{#1}}{#2}}
+\newcmd*{\Thunk}[0]{\const{Thunk}}
+\newcommand{\force}[1]{#1\mathord{.}\constr{force}}
+\newcommand{\thunk}[3]{\set{\app{\constr{force}}{[\bound{#1}{#2}]} \mathrel{\coloneqq} #3}}
+
 % source names
 \newcommand{\liftN}{\const{liftN}}
 \newcommand{\liftW}{\const{liftW}}
@@ -227,6 +239,11 @@
 \newcommand{\traverseW}{\const{traverseW}}
 \newcommand{\natOrd}{\const{natOrd}}
 \newcommand{\omegaOrd}{\const{\omega}}
+\renewcommand{\repeat}{\const{repeat}}
+\newcommand{\odds}{\const{odds}}
+\renewcommand{\interleave}{\const{interleave}}
+\newcommand{\zip}{\const{zip}}
+\newcommand{\fibs}{\const{fibs}}
 
 % example names
 \newcommand{\id}{\mathit{id}}
@@ -242,6 +259,11 @@
 \newcmd*{\qsort}[0]{\mathit{qsort}}
 \newcmd*{\msort}[0]{\mathit{msort}}
 \newcmd*{\natOrd}[0]{\mathit{natOrd}}
+\newcmd*{\repeat}[0]{\mathit{repeat}}
+\newcmd*{\odds}[0]{\mathit{odds}}
+\newcmd*{\interleave}[0]{\mathit{interleave}}
+\newcmd*{\zip}[0]{\mathit{zip}}
+\newcmd*{\fibs}[0]{\mathit{fibs}}
 
 % judgements
 \newcommand{\wf}[2]{#1 \mathrel{\vdash} #2}
