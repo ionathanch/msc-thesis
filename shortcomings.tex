@@ -348,3 +348,45 @@ since it allows encoding M types, the dual of W types, not just streams.
 \end{align*}
 
 \section{Future Directions}
+
+There is still a long way to go towards a sized dependent type system
+that is expressive, consistent, and useable.
+We've seen from \cref{sec:examples} that working without an infinite size
+or full inductives is verbose at best, in the case of $\msort$ and $\qsort$,
+and impossible at worse, in the case of $\const{\omega}$,
+while attempts at including them either involve inconsistency, undecidability, or noncanonicity.
+Alternate approaches need to be investigated to circumvent these problems.
+
+While the issue with the universe levels of inductive types appears to be cosmetic
+and not affect any important significant metatheoretical properties,
+it might be a mere symptom of a larger issue with how sizes are modelled,
+especially since prior sized type systems shown to be consistent
+haven't required any similar restrictions.
+Given that sizes are already modelled as transfinite ordinals,
+it may be inevitable that a more appropriate model, syntactic or otherwise,
+is more set-theoretical in nature.
+
+The main barrier to a syntactic model of \lang with any coinductive types
+is the lack of an established target type theory with coinductive types
+with nice properties.
+Whereas pCIC and pCuIC lack them, MetaCoq mechanizes Coq-style coinductive types,
+but necessarily cannot prove its own consistency.
+Meanwhile, older CICs with coinductive types and cofixpoints guarded by constructors
+(\eg \citet{guard}) have issues with subject reduction%
+\footnote{See issue \#6768 of the Coq repository,
+\textit{Towards a fix to the loss of subject reduction with corecursion?},
+URL \url{https://github.com/coq/coq/issues/6768}.},
+which is a necessary property for proving type preservation in \cref{ch:proofs}.
+Another potential issue is the translation of cofixpoints into applications of
+a well-founded induction principle, which is suspicious and also requires further investigation.
+
+Finally, \lang is missing some important but comparatively simple features
+from the perspective of the syntactic model, namely inductive types in general.
+They can be added directly to \lang as a generalization of the existing inductives,
+and I conjecture that the type preservation proofs would similarly straightforward.
+Alternatively, since already are well-founded trees,
+\lang could instead be augmented with dependent pairs and an equality type,
+both of which I also conjecture to be straightforward;
+then mutual inductives, indexed inductives \citep{whynotW}, some nested inductives \citep{barras},
+and even some inductive--inductive types \citep{ind-ind}
+can be encoded using W types and propositional equality.
