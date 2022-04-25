@@ -390,3 +390,25 @@ both of which I also conjecture to be straightforward;
 then mutual inductives, indexed inductives \citep{whynotW}, some nested inductives \citep{barras},
 and even some inductive--inductive types \citep{ind-ind}
 can be encoded using W types and propositional equality.
+
+In terms of metatheory, \lang is missing proof of two desirable properties:
+strong normalization and decidability of type checking.
+Because \nameref{lem:pres-red} only preserves reduction up to equivalence in \CICE,
+not reduction, normalization doesn't hold immediately from the translation.
+In particular, the proof of \nameref{lem:pres-red} uses equality reflection
+to obtain an equivalence between two proofs of accessibility of a size,
+and \citet{SProp} show that this can lead to nonnormalization in
+particular inconsistent environments,
+as is the case for $\tg{false}$.
+Even so, I conjecture that translation of a \lang term will never lead to
+a \CICE term with a subterm in an appropriate inconsistent environment that leads to nonormalization,
+because the translation will never yield an assumption of the form $\sT \szltT \sT$.
+By inspection of the translation, the only fitting subsizing relation possible is of the form $\alphaT \szltT \alphaT$,
+and the only possible sources $\Funtype<{\alpha}{\alpha}{\tau}$, $\Fun<{\alpha}{\alpha}{e}$ are ill-scoped.
+
+Decidability of type checking, meanwhile, rests not only on strong normalization,
+but also on decidability of subsizing, \ie deciding whether $\bound{r}{s}$ holds.
+The trickiest rule is transitivity of subsizing,
+but I conjecture that subsizing, too, is decidable,
+as the size environment only contains a finite number of bounded size variables,
+and sizes can only have a finite number of successor operators applied.

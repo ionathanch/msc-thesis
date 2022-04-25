@@ -1231,6 +1231,18 @@ using \cref{sublem:compos-subsize-unbounded} in place of \cref{sublem:compos-sub
 
 \subsection{Preservation of reduction}
 
+\begin{lemma}[Preservation of reduction] \label{lem:pres-red}
+Suppose we have the following:
+\begin{itemize}[noitemsep]
+  \item $\red{\Phi; \Gamma}{e}{e'}$,
+  \item $\type{\Phi; \Gamma}{e}{\tau}$, and
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
+\end{itemize}
+Then $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e'}}{\compile{tau}}$,
+where \nameref{lem:sr} gives us $\type{\Phi; \Gamma}{e'}{\tau}$
+in order to translate $\compile{e'}$.
+\end{lemma}
+
 \subsection{Preservation of closure of reduction}
 
 Like for preservation of reduction,
