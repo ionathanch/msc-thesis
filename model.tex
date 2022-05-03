@@ -118,7 +118,7 @@ regardless of what they are applied to.
 To maintain normalization,
 the usual guarded reduction rule in intensional CIC reduces fixpoints
 only when applied to a literal constructor in the recursive argument position.
-
+\vspace{-0.25\baselineskip}
 \begin{mathpar}
 \inferrule[\rlabel{$\equiv$-$\mu$-guarded}{equiv-mu-guarded}]{\cdots \\ \card{\vec{\eT}'} + 1 = \nT}{
   \defeq{\GammaT}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\app{(\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\tauT}
