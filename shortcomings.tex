@@ -1,4 +1,4 @@
-\chapter{Design Shortcomings}\label{sec:shortcomings}
+\chapter{Design Shortcomings}\label{ch:shortcomings}
 
 With \lang and its syntactic model come shortcomings in the design decisions that make it work.
 Most notable are the lack of an infinite size
@@ -8,7 +8,7 @@ Another shortcoming is the lack of coinductive types,
 which is a common use case of sized types in the Agda standard library.
 In this chapter, I elaborate on these features and the problems that arise from them, if any.
 
-\section{The Infinite Size}
+\section{The Infinite Size} \label{sec:infinity}
 
 In prior sized type systems, the infinite size $\infty$ is applied to sized inductive types
 to represent a ``full'' inductive type encompassing that inductive at all sizes,
@@ -115,7 +115,7 @@ decidability of subsizing or canonicity.
 Representing ordinary full inductives (namely naturals) this way,
 however, has been previously explored~\citep{guarded, modal-sizes}.
 
-\section{Universe Levels of Inductives}
+\section{Universe Levels of Inductives} \label{sec:universe-levels}
 
 The universes in which the type of natural numbers
 and W types in \lang live

@@ -238,8 +238,8 @@ $\SizeT$ is a generalization of the $\Ord*$ type introduced in \cref{sec:example
 with the domain of the function passed to the limit size $\limT$ replaced by some arbitrary type.
 Although limit sizes aren't strictly necessary for the translation,
 since \lang only has successor sizes and size variables,
-I include them so that they validate the various extensions I add to \lang later in \TODO.
-% TODO: forward ref to chapter on extensions
+I include them so that various solutions to the problem of the infinite size
+can be explored in \cref{sec:infinity}.
 Furthermore, this allows for a simplification of the definition,
 since the zero size $\baseT$ can be defined as a limit size rather than as another constructor.
 
@@ -306,11 +306,11 @@ with a universe of \emph{strict propositions}\index{strict proposition} $\SPropT
 of types whose elements are definitionally equal~\citep{SProp},
 then placing $\AccT$ in $\SPropT$.
 This is disallowed by \opcit because it breaks normalization,
-but likely not consistency,
-which as a target language of a syntactic model for proving consistency
+but not consistency which,
+as a target language of a syntactic model for proving consistency,
 is the relevant metatheoretical property.
-In any case, I use \CICE because it's more established, more well-known,
-and definitely consistent.
+In any case, I use \CICE because equality reflection is more established in the literature
+and it allows me to use \rref{equiv-mu} in place of \rref{equiv-mu-guarded}.
 
 Finally, the naturals and the well-founded trees in \CICE are parametrized by a $\SizeT$.
 Their definitions respect the translation in the upcoming section,
@@ -353,8 +353,8 @@ with the current implicit environments extended with $\Phi$ or $\Gamma$,
 and $\compile{\Gamma}$ to mean the translation of $\Gamma$
 when well-formed under the current implicit size environment.
 
-\clearpage % TODO: clearpage
 \FigTransTerm{fig:trans:term}
+
 The translation for base \lang without inductives is given in \cref{fig:trans:term}
 in the more concise notation when the intent is clear and in the usual notation otherwise.
 Terms not involving sizes are translated in a straightforward recursive manner.
@@ -372,7 +372,6 @@ and dually an additional abstraction over such terms in the branches of $\tg{cas
 
 \FigTransInd{fig:trans:ind}
 
-\clearpage % TODO: clearpage
 Fixpoints in \lang are not translated as fixpoints in \CICE.
 Doing so while preserving types would mean that \lang fixpoints
 need to be subject to the same guard conditions as \CICE fixpoints,
