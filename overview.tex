@@ -77,20 +77,20 @@ On the other hand, these proof assistants all have some form of
 but this is much more complex and largely orthogonal to sized types
 and the syntactic model.
 
-Perhaps the most contentious design decision so far is the use of untyped equality
-or \emph{conversion}\index{conversion}, as can be found in Coq,
-over typed equality or \emph{equivalence}\index{equivalence},
-as can be found in Agda.%
+Perhaps the most contentious design decision so far is the use of untyped equality,
+as can be found in Coq, over typed equality, as can be found in Agda.%
+\iffalse
 \footnote{The terminology in the literature varies
 (the conversion \citet{MetaCoq} refers to is untyped, while the one \citet{conversion} refer to is typed;
 the equivalence \citet{wjb} refers to is untyped, while the one \citet{equivalence} refer to is typed).
 Nevertheless, I use \emph{conversion} for untyped and \emph{equivalence} for typed equality.}
-While equivalence is considered to ``have clearer mathematical semantics''~\citep{typed-NbE},
-the equivalence judgement depends on the typing judgement;
+\fi
+While typed equality is considered to ``have clearer mathematical semantics''~\citep{typed-NbE},
+its judgement depends on the typing judgement;
 meanwhile, since types can depend on terms,
-typing itself depends on equivalence to check whether one type can be used in place of another.
+typing itself depends on equality to check whether one type can be used in place of another.
 As we'll see in \cref{sec:syntactic-model}, these mutually-defined judgements would greatly complicate the proofs,
-so I settle for conversion instead.
+so I settle for untyped equality instead.
 
 On top of \GCC, I add two inductive definitions featured in Martin--L\"of type theory (MLTT)~\citep{mltt}\index{Martin--L\"of type theory}:
 the \emph{Peano naturals}\index{naturals} and \emph{well-founded trees}\index{well founded!\textasciitilde~trees}%
@@ -202,8 +202,18 @@ It, too, has a cumulative hierarchy of universes \ala Russell and an impredicati
 augmented with inductive types and \emph{equality reflection}\index{equality reflection},
 where a definitional equality between terms can be derived from a propositional one between them.
 The most notable difference from \lang, aside from these features and sized types,
-is that \CICE uses typed rather than untyped equality to accomodate equality reflection.
-% TODO: forward ref to discussion on inconsistency of untyped conversion + equality reflection
+is that \CICE uses a typed, declarative equality rather than an untyped, algorithmic equality
+to better accomodate equality reflection.
+For concision and to avoid confusion, I henceforth refer to the former as \emph{equivalence}\index{equivalence},
+and to the latter as \emph{conversion}\index{conversion}.%
+\iffalse
+\footnote{This terminology varies in the literature, with some using conversion to refer to
+both algorithmic and declarative equality \citep{conversion},
+and others using equivalence to refer to algorithmic equality \citep{wjb}
+and to declarative equality \citep{equivalence}.
+I henceforth use conversion for \lang's definitional equality, which is algorithmic,
+and equivalence for \CICE's definitional equality, which is declarative.}
+\fi
 
 This translation from \lang to \CICE must be \emph{type preserving}\index{type preservation}%
 \footnote{This terminology comes from compilation;
@@ -323,9 +333,6 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$,
 using inversion on the derivations of $\type{\Phi; \Gamma}{\tau_i}{U_i}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\UT_i}$.
 \end{proof}
-
-The final three lemmas and theorem are proven mutually;
-I state them separately for clarity.
 
 \begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction]\label{lem:overview:pres-red*}
 If $\red*{\Phi; \Gamma}{e}{e'}$ and
