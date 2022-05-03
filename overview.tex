@@ -298,6 +298,7 @@ I summarize them here, omitting some hypotheses and sublemmas,
 to outline the proof architecture,
 which roughly follows the structure of type-preserving compilation by~\citet{wjb}.
 
+\clearpage % TODO: clearpage
 \begin{lemma}[Compositionality]\label{lem:overview:compositionality}\hfill
 \begin{enumerate}[noitemsep]
   \item $\compile{\subst{e}{x}{e'}} = \subst{\compile{e}}{x}{\compile{e'}}$.
@@ -311,15 +312,28 @@ By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
 
 \begin{lemma}[Preservation of reduction]\label{lem:overview:pres-red}
 If $\red{\Phi; \Gamma}{e}{e'}$ and
-$\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$
-then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$.
+$\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\tauT}$
+then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$.
 \end{lemma}
 
 \begin{proof}
-By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$
-and inversion on the derivation of $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$,
-using \cref{lem:overview:compositionality}
+By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$,
+using inversion on the derivation of $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$,
+\cref{lem:overview:compositionality},
 and an application of equality reflection in the case for reduction of fixpoints.
+\end{proof}
+
+\begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction]\label{lem:overview:pres-red*}
+If $\red*{\Phi; \Gamma}{e}{e'}$ and
+$\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\tauT}$
+then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$,
+using \cref{lem:overview:pres-red},
+subject reduction of \lang,
+and subject equivalence of \CICE.
 \end{proof}
 
 \begin{lemma}[Preservation of $\alpha$-cumulativity]\label{lem:overview:pres-acum}
@@ -334,18 +348,6 @@ using inversion on the derivations of $\type{\Phi; \Gamma}{\tau_i}{U_i}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\UT_i}$.
 \end{proof}
 
-\begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction]\label{lem:overview:pres-red*}
-If $\red*{\Phi; \Gamma}{e}{e'}$ and
-$\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$
-then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$.
-\end{lemma}
-
-\begin{proof}
-By lexicographical induction on the derivations of $\red*{\Phi; \Gamma}{e}{e'}$
-and of $\type{\Phi; \Gamma}{e}{\tau}$,
-using \cref{lem:overview:pres-red}, \cref{lem:overview:pres-subtyping}, and \cref{lem:overview:pres-typing}.
-\end{proof}
-
 \begin{lemma}[Preservation of subtyping]\label{lem:overview:pres-subtyping}
 If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$
 and $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_i}}{\compile{U}}$
@@ -354,7 +356,9 @@ then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2
 
 \begin{proof}
 By cases on the derivation of $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$,
-using \cref{lem:overview:pres-acum}, \cref{lem:overview:pres-red*}, and subject reduction of \lang.
+using \cref{lem:overview:pres-red*}, \cref{lem:overview:pres-acum},
+subject reduction of \lang,
+and subject equivalence of \CICE.
 \end{proof}
 
 \begin{theorem}[Type preservation]\label{lem:overview:pres-typing}\hfill
@@ -518,6 +522,9 @@ MiniAgda~\citep{MiniAgda, flationary} & \emoji{check-mark} & \emoji{check-mark} 
 \label{tab:sized-types}
 \end{table}
 
+% TODO: fix manual footnote number
+\footnotetext[6]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
+
 \cref{tab:sized-types} lists the sized dependent type theories that follow \CIChat,
 along with the main features I focus on:
 explicit, higher-rank, bounded size quantification,
@@ -534,9 +541,6 @@ However, it's missing two properties that all of these type theories do have:
 inductive types in the ``correct'' universes,
 and the existence of an infinite size.
 
-% TODO: fix manual footnote number
-\footnotetext[6]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
-
 \begin{center}
 \mbox{* * *}
 \end{center}
@@ -548,6 +552,6 @@ provide example programs in \lang that make use of sized types,
 and prove various necessary metatheoretical properties including subject reduction and confluence.
 Next, in \cref{ch:model} I describe \CICE and define the translation from \lang to \CICE.
 Following that, in \cref{ch:proofs} I elaborate on the proof of type preservation and its associated lemmas.
-In \TODO, I discuss some of the shortcomings of \lang, namely the universe levels of the inductive types
+In \cref{ch:shortcoming}, I discuss some of the shortcomings of \lang, namely the universe levels of the inductive types
 and the lack of an infinite size,
-and in \TODO, I propose some possible extensions for \lang.
+as well as how coinductive types might be added.

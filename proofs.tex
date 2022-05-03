@@ -1259,6 +1259,19 @@ using \cref{sublem:compos-subsize-unbounded} in place of \cref{sublem:compos-sub
 
 \subsection{Preservation of reduction}
 
+We're now ready to prove preservation of reduction,
+whose proof uses the various compositionality lemmas
+whenever substitution into a translated term is involved.
+Our task is to show that if one term reduces to another,
+then their translations are equivalent.
+Because \CICE's equivalence judgement is typed,
+we need typing information for the translated terms
+to satisfy its premises.
+Note however that we only need \emph{some} typing information,
+and that $\tauT$ isn't necessarily $\compile{\tau}$.
+To show that it is would require type preservation itself,
+which in turn would make our proofs circular.
+
 \begin{lemma}[Preservation of reduction] \label{lem:pres-red}
 Suppose we have the following:
 \begin{itemize}[noitemsep]
@@ -1473,6 +1486,11 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
 \end{proof}
 
 \subsection{Preservation of closure of reduction}
+
+The proof of preservation for reduction closed under reflexivity, transitivity, and congruence
+is relatively straightforward, if rather tedious for the congruence cases.
+This, too, requires well-typedness of the translated term as a premise
+in order to apply preservation of reduction.
 
 \begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction] \label{lem:pres-red*}
 Suppose we have the following:

@@ -59,7 +59,8 @@ Fixpoint sucLeq s : s ≤ suc s :=
   end.
 
 Inductive Acc (s : Size) : Prop :=
-| acc : (∀ r, r < s → Acc r) → Acc s.
+acc { accLt : ∀ r, r < s → Acc r }.
+Arguments accLt {_}.
 
 Axiom funext : ∀ {A} {B : A → Type} {p q : ∀ x, B x},
   (∀ x, p x = q x) → p = q.
@@ -89,15 +90,14 @@ Proof.
     exact (p r rfa).
 Qed.
 
-Fixpoint wfAcc P (IH : ∀ s, (∀ r, r < s → P r) → P s) s (acc : Acc s) : P s :=
-  let p r rs := wfAcc P IH r (match acc return Acc r with | acc _ p => p r rs end)
-  in IH s p.
-
-Definition wfInd P IH s : P s := wfAcc P IH s (wf s).
+Definition wfInd P IH s : P s :=
+  let wfInd := fix wfAcc s acc {struct acc} :=
+    IH s (λ r rs, wfAcc r (acc.(accLt) r rs))
+  in wfInd s (wf s).
 \end{minted}
 \end{singlespace}
 
-\subsection{\texorpdfstring{$\WT$}{W} Types} \label{app:mechanization:coq:W}
+\subsection{W Types} \label{app:mechanization:coq:W}
 
 \begin{singlespace}
 \begin{minted}{coq}
@@ -197,7 +197,7 @@ wfInd P f s = wfAcc s (wf s)
 \end{minted}
 \end{singlespace}
 
-\subsection{\texorpdfstring{$\WT$}{W} Types} \label{app:mechanization:agda:W}
+\subsection{W Types} \label{app:mechanization:agda:W}
 
 \begin{singlespace}
 \begin{minted}{agda}
