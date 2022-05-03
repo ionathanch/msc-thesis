@@ -638,14 +638,14 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
 \section{Metatheory of \CICE}
 
 Fewer metatheoretical properties of \CICE are required for the type preservation proof,
-namely substitutivity\index{substitutivity},
+namely replacement\index{replacement},
+substitutivity\index{substitutivity},
 the inversion principles\index{inversion principle},
 and subject equivalence\index{subject reduction}.
 I don't provide the proofs here, as the properties of CIC,
 typed equivalence, and equality reflection are well established,
 and they're similar to the proofs for the analogous lemmas for \lang.
 
-\iffalse
 \begin{lemma}[Replacement by subtyping] \label{lem:replacement-subtyping*}
 Suppose $\subtype{\GammaT_1}{\sigmaT_1}{\sigmaT_2}$ where $\type{\GammaT_1}{\sigmaT_1}{U}$ and $\type{\GammaT_1}{\sigmaT_2}{U}$
 for some $U$.
@@ -657,7 +657,15 @@ for some $U$.
 Furthermore, the above also applies when the environment contains $\defineT{\xT}{\sigmaT_2}{\eT}$
 rather than $\annotT{\xT}{\sigmaT_2}$.
 \end{lemma}
-\fi
+
+\begin{lemma}[Replacement by equivalence] \label{lem:replacement-equivalence}
+Suppose $\defeq{\GammaT_1}{\eT_1}{\eT_2}{\tauT'}$.
+\begin{itemize}[noitemsep]
+  \item If $\type{\GammaT_1, \defineT{\xT}{\sigmaT}{\eT_1}, \GammaT_2}{\eT}{\tauT}$ then $\type{\GammaT_1, \defineT{\xT}{\sigmaT}{\eT_2}, \GammaT_2}{\eT}{\tauT}$.
+  \item If $\subtype{\GammaT_1, \defineT{\xT}{\sigmaT}{\eT_1}, \GammaT_2}{\tauT_1}{\tauT_2}$ then $\subtype{\GammaT_1, \defineT{\xT}{\sigmaT}{\eT_2}, \GammaT_2}{\tauT_1}{\tauT_2}$.
+  \item If $\defeq{\GammaT_1, \defineT{\xT}{\sigmaT}{\eT_1}, \GammaT_2}{\eT_3}{\eT_4}{\tauT}$ then $\defeq{\GammaT_1, \defineT{\xT}{\sigmaT}{\eT_2}, \GammaT_2}{\eT_3}{\eT_4}{\tauT}$.
+\end{itemize}
+\end{lemma}
 
 \begin{lemma}[Substitutivity]
 Suppose $\type{\GammaT_1}{\eT}{\sigmaT}$.
@@ -730,13 +738,15 @@ These lemmas require further sublemmas;
 the subsequent subsections group the sublemmas with their lemma or theorem.
 
 Many of these lemmas make use of the translation of terms $e$ and term environments $\Gamma$
-using the shorthand $\compile{e}$ and $\compile{\Gamma}$.
+using the shorthand $\compile{e}$ and $\compile{\Gamma}$,
+omitting environment extensions for concision.
 If not specified, the well-formedness of $\Gamma$ and well-typedness of $e$
 needed for the translations are derived when possible
 (\eg $\wf{\Phi}{\Gamma}$ and $\type{\Phi; \Gamma}{\tau}{U}$ from $\type{\Phi; \Gamma}{e}{\tau}$
 by \cref{lem:wf-env} and \nameref{thm:regularity}, respectively)
 and otherwise assumed as hypotheses.
 
+\iffalse
 Because judgements in \lang are untyped while equivalence in \CICE is typed
 and defined mutually with the other judgements,
 when deriving \CICE judgements from \lang judgements,
@@ -753,6 +763,7 @@ $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$ holds.
 
 This lets us avoid a complex proof by mutual induction over all lemmas and theorems
 by instead passing up typing judgements as needed.
+\fi
 
 \subsection{Compositionality}
 
@@ -829,7 +840,7 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
       \infer{\Phi; \Gamma}{\match{e}{\fun*{w}{P}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s)}}{\subst{P}{w}{e}}
     }
     \end{mathpar}
-    Induction hypotheses (omitting environment extensions for concision):
+    Induction hypotheses:
     \begin{itemize}[noitemsep]
       \item $\subst{\compile{e}}{\xT}{\compile{e'}} = \compile{\subst{e}{x}{e'}}$,
       \item $\subst{\compile{P}}{\xT}{\compile{e'}} = \compile{\subst{P}{x}{e'}}$, and
@@ -1085,7 +1096,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
         \type{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\subst{\tau}{x}{e_1}}
       }
     \end{mathpar}
-    Induction hypotheses (omitting environment extensions for concision):
+    Induction hypotheses:
     \begin{itemize}[noitemsep]
       \item $\subst{\compile{\sigma}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{\sigma}{\alpha}{s}}$,
       \item $\subst{\compile{e_1}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{e_1}{\alpha}{s}}$, and
@@ -1401,119 +1412,14 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
 
 \subsection{Preservation of closure of reduction}
 
-Like for preservation of reduction,
-we need to first show that reducing a term by zero or more steps
-doesn't change the fact that its typing derivation is strongly type preserved.
-
-\begin{sublemma}[Strong type preservation across closure of reduction]
-If $\type{\Phi; \Gamma}{e}{\tau}$ is strongly type preserved,
-$\red*{\Phi; \Gamma}{e}{e'}$, and
-$\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$, then
-$\type{\Phi; \Gamma}{e'}{\tau}$ is also strongly type preserved.
-\end{sublemma}
-
-\begin{proof}
-By lexicographical induction on the derivations of
-$\red*{\Phi; \Gamma}{e}{e'}$ and $\type{\Phi; \Gamma}{e}{\tau}$.
-That is, inductive hypotheses can be applied to subderivations of
-$\red*{\Phi; \Gamma}{e}{e'}$ and any corresponding typing derivation,
-or to exactly $\red*{\Phi; \Gamma}{e}{e'}$ itself and a subderivation of $\type{\Phi; \Gamma}{e}{\tau}$.
-\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
-  \item \rref*{red*-once}. By \TODO. % Strong type preservation across reduction
-  \item \rref*{red*-refl}. Trivial.
-  \item \rref*{red*-trans}.
-    \vspace{-\baselineskip}
-    \begin{mathpar}
-    \inferrule{
-      \red*{\Phi; \Gamma}{e}{e'} \\
-      \red*{\Phi; \Gamma}{e'}{e''} \\
-    }{
-      \red*{\Phi; \Gamma}{e}{e''}
-    }
-    \end{mathpar}
-    By the induction hypothesis on the first premise,
-    $\type{\Phi; \Gamma}{e'}{\tau}$ is strongly type preserved.
-    Then again by the induction hypothesis on the second premise,
-    $\type{\Phi; \Gamma}{e''}{\tau}$ is strongly type preserved as well.
-  \item \rref*{red*-cong}.
-    The various congruence cases are all similar to one another;
-    I cover only \rref{let} as a representative case.
-    \begin{mathpar}
-      \inferrule{
-        \red*{\Phi; \Gamma}{\sigma}{\sigma'} \\
-        \red*{\Phi; \Gamma}{e_1}{e'_1} \\
-        \red*{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{e_2}{e'_2}
-      }{
-        \red*{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\letin{x}{\sigma'}{e'_1}{e'_2}}
-      }
-    \end{mathpar}
-    There are two possible cases for the typing derivation of $\kw{let}$ expressions.
-    \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
-      \item \rref*{let}.
-        \vspace{-\baselineskip}
-        \begin{mathpar}
-          \inferrule{
-            \infer{\Phi; \Gamma}{\sigma}{U} \\
-            \check{\Phi; \Gamma}{e_1}{\sigma} \\
-            \infer{\Phi; \Gamma, \define{x}{\sigma}{e_1}}{e_2}{\tau}
-          }{
-            \infer{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\subst{\tau}{x}{e_1}}
-          }
-        \end{mathpar}
-        By definition, all three premises are strongly type preserved as well.
-        Then by the induction hypothesis on the first two premises of both derivations, we have
-        \begin{itemize}[noitemsep]
-          \item $\type{\Phi; \Gamma}{\sigma'}{U}$ is strongly type preserved, and
-          \item $\type{\Phi; \Gamma}{e'_1}{\sigma}$ is strongly type preserved.
-        \end{itemize}
-        We have $\subtype{\Phi; \Gamma}{\sigma}{\sigma'}$ by the first reduction premise and
-        \rref{red*-refl, acum-refl},
-        so we have $\type{\Phi; \Gamma}{e'_1}{\sigma'}$ by \rref{conv}.
-        Furthermore, we have $\infer{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{e_2}{\tau}$
-        by the third typing premise, \nameref{lem:replacement-subtyping},
-        and \nameref{lem:replacement-reduction}.
-        Then we can apply the induction hypothesis once more on the third reduction premise
-        to get that $\infer{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{e'_2}{\tau}$
-        is strongly type preserved.
-        Putting it all together with \rref{let, let*}, we have
-        \begin{itemize}[noitemsep]
-          \item $\type{\Phi; \Gamma}{\letin{x}{\sigma'}{e'_1}{e'_2}}{\subst{\tau}{x}{e'_1}}$
-          is strongly type preserved, and
-          \item $\type{\compile{\Phi}\compile{\Gamma}}{\letinT{\xT}{\compile{\sigma'}}{\compile{e'_1}}{\compile{e'_2}}}{\subst{\compile{\tau}}{\xT}{\compile{e'_1}}}$.
-        \end{itemize}
-        By the second reduction premise and \rref{red*-cong, red*-refl, acum-refl},
-        we have that
-        $$\subtype{\Phi; \Gamma}{\subst{\tau}{x}{e'_1}}{\subst{\tau}{x}{e_1}}$$
-        holds. Finally, using \rref{conv}, we have that % TODO: this doesn't seem right
-        $$\type{\Phi; \Gamma}{\letin{x}{\sigma'}{e'_1}{e'_2}}{\subst{\tau}{x}{e_1}}$$
-        is strongly type preserved.
-      \item \rref*{conv}.
-        \vspace{-\baselineskip}
-        \begin{mathpar}
-          \inferrule{
-            \dots \\
-            \infer{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\tau'} \\
-            \subtype{\Phi; \Gamma}{\tau'}{\tau}
-          }{
-            \check{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\tau}
-          }
-        \end{mathpar}
-        By the induction hypothesis on the entire reduction derivation
-        and on the typing premise,
-        $\type{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\tau'}$ is strongly type preserved.
-        \TODO
-    \end{itemize}
-\end{itemize}
-\end{proof}
-
 \begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction] \label{lem:pres-red*}
 Suppose we have the following:
 \begin{itemize}[noitemsep]
   \item $\red*{\Phi; \Gamma}{e}{e'}$,
-  \item $\type{\Phi; \Gamma}{e}{\tau}$ is strongly type preserved, and
-  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
+  \item $\type{\Phi; \Gamma}{e}{\tau}$, and
+  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\tauT}$.
 \end{itemize}
-Then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$,
+Then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$,
 where \nameref{thm:subject-reduction} gives us $\type{\Phi; \Gamma}{e'}{\tau}$
 in order to translate $\compile{e'}$.
 \end{lemma}
@@ -1521,7 +1427,7 @@ in order to translate $\compile{e'}$.
 \begin{proof}
 By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
-  \item \rref*{red*-once}. By \TODO. % Preservation of reduction
+  \item \rref*{red*-once}. By \nameref{lem:pres-red}.
   \item \rref*{red*-refl}. Trivial by \rref{equiv-refl}.
   \item \rref*{red*-trans}.
     \vspace{-\baselineskip}
@@ -1534,20 +1440,62 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
     }
     \end{mathpar}
     By the induction hypothesis on the first premise,
-    we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\compile{\tau}}$.
+    we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$.
     By \nameref{thm:subject-reduction} and \nameref{thm:subject-equivalence}, we have
     \begin{itemize}[noitemsep]
       \item $\type{\Phi; \Gamma}{e'}{\tau}$ and
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e'}}{\compile{\tau}}$.
+      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e'}}{\tauT}$.
     \end{itemize}
     Then we can apply the induction hypothesis on the second premise to yield
-    $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e'}}{\compile{e''}}{\compile{\tau}}$.
+    $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e'}}{\compile{e''}}{\tauT}$.
     Finally, by \rref{equiv-trans}, we have
-    $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e''}}{\compile{\tau}}$
+    $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e''}}{\tauT}$
   \item \rref*{red*-cong}.
     The various congruence cases are all similar to one another;
     I cover only \rref{let} as a representative case.
-    \TODO
+    \begin{mathpar}
+    \inferrule{
+      \red*{\Phi; \Gamma}{\sigma}{\sigma'} \\
+      \red*{\Phi; \Gamma}{e_1}{e'_1} \\
+      \red*{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{e_2}{e'_2}
+    }{
+      \red*{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\letin{x}{\sigma'}{e'_1}{e'_2}}
+    }
+    \end{mathpar}
+    By inversion on $\type{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\tau}$
+    and on $\type{\compile{\Phi}\compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\compile{\tau}}$,
+    we have
+    \begin{itemize}[noitemsep]
+      \item $\type{\Phi; \Gamma}{\sigma}{U}$,
+      \item $\type{\Phi; \Gamma}{e_1}{\sigma}$,
+      \item $\type{\Phi; \Gamma, \define{x}{\sigma}{e_1}}{e_2}{\tau'}$,
+      \item $\subtype{\Phi; \Gamma}{\subst{\tau'}{x}{e_1}}{\tau}$;
+      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\UT}$,
+      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e_1}}{\compile{\sigma}}$,
+      \item $\type{\compile{\Phi}\compile{\Gamma}, \defineT{\xT}{\compile{\sigma}}{\compile{e_1}}}{\compile{e_2}}{\tauT'}$, and
+      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e_1}}}{\tauT}$.
+    \end{itemize}
+    Applying the induction hypothesis to the first and second premises, we have
+    \begin{itemize}[noitemsep]
+      \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma'}}{\UT}$ and
+      \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e_1}}{\compile{e'_1}}{\compile{\sigma}}$.
+    \end{itemize}
+    By \rref{red*-refl, acum-refl, subtype-red}, we have $\subtype{\Phi; \Gamma}{\sigma}{\sigma'}$.
+    Then by \nameref{lem:replacement-subtyping} and \nameref{lem:replacement-reduction},
+    we have $\type{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{e_2}{\tau'}$.
+    Similarly, by \rref{subtype-conv}, we have $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma'}}$,
+    and by \nameref{lem:replacement-subtyping*} and \nameref{lem:replacement-equivalence},
+    we have $\type{\compile{\Phi}\compile{\Gamma}, \defineT{\xT}{\compile{\sigma'}}{\compile{e'_1}}}{\compile{e_2}}{\tauT'}$.
+    This allows us to apply the induction hypothesis to the third premise,
+    yielding $\defeq{\compile{\Phi}\compile{\Gamma}, \defineT{\xT}{\compile{\sigma'}}{\compile{e'_1}}}{\compile{e_2}}{\compile{e'_2}}{\tauT'}$.
+    By \rref{subtype-conv, equiv-conv, equiv-cong} and \nameref{thm:transivity-subtyping}, we have
+    \begin{itemize}[noitemsep]
+      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e_1}}{\compile{\sigma'}}$,
+      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e'_1}}}{\subst{\tauT'}{\xT}{\compile{e_1}}}$, and
+      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e'_1}}}{\tauT}$.
+    \end{itemize}
+    Finally, by \rref{equiv-cong, equiv-conv}, we have
+    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\letinT{\xT}{\compile{\sigma'}}{\compile{e'_1}}{\compile{e'_2}}}{\tauT}.$$
 \end{itemize}
 \end{proof}
 
@@ -1648,7 +1596,7 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
     By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\SizeT}{\UT'}$
     and $\defeq{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\alphaT \szltT \compile{s}}{\UT''}$.
     Then by \rref{subtype-pi} twice, we have
-    $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_1}_{\bound{\alpha}{s}}}}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_2}_{\bound{\alpha}{s}}}}}$.
+    $$\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_1}_{\bound{\alpha}{s}}}}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_2}_{\bound{\alpha}{s}}}}}.$$
     \qedhere
 \end{itemize}
 \end{proof}
