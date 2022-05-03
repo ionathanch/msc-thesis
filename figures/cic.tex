@@ -77,7 +77,7 @@
     \type{\GammaT, \annotT{\xT}{\sigmaT}}{\eT}{\tauT} \\
     \type{\GammaT}{\eT'}{\sigmaT}
   }{
-    \defeq{\GammaT}{\app{(\funT{\xT}{\sigmaT}{\eT})}{\eT'}}{\subst{\eT}{\xT}{\eT'}}{\tauT}
+    \defeq{\GammaT}{\app{(\funT{\xT}{\sigmaT}{\eT})}{\eT'}}{\subst{\eT}{\xT}{\eT'}}{\subst{\tauT}{\xT}{\eT'}}
   }
   \and
   \inferrule[\rlabel{$\equiv$-$\eta$}{equiv-eta}]{

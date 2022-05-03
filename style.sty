@@ -131,6 +131,7 @@
 \newcommand{\subst}[3]{#1\mathopen{\meta{\mathbf{[}}}#2 \mathrel{\meta{\mathbf{\mapsto}}} #3\mathclose{\meta{\mathbf{]}}}}
 \newcommand{\card}[1]{\mathopen{\meta{\mathbf{\lvert}}} #1 \mathclose{\meta{\mathbf{\rvert}}}}
 \newcommand{\compile}[1]{\mathopen{\meta{\mathbf{\llbracket}}} #1 \mathclose{\meta{\mathbf{\rrbracket}}}}
+\newcmd*{\compile}[1]{\meta{\mathbf{\biggl\llbracket}} #1 \meta{\mathbf{\biggr\rrbracket}}}
 \newcommand{\metafun}[2]{\meta{\textbf{#1(}}#2\meta{\textbf{)}}}
 \newcmd*{\metafun}[1]{\meta{\textbf{#1}}}
 \newcommand{\maximum}[1]{\metafun{max}{#1}}

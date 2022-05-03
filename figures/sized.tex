@@ -281,7 +281,7 @@
     \infer{\Phi; \Gamma}{e_1}{\funtype{x}{\sigma}{\tau}} \\
     \check{\Phi; \Gamma}{e_2}{\sigma}
   }{
-    \infer{\Phi; \Gamma}{\app{e_1}{e_2}}{\subst{\tau}{x}{e_1}}
+    \infer{\Phi; \Gamma}{\app{e_1}{e_2}}{\subst{\tau}{x}{e_2}}
   }
   \and
   \inferrule[\rlabel*{let}]{
