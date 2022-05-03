@@ -40,10 +40,14 @@
   &\LetT{\accIsProp}{\funtypeT{\alpha}{\SizeT}{\funtypeT{\mathit{acc}_1, \mathit{acc}_2}{\app{\AccT}{\alpha}}{\eqT{\mathit{acc}_1}{}{\mathit{acc}_2}}}}{\seq} \\
   &\LetT{\accleq}{\funtypeT{\alpha, \beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{\AccT}{\alpha}}{\app{\AccT}{\beta}}}}{\seq} \\
   &\LetT{\accessible}{\funtypeT{\alpha}{\SizeT}{\app{\AccT}{\alpha}}}{\seq} \\
+  \hfill \\
   &\LetT{\wfacc}{\funtypeT{P}{(\arrT*{\SizeT}{\TypeT{\iT}})}{\arrT*{(\funtypeT{\alpha}{\SizeT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{P}{\beta}}})}{\app{P}{\alpha}}})}{ \\
-    &\phantom{\app{\tg{let}}{\wfacc} \mathrel{:} \phantom{}} \funtypeT{\alpha}{\SizeT}{\arrT*{\app{\AccT}{\alpha}}{\app{P}{\alpha}}}}}}{\seq} \\
+    &\phantom{\app{\tg{let}}{\wfacc} \mathrel{:} \phantom{}} \funtypeT{\alpha}{\SizeT}{\arrT*{\app{\AccT}{\alpha}}{\app{P}{\alpha}}}}}}{\funT{P}{\any}{\funT{f}{\any}{\funT{\alpha}{\any}{\funT{\mathit{acc}}{\any}{ \\
+    & \quad \app{(\fixT{1}{\wfacc*}{\funtype{\alpha}{\SizeT}{\arrT*{\app{\AccT}{\alpha}}{\app{P}{\alpha}}}}{ \\
+    & \qquad \funT{\alpha}{\any}{\funT{\mathit{acc}}{\any}{\app{f}{\alpha}{(\funT{\beta}{\SizeT}{\funT{\beta^*}{\beta \szltT \alpha}{ \\
+    & \qquad \quad \app{\wfacc*}{\beta}{(\matchT*{\mathit{acc}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})})}}})}}}})}{\alpha}{\mathit{acc}}}}}}} \\
   &\LetT{\wfind}{\funtypeT{P}{(\arrT*{\SizeT}{\TypeT{\iT}})}{\arrT*{(\funtypeT{\alpha}{\SizeT}{\arrT*{(\funtypeT{\beta}{\SizeT}{\arrT*{\beta \szleT \alpha}{\app{P}{\beta}}})}{\app{P}{\alpha}}})}{ \\
-    &\phantom{\app{\tg{let}}{\wfind} \mathrel{:} \phantom{}} \funtypeT{\alpha}{\SizeT}{\app{P}{\alpha}}}}}{\seq}
+    &\phantom{\app{\tg{let}}{\wfind} \mathrel{:} \phantom{}} \funtypeT{\alpha}{\SizeT}{\app{P}{\alpha}}}}}{\fun{P}{\any}{\fun{f}{\any}{\fun{\alpha}{\any}{\app{\wfacc}{P}{f}{\alpha}{(\app{\accessible}{\alpha})}}}}}
   \end{align*}
   \caption{Definitions in \CICE}
   \label{#1}

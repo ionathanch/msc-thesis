@@ -1281,7 +1281,7 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     we have that $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau}}{\tauT}$.
     Then $\defeq{\compile{\Phi}\compile{\Gamma}}{\xT}{\compile{e}}{\compile{\tau}}$
     holds by \rref{equiv-delta, equiv-conv}.
-  \item $\red{\Phi; \Gamma}{\app{(\fun{x}{\sigma}{e})}{e'}}{\subst{e}{x}{e'}}$.
+  \item $\red{\Phi; \Gamma}{\app{(\fun{x}{\sigma}{e})}{e'}}{\subst{e}{x}{e'}}$.\\
     By inversion on $\type{\compile{\Phi}\compile{\Gamma}}{\app{(\funT{\xT}{\compile{\sigma}}{\compile{e}})}{\compile{e'}}}{\tauT}$,
     we have
     \begin{itemize}[noitemsep]
@@ -1309,7 +1309,7 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     $$\defeq{\compile{\Phi}\compile{\Gamma}}{\app{(\funT{\xT}{\compile{\sigma}}{\compile{e}})}{\compile{e'}}}{\subst{\compile{e}}{\xT}{\compile{e'}}}{\tauT}.$$
     Finally, by \nameref{lem:term-compositionality}, we obtain our goal.
     $$\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\app{(\fun{x}{\sigma}{e})}{e'}}}{\compile{\subst{e}{x}{e'}}}{\tauT}$$
-  \item $\red{\Phi; \Gamma}{\App{(\Fun{\alpha}{e})}{s}}{\subst{e}{\alpha}{s}}$.
+  \item $\red{\Phi; \Gamma}{\App{(\Fun{\alpha}{e})}{s}}{\subst{e}{\alpha}{s}}$.\\
     By inversion on $\type{\compile{\Phi}\compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{e}})}{\compile{s}}}{\tauT}$,
     we have
     \begin{itemize}[noitemsep]
@@ -1331,7 +1331,7 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     $$\defeq{\compile{\Phi}\compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{e}})}{\compile{s}}}{\subst{\compile{e}}{\alphaT}{\compile{s}}}{\tauT}.$$
     Finally, by \nameref{lem:compos-size-unbounded}, we obtain our goal.
     $$\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\App{(\Fun{\alpha}{e})}{s}}}{\compile{\subst{e}{\alpha}{s}}}{\tauT}$$
-  \item $\red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}$.
+  \item $\red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}$.\\
     Let $\subsizeto{\Phi}{\sss{s}}{r}{\eT'}$.
     Then by inversion thrice on $\type{\compile{\Phi}\compile{\Gamma}}{\app{(\fun{\alphaT}{\SizeT}{\fun{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}}})}{\compile{s}}{\eT'}}{\tauT}$
     and an application of \rref{conv*}, we have
@@ -1345,7 +1345,7 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     $$\defeq{\compile{\Phi}\compile{\Gamma}}{\app{(\fun{\alphaT}{\SizeT}{\fun{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}}})}{\compile{s}}{\eT'}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\tauT}.$$
     Finally, by \nameref{lem:compos-size-bounded}, we obtain our goal.
     $$\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\App{(\Fun<{\alpha}{r}{e})}{s}}}{\compile{\subst{e}{\alpha}{s}}}{\tauT}$$
-  \item $\red{\Phi; \Gamma}{\letin{x}{\sigma}{e'}{e}}{\subst{e}{x}{e'}}$.
+  \item $\red{\Phi; \Gamma}{\letin{x}{\sigma}{e'}{e}}{\subst{e}{x}{e'}}$.\\
     By inversion on $\type{\compile{\Phi}\compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e'}}{\compile{e}}}{\tauT}$,
     we have
     \begin{itemize}[noitemsep]
@@ -1406,7 +1406,69 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
         &\quad \app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e}
       \end{aligned}
     }}{\compile{\subst{e}{\alpha, z_1, z_2}{s, e_1, e_2}}}{\tauT}$$
-  \item
+  \item $\red[]{\Phi; \Gamma}{
+      \App{(\fix{f}{\alpha}{\sigma}{e})}{s}
+    }{
+      \subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}
+    }$.\\
+    By definition of the translation, we have
+    $$\type{\compile{\Phi}\compile{\Gamma}}{
+      \begin{aligned}
+      & \app{\wfind}{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\\
+      & \quad (\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}{\compile{e}}})}{\compile{s}}
+      \end{aligned}
+    }{\tauT},$$
+    where $\wfind$ (and $\wfacc$) are defined in \cref{fig:defns}.
+    Because of the sheer volume of the terms involved in the translation, $\wfind$, and $\wfacc$,
+    I omit well-typedness premises when applying equivalence rules,
+    especially since all of these terms are known to be well typed.
+    Do note, however, that by repeated applications of inversion, we have
+    $\subtype{\compile{\Phi}\compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}}{\tauT}$. \\[\baselineskip]
+    Let $\sigmaT$ be $\funT{\alphaT}{\SizeT}{\compile{\sigma}}$,
+    and let $\eT$ be $\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}{\compile{e}}}$.
+    Liberally using \rref{equiv-trans}, for the left-hand side we then have
+    \begin{align*}
+    \compile{\Phi}\compile{\Gamma} &\vdash \app{\wfind}{\sigmaT}{\eT}{\compile{s}} \\
+    &\equiv \app{\wfacc}{\sigmaT}{\eT}{\compile{s}}{(\app{\accessible}{\compile{s}})} \\
+      &\phantom{\equiv} \textit{by $\wfind$ and \rref*{equiv-beta}} \\
+    &\equiv \app{(\fixT{1}{\wfacc*}{\funtype{\alpha}{\SizeT}{\arrT*{\app{\AccT}{\alpha}}{\app{\sigmaT}{\alpha}}}}{ \\
+      &\phantom{\equiv} \quad \funT{\alpha}{\any}{\funT{\mathit{acc}}{\any}{\app{\eT}{\alpha}{(\funT{\beta}{\SizeT}{\funT{\beta^*}{\beta \szltT \alpha}{ \\
+      &\phantom{\equiv} \qquad \app{\wfacc*}{\beta}{(\matchT*{\mathit{acc}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})})}}})}}}})}{\compile{s}}{(\app{\accessible}{\compile{s}})} \\
+      &\phantom{\equiv} \textit{by $\wfacc$ and \rref*{equiv-beta}} \\
+    &\equiv \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\beta^*}{\beta \szltT \compile{s}}{ \\
+      &\phantom{\equiv} \quad \app{\wfacc}{\sigmaT}{\eT}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})})}}} \\
+      &\phantom{\equiv} \textit{by \rref*{equiv-mu}, \rref*{equiv-beta}, and $\wfacc$} \\
+    &: \app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}
+    \end{align*}
+    Meanwhile, for the right-hand side we have
+    \begin{align*}
+    &\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}} \\
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \compile{s}}{\app{\compile{\fix{f}{\alpha}{\sigma}{e}}}{\betaT}}}} \\
+      &\phantom{=} \textit{by \nameref{lem:compos-size-unbounded} and \nameref{lem:term-compositionality}} \\
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfind}{\sigmaT}{\eT}{\betaT}}}} \\
+      &\phantom{=} \textit{by definition of translation of $\kw{fix}$} \\
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfacc}{\sigmaT}{\eT}{\betaT}{(\app{\accessible}{\betaT})}}}} \\
+      &\phantom{=} \textit{by $\wfind$}
+    \end{align*}
+    Note that the only difference between the left- and right-hand sides now
+    is the proof of $\app{\AccT}{\betaT}$ for some $\betaT \szltT \compile{s}$,
+    but we know that such proofs are propositionally equal to one another.
+    From inversion, we know that $\compile{s}$ is well typed with type $\SizeT$.
+    Then we can show that
+    \begin{align*}
+    &\type{\compile{\Phi}, \compile{\Gamma}, \annot{\betaT}{\SizeT}, \annot{\betaT^*}{\betaT \szltT \compile{s}}}{\app{\accIsProp}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})})}{(\app{\accessible}{\betaT})}}{\\
+    &\phantom{\type{\compile{\Phi}, \compile{\Gamma}, \annot{\betaT}{\SizeT}, \annot{\betaT^*}{\betaT \szltT \compile{s}}}{}{}}
+    \eq{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})}}{\app{\AccT}{\beta}}{\app{\accessible}{\betaT}}}.
+    \end{align*}
+    By \rref{equiv-reflect}, we have
+    \begin{align*}
+    &\defeq{\compile{\Phi}, \compile{\Gamma}, \annot{\betaT}{\SizeT}, \annot{\betaT^*}{\betaT \szltT \compile{s}}}{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})}}{\app{\accessible}{\betaT}}{\app{\AccT}{\beta}}.
+    \end{align*}
+    Finally, by \rref{equiv-cong}, we can equate the left- and right-hand sides,
+    and by \rref{equiv-conv}, we obtain our goal.
+    \begin{align*}
+    \defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\App{(\fix{f}{\alpha}{\sigma}{e})}{s}}}{\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}}}{\tauT}
+    \end{align*}
 \end{itemize}
 \end{proof}
 
