@@ -1,5 +1,6 @@
-\chapter{Design Shortcomings}\label{ch:shortcomings}
+\chapter{Discussion and Conclusions}\label{ch:shortcomings}
 
+\TODO: Rewrite this paragraph.
 With \lang and its syntactic model come shortcomings in the design decisions that make it work.
 Most notable are the lack of an infinite size
 and the fact that the type of naturals and well-founded trees live in a universe
@@ -191,6 +192,17 @@ so we would expect $\SizeT$ to be just as large as the inductive itself.
 Aside from situations where the inductive is impredicative, \ie in $\PropT$,
 parametrizing over $\SizeT$ then necessarily requires moving up a universe
 so that it's not essentially quantifying over itself.
+
+If having inductive types in the correct universe were more important than
+the potential expressibility of infinitude,
+we could eliminate $\limT$ altogether and model sizes as ordinary naturals.
+Then $\SizeT$ would live in $\Type{0}$, $\NatT$ and $\WT$ would live in the correct universes,
+as well as $\N*$ and $\W*$.
+Although this would affect the judgements of both \lang and \CICE,
+this wouldn't affect the proofs, since the changes are the same for both languages.
+However, this does mean giving up $\const{ac}$
+and likely any hope of defining any infinitary constructs like $\const{\omega}$
+when using this model.
 
 \section{Streams and Coinductives}
 
@@ -391,20 +403,26 @@ then mutual inductives, indexed inductives \citep{whynotW}, some nested inductiv
 and even some inductive--inductive types \citep{ind-ind}
 can be encoded using W types and propositional equality.
 
+\hfill
+
 In terms of metatheory, \lang is missing proof of two desirable properties:
 strong normalization and decidability of type checking.
 Because \nameref{lem:pres-red} only preserves reduction up to equivalence in \CICE,
 not reduction, normalization doesn't hold immediately from the translation.
 In particular, the proof of \nameref{lem:pres-red} uses equality reflection
 to obtain an equivalence between two proofs of accessibility of a size,
-and \citet{SProp} show that this can lead to nonnormalization in
+and \citet{SProp} show that this equivalence can lead to nonnormalization in
 particular inconsistent environments,
 as is the case for $\tg{false}$.
+
 Even so, I conjecture that translation of a \lang term will never lead to
 a \CICE term with a subterm in an appropriate inconsistent environment that leads to nonormalization,
 because the translation will never yield an assumption of the form $\sT \szltT \sT$.
 By inspection of the translation, the only fitting subsizing relation possible is of the form $\alphaT \szltT \alphaT$,
 and the only possible sources $\Funtype<{\alpha}{\alpha}{\tau}$, $\Fun<{\alpha}{\alpha}{e}$ are ill-scoped.
+Since fixpoints only reduce when applied to sizes that have a subsize
+and we can't obtain infinitely decreasing chains of subsizes,
+they can't unfold endlessly and must stop eventually.
 
 Decidability of type checking, meanwhile, rests not only on strong normalization,
 but also on decidability of subsizing, \ie deciding whether $\bound{r}{s}$ holds.
@@ -412,3 +430,32 @@ The trickiest rule is transitivity of subsizing,
 but I conjecture that subsizing, too, is decidable,
 as the size environment only contains a finite number of bounded size variables,
 and sizes can only have a finite number of successor operators applied.
+Moreover, Agda has transitive subsizing, and so far hasn't had issues with its decidability.
+
+\hfill
+
+As for implementation, the consistency of \lang shows that sized types for inductives in Agda
+are likely to be consistent were the infinite size removed.
+This immediately poses a significant problem to Agda's standard library,
+as 20 of the 33 files that use sized types in version 1.7.1 of the standard library
+make use of the infinite size.
+Furthermore, 30 of those files deal with coinductives rather than inductives,
+and it remains to be seen whether \lang with coinductives really is consistent as well.
+The addition of the $\const{ac}$ axiom to recover some of the expressivity of the infinite size
+isn't ideal for a proof assistant either, since it would block computation.
+
+\section{Conclusion}
+
+In this thesis, I introduced \lang, a sized dependent type theory
+with higher-rank size quantification and bounded size quantification,
+but without an infinite size that is strictly greater than itself,
+along with sized naturals and well-founded trees.
+I gave examples of programming with sized inductives to write recursive programs
+that would have otherwise not passed the usual syntactic guard checks,
+as well as limitations of programming without the infinite size.
+I then showed that \lang is consistent, contingent on the consistency of \CICE,
+an extensional dependent type theory, by translating \lang terms to \CICE terms
+and proving that the translation is type preserving.
+Finally, I discussed the tradeoffs in the design of \lang for the syntactic model to work,
+namely the lack of an infinite size and raising the universe levels of the inductives,
+as well as some potential extensions and future work.
