@@ -52,6 +52,7 @@
 
 ## TODOs
 
+* Rewrite first paragraph in Discussion
 * Fill in everything marked with `\TODO`
 * Revisit `% TODO`s eventually
 * Prove type preservation
