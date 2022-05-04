@@ -1,6 +1,6 @@
 # The Future Home of Jonathan's Master's Thesis
 
-## Outline
+## Outline (outdated)
 
 1. Introduction
    1. Something whimsical
@@ -50,8 +50,15 @@
 7. Related work (see ISTCP?)
 8. Conclusion
 
-## Technical TODOs
+## TODOs
 
-* Add congruence of convertibility to source
-* See if match η-equivalence can be proven from equality reflection
-* Add equality, streams to source
+* Fill in everything marked with `\TODO`
+* Revisit `% TODO`s eventually
+* Prove type preservation
+* Prove confluence
+* Ask William about replacement by reduction
+* Restructure Design Shortcomings as a Discussion + Conclusion chapter
+* Write Introduction chapter
+* Add congruence rules in Appendix
+* Fix index entries (a lot are probably missing) and glossary entries
+* Abstract, Lay Summary, Preface, Acknowledgements

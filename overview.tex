@@ -152,7 +152,6 @@ An order on sizes is induced by these bound instantiations and the successor ope
 this order has nothing to do with subtyping,
 and in particular we do \emph{not} have subtyping relations between
 $\N{\alpha}$ and $\N{\sss{\alpha}}$, for instance.
-% TODO: forward ref to where we define the cast between the two
 Fixpoint expressions recur on smaller sizes according to the order,
 summarized by the below typing rule.
 %
@@ -187,8 +186,8 @@ Notably, these are all features found in Agda's implementation of sized types.
 The only missing feature is the infinite size,
 since its properties and its use are known to be inconsistent in Agda%
 \textsuperscript{\labelcref{foot:agda-inconsistent}}.
-% TODO: forward ref to discussion on the infinite size
-% TODO: mention ⊔ or add it??
+A demonstration of the inconsistency of a hypothetical infinite size in \lang
+is given in \cref{sec:infinity}.
 
 \section{Syntactic Model}\label{sec:syntactic-model}
 
@@ -248,7 +247,6 @@ and to show that this translation is type preserving.
 I define my translation by induction on the typing derivations of \lang
 rather than merely over its syntax,
 ensuring that only well-typed terms have a translation.
-% TODO: forward ref here?
 
 Type preservation of the translation is proven by induction on not only the typing derivations,
 but also the derivations of the judgements on which the typing rules depend.
