@@ -88,10 +88,10 @@ and we're good to go.
 \end{align*}
 
 Unfortunately, as the name might suggest,
-$\const{ac}$ is an instance of the axiom of choice%
+$\const{ac}$ is an instance of the axiom of choice\punctstack{,}%
 \footnote{The ``choice'' made here is the existentially-quantified size in the consequent:
 the axiom asserts that there's always a way to choose a size such that
-all of the well-founded trees returned have that size.},
+all of the well-founded trees returned have that size.}
 which for weak existentials\index{weak dependent pair} (whose elements we can't project out)
 is nonconstructive,
 so there's no hope of implementing $\const{ac}$.
@@ -144,9 +144,9 @@ $\NatT$ and $\WT$ have a $\SizeT$ as parameter,
 the $\limT$ operator quantifies over the type of the domain of its function argument,
 and that type must be ``large'' enough to accomodate the correct type.
 For $\app{\WT}{\sigmaT}{\tauT}{\sT}$,
-the domain is $\app{\tauT}{\aT}$ for some $\aT$%
+the domain is $\app{\tauT}{\aT}$ for some $\aT$\punctstack{,}%
 \footnote{For generalized inductives, given a recursive argument in the form of a function,
-the domain of $\limT$ should emcompass the domain of that function.},
+the domain of $\limT$ should emcompass the domain of that function.}
 as is the case for the definition of $\compile{\const{ac}}$,
 so if its universe is $\TypeT{\iT}$,
 then the universe of the type of $\sT$ must be $\TypeT{\tg{i+1}}$,
@@ -383,10 +383,10 @@ with nice properties.
 Whereas pCIC and pCuIC lack them, MetaCoq mechanizes Coq-style coinductive types,
 but necessarily cannot prove its own consistency.
 Meanwhile, older CICs with coinductive types and cofixpoints guarded by constructors
-(\eg \citet{guard}) have issues with subject reduction%
+(\eg \citet{guard}) have issues with subject reduction\punctstack{,}%
 \footnote{See issue \#6768 of the Coq repository,
 \textit{Towards a fix to the loss of subject reduction with corecursion?},
-URL \url{https://github.com/coq/coq/issues/6768}.},
+URL \url{https://github.com/coq/coq/issues/6768}.}
 which is a necessary property for proving type preservation in \cref{ch:proofs}.
 Another potential issue is the translation of cofixpoints into applications of
 a well-founded induction principle, which is suspicious and also requires further investigation.
