@@ -32,15 +32,15 @@
     \subsizeto{\Phi}{\sss{\alpha}}{s}{\alphaT^*}
   }
   \and
-  \inferrule{~}{
+  \inferrule{\wf{\Phi}{s}}{
     \subsizeto{\Phi}{\circ}{s}{\app{\baseleq}{\compile{s}}}
   }
   \and
-  \inferrule{~}{
+  \inferrule{\wf{\Phi}{s}}{
     \subsizeto{\Phi}{s}{s}{\app{\reflleq}{\compile{s}}}
   }
   \and
-  \inferrule{~}{
+  \inferrule{\wf{\Phi}{s}}{
     \subsizeto{\Phi}{s}{\sss{s}}{\app{\sucleq}{\compile{s}}}
   }
   \and

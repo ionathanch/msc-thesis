@@ -459,6 +459,13 @@ If $\type{\Phi; \Gamma}{e}{\tau}$ then $\wf{\Phi}{\Gamma}$.
 By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
 \end{proof}
 
+\begin{lemma} \label{lem:wf-env-size}
+If $\wf{\Phi}{\Gamma}$ then $\wf{}{\Phi}$.
+\end{lemma}
+\begin{proof}
+By induction on the derivation of $\wf{\Phi}{\Gamma}$.
+\end{proof}
+
 \begin{theorem}[Regularity] \label{thm:regularity}
 If $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\Phi; \Gamma}{\tau}{U}$.
 \end{theorem}
@@ -1734,4 +1741,99 @@ $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
 
 \subsection{Type preservation}
 
-\label{thm:pres-typing}
+At last we are able to prove type preservation,
+using preservation of subtyping in the \rref*{conv} case
+and preservation of sizes and subsizing,
+which are proven independently.
+
+\begin{lemma}[Preservation of sizes] \label{lem:pres-size}
+\begin{enumerate}[noitemsep]\hfill
+  \item If $\wf{}{\Phi}$ then $\wf{}{\compile{\Phi}}$; and
+  \item If $\wf{\Phi}{s}$ then $\wf{\compile{\Phi}}{\compile{s}}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+By mutual induction on the derivations of $\wf{}{\Phi}$ and $\wf{\Phi}{s}$.
+\begin{enumerate}[noitemsep]
+  \item %
+    \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+      \item \rref*{nil}. Trivial.
+      \item \rref*{cons-size}. By the induction hypothesis and \rref{ind, cons*-ass}.
+      \item \rref*{cons-size<}. By the induction hypotheses and \rref{ind, cons*-ass} twice.
+    \end{itemize}
+  \item %
+    \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+      \item $\wf{\Phi}{\alpha}$. By the induction hypothesis and \rref{var*}.
+      \item $\wf{\Phi}{\circ}$. By the induction hypothesis and well-typedness of $\baseT$.
+      \item $\wf{\Phi}{\sss{s}}$. By the induction hypothesis and \rref{constr}.
+    \end{itemize}
+\end{enumerate}
+\end{proof}
+
+\begin{lemma}[Preservation of subsizing]
+If $\subsizeto{\Phi}{r}{s}{\eT}$ then $\type{\compile{\Phi}}{\eT}{\compile{r} \szleT \compile{s}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\subsizeto{\Phi}{r}{s}{\eT}$.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item $\subsizeto{\Phi}{\sss{\alpha}}{s}{\alphaT^*}$.
+    By definition of the translation,
+    $(\annotT{\alphaT^*}{\alphaT \szltT \compile{s}}) \in \compile{\Phi}$,
+    so $\type{\compile{\Phi}}{\alphaT^*}{\alphaT \szltT \compile{s}}$ by
+    the induction hypothesis and \rref{var*}.
+  \item $\subsizeto{\Phi}{\circ}{s}{\app{\baseleq}{\compile{s}}}$.
+    By the induction hypothesis and well-typedness of $\baseleq$.
+  \item $\subsizeto{\Phi}{s}{s}{\app{\reflleq}{\compile{s}}}$.
+    By the induction hypothesis and well-typedness of $\reflleq$.
+  \item $\subsizeto{\Phi}{s}{\sss{s}}{\app{\sucleq}{\compile{s}}}$.
+    By the induction hypothesis and well-typedness of $\sucleq$.
+  \item \textbf{for monotonicity}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \subsizeto{\Phi}{r}{s}{\eT}
+    }{
+      \subsizeto{\Phi}{\sss{r}}{\sss{s}}{\app{\monoT}{\compile{r}}{\compile{s}}{\eT}}
+    }
+    \end{mathpar}
+    By the induction hypothesis,
+    $\type{\compile{\Phi}}{\eT}{\compile{r} \szleT \compile{s}}$.
+    Then $\type{\compile{\Phi}}{\app{\monoT}{\compile{r}}{\compile{s}}{\eT}}{\app{\sucT}{\compile{r}} \szleT \app{\sucT}{\compile{s}}}$
+    by \rref{constr}.
+  \item \textbf{for transitivity}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \subsizeto{\Phi}{s_1}{s_2}{\eT_{12}} \\
+      \subsizeto{\Phi}{s_2}{s_3}{\eT_{23}}
+    }{
+      \subsizeto{\Phi}{s_1}{s_3}{\app{\transleq}{\compile{s_1}}{\compile{s_2}}{\compile{s_3}}{\eT_{12}}{\eT_{23}}}
+    }
+    \end{mathpar}
+    By the induction hypotheses,
+    $\type{\compile{\Phi}}{\eT_{12}}{\compile{s_1} \szleT \compile{s_2}}$ and
+    $\type{\compile{\Phi}}{\eT_{23}}{\compile{s_2} \szleT \compile{s_3}}$.
+    Then $\type{\compile{\Phi}}{\app{\transleq}{\compile{s_1}}{\compile{s_2}}{\compile{s_3}}{\eT_{12}}{\eT_{23}}}{\compile{s_1} \szleT \compile{s_3}}$
+    by well-typedness of $\transleq$.
+\end{itemize}
+\end{proof}
+
+\begin{theorem}[Type preservation] \label{thm:pres-typing} \hfill
+\begin{enumerate}[noitemsep]
+  \item If $\wf{\Phi}{\Gamma}$ then $\wf{}{\compile{\Phi}, \compile{\Gamma}}$; and
+  \item If $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+By mutual induction on the derivations of
+$\wf{\Phi}{\Gamma}$ and $\type{\Phi; \Gamma}{e}{\tau}$.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item \rref*{nil}. Trivial by \cref*{lem:wf-env-size} and \nameref{lem:pres-size}.
+  \item \rref*{cons-ass}. By the induction hypotheses and \rref{cons*-ass}.
+  \item \rref*{cons-def}. By the induction hypotheses and \rref{cons*-def}.
+  \item \rref*{conv}.
+\end{itemize}
+\end{proof}
