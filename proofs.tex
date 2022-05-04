@@ -765,7 +765,7 @@ For the other proofs, however, a ``deeper'' property is required.
 \begin{definition}
 A typing derivation is \emph{strongly type preserved} if,
 for every subderivation $\type{\Phi; \Gamma}{e}{\tau}$,
-$\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{\tau}}$ holds.
+$\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{\tau}}$ holds.
 \end{definition}
 
 This lets us avoid a complex proof by mutual induction over all lemmas and theorems
@@ -1284,9 +1284,9 @@ Suppose we have the following:
 \begin{itemize}[noitemsep]
   \item $\red{\Phi; \Gamma}{e}{e'}$,
   \item $\type{\Phi; \Gamma}{e}{\tau}$, and
-  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\tauT}$.
+  \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\tauT}$.
 \end{itemize}
-Then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$,
+Then $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$,
 where \nameref{lem:sr} gives us $\type{\Phi; \Gamma}{e'}{\tau}$
 in order to translate $\compile{e'}$.
 \end{lemma}
@@ -1297,87 +1297,87 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
   \item $\red{\Phi; \Gamma}{x}{e}$ when $(\define{x}{\tau}{e}) \in \Gamma$.
     By the definition of $\compile{\Gamma}$, we have
     $(\defineT{\xT}{\compile{\tau}}{\compile{e}}) \in \compile{\Gamma}$.
-    By inversion on $\type{\compile{\Phi}\compile{\Gamma}}{\xT}{\tauT}$,
-    we have that $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau}}{\tauT}$.
-    Then $\defeq{\compile{\Phi}\compile{\Gamma}}{\xT}{\compile{e}}{\compile{\tau}}$
+    By inversion on $\type{\compile{\Phi}, \compile{\Gamma}}{\xT}{\tauT}$,
+    we have that $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau}}{\tauT}$.
+    Then $\defeq{\compile{\Phi}, \compile{\Gamma}}{\xT}{\compile{e}}{\compile{\tau}}$
     holds by \rref{equiv-delta, equiv-conv}.
   \item $\red{\Phi; \Gamma}{\app{(\fun{x}{\sigma}{e})}{e'}}{\subst{e}{x}{e'}}$.\\
-    By inversion on $\type{\compile{\Phi}\compile{\Gamma}}{\app{(\funT{\xT}{\compile{\sigma}}{\compile{e}})}{\compile{e'}}}{\tauT}$,
+    By inversion on $\type{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\xT}{\compile{\sigma}}{\compile{e}})}{\compile{e'}}}{\tauT}$,
     we have
     \begin{itemize}[noitemsep]
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\funT{\xT}{\compile{\sigma}}{\compile{e}}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e'}}{\sigmaT'}$, and
-      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e'}}}{\tauT}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\funT{\xT}{\compile{\sigma}}{\compile{e}}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e'}}{\sigmaT'}$, and
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e'}}}{\tauT}$.
     \end{itemize}
-    By inversion once more on $\type{\compile{\Phi}\compile{\Gamma}}{\funT{\xT}{\compile{\sigma}}{\compile{e}}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}$,
+    By inversion once more on $\type{\compile{\Phi}, \compile{\Gamma}}{\funT{\xT}{\compile{\sigma}}{\compile{e}}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}$,
     we have
     \begin{itemize}[noitemsep]
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\UT}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \annot{\xT}{\compile{\sigma}}}{\compile{e}}{\tauT''}$, and
-      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\tauT''}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\UT}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annot{\xT}{\compile{\sigma}}}{\compile{e}}{\tauT''}$, and
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\tauT''}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}$.
     \end{itemize}
-    By inversion on $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\tauT''}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}$,
+    By inversion on $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\tauT''}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}$,
     we have
     \begin{itemize}[noitemsep]
-      \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\sigmaT'}{\UT}$ and
-      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\tauT''}{\tauT'}$.
+      \item $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\sigmaT'}{\UT}$ and
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\tauT''}{\tauT'}$.
     \end{itemize}
-    \rref{conv*} gives us $\type{\compile{\Phi}\compile{\Gamma}, \annot{\xT}{\compile{\sigma}}}{\compile{e}}{\tauT'}$,
+    \rref{conv*} gives us $\type{\compile{\Phi}, \compile{\Gamma}, \annot{\xT}{\compile{\sigma}}}{\compile{e}}{\tauT'}$,
     and \rref{equiv-sym, subtype-conv} give us
-    $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e'}}{\compile{\sigma}}$.
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e'}}{\compile{\sigma}}$.
     We can then use \rref{equiv-beta, equiv-conv} to get
-    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\app{(\funT{\xT}{\compile{\sigma}}{\compile{e}})}{\compile{e'}}}{\subst{\compile{e}}{\xT}{\compile{e'}}}{\tauT}.$$
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\xT}{\compile{\sigma}}{\compile{e}})}{\compile{e'}}}{\subst{\compile{e}}{\xT}{\compile{e'}}}{\tauT}.$$
     Finally, by \nameref{lem:term-compositionality}, we obtain our goal.
-    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\app{(\fun{x}{\sigma}{e})}{e'}}}{\compile{\subst{e}{x}{e'}}}{\tauT}$$
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\app{(\fun{x}{\sigma}{e})}{e'}}}{\compile{\subst{e}{x}{e'}}}{\tauT}$$
   \item $\red{\Phi; \Gamma}{\App{(\Fun{\alpha}{e})}{s}}{\subst{e}{\alpha}{s}}$.\\
-    By inversion on $\type{\compile{\Phi}\compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{e}})}{\compile{s}}}{\tauT}$,
+    By inversion on $\type{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{e}})}{\compile{s}}}{\tauT}$,
     we have
     \begin{itemize}[noitemsep]
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\funT{\alphaT}{\SizeT}{\compile{e}}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{s}}{\SizeT}$, and
-      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\subst{\tauT'}{\alphaT}{\compile{s}}}{\tauT}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\funT{\alphaT}{\SizeT}{\compile{e}}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{s}}{\SizeT}$, and
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\subst{\tauT'}{\alphaT}{\compile{s}}}{\tauT}$.
     \end{itemize}
-    By inversion once more on $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$,
+    By inversion once more on $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$,
     we have
     \begin{itemize}[noitemsep]
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\UT}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{e}}{\tauT''}$, and
-      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtype{\alphaT}{\SizeT}{\tauT''}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\UT}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{e}}{\tauT''}$, and
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtype{\alphaT}{\SizeT}{\tauT''}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$.
     \end{itemize}
-    By inversion on $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtype{\alphaT}{\SizeT}{\tauT''}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$,
-    we have $\subtype{\compile{\Phi}\compile{\Gamma}}{\tauT''}{\tauT'}$.
-    \rref{conv*} then gives us $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{e}}{\tauT'}$.
+    By inversion on $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtype{\alphaT}{\SizeT}{\tauT''}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$,
+    we have $\subtype{\compile{\Phi}, \compile{\Gamma}}{\tauT''}{\tauT'}$.
+    \rref{conv*} then gives us $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{e}}{\tauT'}$.
     We can then use \rref{equiv-beta, equiv-conv} to get
-    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{e}})}{\compile{s}}}{\subst{\compile{e}}{\alphaT}{\compile{s}}}{\tauT}.$$
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{e}})}{\compile{s}}}{\subst{\compile{e}}{\alphaT}{\compile{s}}}{\tauT}.$$
     Finally, by \nameref{lem:compos-size-unbounded}, we obtain our goal.
-    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\App{(\Fun{\alpha}{e})}{s}}}{\compile{\subst{e}{\alpha}{s}}}{\tauT}$$
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\App{(\Fun{\alpha}{e})}{s}}}{\compile{\subst{e}{\alpha}{s}}}{\tauT}$$
   \item $\red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}$.\\
     Let $\subsizeto{\Phi}{\sss{s}}{r}{\eT'}$.
-    Then by inversion thrice on $\type{\compile{\Phi}\compile{\Gamma}}{\app{(\fun{\alphaT}{\SizeT}{\fun{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}}})}{\compile{s}}{\eT'}}{\tauT}$
+    Then by inversion thrice on $\type{\compile{\Phi}, \compile{\Gamma}}{\app{(\fun{\alphaT}{\SizeT}{\fun{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}}})}{\compile{s}}{\eT'}}{\tauT}$
     and an application of \rref{conv*}, we have
     \begin{itemize}[noitemsep]
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\UT}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\UT}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{e}}{\tauT'}$, and
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\subst{\tauT'}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\tauT}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\UT}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\UT}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{e}}{\tauT'}$, and
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\subst{\tauT'}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\tauT}$.
     \end{itemize}
     We can then use \rref{equiv-beta} twice and \rref{equiv-conv} to get
-    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\app{(\fun{\alphaT}{\SizeT}{\fun{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}}})}{\compile{s}}{\eT'}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\tauT}.$$
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\app{(\fun{\alphaT}{\SizeT}{\fun{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}}})}{\compile{s}}{\eT'}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\tauT}.$$
     Finally, by \nameref{lem:compos-size-bounded}, we obtain our goal.
-    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\App{(\Fun<{\alpha}{r}{e})}{s}}}{\compile{\subst{e}{\alpha}{s}}}{\tauT}$$
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\App{(\Fun<{\alpha}{r}{e})}{s}}}{\compile{\subst{e}{\alpha}{s}}}{\tauT}$$
   \item $\red{\Phi; \Gamma}{\letin{x}{\sigma}{e'}{e}}{\subst{e}{x}{e'}}$.\\
-    By inversion on $\type{\compile{\Phi}\compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e'}}{\compile{e}}}{\tauT}$,
+    By inversion on $\type{\compile{\Phi}, \compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e'}}{\compile{e}}}{\tauT}$,
     we have
     \begin{itemize}[noitemsep]
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\UT}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e'}}{\compile{\sigma}}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \defineT{\xT}{\compile{\sigma}}{\compile{e'}}}{\compile{e}}{\tauT'}$, and
-      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\subst{\tauT'}{\xT}{\eT'}}{\tauT}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\UT}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e'}}{\compile{\sigma}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \defineT{\xT}{\compile{\sigma}}{\compile{e'}}}{\compile{e}}{\tauT'}$, and
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\subst{\tauT'}{\xT}{\eT'}}{\tauT}$.
     \end{itemize}
     We can then use \rref{equiv-zeta, equiv-conv} to get
-    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e'}}{\compile{e}}}{\subst{\compile{e}}{\xT}{\compile{e'}}}{\tauT}.$$
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e'}}{\compile{e}}}{\subst{\compile{e}}{\xT}{\compile{e'}}}{\tauT}.$$
     Finally, by \nameref{lem:term-compositionality}, we obtain our goal.
-    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\letin{x}{\sigma}{e'}{e}}}{\compile{\subst{x}{e}{e'}}}{\tauT}.$$
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\letin{x}{\sigma}{e'}{e}}}{\compile{\subst{x}{e}{e'}}}{\tauT}.$$
   \item[\textbf{Cases}] \textbf{for $\kw{case}$}.
     \setlength{\jot}{-1.5pt}
     Because the three reduction rules for case expressions on $\zero*$, $\succ*$, and $\sup*$ are very similar,
@@ -1390,7 +1390,7 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     }{\subst{e}{\alpha, z_1, z_2}{s, e_1, e_2}}$$
     Let $\subsizeto{\Phi}{\sss{s}}{r}{\eT'}$.
     Then by inversion multiple times on
-    $$\type{\compile{\Phi}\compile{\Gamma}}{
+    $$\type{\compile{\Phi}, \compile{\Gamma}}{
       \begin{aligned}
         &\matchT{\app{\supT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}{\compile{s}}{\eT'}{\compile{e_1}}{\compile{e_2}}}{\funT*{\mt}{\xT}{\compile{P}}}{ \\
         &\quad \app{\supT}{\alphaT}{\alphaT^*}{\zT_1}{\zT_2} \RightarrowT \compile{e}}
@@ -1398,20 +1398,20 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     }{\tauT}$$
     and a few applications of \rref{conv*}, we have
     \begin{itemize}[noitemsep]
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\UT}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\funT{\xT}{\compile{\sigma}}{\compile{\tau}}}{\funtypeT{\xT}{\compile{\sigma}}{\UT}}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{r}}{\SizeT}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{s}}{\SizeT}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\eT'}{\compile{s} \szltT \compile{r}}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e_1}}{\compile{\sigma}}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e_2}}{\arrT*{\app{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{e_1}}}{\app{\WT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{s}}}}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\xT}{\app{\WT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}}}{\compile{P}}{\UT'}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{r}}, \annotT{\zT_1}{\compile{\sigma}}, \annotT{\zT_2}{\app{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\zT_1}}}{\compile{e}}{\subst{\compile{P}}{\xT}{\app{\supT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}{\alpha}{\alpha^*}{\zT_1}{\zT_2}}}$, and
-      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\subst{\compile{P}}{\xT}{\app{\supT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}{\compile{s}}{\eT'}{\compile{e_1}}{\compile{e_2}}}}{\tauT}$
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\UT}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\funT{\xT}{\compile{\sigma}}{\compile{\tau}}}{\funtypeT{\xT}{\compile{\sigma}}{\UT}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{r}}{\SizeT}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{s}}{\SizeT}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\eT'}{\compile{s} \szltT \compile{r}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e_1}}{\compile{\sigma}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e_2}}{\arrT*{\app{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{e_1}}}{\app{\WT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{s}}}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\app{\WT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}}}{\compile{P}}{\UT'}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{r}}, \annotT{\zT_1}{\compile{\sigma}}, \annotT{\zT_2}{\app{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\zT_1}}}{\compile{e}}{\subst{\compile{P}}{\xT}{\app{\supT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}{\alpha}{\alpha^*}{\zT_1}{\zT_2}}}$, and
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\subst{\compile{P}}{\xT}{\app{\supT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}{\compile{s}}{\eT'}{\compile{e_1}}{\compile{e_2}}}}{\tauT}$
     \end{itemize}
     We can then use \rref{equiv-iota, equiv-conv} to get
     \begin{align*}
-    \defeq{\compile{\Phi}\compile{\Gamma}}{
+    \defeq{\compile{\Phi}, \compile{\Gamma}}{
       \begin{aligned}
         &\matchT{\app{\supT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}{\compile{s}}{\eT'}{\compile{e_1}}{\compile{e_2}}}{\funT*{\mt}{\xT}{\compile{P}}}{ \\
         &\quad \app{\supT}{\alphaT}{\alphaT^*}{\zT_1}{\zT_2} \RightarrowT \compile{e}}
@@ -1420,7 +1420,7 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     \end{align*}
     Finally, by \nameref{lem:compos-size-unbounded}, \nameref{lem:compos-size-bounded},
     and \nameref{lem:term-compositionality} twice, we obtain our goal.
-    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\compile*{
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile*{
       \begin{aligned}
         &\match{\sup{x}{\sigma}{\tau}{r}{s}{e_1}{e_2}}{\fun*{x}{P}}{\\
         &\quad \app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e}
@@ -1432,7 +1432,7 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
       \subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}
     }$.\\
     By definition of the translation, we have
-    $$\type{\compile{\Phi}\compile{\Gamma}}{
+    $$\type{\compile{\Phi}, \compile{\Gamma}}{
       \begin{aligned}
       & \app{\wfind}{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\\
       & \quad (\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}{\compile{e}}})}{\compile{s}}
@@ -1443,12 +1443,12 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     I omit well-typedness premises when applying equivalence rules,
     especially since all of these terms are known to be well typed.
     Do note, however, that by repeated applications of inversion, we have
-    $\subtype{\compile{\Phi}\compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}}{\tauT}$. \\[\baselineskip]
+    $\subtype{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}}{\tauT}$. \\[\baselineskip]
     Let $\sigmaT$ be $\funT{\alphaT}{\SizeT}{\compile{\sigma}}$,
     and let $\eT$ be $\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}{\compile{e}}}$.
     Liberally using \rref{equiv-trans}, for the left-hand side we then have
     \begin{align*}
-    \compile{\Phi}\compile{\Gamma} &\vdash \app{\wfind}{\sigmaT}{\eT}{\compile{s}} \\
+    \compile{\Phi}, \compile{\Gamma} &\vdash \app{\wfind}{\sigmaT}{\eT}{\compile{s}} \\
     &\equiv \app{\wfacc}{\sigmaT}{\eT}{\compile{s}}{(\app{\accessible}{\compile{s}})} \\
       &\phantom{\equiv} \textit{by $\wfind$ and \rref*{equiv-beta}} \\
     &\equiv \app{(\fixT{1}{\wfacc*}{\funtype{\alpha}{\SizeT}{\arrT*{\app{\AccT}{\alpha}}{\app{\sigmaT}{\alpha}}}}{ \\
@@ -1487,7 +1487,7 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     Finally, by \rref{equiv-cong}, we can equate the left- and right-hand sides,
     and by \rref{equiv-conv}, we obtain our goal.
     \begin{align*}
-    \defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\App{(\fix{f}{\alpha}{\sigma}{e})}{s}}}{\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}}}{\tauT}
+    \defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\App{(\fix{f}{\alpha}{\sigma}{e})}{s}}}{\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}}}{\tauT}
     \end{align*}
 \end{itemize}
 \end{proof}
@@ -1504,9 +1504,9 @@ Suppose we have the following:
 \begin{itemize}[noitemsep]
   \item $\red*{\Phi; \Gamma}{e}{e'}$,
   \item $\type{\Phi; \Gamma}{e}{\tau}$, and
-  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\tauT}$.
+  \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\tauT}$.
 \end{itemize}
-Then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$,
+Then $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$,
 where \nameref{thm:subject-reduction} gives us $\type{\Phi; \Gamma}{e'}{\tau}$
 in order to translate $\compile{e'}$.
 \end{lemma}
@@ -1527,16 +1527,16 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
     }
     \end{mathpar}
     By the induction hypothesis on the first premise,
-    we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$.
+    we have $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$.
     By \nameref{thm:subject-reduction} and \nameref{thm:subject-equivalence}, we have
     \begin{itemize}[noitemsep]
       \item $\type{\Phi; \Gamma}{e'}{\tau}$ and
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e'}}{\tauT}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e'}}{\tauT}$.
     \end{itemize}
     Then we can apply the induction hypothesis on the second premise to yield
-    $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e'}}{\compile{e''}}{\tauT}$.
+    $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e'}}{\compile{e''}}{\tauT}$.
     Finally, by \rref{equiv-trans}, we have
-    $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e''}}{\tauT}$
+    $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{e''}}{\tauT}$
   \item \rref*{red*-cong}.
     The various congruence cases are all similar to one another;
     I cover only \rref{let} as a representative case.
@@ -1550,39 +1550,39 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
     }
     \end{mathpar}
     By inversion on $\type{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\tau}$
-    and on $\type{\compile{\Phi}\compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\compile{\tau}}$,
+    and on $\type{\compile{\Phi}, \compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\compile{\tau}}$,
     we have
     \begin{itemize}[noitemsep]
       \item $\type{\Phi; \Gamma}{\sigma}{U}$,
       \item $\type{\Phi; \Gamma}{e_1}{\sigma}$,
       \item $\type{\Phi; \Gamma, \define{x}{\sigma}{e_1}}{e_2}{\tau'}$,
       \item $\subtype{\Phi; \Gamma}{\subst{\tau'}{x}{e_1}}{\tau}$;
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\UT}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e_1}}{\compile{\sigma}}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \defineT{\xT}{\compile{\sigma}}{\compile{e_1}}}{\compile{e_2}}{\tauT'}$, and
-      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e_1}}}{\tauT}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\UT}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e_1}}{\compile{\sigma}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \defineT{\xT}{\compile{\sigma}}{\compile{e_1}}}{\compile{e_2}}{\tauT'}$, and
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e_1}}}{\tauT}$.
     \end{itemize}
     Applying the induction hypothesis to the first and second premises, we have
     \begin{itemize}[noitemsep]
-      \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma'}}{\UT}$ and
-      \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e_1}}{\compile{e'_1}}{\compile{\sigma}}$.
+      \item $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma'}}{\UT}$ and
+      \item $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e_1}}{\compile{e'_1}}{\compile{\sigma}}$.
     \end{itemize}
     By \rref{red*-refl, acum-refl, subtype-red}, we have $\subtype{\Phi; \Gamma}{\sigma}{\sigma'}$.
     Then by \nameref{lem:replacement-subtyping} and \nameref{lem:replacement-reduction},
     we have $\type{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{e_2}{\tau'}$.
-    Similarly, by \rref{subtype-conv}, we have $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma'}}$,
+    Similarly, by \rref{subtype-conv}, we have $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma'}}$,
     and by \nameref{lem:replacement-subtyping*} and \nameref{lem:replacement-equivalence},
-    we have $\type{\compile{\Phi}\compile{\Gamma}, \defineT{\xT}{\compile{\sigma'}}{\compile{e'_1}}}{\compile{e_2}}{\tauT'}$.
+    we have $\type{\compile{\Phi}, \compile{\Gamma}, \defineT{\xT}{\compile{\sigma'}}{\compile{e'_1}}}{\compile{e_2}}{\tauT'}$.
     This allows us to apply the induction hypothesis to the third premise,
-    yielding $\defeq{\compile{\Phi}\compile{\Gamma}, \defineT{\xT}{\compile{\sigma'}}{\compile{e'_1}}}{\compile{e_2}}{\compile{e'_2}}{\tauT'}$.
+    yielding $\defeq{\compile{\Phi}, \compile{\Gamma}, \defineT{\xT}{\compile{\sigma'}}{\compile{e'_1}}}{\compile{e_2}}{\compile{e'_2}}{\tauT'}$.
     By \rref{subtype-conv, equiv-conv, equiv-cong} and \nameref{thm:transivity-subtyping}, we have
     \begin{itemize}[noitemsep]
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e_1}}{\compile{\sigma'}}$,
-      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e'_1}}}{\subst{\tauT'}{\xT}{\compile{e_1}}}$, and
-      \item $\subtype{\compile{\Phi}\compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e'_1}}}{\tauT}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e_1}}{\compile{\sigma'}}$,
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e'_1}}}{\subst{\tauT'}{\xT}{\compile{e_1}}}$, and
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e'_1}}}{\tauT}$.
     \end{itemize}
     Finally, by \rref{equiv-cong, equiv-conv}, we have
-    $$\defeq{\compile{\Phi}\compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\letinT{\xT}{\compile{\sigma'}}{\compile{e'_1}}{\compile{e'_2}}}{\tauT}.$$
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\letinT{\xT}{\compile{\sigma'}}{\compile{e'_1}}{\compile{e'_2}}}{\tauT}.$$
 \end{itemize}
 \end{proof}
 
@@ -1600,10 +1600,10 @@ Suppose we have the following:
   \item $\acum{\tau_1}{\tau_2}$,
   \item $\type{\Phi; \Gamma}{\tau_1}{U_1}$,
   \item $\type{\Phi; \Gamma}{\tau_2}{U_2}$,
-  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\UT_1}$, and
-  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_2}}{\UT_2}$.
+  \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\UT_1}$, and
+  \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_2}}{\UT_2}$.
 \end{itemize}
-Then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
+Then $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
 \end{lemma}
 
 \begin{proof}
@@ -1623,21 +1623,21 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
     }
     \end{mathpar}
     By inversion on $\type{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau_i}}{U_i}$ and on
-    $\type{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_i}_{\annot{x}{\sigma}}}}{\compile{U_i}}$
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_i}_{\annot{x}{\sigma}}}}{\compile{U_i}}$
     for $i = 1, 2$, omitting unneeded judgements, we have
     \begin{itemize}[noitemsep]
       %\item $\type{\Phi; \Gamma}{\sigma}{U'}$,
       \item $\type{\Phi; \Gamma, \annot{x}{\sigma}}{\tau_i}{U''_i}$,
       %\item $\subtype{\Phi; \Gamma}{\rules{U'}{U''_i}}{U'_i}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\UT'}$, and
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{\tau_i}_{\annot{x}{\sigma}}}{\UT''_i}$.
-      %\item $\subtype{\compile{\Phi}\compile{\Gamma}}{\rules{\UT'}{\UT''_i}}{\UT_i}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\UT'}$, and
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{\tau_i}_{\annot{x}{\sigma}}}{\UT''_i}$.
+      %\item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\rules{\UT'}{\UT''_i}}{\UT_i}$.
     \end{itemize}
     By the induction hypothesis on the premise using the above, we have
-    $\subtype{\compile{\Phi}\compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{\tau_1}_{\annot{x}{\sigma}}}{\compile{\tau_2}_{\annot{x}{\sigma}}}$.
-    By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma}}{\UT'}$.
+    $\subtype{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{\tau_1}_{\annot{x}{\sigma}}}{\compile{\tau_2}_{\annot{x}{\sigma}}}$.
+    By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma}}{\UT'}$.
     Then by \rref{subtype-pi}, we have
-    $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_1}_{\annot{x}{\sigma}}}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_2}_{\annot{x}{\sigma}}}}$.
+    $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_1}_{\annot{x}{\sigma}}}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_2}_{\annot{x}{\sigma}}}}$.
   \item \rref{acum-forall}.
     \vspace{-\baselineskip}
     \begin{mathpar}
@@ -1648,18 +1648,18 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
     }
     \end{mathpar}
     By inversion on $\type{\Phi; \Gamma}{\Funtype{\alpha}{\tau_i}}{U_i}$ and on
-    $\type{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_i}_{\alpha}}}{\UT_i}$
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_i}_{\alpha}}}{\UT_i}$
     for $i = 1, 2$, omitting unneeded judgements, we have
     \begin{itemize}[noitemsep]
       \item $\type{\Phi, \alpha; \Gamma}{\tau_i}{U''_i}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\UT'}$, and
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{\tau_i}_{\alpha}}{\UT''_i}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\UT'}$, and
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{\tau_i}_{\alpha}}{\UT''_i}$.
     \end{itemize}
     By the induction hypothesis on the premise using the above, we have
-    $\subtype{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{\tau_1}_{\alpha}}{\compile{\tau_2}_{\alpha}}$.
-    By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\SizeT}{\UT'}$.
+    $\subtype{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{\tau_1}_{\alpha}}{\compile{\tau_2}_{\alpha}}$.
+    By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\SizeT}{\UT'}$.
     Then by \rref{subtype-pi}, we have
-    $\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_1}_{\alpha}}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_2}_{\alpha}}}$.
+    $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_1}_{\alpha}}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_2}_{\alpha}}}$.
   \item \rref{acum-forall<}.
     \vspace{-\baselineskip}
     \begin{mathpar}
@@ -1670,20 +1670,20 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
     }
     \end{mathpar}
     By inversion on $\type{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau_i}}{U_i}$ and on
-    $\type{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_i}_{\bound{\alpha}{s}}}}}{\UT_i}$
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_i}_{\bound{\alpha}{s}}}}}{\UT_i}$
     for $i = 1, 2$, omitting unneeded judgements, we have
     \begin{itemize}[noitemsep]
       \item $\type{\Phi; \Gamma, \bound{\alpha}{s}}{\tau_i}{U''_I}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\UT'}$,
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\UT''}$, and
-      \item $\type{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_i}_{\bound{\alpha}{s}}}{\UT'''_i}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\UT'}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\UT''}$, and
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_i}_{\bound{\alpha}{s}}}{\UT'''_i}$.
     \end{itemize}
     By the induction hypothesis on the premise using the above, we have
-    $\subtype{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_1}_{\bound{\alpha}{s}}}{\compile{\tau_2}_{\bound{\alpha}{s}}}$.
-    By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}\compile{\Gamma}}{\SizeT}{\SizeT}{\UT'}$
-    and $\defeq{\compile{\Phi}\compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\alphaT \szltT \compile{s}}{\UT''}$.
+    $\subtype{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_1}_{\bound{\alpha}{s}}}{\compile{\tau_2}_{\bound{\alpha}{s}}}$.
+    By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\SizeT}{\UT'}$
+    and $\defeq{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\alphaT \szltT \compile{s}}{\UT''}$.
     Then by \rref{subtype-pi} twice, we have
-    $$\subtype{\compile{\Phi}\compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_1}_{\bound{\alpha}{s}}}}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_2}_{\bound{\alpha}{s}}}}}.$$
+    $$\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_1}_{\bound{\alpha}{s}}}}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_2}_{\bound{\alpha}{s}}}}}.$$
     \qedhere
 \end{itemize}
 \end{proof}
@@ -1701,10 +1701,10 @@ Suppose we have the following:
   \item $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$,
   \item $\type{\Phi; \Gamma}{\tau_1}{U}$,
   \item $\type{\Phi; \Gamma}{\tau_2}{U}$,
-  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{U}}$, and
-  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_2}}{\compile{U}}$.
+  \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\compile{U}}$, and
+  \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_2}}{\compile{U}}$.
 \end{itemize}
-Then $\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
+Then $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
 \end{lemma}
 
 \begin{proof}
@@ -1723,20 +1723,20 @@ By \rref{conv, conv*}, we have both $\type{\Phi; \Gamma}{U}{\axioms{U}}$
 and $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{U}}{\compile{\axioms{U}}}$.
 Then \hyperref[lem:pres-red*]{Preservation of closure of reduction} on the first two premises yields
 \begin{itemize}[noitemsep]
-  \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\sigma_1}}{\compile{U}}$ and
-  \item $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_2}}{\compile{\sigma_2}}{\compile{U}}$.
+  \item $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\compile{\sigma_1}}{\compile{U}}$ and
+  \item $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_2}}{\compile{\sigma_2}}{\compile{U}}$.
 \end{itemize}
 By \nameref{thm:subject-reduction} and \nameref{thm:subject-equivalence}, we have
 \begin{itemize}[noitemsep]
   \item $\type{\Phi; \Gamma}{\sigma_1}{U}$,
   \item $\type{\Phi; \Gamma}{\sigma_2}{U}$,
-  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma_1}}{\compile{U}}$, and
-  \item $\type{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma_2}}{\compile{U}}$.
+  \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma_1}}{\compile{U}}$, and
+  \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma_2}}{\compile{U}}$.
 \end{itemize}
 Using the above and the final premise, by \nameref{lem:pres-acum}, we have
-$\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\sigma_1}}{\compile{\sigma_2}}$.
+$\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma_1}}{\compile{\sigma_2}}$.
 Then by \rref{equiv-sym, subtype-conv, subtype-trans}, we have
-$\subtype{\compile{\Phi}\compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
+$\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
 \end{proof}
 
 \subsection{Type preservation}
