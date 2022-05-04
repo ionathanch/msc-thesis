@@ -34,10 +34,10 @@ Instead, the purpose is threefold:
     and requires no additional deep mathematical knowledge.
   \clearpage % NOTE: cross-page bullet points are gross, but this may change
   \item To reopen the discussion on sized dependent types.
-    Since the discovery of the inconsistency of Agda's sized types%
+    Since the discovery of the inconsistency of Agda's sized types\punctstack{,}%
     \footnote{\label{foot:agda-inconsistent} See issue \#2820 of the Agda repository,
     \textit{Equality is incompatible with sized types},
-    URL \url{https://github.com/agda/agda/issues/2820}.},
+    URL \url{https://github.com/agda/agda/issues/2820}.}
     progress appears to have stagnated a little.
     In later chapters, I examine these difficulties as they might apply to \lang
     and its interpretation in the syntactic model.
@@ -93,8 +93,8 @@ As we'll see in \cref{sec:syntactic-model}, these mutually-defined judgements wo
 so I settle for untyped equality instead.
 
 On top of \GCC, I add two inductive definitions featured in Martin--L\"of type theory (MLTT)~\citep{mltt}\index{Martin--L\"of type theory}:
-the \emph{Peano naturals}\index{naturals} and \emph{well-founded trees}\index{well founded!\textasciitilde~trees}%
-\footnote{The types of well-founded trees are also known as \emph{W types}.},
+the \emph{Peano naturals}\index{naturals} and \emph{well-founded trees}\index{well founded!\textasciitilde~trees}\punctstack{,}%
+\footnote{The types of well-founded trees are also known as \emph{W types}.}
 augmented with sizes.
 As the simplest nontrivial inductive,
 the naturals make it easy to demonstrate intuitive uses of sized inductives.
@@ -184,8 +184,8 @@ In summary, the sized type features I include are:
 
 Notably, these are all features found in Agda's implementation of sized types.
 The only missing feature is the infinite size,
-since its properties and its use are known to be inconsistent in Agda%
-\textsuperscript{\labelcref{foot:agda-inconsistent}}.
+since its properties and its use are known to be inconsistent in Agda\punctstack{.}%
+\textsuperscript{\labelcref{foot:agda-inconsistent}}
 A demonstration of the inconsistency of a hypothetical infinite size in \lang
 is given in \cref{sec:infinity}.
 
@@ -427,7 +427,7 @@ with subtyping and definitions.
 The \emph{Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions} (CIC) \citep{CIC}
 adds inductive types to CC,
 while the \emph{Predicative Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions!Predicative \textasciitilde} (pCIC)
-further adds definitions and a cumulative universe hierarchy via subtyping.%
+further adds definitions and a cumulative universe hierarchy via subtyping\punctstack{.}%
 \footnote{More precisely, pCIC refers to Coq's core CIC with the cumulative universe hierarchy
 and without an \emph{impredicative $\Set$} universe from version 8 onwards \citep[Chapter~4]{Coq-manual}.
 The Coq Reference Manual from version 8.5 onwards refers to it simply as CIC,
@@ -520,17 +520,14 @@ MiniAgda~\citep{MiniAgda, flationary} & \emoji{check-mark} & \emoji{check-mark} 
 \label{tab:sized-types}
 \end{table}
 
-% TODO: fix manual footnote number
-\footnotetext[6]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
-
 \cref{tab:sized-types} lists the sized dependent type theories that follow \CIChat,
 along with the main features I focus on:
 explicit, higher-rank, bounded size quantification,
 and with whether the type theory has been proven consistent.
 The type theory of MiniAgda, on which the sized types implemented in Agda are based,
 is the only prior one with all three sized type features,
-but is known to be inconsistent%
-\textsuperscript{\labelcref{foot:agda-inconsistent}}.
+but is known to be inconsistent\punctstack{.}%
+\textsuperscript{\labelcref{foot:agda-inconsistent}}
 (Interestingly, \Fcopomega~\citep{F-omega-cop}, which extends System F$_\omega$ with (co)inductive types and sized types,
 has all three properties \emph{and} has been proven to be strongly normalizing.)
 One of the goals of \lang, as mentioned, is to fill in this gap
@@ -538,6 +535,9 @@ with a consistent sized dependent type theory with all of the desired features.
 However, it's missing two properties that all of these type theories do have:
 inductive types in the ``correct'' universes,
 and the existence of an infinite size.
+
+% TODO: fix manual footnote number
+\footnotetext[6]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
 
 \begin{center}
 \mbox{* * *}

@@ -12,8 +12,8 @@
 \newfontfamily{\codefont}{iosevka.ttc}
 
 % save default lengths
-\newlength{\fboxsepdefault}
-\setlength{\fboxsepdefault}{\fboxsep}
+\newlength{\@fboxsepdefault}
+\setlength{\@fboxsepdefault}{\fboxsep}
 
 % \newcmd*{\cmd}[n]{expression} defines the suffixed command \cmd*
 % similarly for \newcmd<
@@ -86,6 +86,13 @@
 \newcommand{\opcit}{\emph{op. cit.}\xspace}
 \newcommand{\TODO}{\meta{\texttt{TODO}}\xspace}
 
+% use this before footnote to stack footnote mark above punctuation
+\newlength{\@punctwidth}
+\newcommand{\punctstack}[1]{#1%
+  \settowidth{\@punctwidth}{#1}%
+  \hspace*{-\the\@punctwidth}%
+}
+
 % language names
 \newcommand{\lang}{\texorpdfstring{$\widehat{\mathrm{TT}}$}{TT}\xspace}
 \newcommand{\GCC}{CC$^\omega$\xspace}
@@ -114,7 +121,7 @@
 \newcommand{\new}[1]{%
   \setlength{\fboxsep}{3pt}%
   \colorbox{newcolour}{\rule{0em}{0.5\baselineskip}#1}%
-  \setlength{\fboxsep}{\fboxsepdefault}%
+  \setlength{\fboxsep}{\@fboxsepdefault}%
 }
 
 % delimiters

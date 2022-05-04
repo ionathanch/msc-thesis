@@ -173,10 +173,10 @@ The new \rref{eq, refl, J} are for the propositional equality\index{propositiona
 its constructor, and its eliminator.
 Given some equality proof $\pT$ of $\eqT{\eT_1}{\tauT}{\eT_2}$
 and a motive\index{motive} $\PT$ dependent on a proof of equality
-whose left-hand side is fixed at $\eT_1$ and right-hand side is variable%
+whose left-hand side is fixed at $\eT_1$ and right-hand side is variable\punctstack{,}%
 \footnote{Occasionally referred to as \emph{Paulin-Mohring}'s equality,
 as opposed to \emph{Martin-L\"of}'s equality
-where the left-hand side is variable as well.},
+where the left-hand side is variable as well.}
 to prove $\app{\PT}{\eT_2}{\pT}$ it suffices to provide to $\JT*$ a proof that
 $\app{\PT}{\eT_1}{\refl{\eT_1}}$ holds.
 Other usual functions on proofs of equality can be derived from it,
@@ -184,7 +184,7 @@ such as coercion (when the motive is \mbox{$\funT{A}{\UT}{\funT{\any}{\any}{A}}$
 or substitution (when the motive ignores the second argument),
 as well as its symmetry, transitivity, and congruence.
 The proof of type preservation eliminates propositional equalities mostly through reflection rather than using $\JT*$,
-but I retain $\JT*$ in \CICE for completeness.%
+but I retain $\JT*$ in \CICE for completeness\punctstack{.}%
 \footnote{The combined presence of $\JT*$ and equality reflection also allows proving the
 \emph{uniqueness of identity proofs} (UIP)\index{uniqueness of identity proofs},
 or that all proofs of an equality are themselves equal to one another.}
