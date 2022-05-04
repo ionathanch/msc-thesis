@@ -1,13 +1,11 @@
 \chapter{Discussion and Conclusions}\label{ch:shortcomings}
 
-\TODO: Rewrite this paragraph.
-With \lang and its syntactic model come shortcomings in the design decisions that make it work.
-Most notable are the lack of an infinite size
-and the fact that the type of naturals and well-founded trees live in a universe
-higher than that in which their corresponding unsized types in, say, pCIC would live.
-Another shortcoming is the lack of coinductive types,
-which is a common use case of sized types in the Agda standard library.
-In this chapter, I elaborate on these features and the problems that arise from them, if any.
+\lang is neither perfect nor complete:
+the nature of the syntatic model requires that inductives live in a universe
+higher than that in which their corresponding unsized types would live,
+and it's missing features such as an infinite size and coinductives.
+In this chapter, I discuss some of these shortcomings
+and give some possible directions for future work based on them.
 
 \section{The Infinite Size} \label{sec:infinity}
 
@@ -291,7 +289,6 @@ dual to a inductive existentially quantified by a size corresponding to a full i
 We can manipulate sized streams as expected,
 such as taking only the odd elements of a stream
 or interleaving two streams by alternation.
-
 \begin{align*}
 & \Let{\odds}{\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\Stream{A}{\beta}})}{\Stream{A}{\alpha}}}}{ \\
 & \quad \cofix{\odds*}{\alpha}{\arr*{(\Funtype{\beta}{\Stream{A}{\beta}})}{\Stream{A}{\alpha}}}{ \\
@@ -313,7 +310,9 @@ Suppose we have a function $\annot{f}{\arr*{A}{A}{A}}$ and some element $\annot{
 & \Let{\zip}{\Funtype{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}}{ \\
 & \quad \cofix{\zip*}{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}{ \\
 & \qquad \fun{s_1}{\Stream{A}{\alpha}}{\fun{s_2}{\Stream{A}{\alpha}}{\scons{\beta}{\alpha}{\app{f}{\shd{s_1}}{\shd{s_2}}}{\beta}{\alpha}{\app{\App{\zip*}{\beta}}{(\App{\stl{s_1}}{\beta})}{(\App{\stl{s_2}}{\beta})}}}}}} \\
-\hfill \\
+\end{align*}
+
+\begin{align*}
 & \Let{\fibs}{\Funtype{\alpha}{\Stream{A}{\alpha}}}{ \\
 & \quad \cofix{\fibs*}{\alpha}{\Stream{A}{\alpha}}{ \\
 & \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\scons{\gamma}{\beta}{a}{\gamma}{\beta}{\app{\App{\zip}{\gamma}}{(\App{\fibs*}{\gamma})}{(\App{\stl{(\App{\fibs*}{\beta})}}{\gamma})}}}}}
@@ -456,6 +455,6 @@ as well as limitations of programming without the infinite size.
 I then showed that \lang is consistent, contingent on the consistency of \CICE,
 an extensional dependent type theory, by translating \lang terms to \CICE terms
 and proving that the translation is type preserving.
-Finally, I discussed the tradeoffs in the design of \lang for the syntactic model to work,
+Finally, I discussed the tradeoffs in the design of \lang for this syntactic model to work,
 namely the lack of an infinite size and raising the universe levels of the inductives,
 as well as some potential extensions and future work.
