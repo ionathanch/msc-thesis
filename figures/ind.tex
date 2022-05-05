@@ -59,13 +59,13 @@
   \and
   \inferrule[\rlabel*{zero}]{
     \wf{\Phi}{\Gamma} \\
-    \subsize{\Phi}{\hat{r}}{s}
+    \subsize{\Phi}{\sss{r}}{s}
   }{
     \infer{\Phi; \Gamma}{\zero{s}{r}}{\N{s}}
   }
   \and
   \inferrule[\rlabel*{succ}]{
-    \subsize{\Phi}{\hat{r}}{s} \\
+    \subsize{\Phi}{\sss{r}}{s} \\
     \check{\Phi; \Gamma}{e}{\N{r}}
   }{
     \infer{\Phi; \Gamma}{\succ{s}{r}{e}}{\N{s}}
@@ -80,7 +80,7 @@
   }
   \and
   \inferrule[\rlabel*{sup}]{
-    \subsize{\Phi}{\hat{r}}{s} \\
+    \subsize{\Phi}{\sss{r}}{s} \\
     \infer{\Phi; \Gamma}{\sigma}{U} \\
     \infer{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{U} \\\\
     \check{\Phi; \Gamma}{e_1}{\sigma} \\

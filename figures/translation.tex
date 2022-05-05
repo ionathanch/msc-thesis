@@ -99,7 +99,7 @@
   }
   \and
   \inferrule[\nameref{sapp<}]{
-    \subsizeto{\Phi}{\hat{s}}{r}{\eT'} \\
+    \subsizeto{\Phi}{\sss{s}}{r}{\eT'} \\
     \typeto{\Phi; \Gamma}{e}{\Funtype<{\alpha}{r}{\tau}}{\eT}
   }{
     \typeto{\Phi; \Gamma}{\App{e}{s}}{\subst{\tau}{\alpha}{s}}{\app{\eT}{\compile{s}}{\eT'}}
@@ -131,20 +131,20 @@
   \fbox{$\typeto{\Phi; \Gamma}{e}{\tau}{\eT}$} \quad \cdots \hfill \\
   \inferrule[\nameref{zero}]{
     \wf{\Phi}{\Gamma} \\
-    \subsizeto{\Phi}{\hat{r}}{s}{\eT'}
+    \subsizeto{\Phi}{\sss{r}}{s}{\eT'}
   }{
     \typeto{\Phi; \Gamma}{\zero{s}{r}}{\N{s}}{\app{\zeroT}{\compile{s}}{\compile{r}}{\eT'}}
   }
   \and
   \inferrule[\nameref{succ}]{
-    \subsizeto{\Phi}{\hat{r}}{s}{\eT'} \\
+    \subsizeto{\Phi}{\sss{r}}{s}{\eT'} \\
     \typeto{\Phi; \Gamma}{e}{\N{r}}{\eT}
   }{
     \typeto{\Phi; \Gamma}{\succ{s}{r}{e}}{\N{s}}{\app{\succT}{\compile{s}}{\compile{r}}{\eT'}{\eT}}
   }
   \and
   \inferrule[\nameref{sup}]{
-    \subsizeto{\Phi}{\hat{r}}{s}{\eT'} \\
+    \subsizeto{\Phi}{\sss{r}}{s}{\eT'} \\
     \typeto{\Phi; \Gamma}{\sigma}{U}{\sigmaT} \\
     \typeto{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{U}{\tauT} \\\\
     \typeto{\Phi; \Gamma}{e_1}{\sigma}{\eT_1} \\

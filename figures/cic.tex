@@ -181,7 +181,8 @@
   \and
   \inferrule[\rlabel*{var*}]{
     \wf{}{\GammaT} \\
-    (\annotT{\xT}{\tauT}) \in \GammaT
+    (\annotT{\xT}{\tauT}) \in \GammaT \\\\
+    \textit{or } (\defineT{\xT}{\tauT}{\eT}) \in \Gamma
   }{
     \type{\GammaT}{\xT}{\tauT}
   }
