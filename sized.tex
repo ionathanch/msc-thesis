@@ -28,6 +28,7 @@ but also to show that the sublanguage is independent of the chosen inductive typ
 \FigSyntax{fig:syntax}
 \cref{fig:syntax} gives its syntax, which consists of universes $U$,
 sizes $s$, and terms $e$, which includes term functions and size abstractions.
+Note that the hierarchy of universes above $\Prop$ start at $\Type{1}$, not $\Type{0}$.
 Most judgements use two environments: a term environment $\Gamma$ with assumptions $\annot{x}{\tau}$
 and type-annotated definitions $\define{x}{\tau}{e}$,
 and a size environment $\Phi$ with unbounded and bounded size variables.
@@ -247,7 +248,7 @@ as enforced by its type in the environment when type checking the body.
 
 Sizes aside, the only difference from regular, unsized naturals and well-founded trees
 is that their types live in a universe one level higher than they usually are.
-$\N{s}$ lives in $\Type{1}$ rather than in $\Type{0}$,
+$\N{s}$ lives in $\TypeT{1}$ rather than in $\Type{0}$,
 and $\W{x}{\sigma}{\tau}{s}$ lives in $\axioms{U}$ rather than in $U$.
 This is a direct consequence of the way that the translation is defined,
 and is necessary to maintain its type preservation properties.

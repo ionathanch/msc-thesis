@@ -872,7 +872,7 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
     \begin{mathpar}
     \inferrule{
       \infer{\Phi; \Gamma}{e}{\Funtype<{\alpha}{r}{\tau}} \\
-      \subsize{\Phi}{\hat{s}}{r}
+      \subsize{\Phi}{\sss{s}}{r}
     }{
       \infer{\Phi; \Gamma}{\App{e}{s}}{\subst{\tau}{\alpha}{s}}
     }
@@ -1313,7 +1313,7 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     we have
     \begin{itemize}[noitemsep]
       \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\UT}$,
-      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annot{\xT}{\compile{\sigma}}}{\compile{e}}{\tauT''}$, and
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{e}}{\tauT''}$, and
       \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\tauT''}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}$.
     \end{itemize}
     By inversion on $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\tauT''}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}$,
@@ -1322,7 +1322,7 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
       \item $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\sigmaT'}{\UT}$ and
       \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\tauT''}{\tauT'}$.
     \end{itemize}
-    \rref{conv*} gives us $\type{\compile{\Phi}, \compile{\Gamma}, \annot{\xT}{\compile{\sigma}}}{\compile{e}}{\tauT'}$,
+    \rref{conv*} gives us $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{e}}{\tauT'}$,
     and \rref{equiv-sym, subtype-conv} give us
     $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e'}}{\compile{\sigma}}$.
     We can then use \rref{equiv-beta, equiv-conv} to get
@@ -1476,13 +1476,13 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     From inversion, we know that $\compile{s}$ is well typed with type $\SizeT$.
     Then we can show that
     \begin{align*}
-    &\type{\compile{\Phi}, \compile{\Gamma}, \annot{\betaT}{\SizeT}, \annot{\betaT^*}{\betaT \szltT \compile{s}}}{\app{\accIsProp}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})})}{(\app{\accessible}{\betaT})}}{\\
-    &\phantom{\type{\compile{\Phi}, \compile{\Gamma}, \annot{\betaT}{\SizeT}, \annot{\betaT^*}{\betaT \szltT \compile{s}}}{}{}}
+    &\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{\app{\accIsProp}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})})}{(\app{\accessible}{\betaT})}}{\\
+    &\phantom{\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{}{}}
     \eq{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})}}{\app{\AccT}{\beta}}{\app{\accessible}{\betaT}}}.
     \end{align*}
     By \rref{equiv-reflect}, we have
     \begin{align*}
-    &\defeq{\compile{\Phi}, \compile{\Gamma}, \annot{\betaT}{\SizeT}, \annot{\betaT^*}{\betaT \szltT \compile{s}}}{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})}}{\app{\accessible}{\betaT}}{\app{\AccT}{\beta}}.
+    &\defeq{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})}}{\app{\accessible}{\betaT}}{\app{\AccT}{\beta}}.
     \end{align*}
     Finally, by \rref{equiv-cong}, we can equate the left- and right-hand sides,
     and by \rref{equiv-conv}, we obtain our goal.
@@ -1771,7 +1771,7 @@ By mutual induction on the derivations of $\wf{}{\Phi}$ and $\wf{\Phi}{s}$.
 \end{enumerate}
 \end{proof}
 
-\begin{lemma}[Preservation of subsizing]
+\begin{lemma}[Preservation of subsizing] \label{lem:pres-subsize}
 If $\subsizeto{\Phi}{r}{s}{\eT}$ then $\type{\compile{\Phi}}{\eT}{\compile{r} \szleT \compile{s}}$.
 \end{lemma}
 
@@ -1835,5 +1835,147 @@ $\wf{\Phi}{\Gamma}$ and $\type{\Phi; \Gamma}{e}{\tau}$.
   \item \rref*{cons-ass}. By the induction hypotheses and \rref{cons*-ass}.
   \item \rref*{cons-def}. By the induction hypotheses and \rref{cons*-def}.
   \item \rref*{conv}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \infer{\Phi; \Gamma}{e}{\sigma} \\
+      \check{\Phi; \Gamma}{\sigma}{U} \\
+      \infer{\Phi; \Gamma}{\tau}{U} \\
+      \subtype{\Phi; \Gamma}{\sigma}{\tau}
+    }{
+      \check{\Phi; \Gamma}{e}{\tau}
+    }
+    \end{mathpar}
+    Induction hypotheses:
+    \begin{itemize}[noitemsep]
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{\sigma}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\compile{U}}$, and
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau}}{\compile{U}}$.
+    \end{itemize}
+    By \nameref{lem:pres-subtyping} on the last premise,
+    we have $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\compile{\tau}}$.
+    Then by \rref{conv*}, we have $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
+  \item \rref*{var}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \wf{\Phi}{\Gamma} \\
+      (\annot{x}{\tau}) \in \Gamma
+      \textit{ or }
+      (\define{x}{\tau}{e}) \in \Gamma
+    }{
+      \infer{\Phi; \Gamma}{x}{\tau}
+    }
+    \end{mathpar}
+    Induction hypothesis: $\wf{}{\compile{\Phi}, \compile{\Gamma}}$. \\
+    By definition of the translation, we have
+    $(\annotT{\xT}{\compile{\tau}}) \in \compile{\Gamma}$ or
+    $(\defineT{\xT}{\compile{\tau}}{\compile{e}}) \in \compile{\Gamma}$,
+    so by \rref{var*}, we have
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\xT}{\compile{\tau}}$.
+  \item[\textbf{Cases}] \rref*{univ}, \rref*{pi}, \rref*{lam}, \rref*{app}, \rref*{let}.
+    Straightforward by their induction hypotheses and \rref{univ*, pi*, lam*, app*, let*}.
+  \item \rref{forall<}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \wf{\Phi}{s} \\
+      \type{\Phi, \bound{\alpha}{s}; \Gamma}{\tau}{U}
+    }{
+      \type{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau}}{U}
+    }
+    \end{mathpar}
+    Induction hypothesis: $\type{\compile{\Phi}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}, \compile{\Gamma}}{\compile{\tau}}{\compile{U}}$. \\
+    By \nameref{lem:pres-size}, we have $\type{\compile{\Phi}}{\compile{s}}{\SizeT}$.
+    If $\compile{U} = \TypeT{\iT}$ for some $\iT \geq 1$,
+    we have $\type{\compile{\Phi}}{\SizeT}{\compile{U}}$
+    and $\type{\compile{\Phi}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\compile{U}}$
+    by \rref{ind, app*},
+    so we have $\type{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau}}}}{\compile{U}}$
+    by \rref{pi*} twice.
+    If $U = \Prop$, $\SizeT$ and $\alphaT \szltT \compile{s}$
+    can be typed as any $\TypeT{\iT}$ where $\iT \geq 1$,
+    and we still have the goal by \rref{pi*}.
+  \item \rref{forall, slam, slam<}. Similar to the case for \rref*{forall<}.
+  \item \rref{sapp<}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \infer{\Phi; \Gamma}{e}{\Funtype<{\alpha}{r}{\tau}} \\
+      \subsize{\Phi}{\sss{s}}{r}
+    }{
+      \infer{\Phi; \Gamma}{\App{e}{s}}{\subst{\tau}{\alpha}{s}}
+    }
+    \end{mathpar}
+    Induction hypothesis: $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{r}}{\compile{\tau}}}}$. \\
+    Let $\subsizeto{\Phi}{\sss{s}}{r}{\eT}$.
+    By \nameref{lem:pres-subsize}, we have $\type{\compile{\Phi}}{\eT}{\compile{\sss{s}} \szltT \compile{r}}$.
+    By \cref{lem:wf-subsize} and \nameref{lem:pres-size}, we have
+    $\type{\compile{\Phi}}{\compile{\sss{s}}}{\SizeT}$ and $\type{\compile{\Phi}}{\compile{r}}{\SizeT}$.
+    Then by \rref{app*} twice, we have
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\app{\compile{e}}{\compile{s}}{\eT}}{\subst{\compile{\tau}}{\alphaT, \alphaT^*}{\compile{s}, \eT}}$.
+    Finally, by \nameref{lem:compos-size-bounded},
+    the type is equal to $\compile{\subst{\tau}{\alpha}{s}}$ as desired.
+  \item[\textbf{Cases}] \rref{zero, succ, sup}. Similar to the case for \rref*{sapp<}.
+  \item[\textbf{Cases}] \rref{sapp, nat, wft}. Similar to the case for \rref*{sapp<},
+    using only \nameref{lem:pres-size} without \nameref{lem:pres-subsize},
+    and \nameref{lem:compos-size-unbounded} in place of \nameref{lem:compos-size-bounded}.
+  \item \rref*{case-nat}.
+    \setlength{\jot}{-1.5pt}
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \infer{\Phi; \Gamma}{e}{\N{s}} \\
+      \infer{\Phi; \Gamma, \annot{x}{\N{s}}}{P}{U} \\
+      \check{\Phi, \bound{\alpha}{s}; \Gamma}{e_z}{\subst{P}{x}{\zero{s}{\alpha}}} \\
+      \check{\Phi, \bound{\beta}{s}; \Gamma, \annot{z}{\N{\beta}}}{e_s}{\subst{P}{x}{\succ{s}{\beta}{z}}}
+    }{
+      \infer{\Phi; \Gamma}{\match{e}{\fun*{x}{P}}{(\App{\zero*}{\alpha} \Rightarrow e_z)(\app{\App{\succ*}{\beta}}{z} \Rightarrow e_s)}}{\subst{P}{x}{e}}
+    }
+    \end{mathpar}
+    Induction hypotheses (using \nameref{lem:term-compositionality} in the types of the last two):
+    \begin{itemize}[noitemsep]
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\app{\NatT}{\compile{s}}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\app{\NatT}{\compile{s}}}}{\compile{P}}{\compile{U}}$,
+      \item $\type{\compile{\Phi}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}, \compile{\Gamma}}{\compile{e_z}}{\subst{\compile{P}}{\xT}{\app{\zeroT}{\compile{s}}{\alphaT}{\alphaT^*}}}$, and
+      \item $\type{\compile{\Phi}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}, \compile{\Gamma}, \annotT{\zT}{\app{\NatT}{\betaT}}}{\compile{e_s}}{\subst{\compile{P}}{\xT}{\app{\succT}{\compile{s}}{\betaT}{\betaT^*}{\zT}}}$.
+    \end{itemize}
+    By \rref{case} and \nameref{lem:term-compositionality} once more, we have
+    $$\type{\compile{\Phi}, \compile{\Gamma}}{
+      \begin{aligned}
+      &\matchT{\compile{e}}{\funT*{\mt}{\xT}{\compile{P}}}{ \\
+      &\quad \app{\zeroT}{\alphaT}{\alphaT^*} \RightarrowT \compile{e_z} \\
+      &\quad \app{\succT}{\betaT}{\betaT^*}{\zT} \RightarrowT \compile{e_s}}
+      \end{aligned}
+    }{\compile{\subst{P}{x}{e}}}$$
+  \item \rref*{case-wft}. Similar to the case for \rref*{case-nat}.
+  \item \rref*{fix}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule[\rlabel*{fix}]{
+      \infer{\Phi, \alpha; \Gamma}{\sigma}{U} \\
+      \fresh{\beta} \\
+      \check{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\sigma}{\alpha}{\beta}}}}{e}{\sigma}
+    }{
+      \infer{\Phi; \Gamma}{\fix{\fT}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}
+    }
+    \end{mathpar}
+    Induction hypotheses:
+    \begin{itemize}[noitemsep]
+      \item $\type{\compile{\Phi}, \annotT{\alphaT}{\SizeT}, \compile{\Gamma}}{\compile{\sigma}}{\compile{U}}$ and
+      \item $\type{\compile{\Phi}, \annotT{\alphaT}{\SizeT}, \compile{\Gamma}, \annotT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}}{\compile{e}}{\compile{\sigma}}$.
+    \end{itemize}
+    By \rref{ind, lam*}, we have
+    \begin{itemize}[noitemsep]
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\funT{\alphaT}{\SizeT}{\compile{\sigma}}}{\arrT*{\SizeT}{\compile{U}}}$ and
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}{\compile{e}}}}{\funtypeT{\alphaT}{\SizeT}{\arrT*{(\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}})}{\compile{\sigma}}}}$.
+    \end{itemize}
+    Let $\eT$ be $\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}{\compile{e}}}$.
+    By \rref{app*} twice, we then have
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\app{\wfind}{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\eT}}{\funtypeT{\alphaT}{\SizeT}{\app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\alphaT}}}$.
+    By \rref{equiv-beta, equiv-cong, subtype-conv}, we have
+    $\defeq{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\alphaT}}{\funtypeT{\alphaT}{\SizeT}{\compile{\sigma}}}{\compile{U}}$.
+    Then finally, by \rref{conv*}, we have
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\app{\wfind}{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\eT}}{\funtypeT{\alphaT}{\SizeT}{\compile{\sigma}}}$.
 \end{itemize}
 \end{proof}

@@ -7,7 +7,7 @@
   r, s &\Coloneqq \alpha \mid \sss{s} \mid \circ \\
   f, g, x, y, z &\Coloneqq \meta{\textrm{term variables}} &
   \Delta &\Coloneqq \mt \mid \Delta, \annot{x}{\tau} &
-  U &\Coloneqq \Prop \mid \Type{i} \\
+  U &\Coloneqq \Prop \mid \Type{i+1} \\
   \alpha, \beta, \gamma &\Coloneqq \meta{\textrm{size variables}} &
   \Phi &\Coloneqq \mt \mid \Phi, \alpha \mid \Phi, \bound{\alpha}{s} \\
   e, P, \tau, \sigma &\Coloneqq \mathrlap{x \mid U \mid \funtype{x}{\tau}{\tau} \mid \fun{x}{\tau}{e} \mid \app{e}{e} \mid \letin{x}{\tau}{e}{e}} \\
@@ -327,7 +327,7 @@
   \and
   \inferrule[\rlabel{sapp$<$}{sapp<}]{
     \infer{\Phi; \Gamma}{e}{\Funtype<{\alpha}{r}{\tau}} \\
-    \subsize{\Phi}{\hat{s}}{r}
+    \subsize{\Phi}{\sss{s}}{r}
   }{
     \infer{\Phi; \Gamma}{\App{e}{s}}{\subst{\tau}{\alpha}{s}}
   }
