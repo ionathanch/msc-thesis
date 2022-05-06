@@ -1,9 +1,34 @@
 \chapter{Abstract}
 
-The abstract:
-\begin{itemize}
-  \item is a concise and accurate summary of the thesis
-  \item should state the problem, the methods of investigation, and the general conclusions
-  \item must not exceed 350 words
-  \item should contain keywords that will facilitate automated information retrieval
-\end{itemize}
+Many contemporary proof assistants based on dependent type theories such as Coq and Agda
+are founded on the types-as-propositions paradigm where type checking a program
+corresponds to verifying a proof of some proposition in a higher-order predicate logic.
+To ensure the decidability of type checking and the consistency of the logic,
+such proof assistants must forbid all nonterminating recursive functions,
+which is currently done via guard predicates that only allow functions
+that are structurally recursive and that recur only on syntactically smaller arguments.
+However, these guard predicates are sometimes too restrictive and reject functions
+that aren't structurally recursive but are obviously terminating on inspection,
+creating extra work for the programmer to convince the guard checker.
+
+An alternative is to use a type system with type-based termination checking such as sized types,
+where inductively-defined types are annotated with sizes.
+Successful type checking guarantees that functions recur only on arguments whose types are smaller,
+rather than merely on arguments that syntactically appear smaller.
+There exist many sized dependent type theories,
+but none simultaneously feature higher-rank size quantification,
+which allows for passing around size-preserving functions,
+and bounded size quantification,
+which eliminates the need for complex monotonicity checks required by prior sized type systems.
+
+In this thesis, I design a sized dependent type theory with higher-rank and bounded sizes (\lang),
+and show that it's suitable for theorem proving by proving its logical consistency with a syntactic model:
+By compiling \lang into the Extensional Calculus of Inductive Constructions (\CICE),
+a variant of the dependent type theory on which Coq is based,
+and showing that this translation is type preserving,
+the consistency of \lang follows from the consistency of \CICE.
+This approach, unfortunately, refutes the existence of an ``infinite'' size strictly greater than all sizes,
+which is present in most prior sized type systems to overcome the limitations of finitary size expressions,
+meaning that some infinitary constructs aren't definable in \lang.
+Even so, this suggests that the inconsistency in Agda's implementation of higher-rank,
+bounded sized types is limited to interactions with the infinite size and its properties.
