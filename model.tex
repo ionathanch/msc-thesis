@@ -91,11 +91,11 @@ which definitionally equates two terms whenever there exists some proof of their
 Typed equivalence is required in the presence of equality reflection since
 inconsistencies are derivable when using untyped conversion.
 For instance, supposing that \lang had equality reflection and using \new{$\approx$} to denote conversion,
-in the empty context, freely using transivity,
+in the empty environment, freely using transivity,
 %
 \begin{align*}
-  \const{0'} &\approx \app{(\fun{p}{\eq{\const{0}}{\N{\hat{\hat{\circ}}}}{\const{1}}}{\const{0'}})}{\refl{\const{0'}}} &&\textrm{by $\beta$-reduction} \\
-  &\approx \app{(\fun{p}{\eq{\const{0}}{\N{\hat{\hat{\circ}}}}{\const{1}}}{\const{1}})}{\refl{\const{0'}}} &&\textrm{by congruence and reflection of $p$} \\
+  \const{0'} &\approx \app{(\fun{p}{\eq{\const{0'}}{\N{\hat{\hat{\circ}}}}{\const{1}}}{\const{0'}})}{\refl{\const{0'}}} &&\textrm{by $\beta$-reduction} \\
+  &\approx \app{(\fun{p}{\eq{\const{0'}}{\N{\hat{\hat{\circ}}}}{\const{1}}}{\const{1}})}{\refl{\const{0'}}} &&\textrm{by congruence and reflection of $p$} \\
   &\approx \const{1} &&\textrm{by $\beta$-reduction},
 \end{align*}
 since reduction and therefore conversion occurs even when its terms are ill-typed,
@@ -103,6 +103,18 @@ as the second and third terms are.
 An alternate solution would be to disallow transitivity of conversion~\citep{CCE},
 but this is too limiting when trying to prove type preservation,
 and equivalence would no longer be an equivalence relation.
+
+Untyped conversion with equality reflection also violates subject reduction
+under certain environments.
+For example, suppose the environment contains the equality $\eq{\arr*{\N{\sss{\circ}}}{\N{\sss{\circ}}}}{}{\arr*{\N{\sss{\circ}}}{\Prop}}$.
+Then $\app{(\fun{x}{\N{\sss{\circ}}}{x})}{\const{0}}$ can be assigned type $\Prop$
+by equality reflection and conversion of the function's type,
+but this term reduces to $\const{0}$ which \emph{cannot} be assigned type $\Prop$.
+This can be resolved by adding
+\emph{injectivity of type constructors}\index{injectivity of type constructors},
+which would allow deriving the equality $\eq{\N{\sss{\circ}}}{}{\Prop}$
+from the above, but doing so is generally undesirable since it's inconsistent with
+the axioms of both excluded middle and univalence \citep{unification}.
 
 The remaining equivalence rules are typed versions of the usual reduction rules,
 with typing premises to ensure well-typedness of both sides.
