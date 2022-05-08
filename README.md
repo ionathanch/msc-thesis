@@ -62,4 +62,4 @@
 * Write Introduction chapter
 * Add congruence rules in Appendix
 * Fix index entries (a lot are probably missing) and glossary entries
-* Abstract, Lay Summary, Preface, Acknowledgements
+* Lay Summary, Acknowledgements, Dedication
