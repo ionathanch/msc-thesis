@@ -178,7 +178,7 @@
     and recommend to the Faculty of Graduate and Postdoctoral Studies
     for acceptance, the thesis entitled:
     \par\bigskip
-    {\large \textbf{\@title: \@subtitle}}
+    {\large \textbf{\@title\ifx\@subtitle\empty\relax\else: \@subtitle\fi}}
     \par\bigskip\noindent
     submitted by
 	\textbf{\@author}
