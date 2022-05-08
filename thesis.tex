@@ -101,27 +101,27 @@
 \makecommitteepage
 \textspacing
 
-\include{abstract}
-\include{laysummary}
-\include{preface}
+\include{chapters/abstract}
+\include{chapters/laysummary}
+\include{chapters/preface}
 
 \tableofcontents
 \listoftables
 \listoffigures
 
-\input{glossary}
-\include{acknowledgements}
-\include{dedication}
+\input{chapters/glossary.tex}
+\include{chapters/acknowledgements}
+\include{chapters/dedication}
 
 \mainmatter
 \setcounter{chapter}{-1}
-\include{typography.tex}
-\include{introduction.tex}
-\include{overview.tex}
-\include{sized.tex}
-\include{model.tex}
-\include{proofs.tex}
-\include{shortcomings.tex}
+\include{chapters/typography.tex}
+\include{chapters/introduction.tex}
+\include{chapters/overview.tex}
+\include{chapters/sized.tex}
+\include{chapters/model.tex}
+\include{chapters/proofs.tex}
+\include{chapters/discussion.tex}
 
 \bibliographystyle{plainnat}
 \begin{singlespace}
@@ -130,7 +130,7 @@
 \end{singlespace}
 
 \appendix
-\include{appendix}
+\include{chapters/appendix}
 
 \backmatter
 \printindex
