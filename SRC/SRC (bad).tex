@@ -1,0 +1,143 @@
+\documentclass[acmsmall,nonacm]{acmart}
+\acmConference[]{}{}{}
+
+\usepackage{minted}
+\newmintinline[agda]{agda}{escapeinside=<>,mathescape=true}
+
+\newcommand{\α}{\alpha}
+\newcommand{\β}{\beta}
+\newcommand{\γ}{\gamma}
+\newcommand{\σ}{\sigma}
+\newcommand{\Γ}{\Gamma}
+\newcommand{\Λ}{\Lambda}
+\newcommand{\∀}{\forall}
+\newcommand{\↑}{\uparrow}
+\newcommand{\⊢}{\vdash}
+\newcommand{\↦}{\mapsto}
+\newcommand{\⊳}{\rhd}
+\newcommand{\fix}{\textrm{fix}}
+
+% Each submission (referred to as “abstract” below) should include the student author’s name and e-mail address;
+% institutional affiliation; research advisor’s name; ACM student member number; category (undergraduate or graduate)
+\author{Jonathan Chan}
+\title{A Syntactic Model of Sized Dependent Types}
+
+\begin{document}
+\maketitle
+
+\section{???}
+
+The types-as-propositions paradigm associates certain type theories with formal logical systems,
+and consequently types in those theories with propositions in those logics.
+Furthermore, well-typed programs are associated with proofs of the corresponding proposition.
+Many dependent type theories, for instance, correspond to higher-order logics,
+and having an automated type checker means having the ability to automatically verify proofs.
+One must be careful, however, not to allow nonterminating programs,
+because they correspond to logical inconsistencies, i.e. proofs of falsehood;
+additionally, in dependent type checkers where programs may be evaluated during type checking,
+failure to rule out nonterminating programs leads to nonterminating type checking.
+Contemporary proof assistants based on dependent type theories, such as Coq, Agda, Lean, Idris,
+and more, typically restrict recursive functions to \emph{structurally-recursive} ones,
+where the argument of recursive calls must be \emph{syntactically} smaller.
+As an example, consider the following function \agda{minus n m} that computes $\min(n - m, 0)$.
+
+\begin{minted}{agda}
+minus : Nat → Nat → Nat
+minus Zero m = Zero
+minus n Zero = n
+minus (Succ n) (Succ m) = minus n m
+\end{minted}
+
+Inuitively, any well-typed call to \agda{minus} is guaranteed to terminate because the recursive call
+only occurs on constructor arguments, and the base cases must be reached eventually.
+However, we often wish to write terminating functions that aren't necessarily syntactically recursive.
+Consider now the following function \agda{div n m} that computes $\big\lceil\frac{n}{m+1}\big\rceil$ using \agda{minus}.
+
+\begin{minted}{agda}
+div : Nat → Nat → Nat
+div Zero m = Zero
+div (Succ n) m = Succ (div (minus n m) m)
+\end{minted}
+
+Despite the fact that \agda{minus} returns a natural no greater than its first argument,
+meaning that the first argument of the recursive call to \agda{div} has a smaller magnitude
+than the original argument,
+the type checker is unable to conclude that this is a terminating function,
+because the first argument isn't \emph{syntactically} smaller (i.e. \agda{n}).
+The programmer would have to alter the definition of \agda{minus} to prove this property,
+as well as the definition of \agda{div} to use this proof, making writing otherwise simple code burdensome.
+Sometimes it would be possible to make the type checker a little more clever by selectively inlining
+certain functions that allow the syntactic termination check to pass,
+but this is not always possible, and requiring inlining just to pass termination checking is anti-modular.
+If inlining \agda{minus} in the body of \agda{div} helped, then we are forced to import its entire definition,
+rather than merely its name and type, as is only required for type checking alone.
+
+%\paragraph*{}
+A \emph{type-based} rather than syntactic method of termination checking uses \emph{sized types} (Hughes 1996),
+where a function is guaranteed to terminate simply if it type checks.
+To use sized types, we first alter our definition of naturals to take a size expression as a parameter.
+
+\begin{minted}[escapeinside=<>,mathescape=true]{agda}
+data Nat [<$\α$>] : Type where
+  Zero : <$\∀ \β < \α$>. Nat [<$\α$>]
+  Succ : <$\∀ \β < \α$>. Nat [<$\β$>] → Nat [<$\β$>]
+\end{minted}
+
+The bounded size quantification \agda{<$\∀\β < \α$>} asks for some size $\β$ strictly smaller than $\α$.
+So to construct the successor of some natural \agda{n : Nat [s]}, we need a size larger than \agda{s}.
+Let \agda{<$\↑$>s} denote the next size up from \agda{s}.
+Then the successor is simply \agda{Succ {<$\↑$>s} [s] n} (using curly braces for the implicit size parameter).
+Now, let us express the fact that \agda{minus} returns a natural no larger than its first argument using sizes,
+i.e. that \agda{minus} is in fact \emph{size-preserving}.
+
+\begin{minted}[escapeinside=<>,mathescape=true]{agda}
+minus : <$\∀\α$>, <$\β$>. Nat [<$\α$>] → Nat [<$\β$>] → Nat [<$\α$>]
+\end{minted}
+
+Then we are able to write a \agda{div} function that the type checker will accept to be terminating
+with just a few more annotations.
+
+\begin{minted}[escapeinside=<>,mathescape=true]{agda}
+div : <$\∀\α$>, <$\β$>. Nat [<$\α$>] → Nat [<$\β$>] → Nat [<$\α$>]
+div [<$\α$>] [<$\β$>] (Zero {<$\α$>} [<$\γ$>])   m = Zero {<$\α$>} [<$\γ$>]
+div [<$\α$>] [<$\β$>] (Succ {<$\α$>} [<$\γ$>] n) m = Succ {<$\α$>} [<$\γ$>] (div [<$\γ$>] [<$\β$>] (minus [<$\γ$>] [<$\β$>] n m) m)
+\end{minted}
+
+In the second branch, when matching on the first argument of size $\α$, we have the successor of \agda{n},
+which itself has size $\γ < \α$.
+Then the call to \agda{minus} returns a natural of size $\γ$, which is then passed to the recursive call of \agda{div}.
+Type checking passes without problem because the size $\γ$ of the recursive call is strictly smaller
+than the size $\α$ of the original call to \agda{div}.
+More precisely, when expressing recursive functions as fixpoints,
+their typing rule and reduction behaviour is the following
+(using $e[x \↦ e']$ to denote substitution of $x$ by $e'$ in $e$):
+\begin{align*}
+&\Γ, \α, f : \∀\β < \α \mathpunct{.} \σ[\α \↦ \β] \⊢ e : \σ \\[-2\jot]
+&\cline{1-2}
+&\Γ \⊢ \fix \, f \, [\α] : \σ \coloneqq e : \∀\α \mathpunct{.} \σ
+\end{align*}
+\begin{align*}
+(\fix \, f \, [\α] : \σ \coloneqq e) \: [s] \: e' &\⊳ e[\α \↦ s, f \↦ \Λ\β < s \mathpunct{.} (\fix \, f \, [\α] : \σ \coloneqq e) [\β]] \: e'
+\end{align*}
+
+A fixpoint is well-typed if the body has the same type under the environment where
+the recursive reference to the fixpoint quantifies over a \emph{smaller} size.
+When reducing the fixpoint applied to some size, we substitute in the body the fixpoint bounded by that size.
+
+\section{???}
+
+Once we have a program and correctness proofs about the program, we may wish to compile and run our program.
+In Coq and Agda, programs get \emph{extracted} to OCaml and Haskell code, respectively, which are then compiled.
+However, the process of extraction necessarily discards some type information,
+since the extraction targets are not dependently typed.
+This makes it possible to link our proven-safe program after extraction with unsafe code,
+which might cause runtime errors, making all of the work proving it correct in vain.
+To ensure that our proofs are preserved and verified even during linking,
+we want to compile our code in a \emph{type-preserving} manner (Bowman, 2018).
+The type-based nature of sized types makes it more amenable than syntactic termination checking
+to type-preserving compilation of recursive functions.
+
+Traditionally in dependent type theories, there are two mutually-dependent judgements:
+the typing judgement, and the (typed) equality judgement.
+Equality is used in the following typing rule:
+\end{document}
