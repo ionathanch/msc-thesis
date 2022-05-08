@@ -1,0 +1,103 @@
+module SizeOrd.
+import ../scraps/CastTpEq.
+
+data Size: ★ =
+| suc: Size ➔ Size
+| lim: ∀ A: ★. (A ➔ Size) ➔ Size.
+
+data Leq: Size ➔ Size ➔ ★ =
+| mono: ∀ r: Size. ∀ s: Size. Leq r s ➔ Leq (suc r) (suc s)
+| limit: ∀ A: ★. ∀ s: Size. ∀ f: A ➔ Size. ∀ a: A. Leq s (f a) ➔ Leq s (lim f)
+| cocone : ∀ A: ★. ∀ s: Size. ∀ f: A ➔ Size. (Π a: A. Leq (f a) s) ➔ Leq (lim f) s.
+
+unsuc : Size ➔ Size
+= λ s. σ s {
+| suc s ➔ s
+| lim ·A f ➔ s
+}.
+
+False : ★ = ∀ X: ★. X.
+False-elim : ∀ X: ★. False ➔ X = Λ X. λ false. false ·X.
+
+O : Size = lim ·False (False-elim ·Size).
+
+Leq-O : ∀ s: Size. Leq O s
+= Λ s. cocone ·False -s -(False-elim ·Size)
+              (λ false. false ·(Leq (False-elim false) s)).
+
+Leq-refl : Π s: Size. Leq s s
+= λ s. μ Leq-refl. s {
+| suc s ➔ [s' = to/Size -isType/Leq-refl s] -
+  mono -s' -s' (Leq-refl s)
+| lim ·A f ➔ [f' = λ a: A. to/Size -isType/Leq-refl (f a)] -
+  cocone -(lim f') -f' (λ a: A. limit -(f' a) -f' -a (Leq-refl (f a)))
+}.
+
+Leq-trans : Π r: Size. Π s: Size. Π t: Size. Leq r s ➔ Leq s t ➔ Leq r t
+= λ r. λ s. λ t. ●.
+
+Leq-suc : Π s: Size. Leq s (suc s)
+= λ s. μ Leq-suc. s {
+| suc s ➔ [s' = to/Size -isType/Leq-suc s] -
+  mono -s' -(suc s') (Leq-suc s)
+| lim ·A f ➔ [f' = λ a: A. to/Size -isType/Leq-suc (f a)] -
+  cocone -(suc (lim ·A f')) -f'
+         (λ a. Leq-trans (f' a) (suc (f' a)) (suc (lim ·A f'))
+               (Leq-suc (f a))
+               (mono -(f' a) -(lim f')
+                     (limit -(f' a) -f' -a (Leq-refl (f' a)))))
+}.
+
+Lt : Size ➔ Size ➔ ★
+= λ r: Size. λ s: Size. Leq (suc r) s.
+
+data Acc: Size ➔ ★ =
+| acc: ∀ s: Size. (Π r: Size. Lt r s ➔ Acc r) ➔ Acc s.
+
+Leq-accessible : Π r: Size. Π s: Size. Leq r s ➔ Acc s ➔ Acc r
+= λ r. λ s. λ leq-rs. λ accs. μ Leq-accessible.
+accs @(λ s': Size. λ _: Acc s'. {s' ≃ s} ➔ Acc r) {
+| acc -s p ➔ λ b. [leq-rs = ρ b - leq-rs] -
+  acc -r (λ t. λ lt-tr.
+         [lt-ts = Leq-trans (suc t) r s lt-tr leq-rs] -
+         [acc-t = p t lt-ts] -
+         (to/Acc -isType/Leq-accessible -t acc-t))
+} β.
+
+injSuc : ∀ r: Size. ∀ s: Size. {suc r ≃ suc s} ➾ {r ≃ s}
+= Λ r. Λ s. Λ p. ρ p @x.{unsuc x ≃ unsuc (suc s)} - β.
+
+injLimT : ∀ A: ★. ∀ A': ★. ∀ f: A ➔ Size. ∀ g: A' ➔ Size. {lim ·A f ≃ lim ·A' g} ➾ Cast' ·A ·A' = ●.
+injLim : ∀ A: ★. ∀ A': ★. ∀ f: A ➔ Size. ∀ g: A' ➔ Size. {lim ·A f ≃ lim ·A' g} ➾ {f ≃ g} = ●.
+
+accessible : Π s: Size. Acc s
+= λ s. μ accessible. s {
+| suc s# ➔
+  [s = to/Size -isType/accessible s#] -
+  [acc-s = accessible s#] -
+  acc -(suc s) (λ r. λ lt-rs.
+  σ lt-rs @(λ r': Size. λ s': Size. λ _: Leq r' s'.
+              {s' ≃ suc s} ➔ {suc r ≃ r'} ➔ Acc r) {
+  | mono -r' -s' leq-rs ➔ λ bsucs. λ bsucr.
+    [bs = injSuc -s' -s -bsucs] -
+    [br = injSuc -r -r' -bsucr] -
+    ρ br - Leq-accessible r' s' leq-rs (ρ bs - acc-s)
+  | limit ·_ -_ -_ -_ _ ➔ λ b. λ _. δ - b
+  | cocone ·_ -_ -_ _ ➔ λ _. λ b. δ - b
+  } β β)
+| lim ·A f# ➔
+  [f = λ a: A. (to/Size -isType/accessible (f# a))] -
+  acc -(lim ·A f) (λ r. λ lt-rlimf.
+  σ lt-rlimf @(λ r': Size. λ s': Size. λ _: Leq r' s'.
+                 {s' ≃ lim ·A f} ➔ {suc r ≃ r'} ➔ Acc r) {
+  | mono -_ -_ _ ➔ λ b. λ _. δ - b
+  | limit ·A' -r' -f' -a leq-rfa ➔ λ blim. λ bsucr.
+    [a = elimCast' ·A' ·A -(injLimT -f' -f -blim) a] -
+    [ff' = injLim -f -f' -(ς blim)] -
+    σ accessible (f# a)
+      @(λ fa: Size. λ _: Acc fa. {fa ≃ f a} ➔ Acc r) {
+    | acc -fa' p ➔ λ bfa. p r (ρ+ bsucr - ρ bfa - ρ ff' - leq-rfa)
+    } β
+  | cocone ·_ -_ -_ _ ➔ λ _. λ b. δ - b
+  } β β)
+}.
