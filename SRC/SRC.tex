@@ -1,0 +1,210 @@
+\documentclass[acmsmall,nonacm, screen]{acmart}
+\acmConference[]{}{}{}
+
+\usepackage{xspace}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*}
+
+\newcommand{\lang}{Sized CC$_\omega$\xspace}
+\newcommand{\CICE}{CIC$_\mathrm{E}$\xspace}
+\newcommand{\our}{my\xspace}
+\newcommand{\Our}{My\xspace}
+\newcommand{\we}{I\xspace}
+\newcommand{\We}{I\xspace}
+
+% Each submission (referred to as “abstract” below) should include the student author’s name and e-mail address;
+% institutional affiliation; research advisor’s name; ACM student member number; category (undergraduate or graduate)
+\title{Towards a Syntactic Model of Sized Dependent Types}
+\author{Jonathan Chan}
+\email{jcxz@cs.ubc.ca} % why doesn't this show up?
+\affiliation{
+  \institution{University of British Columbia}
+  \city{Vancouver}
+  \country{Canada},
+  \href{mailto:jcxz@cs.ubc.ca}{jcxz@cs.ubc.ca} \\
+  Graduate student (MSc.) advised by William J. Bowman
+}
+
+\begin{document}
+\maketitle
+
+\section{Termination Checking for Dependent Type Theories}
+
+The types-as-propositions paradigm associates certain type theories with formal logical systems,
+and consequently types in those theories with propositions in those logics.
+Furthermore, well-typed programs are associated with proofs of the corresponding proposition.
+Many dependent type theories, for instance, correspond to higher-order logics,
+and having an automated type checker means having the ability to automatically verify proofs.
+
+One must be careful, however, not to allow nonterminating programs,
+because they correspond to logical inconsistencies, i.e. proofs of falsehood.
+Additionally, in dependent type checkers where programs may be evaluated during type checking,
+failure to rule out nonterminating programs leads to nonterminating type checking.
+Contemporary proof assistants based on dependent type theories, such as Coq, Agda, Lean, Idris,
+and many more, typically restrict recursive functions to \emph{structurally-recursive} ones,
+where the argument of recursive calls must be \emph{syntactically} smaller,
+peeling away layers of constructors until a base case is reached.
+Type checkers in these proof assistants use \emph{guard predicates}~\citep{guard-predicate} to ensure the restriction.
+
+However, the guard predicate is often \emph{too} restrictive to accept a variety of recursive functions
+for which termination is otherwise evident to the discerning programmer.
+In particular, functions recurring on subarguments that have first been passed to other functions
+known not to add any more layers of constructors must surely terminate,
+but since the recursive argument is not \emph{syntactically} the subargument,
+the guard predicate does not hold.
+
+Some type checkers will inline function definitions for the purpose of termination checking,
+but this reliance on other function definitions makes code non-modular,
+and inlining very large definitions could severely negatively impact type checking performance.
+Furthermore, the syntactic nature of the guard predicate makes it sensitive to minor syntactic changes,
+and a subtle refactoring of a function inlined in later functions could affect whether
+those functions even pass termination checking at all!
+In short, a syntactic guard predicate goes against good programming practices.
+
+\section{Type-Based Termination Checking}
+
+An alternative to syntactic termination checking is to instead use \emph{type-based} termination checking,
+where if a recursive function type checks without involving any other termination conditions,
+then it is guaranteed to terminate.
+One such method uses \emph{sized types}~\citep{hughes}, where inductive types carry additional size information.
+Intuitively, the size is a measure of how many layers a member of that type contains,
+and constructors must have a greater size than its subarguments.
+The types of functions then carry information about whether it affects the size of its argument,
+meaning that no inlining is required --- only the type is needed, not the whole definition.
+
+Sized types have been implemented in Agda and can be enabled with the \texttt{-\hspace{0em}-sized-types} pragma.%
+\footnote{Unfortunately, the implementation is inconsistent due to the presence of an \emph{infinite size},
+which is defined to be the size strictly greater than all other sizes, including itself.}
+It encludes sophisticated features like first-class sizes and bounded size quantification.
+There is also a large body of theoretical work on sized types in various type systems,
+but none of them quite satisfy all of the desirable features.
+
+\begin{itemize}
+  \item \citet{cic-hat}, \citet{cic-hat-minus-nat}, \citet{cic-hat-minus}, and \citet{cc-hat-omega}
+    introduce and prove consistent a lineage of Calculi of (Co)Inductive Constructions (CIC) with sized types,
+    but only prenex size quantification is possible: one cannot, for instance,
+    pass around a higher-order function quantifying over a size.
+  \item \citet{abel-diss}, \citet{flationary}, and \citet{f-omega-cop}
+    introduce not only higher-rank size quantification but also bounded size quantification,
+    the latter of which eliminates the need for complex monotonicity checks or syntactic approximations thereof.
+    However, these type systems extend System F$_{\omega}$ rather than a dependent type theory.
+  \item \citet{nbe-sized} prove normalization of a higher-rank sized dependent type theory with naturals,
+    but without bounded size quantification.
+\end{itemize}
+
+\textbf{In ongoing work, \we seek to prove the logical consistency of \lang,
+a higher-rank sized dependent type theory with bounded size quantification.}
+Rather than using very involved set-theoretic methods like in Sacchini's dissertation~\citep{cic-hat-minus}
+or the normalization by evaluation technique in~\citet{nbe-sized}
+which requires a typed definitional equality judgement in the type theory,
+\we instead define a \emph{syntactic model}~\citep{syntactic-models} into Extensional CIC (\CICE)~\citep{CCE}.
+That is, \we need to define a compiler from \lang to \CICE, then prove that it is \emph{type-preserving}:
+given some well-typed term in \lang, if both the term and its type are translated to \CICE,
+then the translated term should also be well typed against the translated type.
+Because \CICE is known to be consistent, and an inconsistency in \lang
+implies the existence of an inconsistency in \CICE via the type-preserving compilation,
+inconsistency of \lang would be a contradiction.
+
+\section{Syntactic Model of \texorpdfstring{\lang}{Sized CCω}}
+
+\lang is a Generalized Calclulus of Constructions with definitions (CC$\omega$)~\citep{universes} ---
+that is, a Calculus of Constructions with untyped equality, a cumulative universe hierarchy, and \texttt{let} expressions ---
+extended with bounded and unbounded size quantification, abstraction, and application,
+as well as size expressions consisting of size variables, a base size, and a size successor operation.
+\We further add naturals and W types only, but these should scale directly to inductive types in general.
+
+In \lang, the natural type and W types are parametrized by some size, and their constructors quantify
+over a bounded size representing the strictly smaller size of recursive subarguments.
+In \CICE, \we define a \texttt{Size} inductive type representing the sizes in \lang,
+and an indexed inductive type \texttt{\_$\leqslant$\_} on \texttt{Size}
+representing the ordering relation used in bounded quantification and abstraction.
+The natural type and W types then compile to corresponding inductive types literally parametrized by \texttt{Size},
+and whose constructors take proofs of strict inequality of two \texttt{Size}s.
+
+The majority of the remaining translation is straightforward,
+especially for universes, functions, \texttt{let} expressions, and \texttt{case} expressions.
+Bounded size quantification and abstraction correspond to quantification and abstraction
+over a \texttt{Size} and an inequality, and correspondingly for unbounded ones.
+But what about fixpoints?
+
+The typing rule for fixpoints in \lang has as premise the well-typedness of its body
+in an environment where the fixpoint itself is in scope, but quantifying over a smaller size.
+The key insight is that fixpoints now correspond to \emph{well-founded induction} over sizes,
+rather than structural induction.
+To show that well-founded induction indeed holds for \texttt{Size},
+\we first show that all \texttt{Size}s satisfy an \emph{accessibility predicate}~\citep{wfind};
+well-founded induction then follows by a structurally-inductive proof over the predicate.
+Fixpoints in \lang then translate immediately to applications of well-founded induction.
+
+Now that a translation from \lang to \CICE is established, \we show that it is type preserving.
+Because \lang uses an untyped equality judgement, \we can use standard techniques for showing type preservation~\citep{compiling}.
+An important proof detail is that equality reflection (and therefore extensionality) is required
+to show an $\eta$-equivalence rule for \texttt{case} expressions
+and to show that proofs of accessibility are equal,
+which are properties used to prove that the translations of an applied fixpoint and its reduction in \lang
+are definitionally equal in \CICE.
+
+\section{Status and Future Work}
+
+The work is not yet done;
+there remain unresolved problems with the model,
+and additional features to add that one would expect
+from a practically-useable sized dependent type theory.
+
+\subsection{Universe Levels and \texttt{Size}}
+
+To be able to assign sizes to \emph{general inductive types} such as W types,
+which conceptually can have transfinitely many recursive subarguments,
+\texttt{Size} itself must be able to express the same transfinitivity.
+Therefore, its inductive definition in \CICE mirrors that of \emph{Brouwer ordinals}~\citep{ordinals},
+although the domain of the function in the size corresponding to the limit ordinal is an arbitrary type $A$
+rather than merely the usual natural numbers.
+\texttt{Size} itself must then live in a universe higher than that of $A$,
+according to the usual well-formedness restrictions on inductive types.
+
+Recall that the natural type and W types in \lang are parametrized by \texttt{Size}.
+Given a W type with type parameters $A : \texttt{Type}_\ell$ and $B : A \rightarrow \texttt{Type}_\ell$,
+the type used in limit sizes for the W type would also be $A$.
+Meanwhile, the naturals aren't transfinite, so we simply have $A \coloneq \bot : \texttt{Type}_0$, the uninhabited type.
+Unfortunately, since \texttt{Size} itself would then live in
+\texttt{Type}$_{\ell+1}$ and \texttt{Type}$_1$, respectively,
+so must the W type and the natural type,
+rather than in \texttt{Type}$_{\ell}$ and \texttt{Type}$_0$ as one would expect.
+Intuitively, \texttt{Size} itself must be ``large enough'' (in the type universe sense)
+to include all sizes of naturals and elements of W types,
+which makes it ``too large'' to live in the same universe as what it should include.
+
+One unsatisfactory solution would be to accept the natural type and W types living in larger universes
+than they normally would in an unsized dependent type theory.
+Another solution would be to parametrize \texttt{Size} itself by the limit size's type $A$,
+which would allow it to live in the same universe as $A$.
+However, the translation of sizes and size quantifications and abstractions would have
+an underdetermined parameter, and sizes used for one inductive could not be used for another.
+
+\subsection{The Infinite Size}
+
+In nearly all past work on sized types, including the Agda implementation,
+there is a notion of an infinite size $\infty$ that is strictly larger than all sizes,
+including itself: the relation $\infty < \infty$ holds.
+\lang does not have the infinite size, because this property would make sizes no longer well-founded,
+undermining all efforts to interpret fixpoints as applications of well-founded induction.
+In fact, this is why sized types are inconsistent in Agda:
+dependent types make it possible to internalize the order on sizes as an inductive type within Agda itself,
+from which well-foundedness can be proven, yielding falsehood when combined with $\infty < \infty$.
+Finding a suitable replacement for uses of $\infty$ that capture its convenience while retaining consistency
+remains an open problem.
+One possibility is to use an existentially size-quantified inductive type in place of the $\infty$-sized inductive%
+%\footnote{Dually, the $\infty$-sized \emph{coinductive} type would be \emph{universally} size-quantified.},
+but it appears this might require a nonconstructive axiom that does not compute.
+
+\subsection{Coinductive Types}
+
+Aside from termination checking, sized types are also used for
+\emph{productivity checking} of \emph{corecursive} definitions,
+making reasoning about corecursive constructions much easier.
+If \lang is indeed consistent, \we expect that extending the language and the proofs
+to include sized coinductive types would be relatively straightforward.
+
+\bibliography{SRC}
+\bibliographystyle{ACM-Reference-Format}
+\end{document}
