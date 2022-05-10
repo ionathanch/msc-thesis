@@ -8,5 +8,5 @@ jobs:
       - run: docker run -v $(pwd):/workdir -w /workdir texlive/texlive latexmk --synctex=0
       - uses: actions/upload-artifact@v3
         with:
-          name: diss.pdf
-          path: diss.pdf
+          name: thesis.pdf
+          path: thesis.pdf
