@@ -111,10 +111,7 @@ Instead, the purpose is threefold:
     Instead, a syntactic model relies on the consistency of the language in which I'm modelling,
     and requires no additional deep mathematical knowledge.
   \item To reopen the discussion on sized dependent types.
-    Since the discovery of the inconsistency of Agda's sized types\punctstack{,}%
-    \footnote{\label{foot:agda-inconsistent} See issue \#2820 of the Agda repository,
-    \textit{Equality is incompatible with sized types},
-    URL \url{https://github.com/agda/agda/issues/2820}.}
+    Since the discovery of the inconsistency of Agda's sized types~\citep{infinity},
     progress appears to have stagnated a little.
     In later chapters, I examine these difficulties as they might apply to \lang
     and its interpretation in the syntactic model.
@@ -156,12 +153,6 @@ and the syntactic model.
 
 Perhaps the most contentious design decision so far is the use of untyped equality,
 as can be found in Coq, over typed equality, as can be found in Agda.%
-\iffalse
-\footnote{The terminology in the literature varies
-(the conversion \citet{MetaCoq} refers to is untyped, while the one \citet{conversion} refer to is typed;
-the equivalence \citet{wjb} refers to is untyped, while the one \citet{equivalence} refer to is typed).
-Nevertheless, I use \emph{conversion} for untyped and \emph{equivalence} for typed equality.}
-\fi
 While typed equality is considered to ``have clearer mathematical semantics''~\citep{typed-NbE},
 its judgement depends on the typing judgement;
 meanwhile, since types can depend on terms,
@@ -261,8 +252,7 @@ In summary, the sized type features I include are:
 
 Notably, these are all features found in Agda's implementation of sized types.
 The only missing feature is the infinite size,
-since its properties and its use are known to be inconsistent in Agda\punctstack{.}%
-\textsuperscript{\labelcref{foot:agda-inconsistent}}
+since its properties and its use are known to be inconsistent in Agda.
 A demonstration of the inconsistency of a hypothetical infinite size in \lang
 is given in \cref{sec:infinity}.
 
@@ -281,15 +271,7 @@ The most notable difference from \lang, aside from these features and sized type
 is that \CICE uses a typed, declarative equality rather than an untyped, algorithmic equality
 to better accomodate equality reflection.
 For concision and to avoid confusion, I henceforth refer to the former as \emph{equivalence}\index{equivalence},
-and to the latter as \emph{conversion}\index{conversion}.%
-\iffalse
-\footnote{This terminology varies in the literature, with some using conversion to refer to
-both algorithmic and declarative equality \citep{conversion},
-and others using equivalence to refer to algorithmic equality \citep{wjb}
-and to declarative equality \citep{equivalence}.
-I henceforth use conversion for \lang's definitional equality, which is algorithmic,
-and equivalence for \CICE's definitional equality, which is declarative.}
-\fi
+and to the latter as \emph{conversion}\index{conversion}.
 
 This translation from \lang to \CICE must be \emph{type preserving}\index{type preservation}%
 \footnote{This terminology comes from compilation;
@@ -602,8 +584,7 @@ explicit, higher-rank, bounded size quantification,
 and with whether the type theory has been proven consistent.
 The type theory of MiniAgda, on which the sized types implemented in Agda are based,
 is the only prior one with all three sized type features,
-but is known to be inconsistent\punctstack{.}%
-\textsuperscript{\labelcref{foot:agda-inconsistent}}
+but is known to be inconsistent~\citep{infinity}.
 (Interestingly, \Fcopomega~\citep{F-omega-cop}, which extends System F$_\omega$ with (co)inductive types and sized types,
 has all three properties \emph{and} has been proven to be strongly normalizing.)
 One of the goals of \lang, as mentioned, is to fill in this gap

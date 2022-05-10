@@ -1,3 +1,5 @@
+@comment{Journal articles and tech reports}
+
 @techreport{CoC,
   TITLE = {{The calculus of constructions}},
   AUTHOR = {Coquand, Thierry and Huet, G{\'e}rard},
@@ -8,9 +10,9 @@
   MONTH = May,
   PDF = {https://hal.inria.fr/inria-00076024/file/RR-0530.pdf},
   HAL_ID = {inria-00076024},
-  HAL_VERSION = {v1}
+  HAL_VERSION = {v1},
+  ADDRESS = {{Paris, France}}
 }
-
 
 @techreport{GCC-Coquand,
   TITLE = {{An analysis of Girard's paradox}},
@@ -22,7 +24,8 @@
   MONTH = May,
   PDF = {https://hal.inria.fr/inria-00076023/file/RR-0531.pdf},
   HAL_ID = {inria-00076023},
-  HAL_VERSION = {v1}
+  HAL_VERSION = {v1},
+  ADDRESS = {{Paris, France}}
 }
 
 @techreport{GCC-Luo,
@@ -31,7 +34,23 @@
   year={1988},
   month=Jul,
   institution={University of Edinburgh},
+  address={Edinburgh, Scotland, UK},
   url={https://www.lfcs.inf.ed.ac.uk/reports/88/ECS-LFCS-88-58/}
+}
+
+@techreport{pCuIC,
+  TITLE = {{Consistency of the Predicative Calculus of Cumulative Inductive Constructions (pCuIC)}},
+  AUTHOR = {Timany, Amin and Sozeau, Matthieu},
+  URL = {https://hal.inria.fr/hal-01615123},
+  TYPE = {Research Report},
+  NUMBER = {RR-9105},
+  PAGES = {30},
+  INSTITUTION = {{KU Leuven, Belgium; Inria Paris}},
+  YEAR = {2017},
+  MONTH = Oct,
+  HAL_ID = {hal-01615123},
+  HAL_VERSION = {v2},
+  ADDRESS = {{Paris, France}}
 }
 
 @article{universes,
@@ -41,10 +60,236 @@
   doi = {10.1016/0304-3975(90)90108-T},
   number = {1},
   journal = {Theoretical Computer Science},
+  publisher = {Elsevier},
   author = {Harper, Robert and Pollack, Robert},
   month = oct,
   year = {1991},
   pages = {107--136}
+}
+
+@article{lambda-hat,
+  title = {Type-based termination of recursive definitions},
+  volume = {14},
+  number = {1},
+  issn = {0960-1295, 1469-8072},
+  doi = {10.1017/S0960129503004122},
+  journal = {Mathematical Structures in Computer Science},
+  publisher = {Cambridge University Press},
+  author = {Barthe, Gilles and Frade, Maria Jo\~ao and Gim\'enez, Eduardo and Pinto, Lu\'is and Uustalu, Tarmo},
+  month = feb,
+  year = {2004},
+  pages = {97--141},
+}
+
+@article{F-omega-cop,
+  title = {Well-founded recursion with copatterns and sized types},
+  volume = {26},
+  number = {e2},
+  doi = {10.1017/S0956796816000022},
+  journal = {Journal of Functional Programming},
+  publisher = {Cambridge University Press},
+  author = {Abel, Andreas and Pientka, Brigitte},
+  year = {2016},
+  numpages = {61}
+}
+
+@article{CIC-unifier,
+  title={A comprehensible guide to a new unifier for CIC including universe polymorphism and overloading},
+  volume={27},
+  DOI={10.1017/S0956796817000028},
+  journal={Journal of Functional Programming},
+  publisher={Cambridge University Press},
+  author={Ziliani, Beta and Sozeau, Matthieu},
+  year={2017},
+  number={e10},
+  numpages={63}
+}
+
+@article{unification,
+  title={{Proof-relevant unification: Dependent pattern matching with only the axioms of your type theory}},
+  volume={28},
+  number={e12},
+  DOI={10.1017/S095679681800014X},
+  journal={Journal of Functional Programming},
+  publisher={Cambridge University Press},
+  author={Cockx, Jesper and Devriese, Dominique},
+  year={2018},
+  numpages={55}
+}
+
+@article{telescope,
+  title = {Telescopic mappings in typed lambda calculus},
+  journal = {Information and Computation},
+  volume = {91},
+  number = {2},
+  pages = {189--204},
+  year = {1991},
+  issn = {0890-5401},
+  doi = {10.1016/0890-5401(91)90066-B},
+  url = {https://www.sciencedirect.com/science/article/pii/089054019190066B},
+  author = {{de Bruijn}, Nicolaas Govert},
+  publisher = {Elsevier}
+}
+
+@article{accessibility,
+  title = {Terminating general recursion},
+  volume = {28},
+  issn = {0006-3835, 1572-9125},
+  doi = {10.1007/BF01941137},
+  pages = {605--619},
+  journal = {{Tidskrift f\"or Informationsbehandling (BIT)}},
+  author = {Nordstr\"om, Bengt},
+  year = {1988},
+  publisher = {BIT foundation}
+}
+
+@article{pCIC,
+  title = {Proof-irrelevant model of {CC} with predicative induction and judgmental equality},
+  volume = {7},
+  issn = {18605974},
+  url = {https://lmcs.episciences.org/920},
+  doi = {10.2168/LMCS-7(4:5)2011},
+  pages = {5:1--5:25},
+  number = {4},
+  journal = {Logical Methods in Computer Science},
+  author = {Lee, Gyesik and Werner, Benjamin},
+  year = {2011},
+  month = {nov}
+}
+
+@article{impred-proof-irrel,
+  TITLE = {{Failure of Normalization in Impredicative Type Theory with Proof-Irrelevant Propositional Equality}},
+  AUTHOR = {Andreas Abel and Thierry Coquand},
+  URL = {https://lmcs.episciences.org/6606},
+  DOI = {10.23638/LMCS-16(2:14)2020},
+  JOURNAL = {{Logical Methods in Computer Science}},
+  VOLUME = {{16}},
+  NUMBER = {2},
+  YEAR = {2020},
+  PAGES = {14:1–14:5},
+  MONTH = Jun
+}
+
+@article{term-check,
+  author    = {Andreas Abel},
+  title     = {Termination Checking with Types},
+  journal   = {RAIRO - Theoretical Informatics and Applications},
+  year      = 2004,
+  doi       = {10.1051/ita:2004015},
+  volume    = 38,
+  number    = 4,
+  pages     = {277--319},
+  note      = {Fixed Points in Computer Science (FICS '03)},
+  publisher = {EDP Sciences}
+}
+
+@article{NbE,
+  author = {Abel, Andreas and Vezzosi, Andrea and Winterhalter, Theo},
+  title = {{Normalization by Evaluation for Sized Dependent Types}},
+  year = {2017},
+  month = Sep,
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {1},
+  number = {ICFP},
+  doi = {10.1145/3110277},
+  journal = {Proceedings of the ACM on Programming Languages},
+  numpages = {30},
+}
+
+@article{conversion,
+  author = {Abel, Andreas and \"{O}hman, Joakim and Vezzosi, Andrea},
+  title = {{Decidability of Conversion for Type Theory in Type Theory}},
+  year = {2017},
+  month = Jan,
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {2},
+  number = {POPL},
+  doi = {10.1145/3158111},
+  journal = {Proceedings of the ACM on Programming Languages},
+  month = dec,
+  numpages = {29}
+}
+
+@article{SProp,
+  author = {Gilbert, Ga\"{e}tan and Cockx, Jesper and Sozeau, Matthieu and Tabareau, Nicolas},
+  title = {{Definitional Proof-Irrelevance without K}},
+  year = {2019},
+  month = Jan,
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  volume = {3},
+  number = {POPL},
+  doi = {10.1145/3290316},
+  journal = {Proceedings of the ACM on Programming Languages},
+  numpages = {28}
+}
+
+@comment{Dissertations, theses, and books}
+
+@phdthesis{lambda-hat-diss,
+  title = {{Type-Based Termination of Recursive Definitions and Constructor Subtyping in Typed Lambda Calculi}},
+  year = {2004},
+  month = {March},
+  school = {University of Minho},
+  address = {Braga, Portugal},
+  url = {https://haslab.uminho.pt/sites/default/files/mjf/files/thesis.pdf},
+  author = {Maria Jo{\~a}o Frade}
+}
+
+@phdthesis{CIC-hat-minus,
+  TITLE = {{On type-based termination and dependent pattern matching in the calculus of inductive constructions}},
+  AUTHOR = {Sacchini, Jorge Luis},
+  URL = {https://pastel.archives-ouvertes.fr/pastel-00622429},
+  SCHOOL = {{{\'E}cole Nationale Sup{\'e}rieure des Mines de Paris}},
+  YEAR = {2011},
+  MONTH = Jun,
+  PDF = {https://pastel.archives-ouvertes.fr/pastel-00622429/file/21076\_SACCHINI_2011\_archivage.pdf},
+  HAL_ID = {pastel-00622429},
+  HAL_VERSION = {v1}
+}
+
+@phdthesis{Abel-diss,
+  title={A Polymorphic Lambda-Calculus with Sized Higher-Order Types},
+  author={Abel, Andreas},
+  year={2006},
+  month = Jun,
+  url={http://www.cse.chalmers.se/~abela/diss.pdf},
+  publisher={Harland media},
+  school = {{Ludwig Maximilian University of Munich}},
+  address = {{Munich, Germany}}
+}
+
+@phdthesis{wjb,
+  title = {{Compiling with Dependent Types}},
+  author = {Bowman, William J.},
+  address = {Boston, Massachussetts, USA},
+  school = {Northeastern University},
+  year = {2018},
+  month = Nov,
+  url = {http://hdl.handle.net/2047/D20316239},
+  doi = {10.17760/D20316239}
+}
+
+@phdthesis{guarded,
+  author      = {Vezzosi, Andrea},
+  school      = {Chalmers University of Technology and University of Gothenburg},
+  title       = {{Guarded Recursive Types in Type Theory}},
+  year        = {2015},
+  url         = {https://research.chalmers.se/en/publication/226096},
+  address     = {G\"oteborg, Sweden},
+  type        = {Licentiate thesis}
+}
+
+@phdthesis{barras,
+  author      = {Barras, Bruno},
+  school      = {{Universit\'e Paris-Diderot}},
+  title       = {{Semantical Investigations in Intuitionistic Set Theory and Type Theories with Inductive Families}},
+  year        = {2012},
+  type        = {Habilitation thesis},
+  url         = {http://www.lsv.fr/~barras/habilitation/},
+  address     = {Paris, France}
 }
 
 @book{mltt,
@@ -62,103 +307,47 @@
   Year = {1984}
 }
 
-@misc{W-types,
-  author = {McBride, Conor},
-  url = {https://mazzo.li/epilogue/index.html\%3Fp=324.html},
-  title = {W-types: good news and bad news},
-  year = 2010,
-  month = Mar,
-  date = 7
-}
-
-@phdthesis{lambda-hat-diss,
-  title = {{Type-Based Termination of Recursive Definitions and Constructor Subtyping in Typed Lambda Calculi}},
-  year = {2004},
-  month = {March},
-  school = {University of Minho},
-  address = {Braga, Portugal},
-  url = {https://haslab.uminho.pt/sites/default/files/mjf/files/thesis.pdf},
-  author = {Maria Jo{\~a}o Frade}
-}
-
-@article{lambda-hat,
-  title = {Type-based termination of recursive definitions},
-  volume = {14},
-  issn = {0960-1295, 1469-8072},
-  url = {https://www.journals.cambridge.org/abstract_S0960129503004122},
-  doi = {10.1017/S0960129503004122},
-  language = {en},
-  number = {1},
-  urldate = {2021-04-30},
-  journal = {Mathematical Structures in Computer Science},
-  author = {Barthe, Gilles and Frade, Maria Jo\~ao and Gim\'enez, Eduardo and Pinto, Lu\'is and Uustalu, Tarmo},
-  month = feb,
-  year = {2004},
-  pages = {97--141},
-}
+@comment{Conference proceedings}
 
 @inproceedings{F-hat,
   Author = {Barthe, Gilles and Gr\'egoire, Benjamin and Pastawski, Fernando},
-  Editor = {{Urzyczyn, P}},
   Title = {{Practical inference for type-based termination in a polymorphic setting}},
   Booktitle = {{Typed Lambda Calculi and Applications}},
   Series = {{Lecture Notes in Computer Science}},
   Year = {{2005}},
   Volume = {{3461}},
-  Pages = {{71-85}},
-  Publisher = {{Springer-Verlag Berlin}},
-  Address = {{Heidelberger Platz 3, D-14197 Berlin, Germany}},
-  Type = {{Article; Proceedings Paper}},
-  Language = {{English}},
+  Pages = {{71--85}},
+  Publisher = {{Springer-Verlag Berlin Heidelberg}},
+  Address = {{Berlin/Heidelberg, Germany}},
   Affiliation = {{Univ Nacl Cordoba, FaMAF, RA-5000 Cordoba, Argentina}},
   DOI = {10.1007/11417170\_7},
   ISSN = {{0302-9743}},
   ISBN = {{3-540-25593-1}}
 }
 
-@phdthesis{CIC-hat-minus,
-  TITLE = {{On type-based termination and dependent pattern matching in the calculus of inductive constructions}},
-  AUTHOR = {Sacchini, Jorge Luis},
-  URL = {https://pastel.archives-ouvertes.fr/pastel-00622429},
-  NUMBER = {2011ENMP0022},
-  SCHOOL = {{{\'E}cole Nationale Sup{\'e}rieure des Mines de Paris}},
-  YEAR = {2011},
-  MONTH = Jun,
-  PDF = {https://pastel.archives-ouvertes.fr/pastel-00622429/file/21076\_SACCHINI_2011\_archivage.pdf},
-  HAL_ID = {pastel-00622429},
-  HAL_VERSION = {v1},
-}
-
 @inproceedings{CIC-hat,
   Author = {Barthe, Gilles and Gr\'egoire, Benjamin and Pastawski, Fernando},
-  Editor = {{Hermann, M and Voronkov, A}},
   title = {{CIC$\widehat{~}$ : Type-Based Termination of Recursive Definitions in the Calculus of Inductive Constructions}},
-  Booktitle = {{Logic for Programming, Artificial Intelligence, and Reasoning,
-     Proceedings}},
+  Booktitle = {{Logic for Programming, Artificial Intelligence, and Reasoning, Proceedings}},
   Series = {{Lecture Notes in Artificial Intelligence}},
   Year = {{2006}},
   Volume = {{4246}},
-  Pages = {{257-271}},
-  Publisher = {{Springer-Verlag Berlin}},
-  Address = {{Heidelberger Platz 3, D-14197 Berlin, Germany}},
-  Type = {{Proceedings Paper}},
-  Language = {{English}},
-  Affiliation = {{Barthe, G (Reprint Author), INRIA, Sophia Antipolis, France.
-     INRIA, Sophia Antipolis, France.
-     Univ Nacl Cordoba, FaMAF, RA-5000 Cordoba, Argentina.}},
+  Pages = {{257--271}},
+  Publisher = {{Springer-Verlag Berlin Heidelberg}},
+  Address = {{Berlin/Heidelberg, Germany}},
   DOI = {10.1007/11916277\_18},
   ISSN = {{0302-9743}},
   ISBN = {{3-540-48281-4}}
 }
 
-@incollection{CIC-hat-minus-nat,
-  address = {Berlin, Heidelberg},
+@inproceedings{CIC-hat-minus-nat,
+  address = {{Berlin/Heidelberg, Germany}},
   title = {On {Strong} {Normalization} of the {Calculus} of {Constructions} with {Type}-{Based} {Termination}},
   volume = {6397},
   isbn = {978-3-642-16241-1 978-3-642-16242-8},
-  url = {https://link.springer.com/10.1007/978-3-642-16242-8_24},
-  booktitle = {Logic for {Programming}, {Artificial} {Intelligence}, and {Reasoning}},
-  publisher = {Springer Berlin Heidelberg},
+  url = {https://link.springer.com/10.1007/978-3-642-16242-8\_24},
+  booktitle = {{Logic for Programming, Artificial Intelligence, and Reasoning, Proceedings}},
+  publisher = {{Springer-Verlag Berlin Heidelberg}},
   author = {Grégoire, Benjamin and Sacchini, Jorge Luis},
   year = {2010},
   doi = {10.1007/978-3-642-16242-8\_24},
@@ -166,183 +355,195 @@
   pages = {333--347},
 }
 
-@incollection{cc-hat-omega,
-  Author = {Sacchini, Jorge Luis},
-  Book-Group-Author = {{IEEE Comp Soc}},
-  Title = {{Type-Based Productivity of Stream Definitions in the Calculus of
-     Constructions}},
-  Booktitle = {{2013 28th Annual IEEE/ACM Symposium on Logic in Computer Science (LICS)}},
-  Series = {{IEEE Symposium on Logic in Computer Science}},
-  Year = {{2013}},
-  Pages = {{233-242}},
-  Publisher = {{IEEE}},
-  Address = {{345 E 47th St., New York, NY 10017 USA}},
-  Type = {{Proceedings Paper}},
-  Language = {{English}},
-  Affiliation = {{Carnegie Mellon Univ, Doha, Qatar.}},
-  DOI = {10.1109/LICS.2013.29},
-  ISSN = {{1043-6871}},
-  ISBN = {{978-1-4799-0413-6}}
-}
-
 @incollection{F-hat-times,
-  address = {Berlin, Heidelberg},
+  address = {{Berlin/Heidelberg, Germany}},
   title = {Type-{Based} {Termination} with {Sized} {Products}},
   volume = {5213},
   isbn = {978-3-540-87530-7 978-3-540-87531-4},
   url = {https://link.springer.com/10.1007/978-3-540-87531-4\_35},
-  language = {en},
-  urldate = {2021-06-13},
   booktitle = {Computer {Science} {Logic}},
-  publisher = {Springer Berlin Heidelberg},
+  series = {{Lecture Notes in Computer Science}},
+  publisher = {{Springer-Verlag Berlin Heidelberg}},
   author = {Barthe, Gilles and Grégoire, Benjamin and Riba, Colin},
   year = {2008},
   doi = {10.1007/978-3-540-87531-4\_35},
   pages = {493--507},
 }
 
-@incollection{CIC-hat-l,
+@inproceedings{CIC-hat-l,
   Author = {Sacchini, Jorge Luis},
   Title = {{Linear Sized Types in the Calculus of Constructions}},
-  Booktitle = {{Functional and Logic Programming, FLOPS 2014}},
+  Booktitle = {{Functional and Logic Programming}},
   Series = {{Lecture Notes in Computer Science}},
   Year = {{2014}},
   Volume = {{8475}},
-  Pages = {{169-185}},
-  Publisher = {{Springer-Verlag Berlin}},
-  Address = {{Heidelberger Platz 3, D-14197 Berlin, Germany}},
-  Type = {{Proceedings Paper}},
-  Language = {{English}},
-  Affiliation = {{Carnegie Mellon Univ, Pittsburgh, PA 15213 USA}},
+  Pages = {{169--185}},
+  Publisher = {{Springer-Verlag Berlin Heidelberg}},
+  Address = {{Berlin/Heidelberg, Germany}},
   DOI = {10.1007/978-3-319-07151-0\_11},
   ISSN = {{0302-9743}},
   EISSN = {{1611-3349}},
   ISBN = {{978-3-319-07151-0; 978-3-319-07150-3}}
 }
 
-@misc{CIC-hat-star,
-  title={{Is Sized Typing for Coq Practical?}},
-  author={Jonathan Chan and Yufeng Li and William J. Bowman},
-  year={2021},
-  url={https://arxiv.org/abs/1912.05601}
+@InProceedings{CCE,
+  author = {Oury, Nicolas},
+  title = {{Extensionality in the Calculus of Constructions}},
+  booktitle = {{Theorem Proving in Higher Order Logics}},
+  series = {{Lecture Notes in Computer Science}},
+  volume = {3603},
+  year = {2005},
+  Publisher = {{Springer-Verlag Berlin Heidelberg}},
+  Address = {{Berlin/Heidelberg, Germany}},
+  pages = {278--293},
+  isbn = {978-3-540-31820-0},
+  doi = {10.1007/11541868\_18}
 }
 
-@phdthesis{Abel-diss,
-  title={A Polymorphic Lambda-Calculus with Sized Higher-Order Types},
-  author={Abel, Andreas},
-  year={2006},
-  url={http://www.cse.chalmers.se/~abela/diss.pdf},
-  publisher={HARLAND media},
-  school = {{Ludwig Maximilian University of Munich}}
+@inproceedings{guard,
+  address = {Berlin/Heidelberg, Germany},
+  title = {Codifying guarded definitions with recursive schemes},
+  isbn = {978-3-540-47770-9},
+  booktitle = {Types for {Proofs} and {Programs}},
+  series = {{Lecture Notes in Computer Science}},
+  volume = {996},
+  publisher = {Springer-Verlag Berlin Heidelberg},
+  author = {Giménez, Eduardo},
+  year = {1995},
+  pages = {39--59},
+  doi = {10.1007/3-540-60579-7\_3}
 }
 
-@article{F-omega-cop,
-  title = {Well-founded recursion with copatterns and sized types},
-  volume = {26},
-  issn = {0956-7968, 1469-7653},
-  url = {https://www.cambridge.org/core/product/identifier/S0956796816000022/type/journal_article},
-  doi = {10.1017/S0956796816000022},
-  journal = {Journal of Functional Programming},
-  author = {Abel, Andreas and Pientka, Brigitte},
-  year = {2016},
+@incollection{CCR,
+  address = {Berlin/Heidelberg, Germany},
+  title = {Structural recursive definitions in type theory},
+  volume = {1443},
+  isbn = {978-3-540-64781-2 978-3-540-68681-1},
+  booktitle = {Automata, {Languages} and {Programming}},
+  publisher = {Springer-Verlag Berlin Heidelberg},
+  author = {Giménez, Eduardo},
+  year = {1998},
+  doi = {10.1007/BFb0055070},
+  series = {Lecture Notes in Computer Science},
+  pages = {397--408},
 }
 
-@article{NbE,
-  author = {Abel, Andreas and Vezzosi, Andrea and Winterhalter, Theo},
-  title = {{Normalization by Evaluation for Sized Dependent Types}},
-  year = {2017},
-  issue_date = {September 2017},
-  publisher = {Association for Computing Machinery},
+@inproceedings{CIC,
+  title = {Inductively defined types in the Calculus of Constructions},
+  volume = {442},
+  isbn = {978-0-387-97375-3 978-0-387-34808-7},
+  pages = {209--228},
+  booktitle = {Mathematical Foundations of Programming Semantics},
+  publisher = {Springer-Verlag Berlin Heidelberg},
+  author = {Pfenning, Frank and Paulin-Mohring, Christine},
+  year = {1990},
+  doi = {10.1007/BFb0040259},
+  series = {Lecture Notes in Computer Science}
+}
+
+@inproceedings{TemplateCoq,
+  TITLE = {{Towards Certified Meta-Programming with Typed Template-Coq}},
+  AUTHOR = {Anand, Abhishek and Boulier, Simon and Cohen, Cyril and Sozeau, Matthieu and Tabareau, Nicolas},
+  URL = {https://hal.archives-ouvertes.fr/hal-01809681},
+  BOOKTITLE = {{Interactive Theorem Proving}},
+  ADDRESS = {Cham, Switzerland},
+  PUBLISHER = {{Springer Cham}},
+  SERIES = {Lecture Notes in Computer Science},
+  VOLUME = {10895},
+  PAGES = {20--39},
+  YEAR = {2018},
+  MONTH = Jul,
+  DOI = {10.1007/978-3-319-94821-8\_2},
+  ISBN = {978-3-319-94820-1}
+}
+
+@inproceedings{cc-hat-omega,
+  Author = {Sacchini, Jorge Luis},
+  Title = {{Type-Based Productivity of Stream Definitions in the Calculus of Constructions}},
+  Booktitle = {{Logic in Computer Science}},
+  Year = {{2013}},
+  Pages = {{233-242}},
+  Publisher = {{IEEE Computer Society}},
+  Address = {{New York, NY, USA}},
+  DOI = {10.1109/LICS.2013.29},
+  ISSN = {{1043-6871}},
+  ISBN = {{978-1-4799-0413-6}}
+}
+
+@InProceedings{typed-NbE,
+  author    = {Abel, Andreas and Coquand, Thierry and Dybjer, Peter},
+  title     = {{Normalization by Evaluation for Martin-L\"of Type Theory with Typed Equality Judgements}},
+  booktitle = {Logic in Computer Science},
+  year      = 2007,
+  doi       = {10.1109/LICS.2007.33},
+  publisher = {IEEE Computer Society},
+  address   = {New York, NY, USA},
+  pages     = {3--12},
+  ISBN      = {0-7695-2908-9},
+  ISSN      = {1043-6871}
+}
+
+@InProceedings{ECC,
+  author={Luo, Zhaohui},
+  booktitle={Logic in Computer Science},
+  title={ECC, an extended calculus of constructions},
+  publisher={IEEE Computer Society},
+  address={New York, NY, USA},
+  year={1989},
+  pages={386--395},
+  doi={10.1109/LICS.1989.39193},
+  ISBN={0-8186-1954-6}
+}
+
+@inproceedings{guarded-types,
+  author = {Nakano, Hiroshi},
+  title = {A Modality for Recursion},
+  year = {2000},
+  isbn = {0-7695-0725-5},
+  issn = {1043-6871},
+  publisher = {IEEE Computer Society},
   address = {New York, NY, USA},
-  volume = {1},
-  number = {ICFP},
-  doi = {10.1145/3110277},
-  journal = {Proc. ACM Program. Lang.},
-  month = aug,
-  articleno = {33},
-  numpages = {30},
+  pages = {255--266},
+  booktitle = {Logic in Computer Science},
+  doi = {10.1109/LICS.2000.855774},
+  
 }
 
-@article{MiniAgda,
+@inproceedings{MiniAgda,
   title={{MiniAgda: Integrating Sized and Dependent Types}},
   volume={43},
   ISSN={2075-2180},
   DOI={10.4204/EPTCS.43.2},
-  journal={Electronic Proceedings in Theoretical Computer Science},
+  booktitle={{Partiality and Recursion in Interactive Theorem Provers}},
+  series={{Electronic Proceedings in Theoretical Computer Science}},
   publisher={Open Publishing Association},
   author={Abel, Andreas},
   year={2010},
   month={Dec},
-  pages={14--28}
+  pages={14--28},
+  url={http://eptcs.web.cse.unsw.edu.au/paper.cgi?PAR2010.2}
 }
 
-@article{flationary,
+@incollection{flationary,
   title={{Type-Based Termination, Inflationary Fixed-Points, and Mixed Inductive-Coinductive Types}},
   volume={77},
   ISSN={2075-2180},
   DOI={10.4204/EPTCS.77.1},
-  journal={Electronic Proceedings in Theoretical Computer Science},
+  booktitle={{Fixed Points in Computer Science}},
+  series={{Electronic Proceedings in Theoretical Computer Science}},
   publisher={Open Publishing Association},
   author={Abel, Andreas},
   year={2012},
   month={Feb},
-  pages={1--11}
-}
-
-@online{infinity,
-  title={{Equality is incompatible with sized types}},
-  author={Abel, Andreas},
-  year={2017},
-  month={Oct},
-  url={https://github.com/agda/agda/issues/2820}
-}
-
-@inproceedings{syntactic-models,
-  TITLE = {{The next 700 syntactical models of type theory}},
-  AUTHOR = {Boulier, Simon and P{\'e}drot, Pierre-Marie and Tabareau, Nicolas},
-  URL = {https://hal.inria.fr/hal-01445835},
-  BOOKTITLE = {{Certified Programs and Proofs (CPP 2017)}},
-  ADDRESS = {Paris, France},
-  PAGES = {182 - 194},
-  YEAR = {2017},
-  MONTH = Jan,
-  DOI = {10.1145/3018610.3018620},
-  HAL_ID = {hal-01445835},
-  HAL_VERSION = {v1}
-}
-
-@InProceedings{CCE,
-  author="Oury, Nicolas",
-  title={{Extensionality in the Calculus of Constructions}},
-  booktitle="Theorem Proving in Higher Order Logics",
-  year="2005",
-  publisher="Springer Berlin Heidelberg",
-  address="Berlin, Heidelberg",
-  pages="278--293",
-  isbn="978-3-540-31820-0",
-  doi="10.1007/11541868\_18"
-}
-
-@inproceedings{CICE,
-  TITLE = {{Eliminating Reflection from Type Theory}},
-  AUTHOR = {Winterhalter, Th{\'e}o and Sozeau, Matthieu and Tabareau, Nicolas},
-  URL = {https://hal.archives-ouvertes.fr/hal-01849166},
-  BOOKTITLE = {{CPP 2019 - 8th ACM SIGPLAN International Conference on Certified Programs and Proofs}},
-  ADDRESS = {Lisbonne, Portugal},
-  PUBLISHER = {{ACM}},
-  PAGES = {91-103},
-  YEAR = {2019},
-  MONTH = Jan,
-  DOI = {10.1145/3293880.3294095},
-  HAL_ID = {hal-01849166},
-  HAL_VERSION = {v3},
+  pages={1--11},
+  url={http://eptcs.web.cse.unsw.edu.au/paper.cgi?FICS2012.1}
 }
 
 @inproceedings{MetaCoq,
   author          = {Sozeau, Matthieu},
-  booktitle       = {Logical Frameworks and Meta-Languages: Theory and Practice (LFMTP 2021)},
-  address         = {Pittsburgh, PA, USA},
-  editor          = {Pimentel, Elaine and Tassi, Enrico},
+  volume          = {337},
+  booktitle       = {Logical Frameworks and Meta-Languages: Theory and Practice},
+  series          = {Electronic Proceedings in Theoretical Computer Science},
   title           = {{Touring the MetaCoq Project}},
   year            = {2021},
   month           = {July},
@@ -350,23 +551,38 @@
   URL             = {http://eptcs.web.cse.unsw.edu.au/paper.cgi?LFMTP2021.2}
 }
 
-@phdthesis{wjb,
-  title = {{Compiling with Dependent Types}},
-  author = {Bowman, William J.},
-  address = {Boston, Massachussetts},
-  school = {Northeastern University},
-  year = {2018},
-  url = {http://hdl.handle.net/2047/D20316239},
-  doi = {10.17760/D20316239}
+@inproceedings{syntactic-models,
+  TITLE = {{The next 700 syntactical models of type theory}},
+  AUTHOR = {Boulier, Simon and P{\'e}drot, Pierre-Marie and Tabareau, Nicolas},
+  URL = {https://hal.inria.fr/hal-01445835},
+  BOOKTITLE = {{Certified Programs and Proofs}},
+  PUBLISHER = {{Association for Computing Machinery}},
+  ADDRESS = {New York, NY, USA},
+  PAGES = {182--194},
+  YEAR = {2017},
+  MONTH = Jan,
+  DOI = {10.1145/3018610.3018620}
+}
+
+@inproceedings{CICE,
+  TITLE = {{Eliminating Reflection from Type Theory}},
+  AUTHOR = {Winterhalter, Th{\'e}o and Sozeau, Matthieu and Tabareau, Nicolas},
+  URL = {https://hal.archives-ouvertes.fr/hal-01849166},
+  BOOKTITLE = {{Certified Programs and Proofs}},
+  PUBLISHER = {{Association for Computing Machinery}},
+  ADDRESS = {New York, NY, USA},
+  PAGES = {91--103},
+  YEAR = {2019},
+  MONTH = Jan,
+  DOI = {10.1145/3293880.3294095},
 }
 
 @inproceedings{hughes,
   address = {New York, NY, USA},
-  series = {{POPL} '96},
   title = {Proving the correctness of reactive systems using sized types},
   isbn = {978-0-89791-769-8},
   doi = {10.1145/237721.240882},
-  booktitle = {Proceedings of the 23rd {ACM} {SIGPLAN}-{SIGACT} symposium on {Principles} of programming languages},
+  booktitle = {{Principles of Programming Languages}},
   publisher = {Association for Computing Machinery},
   author = {Hughes, John and Pareto, Lars and Sabry, Amr},
   month = jan,
@@ -374,32 +590,79 @@
   pages = {410--423},
 }
 
-@article{telescope,
-  title = {Telescopic mappings in typed lambda calculus},
-  journal = {Information and Computation},
-  volume = {91},
-  number = {2},
-  pages = {189-204},
-  year = {1991},
-  issn = {0890-5401},
-  doi = {10.1016/0890-5401(91)90066-B},
-  url = {https://www.sciencedirect.com/science/article/pii/089054019190066B},
-  author = {{de Bruijn}, Nicolaas Govert},
+@InProceedings{ordinals,
+  author = {Kraus, Nicolai and Nordvall Forsberg, Fredrik and Xu, Chuangjie},
+  title = {{Connecting Constructive Notions of Ordinals in Homotopy Type Theory}},
+  booktitle = {Mathematical Foundations of Computer Science},
+  pages = {70:1--70:16},
+  series = {Leibniz International Proceedings in Informatics},
+  ISBN = {978-3-95977-201-3},
+  ISSN = {1868-8969},
+  year = {2021},
+  volume = {202},
+  publisher = {Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
+  address = {Dagstuhl, Germany},
+  URL = {https://drops.dagstuhl.de/opus/volltexte/2021/14510},
+  URN = {urn:nbn:de:0030-drops-145100},
+  doi = {10.4230/LIPIcs.MFCS.2021.70},
 }
 
-@techreport{pCuIC,
-  TITLE = {{Consistency of the Predicative Calculus of Cumulative Inductive Constructions (pCuIC)}},
-  AUTHOR = {Timany, Amin and Sozeau, Matthieu},
-  URL = {https://hal.inria.fr/hal-01615123},
-  TYPE = {Research Report},
-  NUMBER = {RR-9105},
-  PAGES = {30},
-  INSTITUTION = {{KU Leuven, Belgium; Inria Paris}},
-  YEAR = {2017},
-  MONTH = Oct,
-  HAL_ID = {hal-01615123},
-  HAL_VERSION = {v2}
+@InProceedings{whynotW,
+  author = {Hugunin, Jasper},
+  title = {{Why Not W?}},
+  booktitle = {Types for Proofs and Programs},
+  pages = {8:1--8:9},
+  series = {Leibniz International Proceedings in Informatics},
+  ISBN = {978-3-95977-182-5},
+  ISSN = {1868-8969},
+  year = {2021},
+  volume = {188},
+  publisher = {Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
+  address = {Dagstuhl, Germany},
+  URL = {https://drops.dagstuhl.de/opus/volltexte/2021/13887},
+  URN = {urn:nbn:de:0030-drops-138876},
+  doi = {10.4230/LIPIcs.TYPES.2020.8}
 }
+
+@InProceedings{ind-ind,
+  author = {Ambrus Kaposi and Andr{\'a}s Kov{\'a}cs and Ambroise Lafont},
+  title = {{For Finitary Induction-Induction, Induction Is Enough}},
+  booktitle = {Types for Proofs and Programs},
+  pages = {6:1--6:30},
+  series = {Leibniz International Proceedings in Informatics (LIPIcs)},
+  ISBN = {978-3-95977-158-0},
+  ISSN = {1868-8969},
+  year = {2020},
+  volume = {175},
+  publisher = {Schloss Dagstuhl--Leibniz-Zentrum f{\"u}r Informatik},
+  address = {Dagstuhl, Germany},
+  URL = {https://drops.dagstuhl.de/opus/volltexte/2020/13070},
+  URN = {urn:nbn:de:0030-drops-130707},
+  doi = {10.4230/LIPIcs.TYPES.2019.6}
+}
+
+@inproceedings{guard-relax,
+  TITLE = {{A relaxation of Coq's guard condition}},
+  AUTHOR = {Boutillier, Pierre},
+  URL = {https://hal.archives-ouvertes.fr/hal-00651780},
+  BOOKTITLE = {{Journ{\'e}es Francophones des Langages Applicatifs}},
+  ADDRESS = {Carnac, France},
+  PAGES = {1--14},
+  YEAR = {2012},
+  MONTH = Feb
+}
+
+@inproceedings{modal-sizes,
+  TITLE = {{Towards Unifying (Co)induction and Structural Control}},
+  AUTHOR = {Somayyajula, Siva},
+  URL = {https://hal-lirmm.ccsd.cnrs.fr/lirmm-03271428},
+  BOOKTITLE = {{Trends in Linear Logic and Applications}},
+  ADDRESS = {Rome (virtual), Italy},
+  YEAR = {2021},
+  MONTH = Jun
+}
+
+@comment{Other conference material}
 
 @misc{eta,
   title = {{\'A bas l'$\eta$ --- Coq's troublesome $\eta$-conversion}},
@@ -411,108 +674,46 @@
   month = Jan
 }
 
-@Article{term-check,
-  author  = {Andreas Abel},
-  title   = {Termination Checking with Types},
-  journal = {RAIRO -- Theoretical Informatics and Applications},
-  year    = 2004,
-  doi     = {DOI: 10.1051/ita:2004015},
-  volume  = 38,
-  number  = 4,
-  pages   = {277--319},
-  note    = {Special Issue: Fixed Points in Computer Science (FICS'03)},
-  url     = {http://www.edpsciences.org/articles/ita/abs/2004/04/ita0428NS/ita0428NS.html},
-  pdf     = {http://www.edpsciences.org/articles/ita/pdf/2004/04/ita0428NS.pdf}
+@misc{SRC,
+  title = {{Towards a Syntactic Model of Sized Dependent Types}},
+  author = {{Chan, Jonathan}},
+  url = {https://popl22.sigplan.org/details/POPL-2022-student-research-competition/1/Towards-a-Syntactic-Model-of-Sized-Dependent-Types},
+  year = 2022,
+  month = Jan
 }
 
-@InProceedings{ordinals,
-  author = {Kraus, Nicolai and Nordvall Forsberg, Fredrik and Xu, Chuangjie},
-  title = {{Connecting Constructive Notions of Ordinals in Homotopy Type Theory}},
-  booktitle = {46th International Symposium on Mathematical Foundations of Computer Science (MFCS 2021)},
-  pages = {70:1--70:16},
-  series = {Leibniz International Proceedings in Informatics (LIPIcs)},
-  ISBN = {978-3-95977-201-3},
-  ISSN = {1868-8969},
-  year = {2021},
-  volume = {202},
-  editor = {Bonchi, Filippo and Puglisi, Simon J.},
-  publisher = {Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
-  address = {Dagstuhl, Germany},
-  URL = {https://drops.dagstuhl.de/opus/volltexte/2021/14510},
-  URN = {urn:nbn:de:0030-drops-145100},
-  doi = {10.4230/LIPIcs.MFCS.2021.70},
+@comment{Online resources}
+
+@misc{W-types,
+  author = {McBride, Conor},
+  url = {https://mazzo.li/epilogue/index.html\%3Fp=324.html},
+  title = {W-types: good news and bad news},
+  year = 2010,
+  month = Mar,
+  date = 7
 }
 
-@article{accessibility,
-  title = {Terminating general recursion},
-  volume = {28},
-  issn = {0006-3835, 1572-9125},
-  url = {http://link.springer.com/10.1007/BF01941137},
-  doi = {10.1007/BF01941137},
-  pages = {605--619},
-  number = {3},
-  journal = {{BIT Numerical Mathematics}},
-  author = {Nordström, Bengt},
-  year = {1988}
+@misc{infinity,
+  title = {{\#2820 Equality is incompatible with sized types}},
+  author = {Abel, Andreas},
+  year = {2017},
+  month = {Oct},
+  url = {https://github.com/agda/agda/issues/2820}
 }
 
-@inproceedings{guard,
-  address = {Berlin, Heidelberg},
-  title = {Codifying guarded definitions with recursive schemes},
-  isbn = {978-3-540-47770-9},
-  booktitle = {Types for {Proofs} and {Programs}},
-  publisher = {Springer Berlin Heidelberg},
-  author = {Giménez, Eduardo},
-  editor = {Dybjer, Peter and Nordström, Bengt and Smith, Jan},
-  year = {1995},
-  pages = {39--59},
+@misc{coind-SR,
+  title = {{\#6768 Towards a fix to the loss of subject reduction with corecursion?}},
+  author = {Herbelin, Hugo},
+  year = {2018},
+  month = {Feb},
+  url = {https://github.com/coq/coq/issues/6768}
 }
 
-@inproceedings{guard-relax,
-  TITLE = {{A relaxation of Coq's guard condition}},
-  AUTHOR = {Boutillier, Pierre},
-  URL = {https://hal.archives-ouvertes.fr/hal-00651780},
-  BOOKTITLE = {{JFLA - Journ{\'e}es Francophones des langages applicatifs - 2012}},
-  ADDRESS = {Carnac, France},
-  PAGES = {1 - 14},
-  YEAR = {2012},
-  MONTH = Feb,
-  PDF = {https://hal.archives-ouvertes.fr/hal-00651780/file/boutillier.pdf}
-}
-
-@article{SProp,
-  author = {Gilbert, Ga\"{e}tan and Cockx, Jesper and Sozeau, Matthieu and Tabareau, Nicolas},
-  title = {{Definitional Proof-Irrelevance without K}},
-  year = {2019},
-  issue_date = {January 2019},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  volume = {3},
-  number = {POPL},
-  url = {https://doi.org/10.1145/3290316},
-  doi = {10.1145/3290316},
-  journal = {Proc. ACM Program. Lang.},
-  month = {jan},
-  articleno = {3},
-  numpages = {28}
-}
-
-@InProceedings{whynotW,
-  author = {Hugunin, Jasper},
-  title = {{Why Not W?}},
-  booktitle = {26th International Conference on Types for Proofs and Programs (TYPES 2020)},
-  pages = {8:1--8:9},
-  series = {Leibniz International Proceedings in Informatics (LIPIcs)},
-  ISBN = {978-3-95977-182-5},
-  ISSN = {1868-8969},
-  year = {2021},
-  volume = {188},
-  editor = {de'Liguoro, Ugo and Berardi, Stefano and Altenkirch, Thorsten},
-  publisher = {Schloss Dagstuhl -- Leibniz-Zentrum f{\"u}r Informatik},
-  address = {Dagstuhl, Germany},
-  URL = {https://drops.dagstuhl.de/opus/volltexte/2021/13887},
-  URN = {urn:nbn:de:0030-drops-138876},
-  doi = {10.4230/LIPIcs.TYPES.2020.8}
+@misc{coqterm,
+  author = {{Coq Development Team}, The},
+  title = {{CoqTerminationDiscussion}},
+  year = {2017},
+  url = {https://github.com/coq/coq/wiki/CoqTerminationDiscussion}
 }
 
 @misc{palette,
@@ -522,111 +723,6 @@
   month = nov,
   date = 20,
   url = {https://jfly.uni-koeln.de/color/},
-}
-
-@article{conversion,
-  author = {Abel, Andreas and \"{O}hman, Joakim and Vezzosi, Andrea},
-  title = {{Decidability of Conversion for Type Theory in Type Theory}},
-  year = {2017},
-  issue_date = {January 2018},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  volume = {2},
-  number = {POPL},
-  doi = {10.1145/3158111},
-  journal = {Proceedings of the ACM on Programming Languages},
-  month = dec,
-  articleno = {23},
-  numpages = {29}
-}
-
-@article{equivalence,
-  author = {Stone, Christopher A. and Harper, Robert},
-  title = {{Extensional Equivalence and Singleton Types}},
-  year = {2006},
-  issue_date = {October 2006},
-  publisher = {Association for Computing Machinery},
-  address = {New York, NY, USA},
-  volume = {7},
-  number = {4},
-  issn = {1529-3785},
-  url = {https://doi.org/10.1145/1183278.1183281},
-  doi = {10.1145/1183278.1183281},
-  journal = {ACM Trans. Comput. Logic},
-  month = {oct},
-  pages = {676–722},
-  numpages = {47}
-}
-
-@InProceedings{typed-NbE,
-  author    = {Abel, Andreas and Coquand, Thierry and Dybjer, Peter},
-  title     = {{Normalization by Evaluation for Martin-L\"of Type Theory with Typed Equality Judgements}},
-  booktitle = "22nd IEEE Symposium on Logic in Computer Science (LICS 2007), 10-12 July 2007, Wroclaw, Poland, Proceedings",
-  year      = 2007,
-  doi       = {10.1109/LICS.2007.33},
-  publisher = "IEEE Computer Society Press",
-  pages     = {3--12},
-}
-
-@InProceedings{ECC,
-  author={Luo, Zhaohui},
-  booktitle={[1989] Proceedings. Fourth Annual Symposium on Logic in Computer Science},
-  title={ECC, an extended calculus of constructions},
-  year={1989},
-  pages={386-395},
-  doi={10.1109/LICS.1989.39193}
-}
-
-@article{pCIC,
-  title = {Proof-irrelevant model of {CC} with predicative induction and judgmental equality},
-  volume = {7},
-  issn = {18605974},
-  url = {https://lmcs.episciences.org/920},
-  doi = {10.2168/LMCS-7(4:5)2011},
-  pages = {5},
-  number = {4},
-  journal = {Logical Methods in Computer Science},
-  author = {Lee, Gyesik and Werner, Benjamin},
-  editor = {Barendregt, Henk},
-  urldate = {2021-04-30},
-  year = {2011},
-  month = {nov}
-}
-
-
-@incollection{CIC,
-  location = {New York, {NY}},
-  title = {Inductively defined types in the Calculus of Constructions},
-  volume = {442},
-  isbn = {978-0-387-97375-3 978-0-387-34808-7},
-  url = {http://link.springer.com/10.1007/BFb0040259},
-  pages = {209--228},
-  booktitle = {Mathematical Foundations of Programming Semantics},
-  publisher = {Springer-Verlag},
-  author = {Pfenning, Frank and Paulin-Mohring, Christine},
-  editor = {Main, M. and Melton, A. and Mislove, M. and Schmidt, D.},
-  year = {1990},
-  langid = {english},
-  doi = {10.1007/BFb0040259},
-  note = {Series Title: Lecture Notes in Computer Science}
-}
-
-@inproceedings{TemplateCoq,
-  TITLE = {{Towards Certified Meta-Programming with Typed Template-Coq}},
-  AUTHOR = {Anand, Abhishek and Boulier, Simon and Cohen, Cyril and Sozeau, Matthieu and Tabareau, Nicolas},
-  URL = {https://hal.archives-ouvertes.fr/hal-01809681},
-  BOOKTITLE = {{ITP 2018 - 9th Conference on Interactive Theorem Proving}},
-  ADDRESS = {Oxford, United Kingdom},
-  HAL_LOCAL_REFERENCE = {ACTI+},
-  PUBLISHER = {{Springer}},
-  SERIES = {LNCS},
-  VOLUME = {10895},
-  PAGES = {20-39},
-  YEAR = {2018},
-  MONTH = Jul,
-  DOI = {10.1007/978-3-319-94821-8\_2},
-  HAL_ID = {hal-01809681},
-  HAL_VERSION = {v1}
 }
 
 @misc{Coq,
@@ -648,31 +744,7 @@
   url          = {https://coq.inria.fr/distrib/V8.4pl6/refman/}
 }
 
-@article{CIC-unifier,
-  title={A comprehensible guide to a new unifier for CIC including universe polymorphism and overloading},
-  volume={27},
-  DOI={10.1017/S0956796817000028},
-  journal={Journal of Functional Programming},
-  publisher={Cambridge University Press},
-  author={Ziliani, Beta and Sozeau, Matthieu},
-  year={2017},
-  pages={e10}
-}
-
-@incollection{CCR,
-  address = {Berlin, Heidelberg},
-  title = {Structural recursive definitions in type theory},
-  volume = {1443},
-  isbn = {978-3-540-64781-2 978-3-540-68681-1},
-  url = {http://link.springer.com/10.1007/BFb0055070},
-  booktitle = {Automata, {Languages} and {Programming}},
-  publisher = {Springer Berlin Heidelberg},
-  author = {Giménez, Eduardo},
-  year = {1998},
-  doi = {10.1007/BFb0055070},
-  series = {Lecture Notes in Computer Science},
-  pages = {397--408},
-}
+@comment{Preprints}
 
 @unpublished{CIC-hat-sub,
   title  = {{Well-Founded Sized Types in the Calculus of (Co)Inductive Constructions}},
@@ -682,99 +754,10 @@
   note   = {Unpublished paper}
 }
 
-@phdthesis{guarded,
-  author      = {Vezzosi, Andrea},
-  school      = {Chalmers University of Technology and University of Gothenburg},
-  title       = {{Guarded Recursive Types in Type Theory}},
-  year        = {2015},
-  url         = {https://research.chalmers.se/en/publication/226096},
-  address     = {G\"oteborg, Sweden},
-  type        = {Licentiate thesis}
-}
-
-@inproceedings{modal-sizes,
-  TITLE = {{Towards Unifying (Co)induction and Structural Control}},
-  AUTHOR = {Somayyajula, Siva},
-  URL = {https://hal-lirmm.ccsd.cnrs.fr/lirmm-03271428},
-  BOOKTITLE = {{5th International Workshop on Trends in Linear Logic and Applications (TLLA 2021)}},
-  ADDRESS = {Rome (virtual), Italy},
-  YEAR = {2021},
-  MONTH = Jun,
-  HAL_ID = {lirmm-03271428},
-  HAL_VERSION = {v1}
-}
-
-@InProceedings{ind-ind,
-  author = {Ambrus Kaposi and Andr{\'a}s Kov{\'a}cs and Ambroise Lafont},
-  title = {{For Finitary Induction-Induction, Induction Is Enough}},
-  booktitle = {25th International Conference on Types for Proofs and Programs (TYPES 2019)},
-  pages = {6:1--6:30},
-  series = {Leibniz International Proceedings in Informatics (LIPIcs)},
-  ISBN = {978-3-95977-158-0},
-  ISSN = {1868-8969},
-  year = {2020},
-  volume = {175},
-  editor = {Marc Bezem and Assia Mahboubi},
-  publisher = {Schloss Dagstuhl--Leibniz-Zentrum f{\"u}r Informatik},
-  address = {Dagstuhl, Germany},
-  URL = {https://drops.dagstuhl.de/opus/volltexte/2020/13070},
-  URN = {urn:nbn:de:0030-drops-130707},
-  doi = {10.4230/LIPIcs.TYPES.2019.6}
-}
-
-@phdthesis{barras,
-  author      = {Barras, Bruno},
-  school      = {{Universit\'e Paris-Diderot}},
-  title       = {{Semantical Investigations in Intuitionistic Set Theory and Type Theories with Inductive Families}},
-  year        = {2012},
-  type        = {Habilitation thesis},
-  url         = {http://www.lsv.fr/~barras/habilitation/}
-}
-
-@article{unification,
-  title={{Proof-relevant unification: Dependent pattern matching with only the axioms of your type theory}},
-  volume={28},
-  DOI={10.1017/S095679681800014X},
-  journal={Journal of Functional Programming},
-  publisher={Cambridge University Press},
-  author={Cockx, Jesper and Devriese, Dominique},
-  year={2018},
-  pages={55}
-}
-
-@misc{src,
-  title = {{Towards a Syntactic Model of Sized Dependent Types}},
-  author = {{Chan, Jonathan}},
-  url = {https://popl22.sigplan.org/details/POPL-2022-student-research-competition/1/Towards-a-Syntactic-Model-of-Sized-Dependent-Types},
-  year = 2022,
-  month = Jan
-}
-
-@article{impred-proof-irrel,
-  TITLE = {{Failure of Normalization in Impredicative Type Theory with Proof-Irrelevant Propositional Equality}},
-  AUTHOR = {Andreas Abel and Thierry Coquand},
-  URL = {https://lmcs.episciences.org/6606},
-  DOI = {10.23638/LMCS-16(2:14)2020},
-  JOURNAL = {{Logical Methods in Computer Science}},
-  VOLUME = {{Volume 16, Issue 2}},
-  YEAR = {2020},
-  MONTH = Jun
-}
-
-@online{coqterm,
-  author = {{The Coq Development Team}},
-  title = {{CoqTerminationDiscussion}},
-  year = 2018,
-  url = {https://github.com/coq/coq/wiki/CoqTerminationDiscussion}
-}
-
-@inproceedings{guarded-types,
-  author = {Nakano, Hiroshi},
-  title = {A Modality for Recursion},
-  year = {2000},
-  isbn = {0769507255},
-  publisher = {IEEE Computer Society},
-  address = {USA},
-  pages = {255},
-  series = {{IEEE Symposium on Logic in Computer Science}}
+@unpublished{CIC-hat-star,
+  title={{Is Sized Typing for Coq Practical?}},
+  author={Jonathan Chan and Yufeng Li and William J. Bowman},
+  year={2021},
+  url={https://arxiv.org/abs/1912.05601},
+  note={Preprint}
 }
