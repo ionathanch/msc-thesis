@@ -37,8 +37,8 @@
 \usepackage[capitalize, noabbrev]{cleveref} % needs to come after hyperref and amsmath
 
 % backreferences styled as ↪ page(s) x, y, and z
-\newcommand{\decline}[3]{\ifcase #1 #3 \or #2 \else #3 \fi}
-\renewcommand{\backrefalt}[4]{\textcolor{gray}{$\hookrightarrow$ \decline{#1}{page}{pages}#2}}
+\newcommand{\decline}[3]{\ifcase #1 #3\or #2\else #3\fi}
+\renewcommand{\backrefalt}[4]{\textcolor{gray}{$\hookrightarrow$~\decline{#1}{page}{pages}~#2}}
 
 % links must be in "dark blue"
 % https://www.grad.ubc.ca/current-students/dissertation-thesis-preparation/fonts-print
