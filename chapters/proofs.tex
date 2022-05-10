@@ -1030,7 +1030,7 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
       \item $\subst{\compile{e_s}}{\xT}{\compile{e'}} = \compile{\subst{e_s}{x}{e'}}$.
     \end{itemize}
     Suppose first that $x \neq w$, $x \neq z_1$, and $x \neq z_2$.
-    Then we have%
+    Then we have
     \begin{align*}
     &\subst{\compile{\match{e}{\fun*{w}{P}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s)}}}{\xT}{\compile{e'}} \\
     &= \subst{(\matchT{\compile{e}}{\funT*{\mt}{\wT}{\compile{P}}}{(\app{\supT}{\alphaT}{\alphaT^*}{\zT_1}{\zT_2} \RightarrowT \compile{e_s})})}{\xT}{\compile{e'}} && \textit{by translation} \\
@@ -1055,7 +1055,7 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
     \end{mathpar}
     Induction hypothesis: $\subst{\compile{e}}{\xT}{\compile{e'}} = \compile{\subst{e}{x}{e'}}$. \\
     By the translation, we have $\subsizeto{\Phi}{\sss{s}}{r}{\eT''}$.
-    Then we have%
+    Then we have
     \begin{align*}
     \subst{\compile{\App{e}{s}}}{\xT}{\compile{e'}}
     &= \subst{(\app{\compile{e}}{\compile{s}}{\eT''})}{\xT}{\compile{e'}} && \textit{by translation} \\
@@ -1083,7 +1083,7 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
       \item $\subst{\compile{\sigma}}{\xT}{\compile{e'}} = \compile{\subst{\sigma}{x}{e'}}$ and
       \item $\subst{\compile{e}}{\xT}{\compile{e'}} = \compile{\subst{e}{x}{e'}}$.
     \end{itemize}
-    We then have%
+    We then have
     \begin{align*}
     &\subst{\compile{\fix{f}{\alpha}{\sigma}{e}}}{\xT}{\compile{e'}} \\
     &= \subst{(\app{\wfind}{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{ \\
@@ -1181,13 +1181,13 @@ By induction on the derivation of $\subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2
     }
     \end{mathpar}
     Induction hypothesis: $$\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s}{\alpha}{s'}}{\subst{r}{\alpha}{s'}}{\subst{\eT}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}.$$
-    By the same rule, we can derive%
+    By the same rule, we can derive
     \begin{align*}
       &\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{\sss{s}}{\alpha}{s'}}{\subst{\sss{r}}{\alpha}{s'}}
       {\\ & \qquad \app{\monoT}{\compile{\subst{s}{\alpha}{s'}}}{\compile{\subst{r}{\alpha}{s'}}}{(\subst{\eT}{\alphaT, \alphaT^*}{\compile{s'}, \eT'})}}.
     \end{align*}
     By \cref{sublem:compos-size}, again noting that $\alphaT^*$ never appears in $\compile{s}$ or $\compile{r}$,
-    this becomes%
+    this becomes
     \begin{align*}
       &\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{\sss{s}}{\alpha}{s'}}{\subst{\sss{r}}{\alpha}{s'}}
       {\\ & \qquad \app{\monoT}{\subst{\compile{s}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}{\subst{\compile{r}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}{(\subst{\eT}{\alphaT, \alphaT^*}{\compile{s'}, \eT'})}}.
@@ -1208,14 +1208,14 @@ By induction on the derivation of $\subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2
       \item $\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s_1}{\alpha}{s'}}{\subst{s_2}{\alpha}{s'}}{\subst{\eT_{12}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}$ and
       \item $\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s_2}{\alpha}{s'}}{\subst{s_3}{\alpha}{s'}}{\subst{\eT_{23}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}$.
     \end{itemize}
-    By the same rule, we can derive%
+    By the same rule, we can derive
     \begin{align*}
     &\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s_1}{\alpha}{s'}}{\subst{s_3}{\alpha}{s'}}
     {\\ & \qquad \app{\transleq}{\compile{\subst{s_1}{\alpha}{s'}}}{\compile{\subst{s_2}{\alpha}{s'}}}{\compile{\subst{s_3}{\alpha}{s'}}}
     {\\ & \qquad \phantom{\app{\transleq}{}} (\subst{\eT_{12}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'})}{(\subst{\eT_{23}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'})}}
     \end{align*}
     By \cref{sublem:compos-size}, again noting that $\alphaT^*$ never appears in
-    $\compile{s_1}$, $\compile{s_2}$, or $\compile{s_3}$, this becomes%
+    $\compile{s_1}$, $\compile{s_2}$, or $\compile{s_3}$, this becomes
     \begin{align*}
     &\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s_1}{\alpha}{s'}}{\subst{s_3}{\alpha}{s'}}
     {\\ & \qquad \app{\transleq}{\subst{\compile{s_1}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}{\subst{\compile{s_2}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}{\subst{\compile{s_3}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}
@@ -1285,7 +1285,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
       \item $\subst{\compile{e_1}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{e_1}{\alpha}{s}}$, and
       \item $\subst{\compile{e_2}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{e_2}{\alpha}{s}}$.
     \end{itemize}
-    Then we have%
+    Then we have
     \begin{align*}
     &\subst{\compile{\letin{x}{\sigma}{e_1}{e_2}}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} \\
     &= \subst{(\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}})}{\alphaT, \alphaT^*}{\compile{s}, \eT'} \\
@@ -1310,7 +1310,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
       }
     \end{mathpar}
     Induction hypothesis: $\subst{\compile{\tau}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{\tau}{\alpha}{s}}$. \\
-    Suppose first that $\alpha \neq \beta$. Then we have%
+    Suppose first that $\alpha \neq \beta$. Then we have
     \begin{align*}
     \subst{\compile{\Funtype{\beta}{\tau}}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}
     &= \subst{(\funtypeT{\betaT}{\SizeT}{\compile{\tau}})}{\alphaT, \alphaT^*}{\compile{s}, \eT'}
@@ -1337,7 +1337,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
       }      
     \end{mathpar}
     Induction hypothesis: $\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{e}{\alpha}{s}}$. \\
-    Then we have%
+    Then we have
     \begin{align*}
     &\subst{\compile{\Fun<{\beta}{r}{e}}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} \\
     &= \subst{(\fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \compile{r}}{\compile{e}}})}{\alphaT, \alphaT^*}{\compile{s}, \eT'}
@@ -1406,6 +1406,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
       \item $\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}$.
     \end{itemize}
     Supposing that $\alpha \neq \beta$, we then have
+    \allowdisplaybreaks
     \begin{align*}
     &\subst{\compile{\fix{f}{\beta}{\sigma}{e}}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} \\
     &= \subst{(\app{\wfind}{(\funT{\betaT}{\SizeT}{\compile{\sigma}})}{ \\
@@ -1870,8 +1871,6 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
 
 Most of the heavy lifting in proving preservation of subtyping is done by
 preservation of $\alpha$-cumulativity and preservation of the closure of reduction.
-% This lemma requires strongly type preserved typing judgements only to apply
-% \hyperref[lem:pres-red*]{Preservation of closure of reduction}.
 
 \begin{lemma}[Preservation of subtyping] \label{lem:pres-subtyping}
 Suppose we have the following:
