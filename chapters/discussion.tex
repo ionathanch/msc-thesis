@@ -9,7 +9,7 @@ and give some possible directions for future work based on them.
 
 \section{The Infinite Size} \label{sec:infinity}
 
-In prior sized type systems, the infinite size $\infty$ is applied to sized inductive types
+In prior sized type systems, the infinite size\index{infinite size} $\infty$ is applied to sized inductive types
 to represent a ``full'' inductive type encompassing that inductive at all sizes,
 which essentially corresponds to the usual unsized inductive.
 Whereas an inductive of some size $s$ can be thought of as the type of elements
@@ -39,7 +39,7 @@ its set-theoretic interpretation is an ordinal that is ``large enough'' in that 
 For instance, the interpretation of the infinite size of $\N{\infty}$
 is the first limit ordinal $\omega$.
 
-This strategy doesn't adapt well to \lang with its size abstractions and syntactic model,
+This strategy doesn't adapt well to \lang with its size abstractions and syntactic model\index{syntactic model},
 since it requires a non-local translation of sizes.
 For instance, given the size application $\App{e}{\infty}$,
 what $\infty$ translates to would hypothetically depend on what $e$ translates to,
@@ -100,7 +100,7 @@ rather than being defined as an encoding,
 and model them by strong dependent pairs in \CICE,
 then the translation of $\const{ac}$ \emph{can} be implemented as a function,
 also making use of the limit operator.
-In other words, the syntactic model justifies the axiom $\const{ac}$ in the source.
+In other words, the syntactic model\index{syntactic model} justifies the axiom $\const{ac}$ in the source.
 The mechanization of $\compile{\const{ac}}$ in Agda and Coq are given in
 \cref{app:mechanization:agda:W} and \cref{app:mechanization:coq:W}, respectively.
 
@@ -116,9 +116,8 @@ however, has been previously explored~\citep{guarded, modal-sizes}.
 
 \section{Universe Levels of Inductives} \label{sec:universe-levels}
 
-The universes in which the type of natural numbers
-and W types in \lang live
-are, in a sense, one level higher than is usually expected;
+The universes in which the type of natural numbers and W types in \lang live
+are, in a sense, one level\index{universe level} higher than is usually expected;
 their typing rules are reproduced below.
 $\N*$ is typically in $\Type{0}$,
 while $\W*$ is typically in $U$ rather than $\axioms{U}$.
@@ -187,7 +186,7 @@ and there aren't ``enough'' sizes to cover all well-founded trees of any particu
 In a sense, it's reasonable to expect that $\SizeT$ needs to live in a larger universe.
 The r\^ole of $\SizeT$ is to represent all of the possible sizes of a given full inductive,
 so we would expect $\SizeT$ to be just as large as the inductive itself.
-Aside from situations where the inductive is impredicative, \ie in $\PropT$,
+Aside from situations where the inductive is impredicative\index{impredicativity}, \ie in $\PropT$,
 parametrizing over $\SizeT$ then necessarily requires moving up a universe
 so that it's not essentially quantifying over itself.
 
@@ -207,11 +206,12 @@ when using this model.
 Dually to inductive types, coinductive types allow for constructing
 potentially infinitely large elements in a principled manner,
 and are present in many proof assistants such as Coq, Agda, and Idris.
-Conventionally, while fixpoints are guarded by destructors
+Conventionally, while fixpoints are guarded by destructors\index{guardedness}
 and destruct elements of inductives by recurring only on syntactically smaller elements,
 cofixpoints are guarded by constructors and occur only as a syntactic argument to a constructor~\citep{guard}.
-Since coinductives aren't present in pCIC, upon which \CICE is based,
-I don't include them in \lang either, as they would lack a translation in the syntactic model.
+Since coinductives aren't present in pCIC\index{Calculus of Inductive Constructions!Predicative \textasciitilde},
+upon which \CICE is based, I don't include them in \lang either,
+as they would lack a translation in the syntactic model.
 Nevertheless, we can speculate on how they might appear and interact with sizes.
 Here, I define the classic example of coinductive streams,
 composed of a head element and a tail stream.
@@ -263,14 +263,14 @@ The reduction rules of streams, omitted here, operate as expected:
 $\shd{}$ projects out the head and $\stl{}$ projects out the tail.
 
 To actually construct infinite streams, we need cofixpoint expressions.
-The natural correspondence of guardedness in sized types
+The natural correspondence of guardedness\index{guardedness} in sized types
 is that cofixpoint bodies must construct coinductives larger than
 their own occurrences inside the body,
 which coincides with the structure of \rref{fix}.
 Cofixpoints also reduce when applied to a size that has some subsize,
 just like fixpoints.
 Interestingly, this suggests that cofixpoints might also be translated in the syntactic model
-to well-founded induction on sizes despite constructing a coinductive type.
+to well-founded induction\index{well-founded induction} on sizes despite constructing a coinductive type.
 
 With cofixpoints, we can then construct an infinite stream of some single element.
 Let $A$ in the definitions to follow be some type.
@@ -377,14 +377,16 @@ Given that sizes are already modelled as transfinite ordinals,
 it may be inevitable that a more appropriate model, syntactic or otherwise,
 is more set-theoretical in nature.
 
-The main barrier to a syntactic model of \lang with any coinductive types
+The main barrier to a syntactic model\index{syntactic model} of \lang with any coinductive types
 is the lack of an established target type theory with coinductive types
 with nice properties.
-Whereas pCIC and pCuIC lack them, MetaCoq mechanizes Coq-style coinductive types,
+Whereas pCIC\index{Calculus of Inductive Constructions!Predicative \textasciitilde}
+and pCuIC\index{Predicative Calculus of Cumulative Inductive Constructions} lack them,
+MetaCoq\index{MetaCoq} mechanizes Coq-style coinductive types,
 but necessarily cannot prove its own consistency.
-Meanwhile, older CICs with coinductive types and cofixpoints guarded by constructors
-(\eg \citet{guard}) have issues with subject reduction~\citep{coind-SR},
-which is a necessary property for proving type preservation in \cref{ch:proofs}.
+Meanwhile, older CICs with coinductive types and cofixpoints guarded by constructors\index{guardedness}
+(\eg \citet{guard}) have issues with subject reduction~\citep{coind-SR}\index{subject reduction},
+which is a necessary property for proving type preservation\index{type preservation} in \cref{ch:proofs}.
 Another potential issue is the translation of cofixpoints into applications of
 a well-founded induction principle, which is suspicious and also requires further investigation.
 
@@ -406,7 +408,7 @@ strong normalization and decidability of type checking.
 Because \nameref{lem:pres-red} only preserves reduction up to equivalence in \CICE,
 not reduction, normalization doesn't hold immediately from the translation.
 In particular, the proof of \nameref{lem:pres-red} uses equality reflection
-to obtain an equivalence between two proofs of accessibility of a size,
+to obtain an equivalence between two proofs of accessibility\index{accessibility predicate} of a size,
 and \citet{SProp} show that this equivalence can lead to nonnormalization in
 particular inconsistent environments,
 as is the case for $\tg{false}$.
@@ -431,7 +433,7 @@ Moreover, Agda has transitive subsizing, and so far hasn't had issues with its d
 \hfill
 
 As for implementation, the consistency of \lang shows that sized types for inductives in Agda
-are likely to be consistent were the infinite size removed.
+are likely to be consistent were the infinite size\index{infinite size} removed.
 This immediately poses a significant problem to Agda's standard library,
 as 20 of the 33 files that use sized types in version 1.7.1 of the standard library
 make use of the infinite size.

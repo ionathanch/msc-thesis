@@ -40,7 +40,7 @@ and suppose $\wf{\Phi}{\Gamma, \Gamma'}$.
 \end{enumerate}
 \end{proof}
 
-\begin{lemma}[Replacement by subtyping] \label{lem:replacement-subtyping}
+\begin{lemma}[Replacement by subtyping] \label{lem:replacement-subtyping}\index{subtyping}
 Suppose $\subtype{\Phi; \Gamma_1}{\sigma_1}{\sigma_2}$ where
 $\type{\Phi; \Gamma_1}{\sigma_1}{U}$ and $\type{\Phi; \Gamma_1}{\sigma_2}{U}$
 for some $U$.
@@ -92,7 +92,7 @@ $\define{x}{\sigma_2}{e'}$ rather than $\annot{x}{\sigma_2}$
 by the exact same arguments.
 \end{corollary}
 
-\begin{lemma}[Substitutivity by terms] \label{lem:substitutivity-terms}
+\begin{lemma}[Substitutivity by terms] \label{lem:substitutivity-terms}\index{substitutivity}
 Suppose $\type{\Phi; \Gamma_1}{e}{\sigma}$.
 \begin{enumerate}[noitemsep]
   \item If $\red{\Phi; \Gamma_1, \annot{x}{\sigma}, \Gamma_2}{e_1}{e_2}$
@@ -215,7 +215,7 @@ I omit explicit references to uses of weakening.
 
 \subsection{Confluence}
 
-\TODO
+\TODO \index{confluence}
 
 \begin{theorem}[Confluence] \label{thm:confluence}
 If $\red*{\Phi; \Gamma}{e}{e_1}$ and $\red*{\Phi; \Gamma}{e}{e_2}$
@@ -229,7 +229,7 @@ $\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
 
 \subsection{Inversion}
 
-\emph{Inversion principles}\index{inversion principle}
+\emph{Inversion principles}\index{inversion}
 allow for deducing from a typing judgement the necessary premises for a typing derivation,
 with one principle for each syntactic form.
 In the presence of subtyping, these principles are a little more complex,
@@ -357,7 +357,7 @@ $\red*{\Phi; \Gamma}{e_1}{e'_1}$ and $\acum{e'_1}{e'_2}$,
 using the symmetric argument to \cref{lem:confluence-acum-right}.
 \end{corollary}
 
-\begin{theorem}[Transitivity of subtyping] \label{thm:transivity-subtyping}
+\begin{theorem}[Transitivity of subtyping] \label{thm:transivity-subtyping}\index{subtyping}
 If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$ and $\subtype{\Phi; \Gamma}{\tau_2}{\tau_3}$
 then $\subtype{\Phi; \Gamma}{\tau_1}{\tau_3}$.
 \end{theorem}
@@ -480,7 +480,7 @@ By induction on the derivation of $\type{\Gamma}{e}{\tau}$.
 
 \subsection{Replacement by reduction}
 
-Similar to \nameref{lem:replacement-subtyping},
+Similar to \nameref{lem:replacement-subtyping}\index{replacement},
 where a type annotation in the environment can be replaced by a subtype,
 a definition in the environment can also be replaced by a term it reduces to.
 In contrast, the proof is more involved and requires \nameref{thm:confluence}.
@@ -679,7 +679,7 @@ By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
       \inferrule{
         \type{\Phi; \Gamma}{e}{\N{s}} \\
         \type{\Phi; \Gamma, \annot{x}{\N{s}}}{P}{U} \\
-        \seq
+        \dots
       }{
         \infer{\Phi; \Gamma}{\match{e}{\fun*{x}{P}}{\any \any}}{\subst{P}{x}{e}}
       }
@@ -687,7 +687,7 @@ By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$.
       \inferrule{
         \type{\Phi; \Gamma}{e}{\W{x}{\sigma}{\tau}{s}} \\
         \type{\Phi; \Gamma, \annot{x}{\W{x}{\sigma}{\tau}{s}}}{P}{U} \\
-        \seq
+        \dots
       }{
         \infer{\Phi; \Gamma}{\match{e}{\fun*{x}{P}}{\any}}{\subst{P}{x}{e}}
       }
@@ -823,7 +823,7 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
 Fewer metatheoretical properties of \CICE are required for the type preservation proof,
 namely replacement\index{replacement},
 substitutivity\index{substitutivity},
-the inversion principles\index{inversion principle},
+the inversion principles\index{inversion},
 and subject equivalence\index{subject reduction}.
 I don't provide the proofs here, as the properties of CIC,
 typed equivalence, and equality reflection are well established,
@@ -929,28 +929,9 @@ needed for the translations are derived when possible
 by \cref{lem:wf-env} and \nameref{thm:regularity}, respectively)
 and otherwise assumed as hypotheses.
 
-\iffalse
-Because judgements in \lang are untyped while equivalence in \CICE is typed
-and defined mutually with the other judgements,
-when deriving \CICE judgements from \lang judgements,
-additional typing derivations are required.
-For preservation of reduction and $\alpha$-cumulativity,
-simply having \CICE typing judgements of the relevant terms is sufficient.
-For the other proofs, however, a ``deeper'' property is required.
-
-\begin{definition}
-A typing derivation is \emph{strongly type preserved} if,
-for every subderivation $\type{\Phi; \Gamma}{e}{\tau}$,
-$\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{\tau}}$ holds.
-\end{definition}
-
-This lets us avoid a complex proof by mutual induction over all lemmas and theorems
-by instead passing up typing judgements as needed.
-\fi
-
 \subsection{Compositionality}
 
-Compositionality is the key to proving preservation of reduction in the next section,
+Compositionality\index{compositionality} is the key to proving preservation of reduction in the next section,
 since reduction rules are defined in terms of substitution.
 In essence, we need to show that the translation commutes with substitution,
 so that translating a term with a substitution is the same as
@@ -1768,7 +1749,7 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
 \subsection{Preservation of \texorpdfstring{$\alpha$}{alpha}-cumulativity}
 
 This lemma is proven independently of compositionality and preservation of (closure of) reduction.
-Like preservation of reduction, the well-typedness of the translation of the $\alpha$-cumulative terms
+Like preservation of reduction, the well-typedness of the translation of the $\alpha$-cumulative\index{$\alpha$-cumulativity} terms
 is required to derive various equivalences,
 but their types need not even be the same,
 since the \CICE subtyping judgement itself is untyped.
@@ -1869,7 +1850,7 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
 
 \subsection{Preservation of subtyping}
 
-Most of the heavy lifting in proving preservation of subtyping is done by
+Most of the heavy lifting in proving preservation of subtyping\index{subtyping} is done by
 preservation of $\alpha$-cumulativity and preservation of the closure of reduction.
 
 \begin{lemma}[Preservation of subtyping] \label{lem:pres-subtyping}
@@ -1918,7 +1899,7 @@ $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$
 
 \subsection{Type preservation}
 
-At last we are able to prove type preservation,
+At last we are able to prove type preservation\index{type preservation},
 using preservation of subtyping in the \rref*{conv} case
 and preservation of sizes and subsizing,
 which are proven independently.

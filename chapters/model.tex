@@ -4,7 +4,8 @@
 \input{figures/definitions.tex}
 \input{figures/translation.tex}
 
-The type theory in which \lang is modelled is \CICE,
+The type theory in which \lang is modelled is
+\CICE\index{Calculus of Inductive Constructions!Extensional \textasciitilde},
 as briefly described in \cref{ch:introduction}.
 The key idea is that sizes in \lang can themselves be represented as a inductive type in \CICE,
 and naturals and well-founded trees are then inductives with an additional size parameter.
@@ -13,7 +14,7 @@ and their order as an inductive type indexed by sizes.
 The order is \emph{well-founded}:
 there is no infinite sequence of ever-smaller sizes,
 and there is always a ``smallest'' size (or many of them).
-This property allows for \emph{well-founded induction}\index{well founded!\textasciitilde~induction},
+This property allows for \emph{well-founded induction}\index{well-founded induction},
 where to prove some property on sizes, one supposes that it holds for all strictly smaller sizes.
 
 Every fixpoint expression in \lang is modelled as an instance of well-founded induction in \CICE.
@@ -49,7 +50,8 @@ but the type preservation theorem only applies to well-typed terms anyway.
 \section{Target Type Theory}
 
 \FigSyntaxCIC{fig:syntax-cic}
-The syntax of \CICE is given in \cref{fig:syntax-cic};
+The syntax of \CICE
+is given in \cref{fig:syntax-cic};
 differences from \lang include a 1-based index for the recursive argument of fixpoint expressions,
 $\tg{case}$ expression motives abstracted over the target's inductive type indices,
 and a homogeneous propositional equality\index{propositional equality} type with the reflexivity constructor and $\JT*$ eliminator.
@@ -62,14 +64,15 @@ and $\aT$ for inductive type indices.
 The well-formedness conditions on inductive data definitions,
 such as well-typedness and \emph{strict positivity}\index{strict positivity},
 are entirely standard, so I don't detail them here;
-see pCIC~\citep{pCIC} for instance for a full description.
+see pCIC\index{Calculus of Inductive Constructions!Predicative \textasciitilde}~\citep{pCIC}
+for instance for a full description.
 Inductive definitions in their full generality are not needed,
 and nonmutual, nonnested inductives suffice.
 Indeed, only six inductive definitions are used for the translation,
 for representing sizes, their order, their well-foundedness,
 and the empty type, naturals, and well-founded trees.
 
-The typed equivalence, subtyping, and typing judgements are defined mutually:
+The typed equivalence\index{equivalence}, subtyping, and typing judgements are defined mutually:
 equivalence depends on typing and subtyping,
 subtyping depends on equivalence,
 and typing depends on subtyping and equivalence.
@@ -89,7 +92,7 @@ which definitionally equates two terms whenever there exists some proof of their
 
 \clearpage
 Typed equivalence is required in the presence of equality reflection since
-inconsistencies are derivable when using untyped conversion.
+inconsistencies are derivable when using untyped conversion\index{conversion}.
 For instance, supposing that \lang had equality reflection and using \new{$\approx$} to denote conversion,
 in the empty environment, freely using transivity,
 %
@@ -160,8 +163,9 @@ Since \rref{equiv-mu} and \rref{equiv-mu-guarded} are metatheoretically equivale
 I choose to use \rref{equiv-mu} for its simplicity.
 
 \FigSubtypingCIC{fig:subtyping-cic}
-As opposed to \lang, for \CICE I use pCIC's presentation of subtyping,
-which has a typed equivalence premise in \rref{subtype-conv}.
+As opposed to \lang, for \CICE I use
+pCIC's\index{Calculus of Inductive Constructions!Predicative \textasciitilde}
+presentation of subtyping\index{subtyping}, which has a typed equivalence premise in \rref{subtype-conv}.
 It also has an explicit rule for transitivity of subtyping since judgements such as
 $\subtype{\mt}{\app{(\funT{P}{\TypeT{\tg{1}}}{P})}{\PropT}}{\TypeT{\tg{0}}}$ would fail to hold otherwise.
 Like \rref{acum-pi}, \rref{subtype-pi} is invariant in the domain of function types.
@@ -173,9 +177,9 @@ as in \cref{fig:rules-axioms}.
 An additional premise to \rref{fix*} ensures that the $\nT$th argument is indeed an inductive type.
 % in addition to checking well-typedness of fixpoint bodies with possible recursive references.
 
-As previously mentioned, fixpoints must also be \emph{guarded}\index{guardedness}:
+As previously mentioned, fixpoints must also be guarded\index{guardedness}:
 recursive calls can only occur on structurally smaller arguments of elements of inductives.
-This \emph{guard condition} is well-studied~\citep{guard, guard-relax, Coq} and so omitted here.
+The guard condition is well-studied~\citep{guard, guard-relax, Coq} and so omitted here.
 To justify uses of fixpoint expressions in the translation,
 I will provide either a mechanization or present a brief argument of guardedness.
 
@@ -184,7 +188,7 @@ I will provide either a mechanization or present a brief argument of guardedness
 The new \rref{eq, refl, J} are for the propositional equality\index{propositional equality} type,
 its constructor, and its eliminator.
 Given some equality proof $\pT$ of $\eqT{\eT_1}{\tauT}{\eT_2}$
-and a motive\index{motive} $\PT$ dependent on a proof of equality
+and a motive $\PT$ dependent on a proof of equality
 whose left-hand side is fixed at $\eT_1$ and right-hand side is variable\punctstack{,}%
 \footnote{Occasionally referred to as \emph{Paulin-Mohring}'s equality,
 as opposed to \emph{Martin-L\"of}'s equality
@@ -195,7 +199,8 @@ Other usual functions on proofs of equality can be derived from it,
 such as coercion (when the motive is \mbox{$\funT{A}{\UT}{\funT{\any}{\any}{A}}$})
 or substitution (when the motive ignores the second argument),
 as well as its symmetry, transitivity, and congruence.
-The proof of type preservation eliminates propositional equalities mostly through reflection rather than using $\JT*$,
+The proof of type preservation eliminates propositional equalities mostly through
+reflection\index{equality reflection} rather than using $\JT*$,
 but I retain $\JT*$ in \CICE for completeness\punctstack{.}%
 \footnote{The combined presence of $\JT*$ and equality reflection also allows proving the
 \emph{uniqueness of identity proofs} (UIP)\index{uniqueness of identity proofs},
@@ -268,7 +273,7 @@ The order on sizes $\mt \szleT \mt$ is defined by the three properties that must
 
 Other properties of the order can be derived by induction from these constructors alone.
 A corresponding strict order $\mt \szltT \mt$ is also defined,
-and an accessibility predicate $\AccT$ is specialized to sizes and the strict order.
+and an accessibility predicate\index{accessibility predicate} $\AccT$ is specialized to sizes and the strict order.
 Note that it lives in $\PropT$, as does the argument of its sole constructor $\accT$,
 so accessibility predicates are intended to be interpreted as proof-irrelevant\index{proof irrelevance},
 and their large elimination\index{large elimination} is allowed.
@@ -306,12 +311,12 @@ and of the accessibility predicate:
   \item $\accIsProp$: Accessibility predicates are \emph{mere propositions}\index{mere proposition}:
     any two proofs of accessibility of a size are propositionally equal.
   \item $\accleq$: Any size smaller or equal to an accessible size is itself accessible.
-  \item $\accessible$: All sizes are accessible; in other words, the order on sizes is well founded\index{well founded}.
-  \item $\wfind$ and $\wfacc$: The well-founded induction principle on sizes with respect to the order,
+  \item $\accessible$: All sizes are accessible; in other words, the order on sizes is well founded.
+  \item $\wfind$ and $\wfacc$: The well-founded induction principle\index{well-founded induction} on sizes with respect to the order,
     proven by structural induction on the accessibility of sizes.
 \end{itemize}
 
-The only time equality reflection is needed is to prove $\accIsProp$ (via $\funext$),
+The only time equality reflection\index{equality reflection} is needed is to prove $\accIsProp$ (via $\funext$),
 which in turn is the only other equality that is reflected for proving type preservation.
 Since $\AccT$ is in already $\PropT$, \CICE could be replaced by an intensional CIC
 with a universe of \emph{strict propositions}\index{strict proposition} $\SPropT$
@@ -330,7 +335,7 @@ so that the types of $\NatT$ and $\WT$ and their constructors are preserved.
 
 \section{Translation}
 
-The key type preservation theorem states that well-typed terms of \lang translate to
+The key type preservation\index{type preservation} theorem states that well-typed terms of \lang translate to
 corresponding well-typed terms of CICE.
 However, terms are not the only thing requiring translation:
 well-typedness holds under some environment, so term environments need translations;
@@ -389,8 +394,8 @@ Doing so while preserving types would mean that \lang fixpoints
 need to be subject to the same guard conditions as \CICE fixpoints,
 which is clearly undesirable and not the case in the examples from \cref{sec:examples}.
 Instead, every single \lang fixpoint, regardless of the inductive on which they recur,
-is translated to well-founded induction,
-which is defined via a \CICE fixpoint on accessibility predicates.
+is translated to well-founded induction\index{well-founded induction},
+which is defined via a \CICE fixpoint on accessibility predicates\index{accessibility predicate}.
 Intuitively, the return type of a fixpoint corresponds to the motive of well-founded induction,
 while recursion on a strictly smaller size corresponds to the induction hypothesis,
 where the motive holds for all strictly smaller sizes.

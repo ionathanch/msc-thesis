@@ -9,7 +9,7 @@ are indispensible tools of dependently-typed programming,
 allowing the expression of a variety of constructs, programs, and their properties.
 A crucial restriction on recursive functions that exist in contemporary proof assistants
 based on dependent type theory, such as Agda, Coq, Idris, Lean, and more,
-is that recursive functions must be \emph{guarded by destructors}\index{guarded by destructors}
+is that recursive functions must be \emph{guarded by destructors}\index{guardedness}
 and only recur on structurally smaller arguments~\citep{guard}.
 This guardedness check is statically done before or during type checking and,
 to vastly simplify, ensures that recursive calls occur only on syntactic subarguments:
@@ -19,7 +19,8 @@ and so on.
 Although this is usually referred to as a syntactic termination check,
 the key desired property in dependent types rather \emph{consistency}.
 Indeed, a type theory may be consistent yet nonnormalizing
-(as is the case with an impredicative, definitionally proof-irrelevant $\Prop$ universe~\citep{impred-proof-irrel}),
+(as is the case with an impredicative\index{impredicativity},
+definitionally proof-irrelevant $\Prop$ universe~\citep{impred-proof-irrel}),
 but unrestricted recursion easily proves an inconsistency:
 the recursive function $f$ defined by $\fun{P}{\Prop}{\app{f}{P}}$,
 for instance, can be assigned type $\funtype{P}{\Prop}{P}$.
@@ -161,7 +162,7 @@ As we'll see in \cref{sec:syntactic-model}, these mutually-defined judgements wo
 so I settle for untyped equality instead.
 
 On top of \GCC, I add two inductive definitions featured in Martin--L\"of type theory (MLTT)~\citep{mltt}\index{Martin--L\"of type theory}:
-the \emph{Peano naturals}\index{naturals} and \emph{well-founded trees}\index{well founded!\textasciitilde~trees}\punctstack{,}%
+the \emph{Peano naturals} and \emph{well-founded trees}\punctstack{,}%
 \footnote{The types of well-founded trees are also known as \emph{W types}.}
 augmented with sizes.
 As the simplest nontrivial inductive,
@@ -176,12 +177,6 @@ because the syntactic baggage that comes with handling the generalization
 obscures the intuition behind sized inductive types and the syntactic model,
 while it's easy to see how one \emph{could} go from the naturals and well-founded trees
 to inductive types in general.
-
-\iffalse
-Finally, I add a standard \emph{homogeneous propositional equality type}\index{propositional equality},
-which isn't particularly difficult to deal with
-and will allow for some more interesting examples.
-\fi
 
 \subsection{Sized Types}\label{sec:sized-types}
 
@@ -202,11 +197,11 @@ types are distinct from terms.
 Having explicit sizes differs from some most prior sized type systems where,
 extending the type polymorphism analogy,
 there is only implicit \emph{rank-1} or
-\emph{prenex}\index{polymorphism!prenex/rank-1 \textasciitilde} size quantification:
+\emph{prenex} size quantification:
 size quantifications never appear inside of a type,
 and in fact all size abstractions and applications are fully inferred.
 Explicit sizes, in contrast, let us express
-\emph{higher-rank}\index{polymorphism!higher-rank \textasciitilde} size quantification,
+\emph{higher-rank} size quantification,
 which allow for more expressiveness:
 for instance, supposing we have cons lists parametrized over some sized type $\tau$,
 one could write a size-preserving mapping function over a list
@@ -232,7 +227,7 @@ summarized by the below typing rule.
 \end{mathpar}
 
 Bounded sizes were originally introduced to avoid complex
-\emph{semi-continuity}\index{semi-continuity} or approximative \emph{polarity}\index{polarity}
+\emph{semi-continuity} or approximative \emph{polarity}
 requirements on fixpoints' types in the presence of an \emph{infinite size}\index{infinite size}
 that is strictly larger than all sizes.
 Although I don't include an infinite size,
@@ -311,7 +306,7 @@ Type preservation of the translation is proven by induction on not only the typi
 but also the derivations of the judgements on which the typing rules depend.
 In particular, typing depends on subtyping\index{subtyping}, which in turn depends
 on \emph{$\alpha$-cumulativity}\index{$\alpha$-cumulativity}~\citep{MetaCoq}
-and on the reflexive, transitive, congruent closure of \emph{reduction}\index{reduction}.
+and on the reflexive, transitive, congruent closure of \emph{reduction}.
 Finally, this closure of reduction depends on the reduction rules,
 most of which are defined by substitution.
 Below are the relevant rules showing these dependencies and an example reduction rule.
@@ -429,13 +424,13 @@ By mutual induction on the derivations of $\wf{\Phi}{\Gamma}$ and $\type{\Phi; \
 using \cref{lem:overview:pres-subtyping}.
 \end{proof}
 
-The most important properties required of \lang are subject reduction,
+The most important properties required of \lang are subject reduction\index{subject reduction},
 used in \cref{lem:overview:pres-subtyping},
-and confluence, which is used to show that subtyping is transitive,
+and confluence\index{confluence}, which is used to show that subtyping is transitive,
 which in turn is used to prove the inversion principles for the typing judgement.
 
 This proof structure is possible by virtue of the non-mutuality of the judgements of \lang
-due to the use of untyped conversion (and hence untyped reduction).
+due to the use of untyped conversion\index{conversion} (and hence untyped reduction).
 If it were instead typed, then it would mutually depend on typing and subtyping as well,
 and the above lemmas would circularly depend on one another~\citep{wjb}. \\
 
@@ -450,8 +445,8 @@ or that I refer to again in later chapters.
 
 \GCC\index{Calculus of Constructions!Generalized \textasciitilde}
 was originally proposed by \citet{GCC-Coquand},
-adding a universe hierarchy to CC with untyped equality
-and using \rref{cum} for cumulativity.
+adding a universe hierarchy to CC\index{Calculus of Constructions} with untyped equality
+and using \rref{cum} for cumulativity\index{cumulativity}.
 The \emph{Extended Calculus of Constructions}\index{Calculus of Constructions!Extended \textasciitilde}
 (ECC) by \citet{ECC} adds a dependent pair type
 and uses a subtyping relation instead for cumulativity;
@@ -496,15 +491,16 @@ which is currently pCuIC.}
 \citet{pCIC} give a set-theoretic model for a variant of pCIC with typed equality.
 The \emph{Predicative Calculus of Cumulative Inductive Constructions}
 \index{Predicative Calculus of Cumulative Inductive Constructions} (pCuIC) \citep{pCuIC}
-further extends pCIC with additional cumulativity between inductive types,
+further extends pCIC with additional cumulativity\index{cumulativity} between inductive types,
 also providing a set-theoretic model,
 and it serves as the modern core calculus of Coq.
-Closely related is the MetaCoq project \citep{MetaCoq},
+Closely related is the MetaCoq project~\citep{MetaCoq}\index{MetaCoq},
 which mechanizes pCuIC and various of its metatheorems within Coq itself,
 with additional alternate untyped equality and subtyping judgements,
 since Coq's implementation of definitional equality is untyped.
 
-\citet{CCE} adds a propositional equality type with equality reflection to \GCC with \rref{cum} in \CCE,
+\citet{CCE} adds a propositional equality type with
+equality reflection\index{equality reflection} to \GCC with \rref{cum} in \CCE,
 although transitivity of definitional equality only holds for well-typed terms,
 and gives a syntactic model in an extension of CIC.
 Following that, \citet{CICE} improve upon the translation,
@@ -515,7 +511,8 @@ They implement the translation in Template Coq \citep{TemplateCoq},
 extending it to include inductive types.
 
 In contrast to these type systems based on CC,
-MLTT is a dependent type theory with a noncumulative universe hierarchy without $\Prop$,
+MLTT\index{Martin--L\"of type theory} is a dependent type theory
+with a noncumulative universe hierarchy without $\Prop$,
 typed equality, and some basic types: the empty type, the unit type,
 dependent pair types, disjoint sum types, and a propositional equality type,
 as well as the types of naturals and well-founded trees as mentioned.
@@ -532,7 +529,7 @@ while \CICE is based on pCIC with extensionality inspired by ETT.
 Sized dependent type systems date all the way back to \CCR by \citet{CCR},
 although its sized types are formulated quite differently from ``modern'' sized types.
 The first sized dependent type theory recognized as such is \CIChat by \citet{CIC-hat},
-which adds prenex\index{polymorphism!prenex/rank-1 \textasciitilde} sizes
+which adds prenex sizes
 and a size inference algorithm to CIC.
 In the intervening years, several nondependent sized type systems were developed,
 notably the ML-like type system by \citet{hughes} (independently of \CCR),
@@ -551,27 +548,27 @@ Other sized type systems and more extensive discussions can be found in disserta
 \begin{tabular}{l c c c l}
 Type system & Explicit sizes? & Higher-rank? & Bounded? & Size algebra \\
 \hline
-\citet{hughes} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & $\sss{s}, s + s, n \times s$ \\
-\lambdahat~\citep{lambda-hat, lambda-hat-diss} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & $\sss{s}$ \\
-\Fhat~\citep{F-hat} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & $\sss{s}$ \\
-\Fhattimes~\citep{F-hat-times} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & $\sss{s}, s + s$ \\
-\Fhatomega~\citep{Abel-diss} & \emoji{check-mark} & \emoji{check-mark} & \emoji{cross-mark} & $\sss{s}$ \\
-\Fcopomega~\citep{F-omega-cop} & \emoji{check-mark} & \emoji{check-mark} & \emoji{check-mark} & $\sss{s}$ \\
+\citet{hughes} & \crossmark & \crossmark & \crossmark & $\sss{s}, s + s, n \times s$ \\
+\lambdahat~\citep{lambda-hat, lambda-hat-diss} & \crossmark & \crossmark & \crossmark & $\sss{s}$ \\
+\Fhat~\citep{F-hat} & \crossmark & \crossmark & \crossmark & $\sss{s}$ \\
+\Fhattimes~\citep{F-hat-times} & \crossmark & \crossmark & \crossmark & $\sss{s}, s + s$ \\
+\Fhatomega~\citep{Abel-diss} & \checkmark* & \checkmark* & \crossmark & $\sss{s}$ \\
+\Fcopomega~\citep{F-omega-cop} & \checkmark* & \checkmark* & \checkmark* & $\sss{s}$ \\
 \end{tabular}
 \fi
 
 \begin{tabular}{l c c c c}
 Type theory & Explicit sizes? & Higher-rank? & Bounded? & Consistent? \\
 \hline
-\CIChat~\citep{CIC-hat} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{red-question-mark} \\
-\CIChatminus~\citep{CIC-hat-minus-nat, CIC-hat-minus} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{check-mark} \\
-\CChatomega~\citep{CC-hat-omega} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{check-mark} \\
-\CIChatl~\citep{CIC-hat-l} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{check-mark} \\
-\CIChatsub~\citep{CIC-hat-sub} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{check-mark} & \emoji{check-mark} \\
-\CIChatstar~\citep{CIC-hat-star} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{cross-mark} & \emoji{red-question-mark} \\
-\citet{NbE} & \emoji{check-mark} & \emoji{check-mark} & \emoji{cross-mark} & \emoji{check-mark} \\
-MiniAgda~\citep{MiniAgda, flationary} & \emoji{check-mark} & \emoji{check-mark} & \emoji{check-mark} & \emoji{cross-mark} \\
-\textbf{\lang} & \emoji{check-mark} & \emoji{check-mark} & \emoji{check-mark} & \emoji{check-mark}%
+\CIChat~\citep{CIC-hat} & \crossmark & \crossmark & \crossmark & \interromark \\
+\CIChatminus~\citep{CIC-hat-minus-nat, CIC-hat-minus} & \crossmark & \crossmark & \crossmark & \checkmark* \\
+\CChatomega~\citep{CC-hat-omega} & \crossmark & \crossmark & \crossmark & \checkmark* \\
+\CIChatl~\citep{CIC-hat-l} & \crossmark & \crossmark & \crossmark & \checkmark* \\
+\CIChatsub~\citep{CIC-hat-sub} & \crossmark & \crossmark & \checkmark* & \checkmark* \\
+\CIChatstar~\citep{CIC-hat-star} & \crossmark & \crossmark & \crossmark & \interromark \\
+\citet{NbE} & \checkmark* & \checkmark* & \crossmark & \checkmark* \\
+MiniAgda~\citep{MiniAgda, flationary} & \checkmark* & \checkmark* & \checkmark* & \crossmark \\
+\textbf{\lang} & \checkmark* & \checkmark* & \checkmark* & \checkmark*%
 \textsuperscript{\labelcref{foot:CICE-consistency}}
 \end{tabular}
 \caption{Sized dependent type theories and their properties}
