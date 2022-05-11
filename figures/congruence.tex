@@ -1,0 +1,218 @@
+\newcommand{\FigCongRed}[1]{
+  \begin{mathpar}
+  \inferrule{
+    \red*{\Phi; \Gamma}{\sigma}{\sigma'} \\
+    \red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau}{\tau'}
+  }{
+    \red*{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau}}{\funtype{x}{\sigma'}{\tau'}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi; \Gamma}{\sigma}{\sigma'} \\
+    \red*{\Phi; \Gamma, \annot{x}{\sigma'}}{e}{e'}
+  }{
+    \red*{\Phi; \Gamma}{\fun{x}{\sigma}{e}}{\fun{x}{\sigma'}{e'}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi; \Gamma}{e_1}{e'_1} \\
+    \red*{\Phi; \Gamma}{e_2}{e'_2}
+  }{
+    \red*{\Phi; \Gamma}{\app{e_1}{e_2}}{\app{e'_1}{e'_2}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi; \Gamma}{\sigma}{\sigma'} \\
+    \red*{\Phi; \Gamma}{e_1}{e'_1} \\\\
+    \red*{\Phi; \Gamma, \define{x}{\sigma'}{e'_1}}{e_2}{e'_2}
+  }{
+    \red*{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\letin{x}{\sigma'}{e'_1}{e'_2}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi, \alpha; \Gamma}{\tau}{\tau'}
+  }{
+    \red*{\Phi; \Gamma}{\Funtype{\alpha}{\tau}}{\Funtype{\alpha}{\tau'}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi, \alpha; \Gamma}{e}{e'}
+  }{
+    \red*{\Phi; \Gamma}{\Fun{\alpha}{e}}{\Fun{\alpha}{e'}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi; \Gamma}{e}{e'}
+  }{
+    \red*{\Phi; \Gamma}{\App{e}{s}}{\App{e'}{s}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi, \bound{\alpha}{s}; \Gamma}{\tau}{\tau'}
+  }{
+    \red*{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau}}{\Funtype<{\alpha}{s}{\tau'}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi, \bound{\alpha}{s}; \Gamma}{e}{e'}
+  }{
+    \red*{\Phi; \Gamma}{\Fun<{\alpha}{s}{e}}{\Fun<{\alpha}{s}{e'}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi, \alpha; \Gamma}{\sigma}{\sigma'} \\\\
+    \red*{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\sigma'}{\alpha}{\beta}}}}{e}{e'}
+  }{
+    \red*{\Phi; \Gamma}{\fix{f}{\alpha}{\sigma}{e}}{\fix{f}{\alpha}{\sigma'}{e'}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi; \Gamma}{\sigma}{\sigma'} \\
+    \red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau}{\tau'}
+  }{
+    \red*{\Phi; \Gamma}{\W{x}{\sigma}{\tau}{s}}{\W{x}{\sigma'}{\tau'}{s}}
+  }
+  \and
+  \inferrule{
+    \red*{\Phi; \Gamma}{\sigma}{\sigma'} \\
+    \red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau}{\tau'} \\
+    \red*{\Phi; \Gamma}{e_1}{e'_1} \\
+    \red*{\Phi; \Gamma}{e_2}{e'_2}
+  }{
+    \red*{\Phi; \Gamma}{\sup{x}{\sigma}{\tau}{s}{r}{e_1}{e_2}}{\sup{x}{\sigma'}{\tau'}{s}{r}{e'_1}{e'_2}}
+  }
+  \end{mathpar}
+}
+
+\newcommand{\FigCongRedCase}[1]{
+  \begin{mathpar}
+  \setlength{\jot}{-1.5pt}
+  \inferrule{
+    \red*{\Phi; \Gamma}{e}{e'} \\
+    \red*{\Phi; \Gamma, \annot{x}{\N{s}}}{P}{P'} \\\\
+    \red*{\Phi, \bound{\alpha}{s}; \Gamma}{e_z}{e'_z} \\
+    \red*{\Phi, \bound{\beta}{s}; \Gamma, \annot{z}{\N{\beta}}}{e_s}{e'_s} \\
+  }{
+    \red*{\Phi; \Gamma}{
+      \begin{aligned}
+      &\match{e}{\fun{x}{\N{s}}{P}}{ \\
+      &\quad \App{\zero*}{\alpha} \Rightarrow e_z \\
+      &\quad \app{\App{\succ*}{\beta}}{z} \Rightarrow e_s}
+      \end{aligned}
+    }{
+      \begin{aligned}
+      &\match{e'}{\fun{x}{\N{s}}{P}}{ \\
+      &\quad \App{\zero*}{\alpha} \Rightarrow e'_z \\
+      &\quad \app{\App{\succ*}{\beta}}{z} \Rightarrow e'_s}
+      \end{aligned}
+    }
+  }
+  \and
+  \inferrule{
+    \red*{\Phi; \Gamma}{e}{e'} \\
+    \red*{\Phi; \Gamma, \annot{x}{\W{y}{\sigma}{\tau}{s}}}{P}{P'} \\
+    \red*{\Phi, \bound{\alpha}{s}; \Gamma, \annot{z_1}{\sigma}, \annot{z_2}{\arr*{\subst{\tau}{y}{z_1}}{\W{y}{\sigma}{\tau}{\alpha}}}}{e_s}{e'_s}
+  }{
+    \red*{\Phi; \Gamma}{
+      \begin{aligned}
+      &\match{e}{\fun{x}{\W{y}{\sigma}{\tau}{s}}{P}}{ \\
+      &\quad \app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s}
+      \end{aligned}
+    }{
+      \begin{aligned}
+      &\match{e'}{\fun{x}{\W{y}{\sigma}{\tau}{s}}{P'}}{ \\
+      &\quad \app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e'_s}
+      \end{aligned}
+    }
+  }
+  \end{mathpar}
+}
+
+\newcommand{\FigCongEquiv}[1]{
+  \begin{mathpar}
+  \setlength{\jot}{-4pt}
+  \inferrule{
+    \defeq{\GammaT}{\sigmaT}{\sigmaT'}{\UT_1} \\
+    \defeq{\GammaT, \annotT{\xT}{\sigmaT'}}{\tauT}{\tauT'}{\UT_2}
+  }{
+    \defeq{\GammaT}{\funtypeT{\xT}{\sigmaT}{\tauT}}{\funtypeT{\xT}{\sigmaT'}{\tauT'}}{\rules{\UT_1}{\UT_2}}
+  }
+  \and
+  \inferrule{
+    \defeq{\GammaT}{\sigmaT}{\sigmaT'}{\UT} \\
+    \defeq{\GammaT, \annotT{\xT}{\sigmaT'}}{\eT}{\eT'}{\tauT}
+  }{
+    \defeq{\GammaT}{\funT{\xT}{\sigmaT}{\eT}}{\funT{\xT}{\sigmaT}{\eT'}}{\funtypeT{\xT}{\sigmaT'}{\tauT}}
+  }
+  \and
+  \inferrule{
+    \defeq{\GammaT}{\eT_1}{\eT'_1}{\funtypeT{\xT}{\sigmaT}{\tauT}} \\
+    \defeq{\GammaT}{\eT_2}{\eT'_2}{\sigmaT}
+  }{
+    \defeq{\GammaT}{\app{\eT_1}{\eT_2}}{\app{\eT'_1}{\eT'_2}}{\subst{\tauT}{\xT}{\eT'_2}}
+  }
+  \and
+  \inferrule{
+    \defeq{\GammaT}{\eT}{\eT'}{\tauT}
+  }{
+    \defeq{\GammaT}{\reflT{\eT}}{\reflT{\eT'}}{\eqT{\eT'}{\tau}{\eT'}}
+  }
+  \and
+  \inferrule{
+    \defeq{\GammaT}{\sigmaT}{\sigmaT'}{\UT} \\
+    \defeq{\GammaT}{\eT_1}{\eT'_1}{\sigmaT'} \\
+    \defeq{\GammaT, \defineT{\xT}{\sigmaT'}{\eT'_1}}{\eT_2}{\eT'_2}{\tauT}
+  }{
+    \defeq{\GammaT}{\letinT{\xT}{\sigmaT}{\eT_1}{\eT_2}}{\letinT{\xT}{\sigmaT'}{\eT'_1}{\eT'_2}}{\subst{\tauT}{\xT}{\eT'_1}}
+  }
+  \and
+  \inferrule{
+    \defeq{\GammaT}{\tauT}{\tauT'}{\UT} \\\\
+    \defeq{\GammaT}{\eT_1}{\eT'_1}{\tauT'} \\
+    \defeq{\GammaT}{\eT_2}{\eT'_2}{\tauT'}
+  }{
+    \defeq{\GammaT}{\eqT{\eT_1}{\tauT}{\eT_2}}{\eqT{\eT'_1}{\tauT'}{\eT'_2}}{\UT}
+  }
+  \and
+  \inferrule{
+    \defeq{\GammaT}{\PT}{\PT'}{\funtypeT{\yT}{\tauT}{\funtypeT{\zT}{\eqT{\eT_1}{\tauT}{\yT}}{\UT}}} \\\\
+    \defeq{\GammaT}{\dT}{\dT'}{\app{\PT'}{\eT_1}{\reflT{\eT_1}}} \\
+    \defeq{\GammaT}{\pT}{\pT'}{\eqT{\eT_1}{\tauT}{\eT_2}}
+  }{
+    \defeq{\GammaT}{\JT{\PT}{\dT}{\pT}}{\JT{\PT'}{\dT'}{\pT'}}{\app{\PT'}{\eT_2}{\pT'}}
+  }
+  \and
+  \inferrule{
+    \app{\dataT{\app{\XT}{(\annotT{\vec{\wT}}{\vec{\vphantom{\wT}\any}})}}{\arrT*{\DeltaT_I}{\UT}}}{\DeltaT_c} \\
+    \annotT{\vec{\yT}}{\vec{\sigmaT}} = \subst{\DeltaT_I}{\vec{\wT}}{\vec{\pT}} \\
+    \defeq{\GammaT}{\eT}{\eT'}{\app{\XT}{\vec{\pT}}{\vec{\aT}}} \\
+    \defeq{\GammaT, \annotT{\vec{\yT}}{\vec{\sigmaT}}, \annotT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}}{\PT}{\PT'}{\UT'} \\
+    \textrm{For every $1 \leq i \leq n$:} \\
+    (\annotT{\cT_i}{\arrT*{(\annotT{\vec{\zT}_i}{\vec{\tauT}_i})}{\app{\XT}{\vec{\pT}}{\vec{\aT}_i}}}) \in \subst{\DeltaT_c}{\vec{\wT}}{\vec{\pT}} \\
+    \defeq{\GammaT, \annotT{\vec{\zT}_i}{\vec{\tauT}_i}}{\eT_i}{\eT'_i}{\subst{\PT}{\vec{\yT}, \xT}{\vec{\aT}_i, \app{\cT_i}{\vec{\pT}}{\vec{\zT}_i}}}
+  }{
+    \defeq{\GammaT}{
+      \begin{aligned}
+      &\matchT{\eT}{\funT*{\vec{\yT}}{\xT}{\PT}}{ \\
+      &\quad \app{\cT_1}{\vec{\zT}_1} \RightarrowT \eT_1 \\
+      &\quad \seq \\
+      &\quad \app{\cT_n}{\vec{\zT}_n} \RightarrowT \eT_n}
+      \end{aligned}
+    }{
+      \begin{aligned}
+      &\matchT{\eT'}{\funT*{\vec{\yT}}{\xT}{\PT'}}{ \\
+      &\quad \app{\cT_1}{\vec{\zT}_1} \RightarrowT \eT'_1 \\
+      &\quad \seq \\
+      &\quad \app{\cT_n}{\vec{\zT}_n} \RightarrowT \eT'_n}
+      \end{aligned}
+    }{\subst{\PT'}{\vec{\yT}, \xT}{\vec{\aT}, \eT'}}
+  }
+  \and
+  \inferrule{
+    \defeq{\GammaT}{\tauT}{\tauT'}{\UT} \\
+    \defeq{\GammaT, \annotT{\fT}{\tauT'}}{\eT}{\eT'}{\tauT'}
+  }{
+    \defeq{\GammaT}{\fixT{\nT}{\fT}{\tauT}{\eT}}{\fixT{\nT}{\fT}{\tauT'}{\eT'}}{\tauT'}
+  }
+  \end{mathpar}
+}

@@ -20,7 +20,5 @@
 
 * Revisit `% TODO`s eventually
 * Prove confluence
-* Add congruence rules in Appendix
-* Fix index entries (a lot are probably missing) and glossary entries
 * Lay Summary, Acknowledgements
 * Fix weird page break/spacing issues
