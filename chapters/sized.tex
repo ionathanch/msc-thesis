@@ -52,9 +52,9 @@ and well-formedness of size and term environments.
 The reduction rules and their reflexive, transitive, congruent closures are described in \cref{fig:reduction}.
 \new{$\subst{e}{x}{e'}$} denotes capture-avoiding substitution of $x$ for $e'$ within $e$,
 and \new{$\subst{e}{x_1, \seq, x_n}{e_1, \seq, e_n}$} correspondingly denotes simultaneous substitution.
-For every syntactic form of a term there is a corresponding congruence rule,
+For every syntactic form of a composite term there is a corresponding congruence rule,
 which is summarized by \rref{red*-cong};
-the full set of rules can be found in \TODO. % put them in the appendix
+the full set of rules can be found in \cref{app:cong:red}.
 By convention, the reduction rules for functions are also referred to as $\beta$-reduction,
 for $\kw{let}$ expressions as $\zeta$-reduction,
 and for defined variables as $\delta$-reduction.
