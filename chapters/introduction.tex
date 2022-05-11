@@ -16,6 +16,7 @@ to vastly simplify, ensures that recursive calls occur only on syntactic subargu
 if the original argument is some natural $\app{\succ*}{n}$, then the function recurs only on $n$;
 if it's some list $\app{\cons*}{\hd}{\tl}$, then it recurs only on $\tl$;
 and so on.
+
 Although this is usually referred to as a syntactic termination check,
 the key desired property in dependent types rather \emph{consistency}.
 Indeed, a type theory may be consistent yet nonnormalizing
@@ -61,7 +62,7 @@ it has known disadvantages:
 Alternatives to the syntactic guardedness check that avoid these issues are type-based checks,
 where the type system itself is augmented so that successful type checking
 immediately guarantees termination and consistency.
-The one that this thesis discusses is \emph{sized typing}\punctstack{,}%
+The one this thesis focuses on is \emph{sized typing}\punctstack{,}%
 \footnote{The other common one uses \emph{guarded types}~\citep{guarded-types}.}
 where inductive types are annotated with size information,
 and constructors construct constructions whose size is larger than that of their subarguments.
