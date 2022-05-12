@@ -1,14 +1,66 @@
 \chapter{Introduction} \label{ch:introduction}
 
+\section{Background}
 
+\subsection{Theorem proving with dependent types} \label{tt}
 
-\section{Recursion with Sized Types}
+Many contemporary proof assistants are founded on the Curry--Howard correspondence,
+where propositions correspond to types,
+proofs of these propositions to terms of those types,
+and proof verification to type checking.
+Different type theories correspond to different logical systems;
+dependent type theories, in particular, correspond to predicate logics.
+The primary feature of dependent type theory is the dependent function type,
+because it encodes universal quantification by allowing types to \emph{depend on} terms:
+the type $\funtype{x}{A}{\app{P}{x}}$ can be interpreted as the statement
+``for all objects $x$ in $A$, $P$ holds of $x$'',
+with the consequent $\app{P}{x}$ depending on the term $x$.
+Other logical constructs can be encoded as well, for example:
+
+\begin{itemize}
+  \item Falsehood ($\bot$) as $\funtype{P}{\Prop}{P}$,
+    (where $\Prop$ is the type of all propositions),
+    the statement that \emph{all} propositions hold;
+  \item Implication as $\funtype{\any}{A}{B}$
+    (or $\arr*{A}{B}$ for short),
+    where $B$ holds only when given a proof of $A$;
+  \item Negation as $\arr*{A}{\bot}$,
+    or that proving $A$ will yield a falsehood; and
+  \item Truthhood as $\funtype{P}{\Prop}{\arr*{P}{P}}$\punctstack{,}%
+    \footnote{This encoding is slightly simpler than
+    the negation of falsehood $\arr*{\bot}{\bot}$,
+    particularly when written out in full.}
+    which is trivially inhabited by the identity function
+    $\fun{P}{\Prop}{\fun{p}{P}{p}}$;
+\end{itemize}
+and many other logical connectives such as existential quantification, conjunction, and disjunction.
+
+A key metatheoretical property that a type theory must satisfy
+for its interpretation as a logical system to be valid is \emph{consistency}:
+falsehood cannot be proven.
+In other words, there must not be any term whose type is $\funtype{P}{\Prop}{P}$.
+Otherwise, any proposition would be provable,
+which goes against the intuition of how a logical system should behave.
+
+The two most important components of a formal description of a dependent type theory
+are its typing judgement, whose rules describe when a term has a certain type,
+and its equality judgement(s), whose rules describe when two terms are equal.
+The latter is relevant in dependent types because they allow determining that,
+for instance, a proof of \mbox{$\app{P}{(\app{(\fun{y}{A}{y})}{x})}$}
+is in fact also a proof of $\app{P}{x}$.
+Naturally, equality is sometimes described in terms of reduction judgements,
+governed by the rules of computation.
+This means that, in contrast to nondependent type systems,
+whether type checking always terminates depends on whether the language is normalizing.
+The issue gets even more complicated with more complex forms of reduction like recursion.
+
+\subsection{Recursive programming with sized types} \label{ss}
 
 Inductively defined data and recursive functions on them
 are indispensible tools of dependently-typed programming,
 allowing the expression of a variety of constructs, programs, and their properties.
-A crucial restriction on recursive functions that exist in contemporary proof assistants
-based on dependent type theory, such as Agda, Coq, Idris, Lean, and more,
+A crucial restriction on recursive functions
+in proof assistants such as Agda, Coq, Idris, Lean, and more
 is that recursive functions must be \emph{guarded by destructors}\index{guardedness}
 and only recur on structurally smaller arguments~\citep{guard}.
 This guardedness check is statically done before or during type checking and,
@@ -18,13 +70,15 @@ if it's some list $\app{\cons*}{\hd}{\tl}$, then it recurs only on $\tl$;
 and so on.
 
 Although this is usually referred to as a syntactic termination check,
-the key desired property in dependent types rather \emph{consistency}.
+and termination is essential in ensuring decidability of type checking,
+the key desired property is rather consistency.
 Indeed, a type theory may be consistent yet nonnormalizing
 (as is the case with an impredicative\index{impredicativity},
 definitionally proof-irrelevant $\Prop$ universe~\citep{impred-proof-irrel}),
 but unrestricted recursion easily proves an inconsistency:
 the recursive function $f$ defined by $\fun{P}{\Prop}{\app{f}{P}}$,
-for instance, can be assigned type $\funtype{P}{\Prop}{P}$.
+for instance, can be assigned type $\funtype{P}{\Prop}{P}$,
+in addition to being nonterminating.
 
 While the guardedness check, being based on the elimination principles of inductive types,
 yields terminating functions and a consistent type theory,
@@ -126,7 +180,7 @@ the dependent types and the sized types of \lang,
 explain how a syntactic model is used to prove its consistency,
 and briefly outline the structure of the proof.
 
-\subsection{Dependent Types}
+\subsection{Dependent types}
 
 As a simple but expressive foundation for dependent types,
 I start with the Generalized Calculus of Constructions (\GCC)\index{Calculus of Constructions!Generalized \textasciitilde} \citep{GCC-Coquand},
@@ -181,7 +235,7 @@ obscures the intuition behind sized inductive types and the syntactic model,
 while it's easy to see how one \emph{could} go from the naturals and well-founded trees
 to inductive types in general.
 
-\subsection{Sized Types}\label{sec:sized-types}
+\subsection{Sized types}\label{sec:sized-types}
 
 Sized types are introduced with explicit size quantification $\Funtype{\alpha}{\tau}$,
 size abstraction $\Fun{\alpha}{e}$, and size application $\App{e}{s}$.
@@ -254,7 +308,7 @@ since its properties and its use are known to be inconsistent in Agda.
 A demonstration of the inconsistency of a hypothetical infinite size in \lang
 is given in \cref{sec:infinity}.
 
-\subsection{Syntactic Model}\label{sec:syntactic-model}
+\subsection{Syntactic model}\label{sec:syntactic-model}
 
 To show that \lang is consistent and therefore a suitable type theory for proofs,
 I define for it a \emph{syntactic model}\index{syntactic model}~\citep{syntactic-models}.
@@ -309,7 +363,7 @@ Type preservation of the translation is proven by induction on not only the typi
 but also the derivations of the judgements on which the typing rules depend.
 In particular, typing depends on subtyping\index{subtyping}, which in turn depends
 on \emph{$\alpha$-cumulativity}\index{$\alpha$-cumulativity}~\citep{MetaCoq}
-and on the reflexive, transitive, congruent closure of \emph{reduction}.
+and on the reflexive, transitive, congruent closure of reduction.
 Finally, this closure of reduction depends on the reduction rules,
 most of which are defined by substitution.
 Below are the relevant rules showing these dependencies and an example reduction rule.
