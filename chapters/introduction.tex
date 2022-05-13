@@ -113,9 +113,16 @@ it has known disadvantages:
     \end{itemize}
 \end{itemize}
 
+In cases where the guardedness check fails on terminating functions,
+the programmer can refactor the function to recur on a different, related argument,
+such as the length of a list in the example above,
+but this requires additional work and may bloat programs
+with extra code solely for satisfying the guardedness check
+that detracts from the programs' original intent.
 Alternatives to the syntactic guardedness check that avoid these issues are type-based checks,
 where the type system itself is augmented so that successful type checking
 immediately guarantees termination and consistency.
+
 The one this thesis focuses on is \emph{sized typing}\punctstack{,}%
 \footnote{The other common one uses \emph{guarded types}~\citep{guarded-types}.}
 where inductive types are annotated with size information,
