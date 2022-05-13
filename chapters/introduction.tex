@@ -1,6 +1,32 @@
 \chapter{Introduction} \label{ch:introduction}
 
+A type system is a delicate balance between expressivity and well-behavedness.
+More expressivity allows for more programs to be well-typed,
+while paradoxically allowing less code to be written,
+because some of the onus of ensuring a program is valid is shifted
+from the programmer to the process of type checking.
+On the other hand, too much expressivity can destroy
+desirable metatheoretical properties of the type system ---
+strings get be treated as integers, booleans can be called like functions,
+and the language falls to chaos and ruin.
+
+The balancing act is particulary perilous for type systems
+used by proof assistants for mechanized theorem proving,
+because a lack of expressivity can make it too much of a burden to be practically useful,
+while it's all to easy to add some convenient, seemingly innocuous feature
+that turns out to dismantle the logic of the system,
+rendering it unusable for proving.
+
+This thesis deals with dependent type theory, which is commonly used for theorem proving,
+together with sized types, a feature for inductively defined types
+used to increase the expressivity of recursive functions,
+and shows that dependent types can be extended with state-of-the-art sized types
+without sacrificing key metatheoretical properties.
+
 \section{Background}
+
+Before we begin, I briefly summarize why dependent types are used for theorem proving,
+as well as what sized types have to offer in the context of programming with dependent types.
 
 \subsection{Theorem proving with dependent types} \label{tt}
 
@@ -166,7 +192,7 @@ Instead, the purpose is threefold:
     but not both, to my knowledge.
     On the other hand, they are currently in Agda's implementation of sized types.
     By proving the consistency of \lang, a novel type theory with these two features,
-    I bring the theoretical state-of-the-art closer to practice.
+    I bring the theoretical state-of-the-art closer to practice. \\
   \item To demonstrate the viability of using a syntactic model to prove consistency
     of a sized type theory.
     Doing so from scratch through a set-theoretic model is notoriously difficult,
@@ -271,6 +297,8 @@ for instance, supposing we have cons lists parametrized over some sized type $\t
 one could write a size-preserving mapping function over a list
 that leaves the sizes untouched.
 The type of such a function might be
+
+\vspace{-0.25\baselineskip}
 $$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\app{\List*}{(\App{\tau}{\alpha})}}{\app{\List*}{(\App{\tau}{\alpha})}}}.$$
 
 Along with higher-rank sizes, I also include \emph{bounded} size quantification $\Funtype<{\alpha}{s}{\tau}$
@@ -344,7 +372,7 @@ we prove the consistency of \lang.
 
 \begin{postulate}[Consistency of \CICE]\label{fact:consistency-cice}
 There exists no term $\eT$ such that
-$\type{\mt}{\eT}{\funtypeT{\PT}{\PropT}{\PT}}$.
+\mbox{$\type{\mt}{\eT}{\funtypeT{\PT}{\PropT}{\PT}}$}.
 \end{postulate}
 
 \begin{theorem}[Consistency of \lang]\label{thm:consistency}

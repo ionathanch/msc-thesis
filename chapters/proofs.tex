@@ -1918,13 +1918,13 @@ By mutual induction on the derivations of $\wf{}{\Phi}$ and $\wf{\Phi}{s}$.
     \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
       \item \rref*{nil}. Trivial.
       \item \rref*{cons-size}. By the induction hypothesis and \rref{ind, cons*-ass}.
-      \item \rref*{cons-size<}. By the induction hypotheses and \rref{ind, cons*-ass} twice.
+      \item \rref*{cons-size<}. By the induction hypotheses and \rref{ind, cons*-ass}.
     \end{itemize}
   \item %
     \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
       \item $\wf{\Phi}{\alpha}$. By the induction hypothesis and \rref{var*}.
       \item $\wf{\Phi}{\circ}$. By the induction hypothesis and well-typedness of $\baseT$.
-      \item $\wf{\Phi}{\sss{s}}$. By the induction hypothesis and \rref{constr}.
+      \item $\wf{\Phi}{\sss{s}}$. By the induction hypothesis and \rref{constr}. \qedhere
     \end{itemize}
 \end{enumerate}
 \end{proof}
