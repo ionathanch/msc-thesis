@@ -215,7 +215,6 @@ as they would lack a translation in the syntactic model.
 Nevertheless, we can speculate on how they might appear and interact with sizes.
 Here, I define the classic example of coinductive streams,
 composed of a head element and a tail stream.
-
 \begin{mathpar}
 \inferrule[\rlabel*{stream}]{
   \wf{\Phi}{s} \\
@@ -272,6 +271,7 @@ just like fixpoints.
 Interestingly, this suggests that cofixpoints might also be translated in the syntactic model
 to well-founded induction\index{well-founded induction} on sizes despite constructing a coinductive type.
 
+\clearpage % TODO: clearpage
 With cofixpoints, we can then construct an infinite stream of some single element.
 Let $A$ in the definitions to follow be some type.
 \begin{align*}
@@ -326,7 +326,6 @@ in terms of a single coinductive $\Thunk{F}{s}$ record%
 with sized parameter $F$ and size $s$,
 and all other coinductives are implemented as nested inductives,
 where occurrences of the type in its constructors' types are wrapped around a $\Thunk*$.
-
 \begin{mathpar}
 \inferrule[\rlabel*{thunk}]{
   \wf{\Phi}{s} \\
