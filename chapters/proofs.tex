@@ -1,7 +1,7 @@
 \chapter{Metatheory and Type Preservation} \label{ch:proofs}
 
 In this chapter, I elaborate on the proofs of the lemmas and theorems listed in \cref{sec:syntactic-model},
-culminating in type preservation, which by \cref{thm:consistency} proves the consistency of \lang.
+culminating in type preservation, which by \cref{thm:overview:consistency} proves the consistency of \lang.
 Prior to these proofs, I provide the required metatheoretical properties of both \lang and \CICE.
 
 \section{Metatheory of \lang}
@@ -15,6 +15,8 @@ and \emph{substitutivity}\index{substitutivity}, which allows the subsitution of
 or a size variable by a size expression.
 Because term environments have definitions in addition to assumptions,
 substitutivity can only apply to variables that aren't already defined in the environment.
+A final property is the congruence of the reflexive, transitive closure of reduction,
+which extends congruence of reduction to its closure.
 
 \begin{lemma}[Weakening] \label{lem:weakening}
 Let $\Phi$ be a size environment,
@@ -31,7 +33,7 @@ and suppose $\wf{\Phi}{\Gamma, \Gamma'}$.
 
 \begin{proof} \hfill
 \begin{enumerate}[noitemsep]
-  \item Trivial by cases on the derivation of $\red{\Phi; \Gamma}{e_1}{e_2}$.
+  \item By induction on the derivation of $\red{\Phi; \Gamma}{e_1}{e_2}$.
   \item By induction on the derivation of $\red*{\Phi; \Gamma}{e_1}{e_2}$,
     using \cref{item:weakening:red} in \rref{red*-once}.
   \item Trivial by \cref{item:weakening:red*} in \rref{subtype-red}.
@@ -210,12 +212,25 @@ if $\alpha = r_1$ and $s_2 = r_2$ (\ie $\Phi_2 = \mt$),
 use $\subsize{\Phi_1}{\sss{r}_1}{r_2}$.
 \end{proof}
 
+\begin{lemma}[Congruence of closure of reduction] \label{lem:congruence}
+If $\red*{\Phi'; \Gamma'}{e_1}{e_2}$
+then $\red*{\Phi; \Gamma}{\subst{e}{x}{e_1}}{\subst{e}{x}{e_2}}$.
+\end{lemma}
+
+\begin{proof}
+Either $e_1 = e_2$, making the goal trivial by \rref{red*-refl},
+or we can show by induction that $\red*{\Phi'; \Gamma'}{e_1}{e_2}$
+can be split into a finite number of reductions
+$\Phi'; \Gamma' \vdash e_1 \rhd e'_{1} \rhd \dots \rhd e'_{n} \rhd e_2$.
+By \rref{red-cong, red*-once}, we have
+$\Phi; \Gamma \vdash \subst{e}{x}{e_1} \rhd^* \subst{e}{x}{e'_{1}} \rhd^* \dots \rhd^* \subst{e}{x}{e'_{n}} \rhd^* \subst{e}{x}{e_2}$,
+which can then be chained together using \rref{red*-trans}.
+\end{proof}
+
 From here onwards, because it's used so often in uninteresting ways,
 I omit explicit references to uses of weakening.
 
 \subsection{Confluence}
-
-\TODO \index{confluence}
 
 \begin{theorem}[Confluence] \label{thm:confluence}
 If $\red*{\Phi; \Gamma}{e}{e_1}$ and $\red*{\Phi; \Gamma}{e}{e_2}$
@@ -224,7 +239,6 @@ $\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
 \end{theorem}
 
 \begin{proof}
-\TODO: Ask Lily
 \end{proof}
 
 \subsection{Inversion}
@@ -301,7 +315,7 @@ By induction on the derivation of $\acum{e_1}{e_2}$.
     By \rref{red*-refl, acum-refl, subtype-red},
     we have $\subtype{\Phi; \Gamma}{\sigma'}{\sigma_i}$ for $i = 1, 2$.
     Then by \nameref{lem:replacement-subtyping},
-    we have \item $\red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau_i}{\tau'_i}$
+    we have $\red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau_i}{\tau'_i}$
     for $i = 1, 2$,
     and we can apply the induction hypothesis to get
     \begin{itemize}[noitemsep]
@@ -309,7 +323,7 @@ By induction on the derivation of $\acum{e_1}{e_2}$.
       \item $\red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau'_2}{\tau''_2}$, and
       \item $\acum{\tau''_1}{\tau''_2}$.
     \end{itemize}
-    Finally, by \rref{red*-cong, acum-pi}, we have
+    Finally, by \nameref{lem:congruence}, we have
     \begin{itemize}[noitemsep]
       \item $\red*{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau'_1}}{\funtype{x}{\sigma'}{\tau''_1}}$, 
       \item $\red*{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau'_2}}{\funtype{x}{\sigma'}{\tau''_2}}$, and
@@ -345,7 +359,7 @@ By induction on the derivation of $\acum{e_1}{e_2}$.
     where $\red*{\Phi; \Gamma}{\sigma}{\sigma'}$ and $\red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau_1}{\tau'_1}$.
     By the induction hypothesis, we can conclude that there is some term $\tau'_2$ such that
     $\red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau_2}{\tau'_2}$ and $\acum{\tau'_1}{\tau'_2}$.
-    Then by \rref{red*-cong} we conclude that $\red*{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau_2}}{\funtype{x}{\sigma'}{\tau'_2}}$,
+    Then by \nameref{lem:congruence} we conclude that $\red*{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau_2}}{\funtype{x}{\sigma'}{\tau'_2}}$,
     and by \rref{acum-pi} that $\acum{\funtype{x}{\sigma'}{\tau'_1}}{\funtype{x}{\sigma'}{\tau'_2}}$.
   \item \rref*{acum-forall}, \rref*{acum-forall<}. Similar to the case for \rref*{acum-pi}. \qedhere
 \end{enumerate}
@@ -494,7 +508,7 @@ and $\red*{\Phi; \Gamma_1, \define{x}{\sigma}{e'_1}, \Gamma_2}{e'_2}{e''_2}$.
 \end{lemma}
 
 \begin{proof}
-By cases on the derivation of
+By induction on the derivation of
 $\red{\Phi; \Gamma_1, \define{x}{\sigma}{e_1}, \Gamma_2}{e_2}{e'_2}$.
 In the case of $\delta$-reduction where
 $\red{\Phi; \Gamma_1, \define{x}{\sigma}{e_1}, \Gamma_2}{x}{e_1}$,
@@ -503,6 +517,8 @@ we have
   \item $\red*{\Phi; \Gamma_1, \define{x}{\sigma}{e'_1}, \Gamma_2}{x}{e'_1}$ by $\delta$-reduction and \rref{red*-once}, and
   \item $\red*{\Phi; \Gamma_1, \define{x}{\sigma}{e'_1}, \Gamma_2}{e_1}{e'_1}$ by the second hypothesis.
 \end{itemize}
+For the case of \rref*{red-cong},
+the goal holds by the induction hypotheses and \nameref{lem:congruence}.
 All other cases are trivial, always reducing to the existing reduct.
 \end{proof}
 
@@ -517,10 +533,9 @@ and $\red*{\Phi; \Gamma_1, \define{x}{\sigma}{e'_1}, \Gamma_2}{e'_2}{e''_2}$.
 \begin{proof}
 By induction on the derivation of
 $\red*{\Phi; \Gamma_1, \define{x}{\sigma}{e_1}, \Gamma_2}{e_2}{e'_2}$.
-The \rref{red*-once} case holds by \cref{lem:replacement-reduction-1},
-the \rref{red*-refl} case by \rref{red*-refl},
-and the \rref{red*-cong} cases straightforwardly by their induction hypotheses.
-The \rref{red*-trans} case holds using \nameref{thm:confluence}
+The \rref*{red*-once} case holds by \cref{lem:replacement-reduction-1} and
+the \rref*{red*-refl} case by \rref{red*-refl}.
+The \rref*{red*-trans} case holds using \nameref{thm:confluence}
 on the two reducts from the middle term in the transitivity.
 \end{proof}
 
@@ -720,44 +735,74 @@ If $\type{\Phi; \Gamma}{e}{\tau}$ and $\red{\Phi; \Gamma}{e}{e'}$ then $\type{\P
 \end{lemma}
 
 \begin{proof}
-By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$ and \nameref{thm:inversion} of the right-hand term.
-The case for $\delta$-reduction follows by \cref{lem:wf-env,lem:wf-defs}.
-The remaining cases are all similar to one another;
-I cover only $\beta$-reduction for the application of bounded sizes here.
-\vspace{-\baselineskip}
-\begin{mathpar}
-\inferrule{~}{
-  \red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}
-}
-\end{mathpar}
-By inversion on \rref{sapp<}, we have
-\begin{itemize}[noitemsep]
-  \item $\type{\Phi; \Gamma}{\Fun<{\alpha}{r}{e}}{\Funtype<{\alpha}{r}{\sigma}}$,
-  \item $\subsize{\Phi}{\sss{s}}{r}$, and
-  \item $\subtype{\Phi; \Gamma}{\subst{\sigma}{\alpha}{s}}{\tau}$.
+By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$ and \nameref{thm:inversion} of the right-hand term.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item \textbf{for $\delta$-reduction}. Follows by \cref{lem:wf-env,lem:wf-defs}.
+  \item \textbf{for $\beta$-reduction} (application of bounded sizes).
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{~}{
+      \red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}
+    }
+    \end{mathpar}
+    By inversion on \rref{sapp<}, we have
+    \begin{itemize}[noitemsep]
+      \item $\type{\Phi; \Gamma}{\Fun<{\alpha}{r}{e}}{\Funtype<{\alpha}{r}{\sigma}}$,
+      \item $\subsize{\Phi}{\sss{s}}{r}$, and
+      \item $\subtype{\Phi; \Gamma}{\subst{\sigma}{\alpha}{s}}{\tau}$.
+    \end{itemize}
+    By inversion again on \rref{slam}, we have
+    \begin{itemize}[noitemsep]
+      \item $\wf{\Phi}{s}$,
+      \item $\type{\Phi, \bound{\alpha}{s}; \Gamma}{e}{\sigma'}$, and
+      \item $\subtype{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\sigma'}}{\Funtype<{\alpha}{s}{\sigma}}$.
+    \end{itemize}
+    By inversion on subtyping, $\alpha$-cumulativity, and closure of reduction,
+    we also have $\subtype{\Phi, \bound{\alpha}{s}; \Gamma}{\sigma'}{\sigma}$.
+    % TODO: please don't make me explicitly list the inversion principles
+    By \nameref{lem:substitutivity-bounded}, we have
+    \begin{itemize}[noitemsep]
+      \item $\subtype{\Phi; \Gamma}{\subst{\sigma'}{\alpha}{s}}{\subst{\sigma}{\alpha}{s}}$ and
+      \item $\type{\Phi; \Gamma}{\subst{e}{\alpha}{s}}{\subst{\sigma'}{\alpha}{s}}$.
+    \end{itemize}
+    By \nameref{thm:transivity-subtyping} and \nameref{thm:regularity}, we have
+    \begin{itemize}[noitemsep]
+      \item $\subtype{\Phi; \Gamma}{\subst{\sigma'}{\alpha}{s}}{\tau}$,
+      \item $\type{\Phi; \Gamma}{\subst{\sigma'}{\alpha}{s}}{U_1}$, and
+      \item $\type{\Phi; \Gamma}{\tau}{U_2}$.
+    \end{itemize}
+    By \rref{conv}, both $\subst{\sigma'}{\alpha}{s}$ and $\tau$ have type $\rules{U_1}{U_2}$.
+    Finally, by \rref{conv} again, we have $\type{\Phi; \Gamma}{\subst{e}{\alpha}{s}}{\tau}$.
+  \item \rref*{red-cong}.
+    All of the cases for the congruence rules are similar to one another.
+    I cover only the case for reduction of the bound expression in a $\kw{let}$ expression,
+    which requires careful handling of definitions in the environment.
+    \begin{mathpar}
+    \inferrule{
+      \red{\Phi; \Gamma}{e_1}{e'_1}
+    }{
+      \red{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\letin{x}{\sigma}{e'_1}{e_2}}
+    }
+    \end{mathpar}
+    By inversion on \rref{let}, we have
+    \begin{itemize}[noitemsep]
+      \item $\type{\Phi; \Gamma}{\sigma}{U}$,
+      \item $\type{\Phi; \Gamma}{e_1}{\sigma}$, and
+      \item $\type{\Phi; \Gamma, \define{x}{\sigma}{e_1}}{e_2}{\tau'}$, and
+      \item $\subtype{\Phi; \Gamma}{\subst{\tau'}{x}{e_1}}{\tau}$.
+    \end{itemize}
+    By the induction hypothesis, we have $\type{\Phi; \Gamma}{e'_1}{\sigma}$.
+    By \nameref{lem:replacement-reduction},
+    we have $\type{\Phi; \Gamma, \define{x}{\sigma}{e'_1}}{e_2}{\tau'}$.
+    By \rref{let}, we have $\type{\Phi; \Gamma}{\letin{x}{\sigma}{e'_1}{e_2}}{\subst{\tau'}{x}{e'_1}}$.
+    By \nameref{lem:congruence},
+    we have $\red*{\Phi; \Gamma}{\subst{\tau'}{x}{e_1}}{\subst{\tau'}{x}{e'_1}}$.
+    Then by \rref{red*-refl, acum-refl, subtype-red}, \nameref{thm:transivity-subtyping},
+    we have $\subtype{\Phi; \Gamma}{\subst{\tau'}{x}{e'_1}}{\tau}$.
+    Finally, by \rref{conv}, we have $\type{\Phi; \Gamma}{\letin{x}{\sigma}{e'_1}{e_2}}{\tau}$.
+  \item[\textbf{Cases}] \textbf{remaining}.
+    All similar to the case for $\beta$-reduction for application of bounded sizes. \qedhere
 \end{itemize}
-By inversion again on \rref{slam}, we have
-\begin{itemize}[noitemsep]
-  \item $\wf{\Phi}{s}$,
-  \item $\type{\Phi, \bound{\alpha}{s}; \Gamma}{e}{\sigma'}$, and
-  \item $\subtype{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\sigma'}}{\Funtype<{\alpha}{s}{\sigma}}$.
-\end{itemize}
-By inversion on subtyping, $\alpha$-cumulativity, and closure of reduction,
-we also have $\subtype{\Phi, \bound{\alpha}{s}; \Gamma}{\sigma'}{\sigma}$.
-% TODO: please don't make me explicitly list the inversion principles
-By \nameref{lem:substitutivity-bounded}, we have
-\begin{itemize}[noitemsep]
-  \item $\subtype{\Phi; \Gamma}{\subst{\sigma'}{\alpha}{s}}{\subst{\sigma}{\alpha}{s}}$ and
-  \item $\type{\Phi; \Gamma}{\subst{e}{\alpha}{s}}{\subst{\sigma'}{\alpha}{s}}$.
-\end{itemize}
-By \nameref{thm:transivity-subtyping} and \nameref{thm:regularity}, we have
-\begin{itemize}[noitemsep]
-  \item $\subtype{\Phi; \Gamma}{\subst{\sigma'}{\alpha}{s}}{\tau}$,
-  \item $\type{\Phi; \Gamma}{\subst{\sigma'}{\alpha}{s}}{U_1}$, and
-  \item $\type{\Phi; \Gamma}{\tau}{U_2}$.
-\end{itemize}
-By \rref{conv}, both $\subst{\sigma'}{\alpha}{s}$ and $\tau$ have type $\rules{U_1}{U_2}$.
-Finally, by \rref{conv} again, we have $\type{\Phi; \Gamma}{\subst{e}{\alpha}{s}}{\tau}$.
 \end{proof}
 
 \begin{theorem}[Subject reduction] \label{thm:subject-reduction}
@@ -772,7 +817,8 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
   \item \rref*{red*-trans}. By the induction hypothesis on the first premise we have
     $\type{\Phi; \Gamma}{e_2}{\tau}$;
     by the induction hypothesis again on the second premise we have
-    $\type{\Phi; \Gamma}{e_3}{\tau}$.
+    $\type{\Phi; \Gamma}{e_3}{\tau}$. \qedhere
+  \iffalse
   \item \rref*{red*-cong}. The various congruence cases are all similar to one another;
     I cover only the case of \rref*{let} as example.
     \begin{mathpar}
@@ -814,7 +860,8 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
     \end{itemize}
     By \rref{conv}, both $\tau$ and $\subst{\tau'}{x}{e'_1}$ have type $\rules{U_1}{U_2}$.
     Finally, by \rref{let} and by \rref{conv} again,
-    we have $\type{\Phi; \Gamma}{\letin{x}{\sigma'}{e'_1}{e'_2}}{\tau}$. \qedhere
+    we have $\type{\Phi; \Gamma}{\letin{x}{\sigma'}{e'_1}{e'_2}}{\tau}$.
+  \fi
 \end{itemize}
 \end{proof}
 
@@ -1647,18 +1694,55 @@ By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     \begin{align*}
     \defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\App{(\fix{f}{\alpha}{\sigma}{e})}{s}}}{\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}}}{\tauT}
     \end{align*}
+  \item \rref*{red-cong}.
+    The various congruence cases are all similar to one another.
+    I cover only reduction of the bound expression in $\kw{let}$ expressions as a representative case.
+    \begin{mathpar}
+    \inferrule{
+      \red{\Phi; \Gamma}{e_1}{e'_1}
+    }{
+      \red{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\letin{x}{\sigma}{e'_1}{e_2}}
+    }
+    \end{mathpar}
+    By inversion on $\type{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\tau}$
+    and on $\type{\compile{\Phi}, \compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\tauT}$,
+    we have
+    \begin{itemize}[noitemsep]
+      \item $\type{\Phi; \Gamma}{\sigma}{U}$,
+      \item $\type{\Phi; \Gamma}{e_1}{\sigma}$,
+      \item $\type{\Phi; \Gamma, \define{x}{\sigma}{e_1}}{e_2}{\tau'}$,
+      \item $\subtype{\Phi; \Gamma}{\subst{\tau'}{x}{e_1}}{\tau}$;
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\UT}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e_1}}{\compile{\sigma}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \defineT{\xT}{\compile{\sigma}}{\compile{e_1}}}{\compile{e_2}}{\tauT'}$, and
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\subst{\tauT'}{\xT}{\compile{e_1}}}{\tauT}$.
+    \end{itemize}
+    By the induction hypothesis, we have
+    $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e_1}}{\compile{e'_1}}{\compile{\sigma}}$.
+    Meanwhile, by \rref{equiv-refl}, we have
+    \begin{itemize}[noitemsep]
+      \item $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma}}{\UT}$ and
+      \item $\defeq{\compile{\Phi}, \compile{\Gamma}, \defineT{\xT}{\compile{\sigma}}{\compile{e_1}}}{\compile{e_2}}{{\compile{e_2}}{\tauT'}}$.
+    \end{itemize}
+    Then by \rref{equiv-cong}, we have
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\letinT{\xT}{\compile{\sigma}}{\compile{e'_1}}{\compile{e_2}}}{\subst{\tauT'}{\xT}{\compile{e_1}}}.$$
+    Finally, by \rref{equiv-conv}, we obtain our goal.
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\letinT{\xT}{\compile{\sigma}}{\compile{e'_1}}{\compile{e_2}}}{\tauT}$$
+    In general, the proof procedure is to invert on both typing derivations,
+    apply the induction hypothesis, construct the goal up to the type annotation via \rref{equiv-cong},
+    and finally fix the type annotation using \rref{equiv-conv}.
     \qedhere
 \end{itemize}
 \end{proof}
 
 \subsection{Preservation of closure of reduction}
 
-The proof of preservation for reduction closed under reflexivity, transitivity, and congruence
-is relatively straightforward, if rather tedious for the congruence cases.
+The proof of preservation for reduction closed under reflexivity and transitivity is relatively straightforward,
+since most of the work was done in the preservation proof for reduction itself.
 This, too, requires well-typedness of the translated term as a premise
 in order to apply preservation of reduction.
 
-\begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction] \label{lem:pres-red*}
+\begin{lemma}[Preservation of reflexive, transitive closure of reduction] \label{lem:pres-red*}
 Suppose we have the following:
 \begin{itemize}[noitemsep]
   \item $\red*{\Phi; \Gamma}{e}{e'}$,
@@ -1695,7 +1779,8 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
     Then we can apply the induction hypothesis on the second premise to yield
     $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e'}}{\compile{e''}}{\tauT}$.
     Finally, by \rref{equiv-trans}, we have
-    $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{e''}}{\tauT}$
+    $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{e''}}{\tauT}$. \qedhere
+  \iffalse
   \item \rref*{red*-cong}.
     The various congruence cases are all similar to one another;
     I cover only \rref{let} as a representative case.
@@ -1742,7 +1827,7 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
     \end{itemize}
     Finally, by \rref{equiv-cong, equiv-conv}, we have
     $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\letinT{\xT}{\compile{\sigma'}}{\compile{e'_1}}{\compile{e'_2}}}{\tauT}.$$
-    \qedhere
+  \fi
 \end{itemize}
 \end{proof}
 

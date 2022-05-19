@@ -398,7 +398,7 @@ Type preservation of the translation is proven by induction on not only the typi
 but also the derivations of the judgements on which the typing rules depend.
 In particular, typing depends on subtyping\index{subtyping}, which in turn depends
 on \emph{$\alpha$-cumulativity}\index{$\alpha$-cumulativity}~\citep{MetaCoq}
-and on the reflexive, transitive, congruent closure of reduction.
+and on the reflexive, transitive closure of reduction.
 Finally, this closure of reduction depends on the reduction rules,
 most of which are defined by substitution.
 Below are the relevant rules showing these dependencies and an example reduction rule.
@@ -466,7 +466,7 @@ using inversion on the derivation of $\type{\compile{\Phi}\compile{\Gamma}}{\com
 and an application of equality reflection in the case for reduction of fixpoints.
 \end{proof}
 
-\begin{lemma}[Preservation of reflexive, transitive, congruent closure of reduction]\label{lem:overview:pres-red*}
+\begin{lemma}[Preservation of reflexive, transitive closure of reduction]\label{lem:overview:pres-red*}
 If $\red*{\Phi; \Gamma}{e}{e'}$ and
 $\type{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\tauT}$
 then $\defeq{\compile{\Phi}\compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$.
