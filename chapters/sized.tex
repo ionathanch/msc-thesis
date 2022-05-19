@@ -49,22 +49,23 @@ On top of those, there are also judgement forms for subsizing, sizes,
 and well-formedness of size and term environments.
 
 \FigRed{fig:reduction}
-The reduction rules and their reflexive, transitive, congruent closures are described in \cref{fig:reduction}.
+The reduction rules and their reflexive, transitive closure are described in \cref{fig:reduction}.
 \new{$\subst{e}{x}{e'}$} denotes capture-avoiding substitution of $x$ for $e'$ within $e$,
-and \new{$\subst{e}{x_1, \seq, x_n}{e_1, \seq, e_n}$} correspondingly denotes simultaneous substitution.
+and correspondingly \new{$\subst{e}{x_1, \seq, x_n}{e_1, \seq, e_n}$} denotes simultaneous substitution.
 For every syntactic form of a composite term there is a corresponding congruence rule,
-which is summarized by \rref{red*-cong};
+which is summarized by the last reduction rule using substitution;
 the full set of rules can be found in \cref{app:cong:red}.
-By convention, the reduction rules for functions are also referred to as $\beta$-reduction,
+By convention, the reduction rules for function applications are also referred to as $\beta$-reduction,
 for $\kw{let}$ expressions as $\zeta$-reduction,
 and for defined variables as $\delta$-reduction.
 
 These rules can be thought of as a description of nondeterministic evaluation of open terms,
 ``running'' from the left term to the right.
-I separate them into reduction rules proper and closure rules so that the proof structure is more modular:
-the cases for the reduction rules have much more in common with each other than, say, those of the congruence rules,
-and the cases for the congruence rules require extra hypotheses that those of the reduction rules don't.
-This is also the convention for untyped reduction used by \eg \citet{wjb}.
+Separating them into reduction rules that only step once somewhere in the term
+and their reflexive, transitive closure,
+as opposed to the convention used by \eg \citet{wjb}
+where $\rhd^*$ corresponds to the reflexive, transitive, \emph{compatible} closure,
+allows for the usual proof techniques to prove confluence.
 
 \FigSubtype{fig:subtyping}
 Rather than a single subtyping\index{subtyping} judgement like in

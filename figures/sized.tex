@@ -37,6 +37,11 @@
   \and \inferrule[]{~}{\red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}}
   \and \inferrule[]{~}{\red{\Phi; \Gamma}{\letin{x}{\tau}{e'}{e}}{\subst{e}{x}{e'}}}
   %\and \inferrule[]{~}{\red{\Phi; \Gamma}{\unpair{\alpha}{x}{\Pair{s}{e'}}{e}}{\subst{e}{\alpha, x}{s, e'}}}
+  \and \inferrule[\rlabel{$\rhd$-cong}{red-cong}]{
+    \red{\Phi'; \Gamma'}{e'}{e''}
+  }{
+    \red{\Phi; \Gamma}{\subst{e}{x}{e'}}{\subst{e}{x}{e''}}
+  }
   \\\\
   \inferrule[\rlabel{$\rhd^*$-once}{red*-once}]{
     \red{\Phi; \Gamma}{e_1}{e_2}
@@ -51,13 +56,6 @@
     \red*{\Phi; \Gamma}{e_2}{e_3}
   }{
     \red*{\Phi; \Gamma}{e_1}{e_3}
-  }
-  \and
-  \inferrule[\rlabel{$\rhd^*$-cong}{red*-cong}]{
-    \text{For every $1 \leq i \leq n$:} \and
-    \red*{\Phi'; \Gamma'}{e_i}{e'_i}
-  }{
-    \red*{\Phi; \Gamma}{\subst{e}{x_1, \seq, x_n}{e_1, \seq, e_n}}{\subst{e}{x_1, \seq, x_n}{e'_1, \seq, e'_n}}
   }
   \end{mathpar}
   \caption{Reduction rules (base \lang)}
