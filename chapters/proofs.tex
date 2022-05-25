@@ -1,5 +1,7 @@
 \chapter{Metatheory and Type Preservation} \label{ch:proofs}
 
+\input{figures/takahashi.tex}
+
 In this chapter, I elaborate on the proofs of the lemmas and theorems listed in \cref{sec:syntactic-model},
 culminating in type preservation, which by \cref{thm:overview:consistency} proves the consistency of \lang.
 Prior to these proofs, I provide the required metatheoretical properties of both \lang and \CICE.
@@ -232,6 +234,122 @@ I omit explicit references to uses of weakening.
 
 \subsection{Confluence}
 
+\emph{Confluence}\index{confluence} states that if some term
+reduces to two different terms, those two terms must eventually
+reduce to some common term.
+This property is used to prove transitivity of subtyping,
+which in turn is used in several proofs throughout.
+The technique I use is to first show there is some judgement that satisfies the
+\emph{Z property}\index{Z property}~\citep{Z, confluence} for reduction,
+so called for the Z shape formed by reduction and its closure.
+This is illustrated by \cref{fig:Z},
+with the solid arrow representing reduction $\rhd$ and
+dashed arrows representing its reflexive, transitive closure $\rhd^*$.
+Confluence then follows from the Z property.
+
+\begin{definition}[Z property] \label{def:Z}
+The judgement $\develop{\mt}{\mt}{\mt}$ is said to satisfy the Z property
+if $\develop{\Phi; \Gamma}{e_i}{e'_i}$ for $i = 1, 2$
+and $\red{\Phi; \Gamma}{e_1}{e_2}$
+imply that $\red*{\Phi; \Gamma}{e_2}{e'_1}$
+and $\red*{\Phi; \Gamma}{e'_1}{e'_2}$ hold.
+\end{definition}
+
+\begin{lemma} \label{lem:confluence}
+If there exists some judgement satisfying the Z property,
+then given $\red*{\Phi; \Gamma}{e}{e_1}$ and $\red*{\Phi; \Gamma}{e}{e_2}$,
+there exists some term $e'$ such that
+$\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
+\end{lemma}
+
+\begin{figure}[h]
+\centering
+\begin{tikzcd}
+  e_1
+    \arrow[r, rightarrow]
+    \arrow[d, dotted, no head, "\blacktriangledown" description]
+  & e_2
+    \arrow[d, dotted, no head, "\blacktriangledown" description]
+    \arrow[dl, dashrightarrow] \\
+  e'_1
+    \arrow[r, dashrightarrow]
+  & e'_2
+\end{tikzcd}
+\caption{Diagram illustrating the Z property.}
+\label{fig:Z}
+\end{figure}
+
+The judgement I use to satisfy the Z property is an extension of the
+\emph{complete development}\index{complete development}
+used by~\citet{Takahashi},
+which in short reduces all visible redexes from the inside out.
+The inclusion of the size and term environments are crucial,
+since $\delta$-reduction depends on definitions in the environment
+and $\mu$-reduction depends on subsizing.
+\cref{fig:develop,app:cong:develop}
+present the rules for complete development.
+The first rule from left to right, top to bottom that applies is used,
+making complete development decidable and deterministic (up to subsizing)
+given the environments and an initial term.
+
+\FigTakahashi{fig:develop}
+
+To show that the mapping satisfies the Z property,
+we first show that it satisfies some properties that will be useful later.
+
+\begin{lemma}
+If $\develop{\Phi; \Gamma_1, \annot{x}{\tau}, \Gamma_2}{e_1}{e'_1}$ and
+$\develop{\Phi; \Gamma_1}{e_2}{e'_2}$, then
+$\develop{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e_2}}{\subst{e_1}{x}{e_2}}{\subst{e'_1}{x}{e'_2}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the structure of $e_1$.
+The cases not involving a redex are straightforward by the induction hypotheses,
+while the ones that do, namely those in \cref{fig:develop},
+require some attention to substitution.
+I cover only the cases for a $\delta$-redex and a $\zeta$-redex,
+as these involve some subtleties with definitions in the environment,
+and the remaining redex cases are similar to the latter but without definitions.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item $e_1 = y$ and $(\define{y}{\any}{e}) \in \Gamma_1, \annot{x}{\tau}, \Gamma_2$.
+    We then have that $\subst{e_1}{x}{e_2} = y$ and $e'_1 = e$.
+    If $y$ is in $\Gamma_1$, then $x \notin \FV{e}$, so $\subst{e}{x}{e_2} = e$,
+    and $\develop{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e_2}}{y}{e}$.
+    If $y$ is in $\Gamma_2$, then $(\define{y}{\any}{\subst{e}{x}{e_2}}) \in \subst{\Gamma_2}{x}{e_2}$,
+    and $\develop{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e_2}}{y}{\subst{e}{x}{e'_2}}$.
+  \item $e_1 = \letin{y}{\tau}{e_3}{e_4}$.
+    Let $e'_3$, $e'_4$ be the complete developments of $e_3$ and $e_4$, respectively.
+    Suppose that $x \neq y$.
+    By the induction hypotheses, we have
+    \begin{itemize}[noitemsep]
+      \item $\develop{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e_2}}{\subst{e_3}{x}{e_2}}{\subst{e'_3}{x}{e'_2}}$ and
+      \item $\develop{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e_2}, \define{y}{\subst{\tau}{x}{e_2}}{\subst{e_3}{x}{e_2}}}{\subst{e_4}{x}{e_2}}{\subst{e'_4}{x}{e'_2}}$.
+    \end{itemize}
+    Then by complete development of $\kw{let}$ expressions, we have
+    $\develop{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e_2}}{\letin{y}{\subst{\tau}{x}{e_2}}{\subst{e_3}{x}{e_2}}{\subst{e_4}{x}{e_2}}}{\subst{(\subst{e'_4}{x}{e'_2})}{y}{\subst{e'_3}{x}{e'_2}}}$. \\
+    By the properties of substitution, we have that the right-hand side is
+    $\subst{(\subst{e'_4}{y}{e'_3})}{x}{e'_2}$,
+    giving us
+    $\develop{\Phi; \Gamma}{\subst{(\letin{y}{\tau}{e_3}{e_4})}{x}{e_2}}{\subst{(\subst{e'_4}{y}{e'_3})}{x}{e'_2}}$
+    as desired.
+    If $x = y$, then $e_2$ and $e'_2$ are never substituted into $e_4$ and $e'_4$, respectively,
+    simplifying the above argument.
+\end{itemize}
+\end{proof}
+
+\begin{lemma}
+If $\develop{\Phi; \Gamma}{e}{e'}$
+then $\red*{\Phi; \Gamma}{e}{e'}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the structure of $e$.
+Again, the cases not involving a redex are straightforward by the induction hypotheses
+using \cref{lem:congruence},
+while the ones that do also use the reduction rule for the corresponding redex.
+\end{proof}
+
 \begin{theorem}[Confluence] \label{thm:confluence}
 If $\red*{\Phi; \Gamma}{e}{e_1}$ and $\red*{\Phi; \Gamma}{e}{e_2}$
 then there is some term $e'$ such that
@@ -239,6 +357,9 @@ $\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
 \end{theorem}
 
 \begin{proof}
+Since complete development satisfies the Z property,
+confluence holds by \cref{lem:confluence}.
+See \citet[Theorem 3.10]{confluence} for a complete proof.
 \end{proof}
 
 \subsection{Inversion}
@@ -454,7 +575,7 @@ Then finally by \rref{subtype-red}, we have $\subtype{\Phi; \Gamma}{\tau_1}{\tau
 \end{figure}
 
 A diagram representing the proof is shown in \cref{fig:transitivity-subtyping},
-where the dashed arrows represent closure of reduction $\rhd^*$.
+where again the dashed arrows represent closure of reduction $\rhd^*$.
 
 \begin{theorem}[Inversion] \label{thm:inversion}
 Given a syntactic form $e$ and a typing rule $\mathcal{R} \neq \text{\upshape \rref*{conv*}}$ for that form,

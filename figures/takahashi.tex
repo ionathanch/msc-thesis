@@ -1,0 +1,118 @@
+\iffalse
+\newcommand{\FigTakahashi}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{align*}
+  x^\bullet_{\Phi; \Gamma} &= e^\bullet_{\Phi; \Gamma} \qquad \textit{if $(\define{x}{\tau}{e}) \in \Gamma$} \\
+  (\app{(\fun{x}{\tau}{e})}{e'})^\bullet_{\Phi; \Gamma} &= \subst{e^\bullet_{\Phi; \Gamma}}{x}{e'^\bullet_{\Phi; \Gamma}} \\
+  (\App{(\Fun{\alpha}{e})}{s})^\bullet_{\Phi; \Gamma} &= \subst{e^\bullet_{\Phi, \alpha; \Gamma}}{\alpha}{s} \\
+  (\App{(\Fun<{\alpha}{r}{e})}{s})^\bullet_{\Phi; \Gamma} &= \subst{e^\bullet_{\Phi, \bound{\alpha}{r}; \Gamma}}{\alpha}{s} \\
+  (\letin{x}{\tau}{e'}{e})^\bullet_{\Phi; \Gamma} &= \subst{e^\bullet_{\Phi; \Gamma}}{x}{e'^\bullet_{\Phi; \Gamma}} \\
+  (\match*{\App{\zero*_{\any}}{s}}{(\App{\zero*}{\alpha} \Rightarrow e)\any})^\bullet_{\Phi; \Gamma}
+    &= \subst{e^\bullet_{\Phi; \Gamma}}{\alpha}{s} \\
+  (\match*{\app{\App{\succ*_{\any}}{s}}{e'}}{\any(\app{\App{\succ*}{\alpha}}{z} \Rightarrow e)})^\bullet_{\Phi; \Gamma}
+    &= \subst{e^\bullet_{\Phi; \Gamma}}{\alpha, z}{s, e'^\bullet_{\Phi; \Gamma}} \\
+  (\match*{\app{\App{\sup*_{\any}}{s}}{e_1}{e_2}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e)})^\bullet_{\Phi; \Gamma}
+    &= \subst{e^\bullet_{\Phi; \Gamma}}{\alpha, z_1, z_2}{s, {e_1}^\bullet_{\Phi; \Gamma}, {e_2}^\bullet_{\Phi; \Gamma}} \\
+  (\App{(\fix{f}{\alpha}{\tau}{e})}{s})^\bullet_{\Phi; \Gamma}
+    &= \subst{e^\bullet_{\Phi, \alpha; \Gamma}}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\tau^\bullet_{\Phi, \alpha; \Gamma}}{e^\bullet_{\Phi, \alpha; \Gamma}})}{\beta}}} \\
+    &\mathrel{\phantom{=}} \textit{if $\subsize{\Phi}{\sss{r}}{s}$} \\
+  (\funtype{x}{\sigma}{\tau})^\bullet_{\Phi; \Gamma} &= \funtype{x}{\sigma^\bullet_{\Phi; \Gamma}}{\tau^\bullet_{\Phi; \Gamma}} \\
+  (\fun{x}{\sigma}{e})^\bullet_{\Phi; \Gamma} &= \fun{x}{\sigma^\bullet_{\Phi; \Gamma}}{e^\bullet_{\Phi; \Gamma}} \\
+  (\app{e}{e_2})^\bullet_{\Phi; \Gamma} &= \app{{e_1}^\bullet_{\Phi; \Gamma}}{{e_2}^\bullet_{\Phi; \Gamma}} \\
+  (\Funtype{\alpha}{\tau})^\bullet_{\Phi; \Gamma} &= \Funtype{\alpha}{\tau^\bullet_{\Phi, \alpha; \Gamma}} \\
+  (\Funtype<{\alpha}{s}{\tau})^\bullet_{\Phi; \Gamma} &= \Funtype<{\alpha}{s}{\tau^\bullet_{\Phi, \bound{\alpha}{s}; \Gamma}} \\
+  (\Fun{\alpha}{e})^\bullet_{\Phi; \Gamma} &= \Fun{\alpha}{e^\bullet_{\Phi, \alpha; \Gamma}} \\
+  (\Fun<{\alpha}{s}{e})^\bullet_{\Phi; \Gamma} &= \Fun<{\alpha}{s}{e^\bullet_{\Phi, \bound{\alpha}{s}; \Gamma}} \\
+  (\App{e}{s})^\bullet_{\Phi; \Gamma} &= \App{e^\bullet_{\Phi; \Gamma}}{s} \\
+  (\succ{s}{r}{e})^\bullet_{\Phi; \Gamma} &= \succ{s}{r}{e^\bullet_{\Phi; \Gamma}} \\
+  (\W{x}{\sigma}{\tau}{s})^\bullet_{\Phi; \Gamma} &= \W{x}{\sigma^\bullet_{\Phi; \Gamma}}{\tau^\bullet_{\Phi; \Gamma}}{s} \\
+  (\sup{x}{\sigma}{\tau}{s}{r}{e_1}{e_2})^\bullet_{\Phi; \Gamma} &= \sup{x}{\sigma^\bullet_{\Phi; \Gamma}}{\tau^\bullet_{\Phi; \Gamma}}{s}{r}{{e_1}^\bullet_{\Phi; \Gamma}}{{e_2}^\bullet_{\Phi; \Gamma}} \\
+  (\match{e'}{\fun{x}{P}}{(\app{\App{c}{\alpha}}{\vec{z}} \Rightarrow e) \seq})^\bullet_{\Phi; \Gamma}
+    &= \match{e'^\bullet_{\Phi; \Gamma}}{\fun{x}{P^\bullet_{\Phi; \Gamma}}}{(\app{\App{c}{\alpha}}{\vec{z}} \Rightarrow e^\bullet_{\Phi; \Gamma}) \seq} \\
+  (\fix{f}{\alpha}{\tau}{e})^\bullet_{\Phi; \Gamma} &= \fix{f}{\alpha}{\tau^\bullet_{\Phi, \alpha; \Gamma}}{e^\bullet_{\Phi, \alpha; \Gamma}} \\
+  e^\bullet_{\Phi; \Gamma} &= e
+  \end{align*}
+  \caption[Complete development for \lang]{Extension of Takahashi's complete development for \lang}
+  \label{#1}
+  \end{figure}
+}
+\fi
+
+\newcommand{\FigTakahashi}[1]{
+  \begin{figure}[h]
+  \centering
+  \begin{mathpar}
+  \fbox{$\develop{\Phi; \Gamma}{e}{e}$} \hfill
+  \inferrule[]{
+    (\define{x}{\tau}{e}) \in \Gamma \\
+    \develop{\Phi; \Gamma}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{x}{e'}
+  }
+  \and
+  \inferrule[]{
+    \develop{\Phi; \Gamma, \annot{x}{\tau}}{e_1}{e'_1} \\
+    \develop{\Phi; \Gamma}{e_2}{e'_2}
+  }{
+    \develop{\Phi; \Gamma}{\app{(\fun{x}{\tau}{e_1})}{e_2}}{\subst{e'_1}{x}{e'_2}}
+  }
+  \and
+  \inferrule[]{
+    \develop{\Phi, \alpha; \Gamma}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{\App{(\Fun{\alpha}{e})}{s}}{\subst{e'}{\alpha}{s}}
+  }
+  \and
+  \inferrule[]{
+    \develop{\Phi, \bound{\alpha}{r}; \Gamma}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{\App{\Fun<{\alpha}{r}{e}}{s}}{\subst{e'}{\alpha}{s}}
+  }
+  \and
+  \inferrule[]{
+    \develop{\Phi; \Gamma}{e_1}{e'_1} \\
+    \develop{\Phi; \Gamma, \define{x}{\tau}{e_1}}{e_2}{e'_2}
+  }{
+    \develop{\Phi; \Gamma}{\letin{x}{\tau}{e_1}{e_2}}{\subst{e'_2}{x}{e'_1}}
+  }
+  \and
+  \inferrule[]{
+    \develop{\Phi, \bound{\alpha}{r}; \Gamma}{e_z}{e_z'}
+  }{
+    \develop{\Phi; \Gamma}{
+      \match*{\zero{r}{s}}{(\App{\zero*}{\alpha} \Rightarrow e_z) \any}
+    }{\subst{e'_z}{\alpha}{s}}
+  }
+  \and
+  \inferrule[]{
+    \develop{\Phi; \Gamma}{e}{e'} \\
+    \develop{\Phi, \bound{\alpha}{r}; \Gamma, \annot{z}{\N{\alpha}}}{e_s}{e'_s}
+  }{
+    \develop{\Phi; \Gamma}{
+      \match*{\succ{r}{s}{e}}{\any (\app{\App{\succ*}{\alpha}}{z} \Rightarrow e_s)}
+    }{\subst{e'_s}{\alpha, z}{s, e'}}
+  }
+  \and
+  \inferrule[]{
+    \develop{\Phi; \Gamma}{e_1}{e'_1} \\
+    \develop{\Phi; \Gamma}{e_2}{e'_2} \\
+    \develop{\Phi, \bound{\alpha}{r}; \Gamma, \annot{z_1}{\sigma}, \annot{z_2}{\subst{\tau}{x}{z_1}}}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{
+      \match*{\sup{x}{\sigma}{\tau}{r}{s}{e_1}{e_2}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e)}
+    }{\subst{e'}{\alpha, z_1, z_2}{s, e'_1, e'_2}}
+  }
+  \and
+  \inferrule[]{
+    \subsize{\Phi}{\sss{r}}{s} \\
+    \develop{\Phi, \alpha; \Gamma}{\tau}{\tau'} \\
+    \develop{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\tau}{\alpha}{\beta}}}}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{\App{\fix{f}{\alpha}{\tau}{e}}{s}}{\subst{e'}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\tau'}{e'})}{\beta}}}}
+  }
+  \end{mathpar}
+  \caption[Complete development for \lang]{Extension of Takahashi's complete development for \lang \\ (excerpt excl. congruence)}
+  \label{#1}
+  \end{figure}
+}
