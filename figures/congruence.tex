@@ -1,7 +1,6 @@
 \newcommand{\FigCongRed}[1]{
   \small
   \begin{mathpar}
-  \allowdisplaybreaks
   \inferrule{
     \red{\Phi; \Gamma}{\sigma}{\sigma'}
   }{
@@ -108,6 +107,12 @@
     \red{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{\tau'}
   }{
     \red{\Phi; \Gamma}{\W{x}{\sigma}{\tau}{s}}{\W{x}{\sigma}{\tau'}{s}}
+  }
+  \and
+  \inferrule{
+    \red{\Phi; \Gamma}{e}{e'}
+  }{
+    \red{\Phi; \Gamma}{\succ{r}{s}{e}}{\succ{r}{s}{e'}}
   }
   \end{mathpar}
 }
@@ -258,6 +263,135 @@
       &\quad \app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e'_s}
       \end{aligned}
     }
+  }
+  \end{mathpar}
+}
+
+\newcommand{\FigCongTakahashi}[1]{
+  \small
+  \begin{mathpar}
+  \setlength{\jot}{-1.5pt}
+  \inferrule{
+    \develop{\Phi; \Gamma}{\sigma}{\sigma'} \\
+    \develop{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{\tau'}
+  }{
+    \develop{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau}}{\funtype{x}{\sigma'}{\tau}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi; \Gamma}{\sigma}{\sigma'} \\
+    \develop{\Phi; \Gamma, \annot{x}{\sigma}}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{\fun{x}{\sigma}{e}}{\fun{x}{\sigma'}{e}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi; \Gamma}{e_1}{e'_1} \\
+    \develop{\Phi; \Gamma}{e_2}{e'_2}
+  }{
+    \develop{\Phi; \Gamma}{\app{e_1}{e_2}}{\app{e'_1}{e'_2}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi, \alpha; \Gamma}{\tau}{\tau'}
+  }{
+    \develop{\Phi; \Gamma}{\Funtype{\alpha}{\tau}}{\Funtype{\alpha}{\tau'}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi, \alpha; \Gamma}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{\Fun{\alpha}{e}}{\Fun{\alpha}{e'}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi; \Gamma}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{\App{e}{s}}{\App{e'}{s}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi, \bound{\alpha}{s}; \Gamma}{\tau}{\tau'}
+  }{
+    \develop{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau}}{\Funtype<{\alpha}{s}{\tau'}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi, \bound{\alpha}{s}; \Gamma}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{\Fun<{\alpha}{s}{e}}{\Fun<{\alpha}{s}{e'}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi, \alpha; \Gamma}{\tau}{\tau'} \\\\
+    \develop{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\tau}{\alpha}{\beta}}}}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{\fix{f}{\alpha}{\tau}{e}}{\fix{f}{\alpha}{\tau'}{e}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi; \Gamma}{\sigma}{\sigma'} \\
+    \develop{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{\tau'}
+  }{
+    \develop{\Phi; \Gamma}{\W{x}{\sigma}{\tau}{s}}{\W{x}{\sigma'}{\tau'}{s}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi; \Gamma}{e}{e'}
+  }{
+    \develop{\Phi; \Gamma}{\succ{r}{s}{e}}{\succ{r}{s}{e'}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi; \Gamma}{\sigma}{\sigma'} \\
+    \develop{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{\tau'} \\\\
+    \develop{\Phi; \Gamma}{e_1}{e'_1} \\
+    \develop{\Phi; \Gamma}{e_2}{e'_2}
+  }{
+    \develop{\Phi; \Gamma}{\sup{x}{\sigma}{\tau}{r}{s}{e_1}{e_2}}{\sup{x}{\sigma'}{\tau'}{r}{s}{e'_1}{e'_2}}
+  }
+  \and
+  \inferrule{
+    \develop{\Phi; \Gamma}{e}{e'} \\
+    \develop{\Phi; \Gamma, \annot{x}{\N{s}}}{P}{P'} \\\\
+    \develop{\Phi, \bound{\alpha}{s}; \Gamma}{e_z}{e'_z} \\
+    \develop{\Phi, \bound{\beta}{s}; \Gamma, \annot{z}{\N{\beta}}}{e_s}{e'_s}
+  }{
+    \develop{\Phi; \Gamma}{
+      \begin{aligned}
+      &\match{e}{\fun{x}{\N{s}}{P}}{ \\
+      &\quad \App{\zero*}{\alpha} \Rightarrow e_z \\
+      &\quad \app{\App{\succ*}{\beta}}{z} \Rightarrow e_s}
+      \end{aligned}
+    }{
+      \begin{aligned}
+      &\match{e'}{\fun{x}{\N{s}}{P'}}{ \\
+      &\quad \App{\zero*}{\alpha} \Rightarrow e'_z \\
+      &\quad \app{\App{\succ*}{\beta}}{z} \Rightarrow e'_s}
+      \end{aligned}
+    }
+  }
+  \and
+  \inferrule{
+    \develop{\Phi; \Gamma}{e}{e'} \\
+    \develop{\Phi; \Gamma, \annot{x}{\W{y}{\sigma}{\tau}{s}}}{P}{P'} \\\\
+    \develop{\Phi, \bound{\alpha}{s}; \Gamma, \annot{z_1}{\sigma}, \annot{z_2}{\arr*{\subst{\tau}{y}{z_1}}{\W{y}{\sigma}{\tau}{\alpha}}}}{e_s}{e'_s}
+  }{
+    \develop{\Phi; \Gamma}{
+      \begin{aligned}
+      &\match{e}{\fun{x}{\W{y}{\sigma}{\tau}{s}}{P}}{ \\
+      &\quad \app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s}
+      \end{aligned}
+    }{
+      \begin{aligned}
+      &\match{e'}{\fun{x}{\W{y}{\sigma}{\tau}{s}}{P'}}{ \\
+      &\quad \app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e'_s}
+      \end{aligned}
+    }
+  }
+  \and
+  \inferrule{~}{
+    \develop{\Phi; \Gamma}{e}{e}
   }
   \end{mathpar}
 }
