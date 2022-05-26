@@ -262,6 +262,7 @@ there exists some term $e'$ such that
 $\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
 \end{lemma}
 
+\vspace{-\baselineskip}
 \begin{figure}[h]
 \centering
 \begin{tikzcd}
@@ -297,7 +298,7 @@ given the environments and an initial term.
 To show that the mapping satisfies the Z property,
 we first show that it satisfies some properties that will be useful later.
 
-\begin{lemma}
+\begin{lemma} \label{lem:develop-compos}
 If $\develop{\Phi; \Gamma_1, \annot{x}{\tau}, \Gamma_2}{e_1}{e'_1}$ and
 $\develop{\Phi; \Gamma_1}{e_2}{e'_2}$, then
 $\develop{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e_2}}{\subst{e_1}{x}{e_2}}{\subst{e'_1}{x}{e'_2}}$.
@@ -312,13 +313,13 @@ I cover only the cases for a $\delta$-redex and a $\zeta$-redex,
 as these involve some subtleties with definitions in the environment,
 and the remaining redex cases are similar to the latter but without definitions.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
-  \item $e_1 = y$ and $(\define{y}{\any}{e}) \in \Gamma_1, \annot{x}{\tau}, \Gamma_2$.
+  \item $e_1 = y$ and $(\define{y}{\any}{e}) \in \Gamma_1, \annot{x}{\tau}, \Gamma_2$. \\
     We then have that $\subst{e_1}{x}{e_2} = y$ and $e'_1 = e$.
     If $y$ is in $\Gamma_1$, then $x \notin \FV{e}$, so $\subst{e}{x}{e_2} = e$,
     and $\develop{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e_2}}{y}{e}$.
     If $y$ is in $\Gamma_2$, then $(\define{y}{\any}{\subst{e}{x}{e_2}}) \in \subst{\Gamma_2}{x}{e_2}$,
     and $\develop{\Phi; \Gamma_1, \subst{\Gamma_2}{x}{e_2}}{y}{\subst{e}{x}{e'_2}}$.
-  \item $e_1 = \letin{y}{\tau}{e_3}{e_4}$.
+  \item $e_1 = \letin{y}{\tau}{e_3}{e_4}$. \\
     Let $e'_3$, $e'_4$ be the complete developments of $e_3$ and $e_4$, respectively.
     Suppose that $x \neq y$.
     By the induction hypotheses, we have
@@ -334,20 +335,193 @@ and the remaining redex cases are similar to the latter but without definitions.
     $\develop{\Phi; \Gamma}{\subst{(\letin{y}{\tau}{e_3}{e_4})}{x}{e_2}}{\subst{(\subst{e'_4}{y}{e'_3})}{x}{e'_2}}$
     as desired.
     If $x = y$, then $e_2$ and $e'_2$ are never substituted into $e_4$ and $e'_4$, respectively,
-    simplifying the above argument.
+    simplifying the above argument. \qedhere
 \end{itemize}
 \end{proof}
 
-\begin{lemma}
+\begin{lemma} \label{lem:develop-compos-size}
+If $\develop{\Phi_1, \alpha, \Phi_2; \Gamma}{e}{e'}$ or
+$\develop{\Phi_1, \bound{\alpha}{r}, \Phi_2; \Gamma}{e}{e'}$ then
+$\develop{\Phi_1, \subst{\Phi_2}{\alpha}{s}; \Gamma}{\subst{e}{\alpha}{s}}{\subst{e'}{\alpha}{s}}$.
+\end{lemma}
+
+\begin{proof}
+By straightforward induction on the structure of $e$.
+Intuitively, since size expressions aren't terms and don't reduce,
+the substitution leaves the structure of complete development untouched.
+\end{proof}
+
+\begin{lemma} \label{lem:develop-red*}
 If $\develop{\Phi; \Gamma}{e}{e'}$
 then $\red*{\Phi; \Gamma}{e}{e'}$.
 \end{lemma}
 
 \begin{proof}
-By induction on the structure of $e$.
+By induction on the derivation of $\develop{\Phi; \Gamma}{e}{e'}$.
 Again, the cases not involving a redex are straightforward by the induction hypotheses
 using \cref{lem:congruence},
 while the ones that do also use the reduction rule for the corresponding redex.
+This time, I cover only the cases for a $\delta$-redex and a $\mu$-redex,
+with the remaining redex cases similar to the latter.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item $e = x$.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      (\define{x}{\tau}{e}) \in \Gamma \\
+      \develop{\Phi; \Gamma}{e}{e'}
+    }{
+      \develop{\Phi; \Gamma}{x}{e'}
+    }
+    \end{mathpar}
+    By the induction hypothesis, we have $\red*{\Phi; \Gamma}{e}{e'}$.
+    By $\delta$-reduction, we have $\red{\Phi; \Gamma}{x}{e}$.
+    Then by \rref{red*-once, red*-trans}, we have $\red*{\Phi; \Gamma}{x}{e'}$.
+  \item $e = \App{\fix{f}{\alpha}{\tau}{e}}{s}$.
+    \begin{mathpar}
+    \inferrule{
+      \subsize{\Phi}{\sss{r}}{s} \\
+      \develop{\Phi, \alpha; \Gamma}{\tau}{\tau'} \\
+      \develop{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\tau}{\alpha}{\beta}}}}{e}{e'}
+    }{
+      \develop{\Phi; \Gamma}{\App{\fix{f}{\alpha}{\tau}{e}}{s}}{\subst{e'}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\tau'}{e'})}{\beta}}}}
+    }
+    \end{mathpar}
+    By the induction hypotheses, we have
+    \begin{itemize}[noitemsep]
+      \item $\red*{\Phi, \alpha; \Gamma}{\tau}{\tau'}$ and
+      \item $\red*{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\tau}{\alpha}{\beta}}}}{e}{e'}$.
+    \end{itemize}
+    By \cref{lem:congruence}, we have
+    \begin{itemize}[noitemsep]
+      \item $\red*{\Phi; \Gamma}{\App{\fix{f}{\alpha}{\tau}{e}}{s}}{\App{\fix{f}{\alpha}{\tau}{e'}}{s}}$ and
+      \item $\red*{\Phi; \Gamma}{\App{\fix{f}{\alpha}{\tau}{e'}}{s}}{\App{\fix{f}{\alpha}{\tau'}{e'}}{s}}$.
+    \end{itemize}
+    Finally, by $\mu$-reduction, we have
+    $\red*{\Phi; \Gamma}{\App{\fix{f}{\alpha}{\tau'}{e'}}{s}}{\subst{e'}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\tau'}{e'})}{\beta}}}}$.
+    Then by \rref{red*-trans}, we have
+    $\red*{\Phi; \Gamma}{\App{\fix{f}{\alpha}{\tau}{e}}{s}}{\subst{e'}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\tau'}{e'})}{\beta}}}}$.
+    \qedhere
+\end{itemize}
+\end{proof}
+
+Now we are ready to show that complete development satisfies the Z property.
+
+\begin{lemma} \label{lem:Z-property}
+If $\develop{\Phi; \Gamma}{e_i}{e'_1}$ for $i = 1, 2$
+and $\red{\Phi; \Gamma}{e_1}{e_2}$
+then $\red*{\Phi; \Gamma}{e_2}{e'_1}$
+and $\red*{\Phi; \Gamma}{e'_1}{e'_2}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\red{\Phi; \Gamma}{e_1}{e_2}$.
+For the congruence cases of reduction,
+it could start and end with terms that aren't redexes.
+Consider bounded size quantification as an example.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item
+  \begin{mathpar}
+  \inferrule{
+    \red{\Phi, \bound{\alpha}{s}; \Gamma}{\tau_1}{\tau_2}
+  }{
+    \red{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau_1}}{\Funtype<{\alpha}{s}{\tau_2}}
+  }
+  \end{mathpar}
+  By the induction hypotheses, we have
+  \begin{itemize}[noitemsep]
+    \item $\red*{\Phi, \bound{\alpha}{s}; \Gamma}{\tau_2}{\tau'_1}$ and
+    \item $\red*{\Phi, \bound{\alpha}{s}; \Gamma}{\tau'_1}{\tau'_2}$,
+  \end{itemize}
+  where $\tau'_1$ and $\tau'_2$ are the corresponding full developments.
+  Then quite straightforwardly, by \cref{lem:congruence}, we have
+  \begin{itemize}[noitemsep]
+    \item $\red*{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau_2}}{\Funtype<{\alpha}{s}{\tau'_1}}$ and
+    \item $\red*{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau'_1}}{\Funtype<{\alpha}{s}{\tau'_2}}$.
+  \end{itemize}
+\end{itemize}
+A congruence case could also start with a term that isn't a redex,
+but end with a reducible term.
+In this case, consider a size application that steps to an applied bounded size abstraction.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item
+  \begin{mathpar}
+  \inferrule{
+    \red{\Phi; \Gamma}{e_1}{\Fun<{\alpha}{r}{e_2}}
+  }{
+    \red{\Phi; \Gamma}{\App{e_1}{s}}{\App{(\Fun<{\alpha}{r}{e_2})}{s}}
+  }
+  \end{mathpar}
+  By the induction hypotheses, we have
+  \begin{itemize}[noitemsep]
+    \item $\red*{\Phi; \Gamma}{\Fun<{\alpha}{r}{e_2}}{e'_1}$ and
+    \item $\red*{\Phi; \Gamma}{e'_1}{\Fun<{\alpha}{r}{e'_2}}$,
+  \end{itemize}
+  where $e'_1$ and $e'_2$ are the corresponding full developments.
+  Again, quite straightforwardly, by \cref{lem:congruence}, we have
+  \begin{itemize}[noitemsep]
+    \item $\red*{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e_2})}{s}}{\App{e'_1}{s}}$ and
+    \item $\red*{\Phi; \Gamma}{\App{e'_1}{s}}{\App{(\Fun<{\alpha}{r}{e'_2})}{s}}$.
+  \end{itemize}
+  Since $\red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e'_2})}{s}}{\subst{e'_2}{\alpha}{s}}$,
+  using \rref{red*-once, red*-trans}, we have
+  $\red*{\Phi; \Gamma}{\App{e'_1}{s}}{\subst{e'_2}{\alpha}{s}}$,
+  where the right-hand side is the complete development of $\App{(\Fun<{\alpha}{r}{e_2})}{s}$.
+\end{itemize}
+Lastly, a congruence case could start and end with a redex,
+as is the case for $\kw{let}$ expressions.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item
+  \begin{mathpar}
+  \inferrule{
+    \red{\Phi; \Gamma, \define{x}{\tau}{e_1}}{e_2}{e_3}
+  }{
+    \red{\Phi; \Gamma}{\letin{x}{\tau}{e_1}{e_2}}{\letin{x}{\tau}{e_1}{e_3}}
+  }
+  \end{mathpar}
+  By the induction hypotheses, we have
+  \begin{itemize}[noitemsep]
+    \item $\red*{\Phi; \Gamma, \define{x}{\tau}{e_1}}{e_3}{e'_2}$ and
+    \item $\red*{\Phi; \Gamma, \define{x}{\tau}{e_1}}{e'_2}{e'_3}$,
+  \end{itemize}
+  where $e'_2$ and $e'_3$ are the corresponding full developments.
+  By \cref{lem:congruence}, we have
+  \begin{itemize}[noitemsep]
+    \item $\red*{\Phi; \Gamma}{\letin{x}{\tau}{e_1}{e_3}}{\letin{x}{\tau}{e_1}{e'_2}}$ and
+    \item $\red*{\Phi; \Gamma}{\subst{e'_2}{x}{e'_1}}{\subst{e'_3}{x}{e'_1}}$.
+  \end{itemize}
+  By \cref{lem:develop-red*}, we also have $\red*{\Phi; \Gamma}{e_1}{e'_1}$,
+  where $e'_1$ is the corresponding full development,
+  so applying \cref{lem:congruence} again with $\zeta$-reduction and chaining it all up,
+  we have $\red*{\Phi; \Gamma}{\letin{x}{\tau}{e_1}{e_3}}{\subst{e'_2}{x}{e'_1}}$.
+\end{itemize}
+The remaining cases for congruence of reduction not covered here are similar to the above,
+falling into one of the three categories.
+Meanwhile, the reduction rules involving redexes except $\delta$-reduction
+all involve some form of substitution,
+so I only cover $\delta$-reduction and $\beta$-reduction for functions,
+the latter of which is representative of the remaining cases.
+Note that for situtations involving substitution of a size expression rather than a term,
+\cref{lem:develop-compos-size} is used in place of \cref{lem:develop-compos}.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item $\red{\Phi; \Gamma}{x}{e}$ when $(\define{x}{\tau}{e}) \in \Gamma$. \\
+  Letting $e'$ be the complete development of $e$,
+  the goals are then
+  \begin{itemize}[noitemsep]
+    \item $\red*{\Phi; \Gamma}{e}{e'}$ and
+    \item $\red*{\Phi; \Gamma}{e'}{e'}$,
+  \end{itemize}
+  which hold by \cref{lem:develop-red*} and \rref{red*-refl} respectively.
+  \item $\red{\Phi; \Gamma}{\app{(\fun{x}{\tau}{e_1})}{e_2}}{\subst{e_1}{x}{e_2}}$. \\
+  Let $e'_1$ and $e'_2$ be the complete development of $e_1$ and $e_2$ respectively.
+  By \cref{lem:develop-compos}, we have
+  $\develop{\Phi; \Gamma}{\subst{e_1}{x}{e_2}}{\subst{e'_1}{x}{e'_2}}$.
+  Then by \cref{lem:develop-red*} and by \rref{red*-refl}, we have our goals
+  \begin{itemize}[noitemsep]
+    \item $\red*{\Phi; \Gamma}{\subst{e_1}{x}{e_2}}{\subst{e'_1}{x}{e'_2}}$ and
+    \item $\red*{\Phi; \Gamma}{\subst{e'_1}{x}{e'_2}}{\subst{e'_1}{x}{e'_2}}$.
+  \end{itemize}
+\end{itemize}
 \end{proof}
 
 \begin{theorem}[Confluence] \label{thm:confluence}
@@ -357,7 +531,7 @@ $\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
 \end{theorem}
 
 \begin{proof}
-Since complete development satisfies the Z property,
+Since complete development satisfies the Z property by \cref{lem:Z-property},
 confluence holds by \cref{lem:confluence}.
 See \citet[Theorem 3.10]{confluence} for a complete proof.
 \end{proof}
@@ -1233,6 +1407,7 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
       \item $\subst{\compile{e}}{\xT}{\compile{e'}} = \compile{\subst{e}{x}{e'}}$.
     \end{itemize}
     We then have
+    \allowdisplaybreaks
     \begin{align*}
     &\subst{\compile{\fix{f}{\alpha}{\sigma}{e}}}{\xT}{\compile{e'}} \\
     &= \subst{(\app{\wfind}{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{ \\
@@ -1531,6 +1706,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
     Meanwhile, on the right-hand size,
     noting that $\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s}; \Gamma}{\subst{\sss{r}}{\alpha}{s}}{\subst{r'}{\alpha}{s}}{\subst{\eT''}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}$
     by \cref{sublem:compos-subsize-bounded}, we have
+
     \begin{align*}
     &\compile{\subst{\App{e}{r}}{\alpha}{s}} \\
     &= \compile{\App{\subst{e}{\alpha}{s}}{\subst{r}{\alpha}{s}}}
@@ -1587,7 +1763,8 @@ $\subst{\compile{e}}{\alphaT}{\compile{s}} = \compile{\subst{e}{\alpha}{s}}$.
 \begin{proof}
 By induction on the derivation of $\type{\Phi_1, \alpha, \Phi_2; \Gamma}{e}{\tau}$.
 The proof structure follows that of \nameref{lem:compos-size-bounded},
-using \cref{sublem:compos-subsize-unbounded} in place of \cref{sublem:compos-subsize-bounded}.
+using \cref{sublem:compos-subsize-unbounded} in place of \cref{sublem:compos-subsize-bounded}
+where the translation of subsizing is involved.
 \end{proof}
 
 \subsection{Preservation of reduction}
