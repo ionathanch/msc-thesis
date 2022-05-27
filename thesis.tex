@@ -16,22 +16,11 @@
 \usepackage[margin=1.25in, marginparwidth=7em]{geometry}
 \usepackage[numbers]{natbib}
 \usepackage[hang, sc, skip=1ex]{caption}
-\usepackage{marginnote} % margin notes
-\usepackage{checkend}	% indicate all unclosed envs
-\usepackage{epigraph} % add epigraphs
-\usepackage{imakeidx} % add an index
-\usepackage{enumitem} % better enumerations and itemizations
-\usepackage{graphicx} % graphics and images
-\usepackage{multicol} % multiple columns
-\usepackage{booktabs} % polished table styling
-\usepackage{tikz-cd} % commutative diagrams
-\usepackage{xcolor} % coloured text and predefined colours
-\usepackage{minted} % code highlighting
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{amsthm}
-\usepackage[pagebackref,bookmarksnumbered,linktocpage,colorlinks]{hyperref}
+\usepackage{xcolor, imakeidx, epigraph}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[pagebackref,bookmarksnumbered,linktocpage,colorlinks,pdfusetitle]{hyperref}
 \usepackage[capitalize, noabbrev]{cleveref} % needs to come after hyperref and amsmath
+\usepackage{style} % contains theorem defs that need to come after cleveref
 
 % backreferences styled as ↪ page(s) x, y, and z
 \newcommand{\decline}[3]{\ifcase #1 #3\or #2\else #3\fi}
@@ -42,12 +31,15 @@
 \definecolor{darkblue}{HTML}{0000EE}
 \hypersetup{allcolors=darkblue}
 
-% use ⬛ as QED symbol
-\renewcommand\qedsymbol{$\blacksquare$}
-
 % style URLs (incl. DOIs) in sans serif
 \urlstyle{sf}
 \newcommand{\doi}[1]{doi:\href{https://doi.org/#1}{\textsf{#1}}}
+
+% use ⬛ as QED symbol
+\renewcommand\qedsymbol{$\blacksquare$}
+
+% set caption margins to 2× indent
+\setlength{\captionmargin}{2\parindent}
 
 % epigraph custom styling
 \epigraphnoindent
@@ -56,24 +48,6 @@
   \setlength{\epigraphwidth}{#1\textwidth}
   \epigraph{\textit{#2}}{--- #3}
 }
-
-% set caption margins to 2× indent
-\setlength{\captionmargin}{2\parindent}
-
-% style margin notes in single-spaced footnotesize Latin Modern
-\renewcommand{\marginfont}{\fontfamily{lmr}\selectfont\footnotesize\singlespacing}
-
-% PDF metadata
-\hypersetup{
-  pdftitle={Sized Dependent Types in Extensional Type Theory},
-  pdfauthor={Jonathan Chan},
-  pdfsubject={},
-  pdfkeywords={},
-  pdflang={en-CA}
-}
-
-% custom style and macros
-\usepackage{style}
 
 \title{Sized Dependent Types in Extensional Type Theory}
 \makeindex[intoc]
