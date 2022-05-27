@@ -275,9 +275,9 @@ to well-founded induction\index{well-founded induction} on sizes despite constru
 With cofixpoints, we can then construct an infinite stream of some single element.
 Let $A$ in the definitions to follow be some type.
 \begin{align*}
-& \Let{\repeat}{\arr*{A}{\Funtype{\alpha}{\Stream{A}{\alpha}}}}{\\
-& \quad \fun{a}{A}{\cofix{\repeat*}{\alpha}{\Stream{A}{\alpha}}{\\
-& \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\App{\repeat*}{\beta}}}}}
+& \Let{\dup}{\arr*{A}{\Funtype{\alpha}{\Stream{A}{\alpha}}}}{\\
+& \quad \fun{a}{A}{\cofix{\dup*}{\alpha}{\Stream{A}{\alpha}}{\\
+& \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\App{\dup*}{\beta}}}}}
 \end{align*}
 
 Notice that the stream produced has \emph{any} size,
@@ -356,6 +356,74 @@ since it allows encoding M types, the dual of W types, not just streams.
 & \data{\App{\app{\M*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\alpha}}{\Type{i+1}} \\
 & \quad \annot{\inf*}{\arr{a}{A}{\arr*{(\arr*{\app{B}{a}}{\Thunk{(\app{\M*}{A}{B})}{\alpha}})}{\App{\app{\M*}{A}{B}}{\alpha}}}}
 \end{align*}
+
+\section{Designing for Syntactic Modelling}
+
+Choosing to use a syntactic model imposes some contraints on the design
+of the source and target languages, as well as on the proof architecture.
+Most notably, proof of correctness of syntactic models proceed
+by induction on the source derivations,
+so \lang uses untyped conversion to avoid a dependency between typing and definitional equality,
+which would otherwise require a large and complex mutual proof of type preservation.
+On the other hand, there's no similar restriction on the target,
+but since equality reflection is needed for translation-specific reasons,
+\CICE uses typed equivalence instead to avoid the inconsistency and loss of subject equivalence
+arising from reflecting propositional equality into transitive, untyped conversion,
+as detailed in \cref{sec:target}.
+
+Due to the incongruity between untyped conversion in the source and typed equivalence in the target,
+the na\"ive proof attempts at preservation would be missing crucial typing information
+to construct the target derivations, especially for equivalence.
+This is why, in all of the preservation lemmas, well-typedness of the translated terms
+are required as premises, essentially replacing what would've been mutual or circular appeals
+to type preservation with just the right amount of typing information.
+
+Quite unexpectedly, this also has an effect on whether conversion
+in the source is declarative or algorithmic.
+If it were declarative like \CICE's equivalence, with no reduction rules or their closures,
+then transitivity of subtyping would need to be an explicit rule rather than a theorem.
+But in preservation of subtyping, we need well-typedness of all translated terms---%
+where would we derive the well-typedness of the middle term arising from the premises
+of such a transitivity rule?
+There's no ``subject subtyping'' as there is for subject reduction, and indeed,
+$\subtype{\mt; \mt}{\Type{1}}{\App{\fix{f}{\alpha}{\N{\alpha}}{\Type{2}}}{\sss{\circ}}}$
+holds while the right-hand side, which is convertible to $\Type{2}$, isn't even well typed.
+
+So simply by deciding on a syntactic model into an extensional type theory,
+definitional equality in the source must be untyped and algorithmic,
+while in the target it must be typed,
+lest we create headaches for ourselves with these complex yet avoidable issues.
+
+These consequences have further effects on the design of the source syntax,
+particularly concerning type annotations, if we also take into account
+the other required metatheoretical properties.
+Proving subject reduction in the case of $\delta$-reduction requires that
+definitions in the environment have type annotations;
+otherwise, even if $\Gamma = \define*{x}{e}, \annot{x}{\tau}$ were well formed,
+we can't guarantee that $x$ reduces to $e$ of the \emph{same} type $\tau$,
+only that $e$ has \emph{some} type.
+Type-annotated definitions in turn force locally-named expressions
+in $\kw{let}$ expressions to have annotations as well.
+In the congruence rule that reduces the body of a $\kw{let}$ expression,
+the named expression needs to be added as a definition to the environment,
+but since reduction is untyped, its type can't be derived:
+it must be provided by the $\kw{let}$ expression itself.
+
+Although not directly related to the type preservation proofs,
+proving confluence requires that the notion of $\rhd*$ be exactly the
+reflexive, transitive closure of $\rhd$, so the congruence rules need to be
+a part of $\rhd$ and not of $\rhd^*$ (as is the case in the languages compiled in \citet{wjb}).
+
+Some of these constraints are not so serious:
+$\kw{let}$ expressions without type annotations, for instance,
+can be easily elaborated into a core calculus with annotations.
+Other constraints require more work to handle:
+although a variant of \lang with typed equivalence would instinctively be equivalent
+to \lang without, proving that nothing has been broken by the introduction of typed equivalence
+requires yet another syntactic model, which would have the same mutual induction issues.
+In other words, a syntactic model constrains us to a particular presentation of the type theory
+and its judgement rules, and changing the presentation (\eg for implementation in a type checker)
+requires either more proof work or a certain amount of trust in the correctness of the changes.
 
 \section{Future Directions}
 
