@@ -386,7 +386,7 @@ But in preservation of subtyping, we need well-typedness of all translated terms
 where would we derive the well-typedness of the middle term arising from the premises
 of such a transitivity rule?
 There's no ``subject subtyping'' as there is for subject reduction, and indeed,
-$\subtype{\mt; \mt}{\Type{1}}{\App{\fix{f}{\alpha}{\N{\alpha}}{\Type{2}}}{\sss{\circ}}}$
+$\subtype{\mt; \mt}{\Type{1}}{\App{(\fix{f}{\alpha}{\N{\alpha}}{\Type{2}})}{\sss{\circ}}}$
 holds while the right-hand side, which is convertible to $\Type{2}$, isn't even well typed.
 
 So simply by deciding on a syntactic model into an extensional type theory,
@@ -399,7 +399,7 @@ particularly concerning type annotations, if we also take into account
 the other required metatheoretical properties.
 Proving subject reduction in the case of $\delta$-reduction requires that
 definitions in the environment have type annotations;
-otherwise, even if $\Gamma = \define*{x}{e}, \annot{x}{\tau}$ were well formed,
+otherwise, even if $\Gamma = (\define*{x}{e}), (\annot{x}{\tau})$ were well formed,
 we can't guarantee that $x$ reduces to $e$ of the \emph{same} type $\tau$,
 only that $e$ has \emph{some} type.
 Type-annotated definitions in turn force locally-named expressions
