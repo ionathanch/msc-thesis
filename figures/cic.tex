@@ -19,8 +19,8 @@
   \end{figure}
 }
 
-\newcommand{\FigEquiv}[1]{
-  \begin{figure}[p]
+\newcommand{\FigEquiv}[2][p]{
+  \begin{figure}[#1]
   \centering
   \begin{mathpar}
   \fbox{$\defeq{\GammaT}{\eT}{\eT}{\tauT}$} \hfill \\
@@ -144,12 +144,12 @@
   }
   \end{mathpar}
   \caption{Equivalence rules}
-  \label{#1}
+  \label{#2}
   \end{figure}
 }
 
-\newcommand{\FigTypingCIC}[1]{
-  \begin{figure}[p]
+\newcommand{\FigTypingCIC}[2][p]{
+  \begin{figure}[#1]
   \centering
   \begin{mathpar}
   \fbox{$\wf{}{\GammaT}$} \qquad
@@ -284,7 +284,7 @@
   }
   \end{mathpar}
   \caption{Typing and well-formedness rules (\CICE)}
-  \label{#1}
+  \label{#2}
   \end{figure}
 }
 
