@@ -19,8 +19,7 @@
 \usepackage{xcolor, imakeidx, epigraph}
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage[pagebackref,bookmarksnumbered,linktocpage,colorlinks,pdfusetitle]{hyperref}
-\usepackage[capitalize, noabbrev]{cleveref} % needs to come after hyperref and amsmath
-\usepackage{style} % contains theorem defs that need to come after cleveref
+\usepackage{style}
 
 % backreferences styled as ↪ page(s) x, y, and z
 \newcommand{\decline}[3]{\ifcase #1 #3\or #2\else #3\fi}
@@ -49,7 +48,7 @@
   \epigraph{\textit{#2}}{--- #3}
 }
 
-\title{Sized Dependent Types in Extensional Type Theory}
+\title{Sized Dependent Types via Extensional Type Theory}
 \makeindex[intoc]
 
 \author{Jonathan {\footnotesize H.W. \relax}Chan}

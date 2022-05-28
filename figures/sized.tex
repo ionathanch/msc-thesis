@@ -233,8 +233,8 @@
   \end{figure}
 }
 
-\newcommand{\FigTyping}[1]{
-  \begin{figure}[p]
+\newcommand{\FigTyping}[2][p]{
+  \begin{figure}[#1]
   \centering
   \begin{mathpar}
   \fbox{$\type{\Phi; \Gamma}{e}{\tau}$} \hfill \\
@@ -376,6 +376,6 @@
   \fi
   \end{mathpar}
   \caption{Typing rules}
-  \label{#1}
+  \label{#2}
   \end{figure}
 }
