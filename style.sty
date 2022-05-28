@@ -134,6 +134,7 @@
 \newcommand{\const}[1]{\mathsf{\textcolor{constcolour}{#1}}}
 \newcommand{\constr}[1]{\mathsf{\textcolor{constrcolour}{#1}}}
 \newcommand{\tg}[1]{\mathtt{\textcolor{targetcolour}{#1}}}
+\newcmd*{\tg}[1]{\textcolor{targetcolour}{#1}}
 \newcommand{\new}[1]{%
   \setlength{\fboxsep}{3pt}%
   \colorbox{newcolour}{\rule{0em}{0.5\baselineskip}#1}%
@@ -311,8 +312,8 @@
 \newcommand{\typeto}[4]{#1 \mathrel{\vdash} \annot{#2}{#3} \mathrel{\rightsquigarrow} #4}
 
 % target metavariables
-\newcommand{\GammaT}{\tg{\Gamma}}
-\newcommand{\DeltaT}{\tg{\Delta}}
+\newcommand{\GammaT}{\tg*{\Gamma}}
+\newcommand{\DeltaT}{\tg*{\Delta}}
 \newcommand{\iT}{\tg{i}}
 \newcommand{\jT}{\tg{j}}
 \newcommand{\kT}{\tg{k}}
@@ -327,11 +328,11 @@
 \newcommand{\PT}{\tg{P}}
 \newcommand{\rT}{\tg{r}}
 \newcommand{\sT}{\tg{s}}
-\newcommand{\alphaT}{\tg{\alpha}}
-\newcommand{\betaT}{\tg{\beta}}
-\newcommand{\gammaT}{\tg{\gamma}}
-\newcommand{\tauT}{\tg{\tau}}
-\newcommand{\sigmaT}{\tg{\sigma}}
+\newcommand{\alphaT}{\tg*{\alpha}}
+\newcommand{\betaT}{\tg*{\beta}}
+\newcommand{\gammaT}{\tg*{\gamma}}
+\newcommand{\tauT}{\tg*{\tau}}
+\newcommand{\sigmaT}{\tg*{\sigma}}
 \newcommand{\XT}{\tg{X}}
 \newcommand{\cT}{\tg{c}}
 \newcommand{\fT}{\tg{f}}
@@ -355,7 +356,7 @@
 \newcommand{\sssT}[1]{\tg{\widehat{#1}}}
 \newcommand{\funT}[3]{\tg{\lambda} \annotT{#1}{#2} \mathpunct{\tg{.}} #3}
 \newcmd*{\funT}[3]{\tg{\lambda} #1 \mathord{\tg{.}} #2 \mathpunct{\tg{.}} #3}
-\newcommand{\funtypeT}[3]{\tg{\Pi} \annotT{#1}{#2} \mathpunct{\tg{.}} #3}
+\newcommand{\funtypeT}[3]{\tg*{\Pi} \annotT{#1}{#2} \mathpunct{\tg{.}} #3}
 \newcommand{\arrT}[3]{\mathopen{\tg{(}} \annotT{#1}{#2} \mathclose{\tg{)}} \mathrel{\tg{\rightarrow}} \phantom{} #3}
 \newcmd*{\arrT}[1]{#1\@ifnextchar\bgroup{\mathrel{\tg{\rightarrow}}\arr*}{\xspace}}
 \newcommand{\letinT}[4]{\tg{let} \@et #1 \mathrel{\tg{:}} #2 \mathrel{\tg{\coloneqq}} \phantom{} #3 \@et \tg{in} \@et #4}
