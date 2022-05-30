@@ -22,5 +22,6 @@
 *.fdb_latexmk
 *.synctex.gz
 *_minted*/
+*.vscode/
 *~
 thesis.pdf
