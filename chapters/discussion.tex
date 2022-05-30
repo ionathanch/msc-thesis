@@ -364,8 +364,24 @@ of the source and target languages, as well as on the proof architecture.
 Most notably, proof of correctness of syntactic models proceed
 by induction on the source derivations,
 so \lang uses untyped conversion to avoid a dependency between typing and definitional equality,
-which would otherwise require a large and complex mutual proof of type preservation.
-On the other hand, there's no similar restriction on the target,
+which would otherwise require a large and complex mutually inductive proof of type preservation.
+
+Strictly speaking, such a proof would still be possible,
+since the compositionality lemmas are merely up to syntactic equality.
+If they were instead up to typed equivalence
+(as is the case for the translations in \citet{wjb}),
+then the base cases would fail:
+to show
+$\defeq{\compile{\Phi}, \compile{\Gamma}}{\yT}{\yT}{\compile{\tau}}$
+via \rref{equiv-refl} for instance,
+$\type{\compile{\Phi}, \compile{\Gamma}}{\yT}{\compile{\tau}}$
+would be required,
+but this can't be constructed even from
+$\type{\Phi; \Gamma}{y}{\tau}$
+as it's not a premise and therefore the mutual type preservation induction hypothesis can't be applied.
+Still, I use untyped conversion to avoid any other potential complications with the mutual induction.
+
+On the other hand, induction isn't done on the derivations of the target,
 but since equality reflection is needed for translation-specific reasons,
 \CICE uses typed equivalence instead to avoid the inconsistency and loss of subject equivalence
 arising from reflecting propositional equality into transitive, untyped conversion,
@@ -412,7 +428,7 @@ it must be provided by the $\kw{let}$ expression itself.
 Although not directly related to the type preservation proofs,
 proving confluence requires that the notion of $\rhd*$ be exactly the
 reflexive, transitive closure of $\rhd$, so the congruence rules need to be
-a part of $\rhd$ and not of $\rhd^*$ (as is the case in the languages compiled in \citet{wjb}).
+a part of $\rhd$ and not of $\rhd^*$ (as is the case for the languages compiled in \citet{wjb}).
 
 Some of these constraints are not so serious:
 $\kw{let}$ expressions without type annotations, for instance,
