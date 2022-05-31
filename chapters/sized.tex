@@ -74,8 +74,8 @@ I use the same presentation as MetaCoq\index{MetaCoq}
 and split it into a subtyping judgement
 and a separate $\alpha$-cumulativity\index{$\alpha$-cumulativity} judgement,
 listed in \cref{fig:subtyping}.
-This overcomes some technical proof complications that appear in
-the single-judgement presentation due to the transitivity rule.
+This overcomes some technical proof complications specific to the syntactic model
+that appear in the single-judgement presentation due to the transitivity rule.
 Aside from the expected cumulativity of universes,
 the function type and size quantification are covariant in the codomain
 (\ie are $\alpha$-cumulative when their codomains are),
@@ -217,8 +217,9 @@ when applied to a constructor,
 since all sized constructors carry a smaller size argument
 that will statisfy the subsizing premise.
 Furthermore, reduction can also occur when the fixpoint is applied to a successor size
-by reflexivity of subsizing,
-making the rule a strict supersession.
+by reflexivity of subsizing, \ie $\App{(\fix{f}{\alpha}{\tau}{e})}{\sss{s}}$ will reduce to
+$\subst{e}{\alpha, f}{\sss{s}, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\tau}{e})}{\beta}}}$
+since $s < \sss{s}$.
 
 \FigTypingInd{fig:typing-ind}
 
@@ -232,7 +233,7 @@ $\kw{case}$ expressions match on these size arguments in addition to the usual t
 asserting within their branches that they are strictly smaller than the target's size.
 The motive is dependent on the target,
 and the type of a branch is the motive with its target as the constructor being destructed.
-In other words, $\kw{case}$ expressions are induction principles:
+In other words, $\kw{case}$ expressions are inversion principles:
 for instance, one proves $P$ for some natural $x$ when one can prove it
 for the base case where $x$ is some $\zero*$
 and for the step case where $x$ is some $\succ*$.
@@ -243,7 +244,7 @@ as enforced by its type in the environment when type checking the body.
 
 Sizes aside, the only difference from regular, unsized naturals and well-founded trees
 is that their types live in a universe one level higher than they usually are.
-$\N{s}$ lives in $\TypeT{1}$ rather than in $\Type{0}$,
+$\N{s}$ lives in $\Type{1}$ rather than in $\Type{0}$,
 and $\W{x}{\sigma}{\tau}{s}$ lives in $\axioms{U}$ rather than in $U$.
 This is a direct consequence of the way that the translation is defined,
 and is necessary to maintain its type preservation\index{type preservation} properties.
