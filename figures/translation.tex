@@ -118,8 +118,8 @@
   \end{figure}
 }
 
-\newcommand{\FigTransInd}[1]{
-  \begin{figure}[p]
+\newcommand{\FigTransInd}[2][p]{
+  \begin{figure}[#1]
   \centering
   \begin{align*}
   \Aboxed{\compile{e} &= \eT} \quad \cdots \\
@@ -206,6 +206,6 @@
   \end{mathpar}
   \caption[Translation of naturals, well-founded trees, $\kw{case}$, fixpoints]{Translation of naturals, well-founded trees, \\
     and $\kw{case}$ and fixpoint expressions}
-  \label{#1}
+  \label{#2}
   \end{figure}
 }
