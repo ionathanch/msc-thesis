@@ -1,7 +1,7 @@
 \chapter{Introduction} \label{ch:introduction}
 
 A type system is a delicate balance between expressivity and well-behavedness.
-More expressivity allows for more programs to be well-typed,
+More expressivity allows for more programs to be well typed,
 while paradoxically allowing less code to be written,
 because some of the onus of ensuring a program is valid is shifted
 from the programmer to the process of type checking.
@@ -59,21 +59,22 @@ Other logical constructs can be encoded as well, for example:
     which is trivially inhabited by the identity function
     $\fun{P}{\Prop}{\fun{p}{P}{p}}$;
 \end{itemize}
-and many other logical connectives such as existential quantification, conjunction, and disjunction.
+and many other logical connectives such as existential quantification, conjunction, disjunction, and equality.
 
 A key metatheoretical property that a type theory must satisfy
 for its interpretation as a logical system to be valid is \emph{consistency}:
 falsehood cannot be proven.
 In other words, there must not be any term whose type is $\funtype{P}{\Prop}{P}$.
 Otherwise, any proposition would be provable,
-which goes against the intuition of how a logical system should behave.
+including those we know to be obviously untrue,
+such as $0 = 1$.
 
 The two most important components of a formal description of a dependent type theory
 are its typing judgement, whose rules describe when a term has a certain type,
 and its equality judgement(s), whose rules describe when two terms are equal.
 The latter is relevant in dependent types because they allow determining that,
-for instance, a proof of \mbox{$\app{P}{(\app{(\fun{y}{A}{y})}{x})}$}
-is in fact also a proof of $\app{P}{x}$.
+for instance, a proof of \mbox{$\app{P}{(1 + 1)}$}
+is in fact also a proof of $\app{P}{2}$.
 Naturally, equality is sometimes described in terms of reduction judgements,
 governed by the rules of computation.
 This means that, in contrast to nondependent type systems,
@@ -83,17 +84,20 @@ The issue gets even more complicated with more complex forms of reduction like r
 \subsection{Recursive programming with sized types} \label{ss}
 
 Inductively defined data and recursive functions on them
-are indispensible tools of dependently-typed programming,
-allowing the expression of a variety of constructs, programs, and their properties.
+are indispensible tools of programming,
+allowing the expression of a variety of constructs, programs,
+and in the case of dependent types, their properties.
 A crucial restriction on recursive functions
 in proof assistants such as Agda, Coq, Idris, Lean, and more
 is that recursive functions must be \emph{guarded by destructors}\index{guardedness}
 and only recur on structurally smaller arguments~\citep{guard}.
 This guardedness check is statically done before or during type checking and,
 to vastly simplify, ensures that recursive calls occur only on syntactic subarguments:
-if the original argument is some natural $\app{\succ*}{n}$, then the function recurs only on $n$;
-if it's some list $\app{\cons*}{\hd}{\tl}$, then it recurs only on $\tl$;
-and so on.
+if the original argument is some natural $\app{\succ*}{n}$ that is the successor of $n$,
+then the function recurs only on $n$;
+if it's some cons list $\app{\cons*}{\hd}{\tl}$
+consisting of an element and the rest of the list $\tl$,
+then it recurs only on $\tl$; and so on.
 
 Although this is usually referred to as a syntactic termination check,
 and termination is essential in ensuring decidability of type checking,
@@ -200,7 +204,8 @@ Instead, the purpose is threefold:
     see Sacchini's dissertation~\citep{CIC-hat-minus} or \CIChatstar~\citep{CIC-hat-star},
     for instance.
     Instead, a syntactic model relies on the consistency of the language in which I'm modelling,
-    and requires no additional deep mathematical knowledge.
+    allowing me to focus on only the unique parts of the sized type theory
+    rather than on consistency as a whole.
   \item To reopen the discussion on sized dependent types.
     Since the discovery of the inconsistency of Agda's sized types~\citep{infinity},
     progress appears to have stagnated a little.
@@ -243,12 +248,13 @@ but this is much more complex and largely orthogonal to sized types
 and the syntactic model.
 
 Perhaps the most contentious design decision so far is the use of untyped equality,
-as can be found in Coq, over typed equality, as can be found in Agda.%
+as can be found in Coq, over typed equality, as can be found in Agda.
 While typed equality is considered to ``have clearer mathematical semantics''~\citep{typed-NbE},
 its judgement depends on the typing judgement;
 meanwhile, since types can depend on terms,
 typing itself depends on equality to check whether one type can be used in place of another.
-As we'll see in \cref{sec:syntactic-model}, these mutually-defined judgements would greatly complicate the proofs,
+As we'll see in \cref{sec:syntactic-model},
+these mutually-defined judgements would greatly complicate the proofs for the syntactic model,
 so I settle for untyped equality instead.
 
 On top of \GCC, I add two inductive definitions featured in Martin--L\"of type theory (MLTT)~\citep{mltt}\index{Martin--L\"of type theory}:
@@ -276,7 +282,7 @@ Sizes themselves consist of size variables as well as a \emph{base size}
 and a \emph{size successor operator}.
 This is the standard for size expressions in sized type systems.
 Some augment the size grammar with addition of or scalar multiplication of size variables,
-for instance, increasing expressivity at the expense of complexity.
+for instance, increasing expressivity at the expense of added complexity in size checking.
 To keep things simple, I don't include these features and stick to successor sizes.
 Note that size expressions here are \emph{not} terms,
 and their quantifications, abstractions, and applications
@@ -321,7 +327,7 @@ summarized by the below typing rule.
 Bounded sizes were originally introduced to avoid complex
 \emph{semi-continuity} or approximative \emph{polarity}
 requirements on fixpoints' types in the presence of an \emph{infinite size}\index{infinite size}
-that is strictly larger than all sizes.
+that is strictly larger than all sizes~\citep{flationary}.
 Although I don't include an infinite size,
 this style of recursion is more elegant because it corresponds neatly to well-founded induction on sizes.
 
@@ -342,6 +348,9 @@ The only missing feature is the infinite size,
 since its properties and its use are known to be inconsistent in Agda.
 A demonstration of the inconsistency of a hypothetical infinite size in \lang
 is given in \cref{sec:infinity}.
+On the other hand, the lack of an infinite size prevents
+certain infinitary constructs from being expressed;
+\cref{sec:examples:limitations} gives a concrete example.
 
 \subsection{Syntactic model}\label{sec:syntactic-model}
 
@@ -362,7 +371,8 @@ and to the latter as \emph{conversion}\index{conversion}.
 
 This translation from \lang to \CICE must be \emph{type preserving}\index{type preservation}%
 \footnote{This terminology comes from compilation;
-in the context of syntactic modelling, this is rather unhelpfully known as \emph{soundness}.}:
+in the context of syntactic modelling,
+this is known as \emph{soundness} with respect to the translation target.}:
 if some term $e$ is well typed under some environments $\Phi; \Gamma$ with some type $\tau$,
 then the translated term $\compile{e}$ must also be well typed
 under the translated environment $\compile{\Phi}\compile{\Gamma}$
@@ -392,16 +402,19 @@ such that $\compile{\bot} = \funtypeT{\PT}{\PropT}{\PT}$,
 and to show that this translation is type preserving.
 I define my translation by induction on the typing derivations of \lang
 rather than merely over its syntax,
-ensuring that only well-typed terms have a translation.
+ensuring that only well-typed terms need to be considered.
 
 Type preservation of the translation is proven by induction on not only the typing derivations,
 but also the derivations of the judgements on which the typing rules depend.
-In particular, typing depends on subtyping\index{subtyping}, which in turn depends
-on \emph{$\alpha$-cumulativity}\index{$\alpha$-cumulativity}~\citep{MetaCoq}
-and on the reflexive, transitive closure of reduction.
-Finally, this closure of reduction depends on the reduction rules,
+In particular, typing depends on subtyping\index{subtyping} $\preccurlyeq$,
+which in turn depends on \emph{$\alpha$-cumulativity}\index{$\alpha$-cumulativity}
+$\sqsubseteq$~\citep{MetaCoq}
+and on the reflexive, transitive closure of reduction $\rhd^*$.
+Finally, this closure of reduction depends on the reduction rules $\rhd$,
 most of which are defined by substitution.
 Below are the relevant rules showing these dependencies and an example reduction rule.
+These judgements will be explained in detail shortly in the next chapter;
+I present them here only to motivate the proof structure.
 %
 \begin{mathpar}
 \inferrule[]{
@@ -439,7 +452,7 @@ reduction of terms are equivalent by the \CICE equivalence judgement
 $\defeq{\GammaT}{\eT_1}{\eT_2}{\tauT}$,
 and $\alpha$-cumulative terms and subtypes are correspondingly \CICE subtypes.
 I summarize them here, omitting some hypotheses and sublemmas,
-to outline the proof architecture,
+solely to outline the proof architecture,
 which roughly follows the structure of type-preserving compilation by~\citet{wjb}.
 
 \begin{lemma}[Compositionality]\label{lem:overview:compositionality}\hfill
@@ -524,7 +537,7 @@ which in turn is used to prove the inversion principles for the typing judgement
 This proof structure is possible by virtue of the non-mutuality of the judgements of \lang
 due to the use of untyped conversion\index{conversion} (and hence untyped reduction).
 If it were instead typed, then it would mutually depend on typing and subtyping as well,
-and the above lemmas would circularly depend on one another~\citep{wjb}. \\
+and proving the above lemmas would require require a seven-part mutual induction on the derivations.
 
 \section{Related Work}
 
@@ -679,7 +692,9 @@ has all three properties \emph{and} has been proven to be strongly normalizing.)
 One of the goals of \lang, as mentioned, is to fill in this gap
 with a consistent sized dependent type theory with all of the desired features.
 However, it's missing two properties that all of these type theories do have:
-inductive types in the ``correct'' universes,
+inductive types in the ``correct'' universes
+(as we'll see shortly, the type of naturals and well-founded trees
+are one universe higher than is conventional),
 and the existence of an infinite size.
 
 % TODO: fix manual footnote number
