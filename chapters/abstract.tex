@@ -3,18 +3,18 @@
 Many contemporary proof assistants based on dependent type theories such as Coq and Agda
 are founded on the types-as-propositions paradigm where type checking a program
 corresponds to verifying a proof of some proposition in a higher-order predicate logic.
-To ensure the decidability of type checking and the consistency of the logic,
-such proof assistants must forbid all nonterminating recursive functions,
-which is currently done via guard predicates that only allow functions
-that are structurally recursive and that recur only on syntactically smaller arguments.
-However, these guard predicates are sometimes too restrictive and reject functions
-that aren't structurally recursive but are obviously terminating on inspection,
+To ensure decidability of type checking and consistency of the logic,
+these proof assistants forbid nonterminating recursive functions
+using guard predicates that only allow structurally recursive functions
+recurring only on syntactically smaller arguments.
+However, these guard predicates are sometimes too restrictive
+and reject obviously-terminating functions that aren't otherwise structurally recursive,
 creating extra work for the programmer to convince the guard checker.
 
-An alternative is to use a type system with type-based termination checking such as sized types,
+An alternative is to use type-based termination checking such as sized types,
 where inductively-defined types are annotated with sizes.
-Successful type checking guarantees that functions recur only on arguments whose types are smaller,
-rather than merely on arguments that syntactically appear smaller.
+Successful type checking guarantees that functions recur only on arguments whose types have smaller sizes,
+rather than merely on syntactic subarguments.
 There exist many sized dependent type theories,
 but none simultaneously feature higher-rank size quantification,
 which allows for passing around size-preserving functions,
@@ -23,12 +23,16 @@ which eliminates the need for complex monotonicity checks required by prior size
 
 In this thesis, I design a sized dependent type theory with higher-rank and bounded sizes (\lang),
 and show that it's suitable for theorem proving by proving its logical consistency with a syntactic model:
-By compiling \lang into the Extensional Calculus of Inductive Constructions (\CICE),
-a variant of the dependent type theory on which Coq is based,
+by compiling \lang into the Extensional Calculus of Inductive Constructions (\CICE),
+a variant of Coq's core type theory,
 and showing that this translation is type preserving,
 the consistency of \lang follows from the consistency of \CICE.
 This approach, unfortunately, refutes the existence of an ``infinite'' size strictly greater than all sizes,
-which is present in most prior sized type systems to overcome the limitations of finitary size expressions,
+which is present in prior sized type systems to overcome the limitations of finitary size expressions,
 meaning that some infinitary constructs aren't definable in \lang.
-Even so, this suggests that the inconsistency in Agda's implementation of higher-rank,
-bounded sized types is limited to interactions with the infinite size and its properties.
+
+Even so, \lang provies a valid foundation for sized types in a proof assistant,
+opening the way for future work on recovering expressivity lost from the lack of an infinite size
+and on restricting sized types in Agda,
+the only (inconsistent!) implementation of sized types in a major proof assistant,
+to be consistent.
