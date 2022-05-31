@@ -1795,7 +1795,7 @@ in order to translate $\compile{e'}$.
 \end{lemma}
 
 \begin{proof}
-By cases on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
+By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
   \item $\red{\Phi; \Gamma}{x}{e}$ when $(\define{x}{\tau}{e}) \in \Gamma$.
     By the definition of $\compile{\Gamma}$, we have
@@ -2290,7 +2290,7 @@ which are proven independently.
 \begin{lemma}[Preservation of sizes] \label{lem:pres-size}
 \begin{enumerate}[noitemsep]\hfill
   \item If $\wf{}{\Phi}$ then $\wf{}{\compile{\Phi}}$; and
-  \item If $\wf{\Phi}{s}$ then $\wf{\compile{\Phi}}{\compile{s}}$.
+  \item If $\wf{\Phi}{s}$ then $\type{\compile{\Phi}}{\compile{s}}{\SizeT}$.
 \end{enumerate}
 \end{lemma}
 
