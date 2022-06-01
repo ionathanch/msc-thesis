@@ -357,9 +357,8 @@ The recursive call is done on the result of $\monus$;
 $\divv$ then only type checks because $\monus$ is size preserving.
 Because the first argument of the recursive call to $\divv$ isn't \emph{structurally}
 a subterm with the call to $\monus$ in the way,
-the corresponding unsized function in a language whose fixpoints
-check for structurally-decreasing arguments (such as CIC)
-would not be accepted.
+a guardedness check wouldn't accept the corresponding unsized function,
+as is the case for CIC.
 %
 \begin{align*}
 &\Let{\divv}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}}{ \\
@@ -400,7 +399,7 @@ $$\App{\app{\App{\Nary}{\alpha}}{n}}{\beta} = \arr*{\underbrace{\arr*{\N{\beta}}
 $n$-ary size-preserving functions can then be typed using $\Nary$,
 such as a $\MaX$ function that takes the maximum of $n+1$ numbers
 all of the same size.
-For concision I define $\maX$ in a pattern-matching style of syntax,
+For concision, I define $\maX$ in a pattern-matching style of syntax,
 but it can easily be translated to proper \lang as a fixpoint and two $\kw{case}$ expressions.
 %
 \begin{align*}
@@ -465,7 +464,7 @@ to specify the exact size.
 This encoding is used in the $\append$ function, written in pattern-matching style,
 where the precise size of the resulting list should be the sum of the sizes of the input lists,
 but \lang has no addition operator for sizes.
-Suppose that $A$ here is some type.
+Suppose that $A$ is some type.
 %
 \begin{align*}
 \Let{&\append}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\List{A}{\alpha}}{\List{A}{\beta}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}}{ \\
@@ -476,14 +475,13 @@ Suppose that $A$ here is some type.
   }}
 \end{align*}
 
-Notice that $\append$ retains the order of the elements of the lists.
+$\append$ retains the order of the elements of the lists.
 On the other hand, if given some ordering function on $A$
 $$\annot{\ifleq}{\funtype{C}{\Type{i}}{\arr*{A}{A}{C}{C}{C}}}$$
 which selects one of two branches $C$ based on the order of the elements of $A$,
 we can define a similar $\mrg$ function that merges two lists such that
-the resulting list is sorted by with respect to $\ifleq$
-if the input lists were.
-In pattern-matching style, the recusion appears lexicographical,
+the resulting list is sorted with respect to $\ifleq$ if the input lists were.
+In pattern-matching style, the recursion appears lexicographical,
 but it can be translated to nested fixpoints~\citep{Abel-diss}.
 
 \begin{align*}
