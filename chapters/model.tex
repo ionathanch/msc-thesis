@@ -4,8 +4,8 @@
 \input{figures/definitions.tex}
 \input{figures/translation.tex}
 
-The type theory in which \lang is modelled is
-\CICE\index{Calculus of Inductive Constructions!Extensional \textasciitilde},
+\lang is modelled in
+\CICE,\index{Calculus of Inductive Constructions!Extensional \textasciitilde}
 as briefly described in \cref{ch:introduction}.
 The key idea is that sizes in \lang can themselves be represented as a inductive type in \CICE,
 and naturals and well-founded trees are then inductives with an additional size parameter.
@@ -102,7 +102,7 @@ in the empty environment, freely using transivity,
   &\approx \app{(\fun{p}{\eq{\const{0'}}{\N{\hat{\hat{\circ}}}}{\const{1}}}{\const{1}})}{\refl{\const{0'}}} &&\textrm{by congruence and reflection of $p$} \\
   &\approx \const{1} &&\textrm{by $\beta$-reduction},
 \end{align*}
-since reduction and therefore conversion occurs even when its terms are ill-typed,
+since reduction and therefore conversion occurs even when its terms are ill typed,
 as the second and third terms are.
 An alternate solution would be to disallow transitivity of conversion~\citep{CCE},
 but this is too limiting when trying to prove type preservation,
@@ -180,7 +180,7 @@ An additional premise to \rref{fix*} ensures that the $\nT$th argument is indeed
 
 As previously mentioned, fixpoints must also be guarded\index{guardedness}:
 recursive calls can only occur on structurally smaller arguments of elements of inductives.
-The guard condition is well-studied~\citep{guard, guard-relax, Coq} and so omitted here.
+The guard condition is well studied \citep{guard, guard-relax, Coq} and so omitted here.
 To justify uses of fixpoint expressions in the translation,
 I will provide either a mechanization or present a brief argument of guardedness.
 
@@ -191,8 +191,8 @@ its constructor, and its eliminator.
 Given some equality proof $\pT$ of $\eqT{\eT_1}{\tauT}{\eT_2}$
 and a motive $\PT$ dependent on a proof of equality
 whose left-hand side is fixed at $\eT_1$ and right-hand side is variable\punctstack{,}%
-\footnote{Occasionally referred to as \emph{Paulin-Mohring}'s equality,
-as opposed to \emph{Martin-L\"of}'s equality
+\footnote{Occasionally referred to as \emph{Paulin-Mohring}'s equality~\citep{CIC},
+as opposed to \emph{Martin-L\"of}'s equality~\citep{MLTT}
 where the left-hand side is variable as well.}
 to prove $\app{\PT}{\eT_2}{\pT}$ it suffices to provide to $\JT*$ a proof that
 $\app{\PT}{\eT_1}{\refl{\eT_1}}$ holds.
@@ -205,18 +205,20 @@ reflection\index{equality reflection} rather than using $\JT*$,
 but I retain $\JT*$ in \CICE for completeness\punctstack{.}%
 \footnote{The combined presence of $\JT*$ and equality reflection also allows proving the
 \emph{uniqueness of identity proofs} (UIP)\index{uniqueness of identity proofs},
-or that all proofs of an equality are themselves equal to one another.}
+or that all proofs of an equality $\eqT{a}{A}{b}$ are themselves equal to one another,
+by reflecting $p$ in the term $\JT{(\funT{b}{A}{\funT{p}{\eqT{a}{A}{b}}{\eqT{\reflT{a}}{}{p}}})}{\reflT{\reflT{a}}.}{}$}
 
 \rref{ind, constr, case} assign types to inductive types, their constructors,
 and $\tg{case}$ expressions, under the premise that
-the relevant inductive data definition exists and is well-formed.
+the relevant inductive data definition exists and is well formed.
 Here, the difference between the parameters and the indices of inductive types becomes apparent:
 the motive\index{motive} of a $\tg{case}$ expression is abstracted over the indices by $\vec{\yT}$
 in addition to the target by $\xT$, while the parameters $\vec{\pT}$ are fixed throughout.
 Therefore, when dealing with the types of indices and constructor arguments,
 the parameters are first substituted in place of $\vec{\wT}$.
 
-A $\tg{case}$ expression is well typed if its target is, if its motive is for any indices and according target,
+A $\tg{case}$ expression is well typed if its target is,
+if its motive is for any indices and target with those indices,
 and if each branch is well typed for that branch's constructor arguments,
 where its type is the motive with the appropriate indices and reconstructed target.
 For notational simplicity, the rule assumes that the binding variable names
@@ -225,7 +227,7 @@ but of course these can be renamed at the expense of additional renaming substit
 
 Additionally, the motive of a $\tg{case}$ expression is restricted by the metarelation $\elim{\mt}{\mt}{\mt}$,
 which indicates when \emph{large elimination}\index{large elimination} is allowed.
-More precisely, $\elim{\any}{\TypeT{\iT}}{\any}$ and $\elim{\any}{\PropT}{\PropT}$ always hold,
+$\elim{\any}{\TypeT{\iT}}{\any}$ and $\elim{\any}{\PropT}{\PropT}$ always hold,
 so that inductives in $\TypeT{}$ can be eliminated to any universe
 and inductives in $\PropT$ can be eliminated to $\PropT$,
 while $\elim{\XT}{\PropT}{\TypeT{\iT}}$ holds if the inductive $\XT$ in $\PropT$ satisfies further conditions.
@@ -236,7 +238,7 @@ They can be loosened while still retaining consistency (see \eg \citet{SProp}).
 The typing premises of
 \rref{equiv-beta, equiv-zeta, equiv-rho, equiv-iota, equiv-mu}
 corresponding to some of the reduction rules duplicate the premises found in many of the typing rules,
-trivially ensuring that both sizes of these equivalences are well-typed with the same type
+trivially ensuring that both sizes of these equivalences are well typed with the same type
 (a property known as \emph{subject equivalence}\index{subject reduction}).
 
 \section{Preliminary Definitions}
@@ -276,7 +278,7 @@ Other properties of the order can be derived by induction from these constructor
 A corresponding strict order $\mt \szltT \mt$ is also defined,
 and an accessibility predicate\index{accessibility predicate} $\AccT$ is specialized to sizes and the strict order.
 Note that it lives in $\PropT$, as does the argument of its sole constructor $\accT$,
-so accessibility predicates are intended to be interpreted as proof-irrelevant\index{proof irrelevance},
+so accessibility predicates are intended to be interpreted as proof irrelevant\index{proof irrelevance},
 and their large elimination\index{large elimination} is allowed.
 
 \FigDefns{fig:defns}
@@ -323,10 +325,9 @@ Since $\AccT$ is in already $\PropT$, \CICE could be replaced by an intensional 
 with a universe of \emph{strict propositions}\index{strict proposition} $\SPropT$
 of types whose elements are definitionally equal~\citep{SProp},
 then placing $\AccT$ in $\SPropT$.
-This is disallowed by \opcit because it breaks normalization,
-but not consistency which,
-as a target language of a syntactic model for proving consistency,
-is the relevant metatheoretical property.
+This is disallowed by \opcit because it breaks normalization;
+however, it doesn't break consistency,
+so it would remain suitable as the target language of a syntactic model.
 In any case, I use \CICE because equality reflection is more established in the literature
 and it allows me to use \rref{equiv-mu} in place of \rref{equiv-mu-guarded}.
 
@@ -357,24 +358,25 @@ The translation of subsizing judgements, on the other hand,
 is a recursive metafunction over the \emph{subsizing derivation}.
 \cref{fig:trans:subsize} defines the translation to \CICE terms
 by induction on the subsizing rules, which recursively translates subderivations
-(omitting size well-scopedness premises).
+(omitting irrelevant size well-scopedness premises).
 
 The translation of terms and term environments are similarly defined
 as recursive metafunctions over the typing and well-formedness derivations,
 denoted by
-\mbox{$\typeto{\Phi, \Gamma}{e}{\tau}{\eT}$} and \mbox{$\wfto{\Phi}{\Gamma}{\GammaT}$}
+\mbox{$\typeto{\Phi; \Gamma}{e}{\tau}{\eT}$} and \mbox{$\wfto{\Phi}{\Gamma}{\GammaT}$}
 respectively.
 However, for concision, I use $\compile{e}$ to mean the translation of $e$
-when well-typed under the current implicit environments,
+when well typed under the current implicit environments,
 $\compile{e}_{\Phi}$ or $\compile{e}_{\Gamma}$ to mean the translation of $e$
 with the current implicit environments extended with $\Phi$ or $\Gamma$,
 and $\compile{\Gamma}$ to mean the translation of $\Gamma$
-when well-formed under the current implicit size environment.
+when well formed under the current implicit size environment.
 
 \FigTransTerm{fig:trans:term}
 
 The translation for base \lang without inductives is given in \cref{fig:trans:term}
-in the more concise notation when the intent is clear and in the usual notation otherwise.
+in the more concise notation translated terms follow directly from subderivations
+and in the usual notation otherwise.
 Terms not involving sizes are translated in a straightforward recursive manner.
 Unbounded size quantifications and abstractions translate to quantifications and abstractions over $\SizeT$,
 while bounded ones have additional quantifications and abstractions over a proof of $\szltT$.
