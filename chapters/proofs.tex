@@ -420,7 +420,8 @@ For the congruence cases of reduction,
 it could start and end with terms that aren't redexes.
 Consider bounded size quantification as an example.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
-  \item
+  \item \phantom{Never gonna give you up}
+  \vspace{-2\baselineskip}
   \begin{mathpar}
   \inferrule{
     \red{\Phi, \bound{\alpha}{s}; \Gamma}{\tau_1}{\tau_2}
@@ -444,7 +445,8 @@ A congruence case could also start with a term that isn't a redex,
 but end with a reducible term.
 In this case, consider a size application that steps to an applied bounded size abstraction.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
-  \item
+  \item \phantom{Never gonna let you down}
+  \vspace{-2\baselineskip}
   \begin{mathpar}
   \inferrule{
     \red{\Phi; \Gamma}{e_1}{\Fun<{\alpha}{r}{e_2}}
@@ -471,7 +473,8 @@ In this case, consider a size application that steps to an applied bounded size 
 Lastly, a congruence case could start and end with a redex,
 as is the case for $\kw{let}$ expressions.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
-  \item
+  \item \phantom{Never gonna run around}
+  \vspace{-2\baselineskip}
   \begin{mathpar}
   \inferrule{
     \red{\Phi; \Gamma, \define{x}{\tau}{e_1}}{e_2}{e_3}
@@ -536,9 +539,9 @@ confluence holds by \cref{lem:confluence}.
 See \citet[Theorem 3.10]{confluence} for a complete proof.
 \end{proof}
 
-\subsection{Inversion}
+\subsection{Inversion on typing}
 
-\emph{Inversion principles}\index{inversion}
+\emph{Inversion principles}\index{inversion} on typing
 allow for deducing from a typing judgement the necessary premises for a typing derivation,
 with one principle for each syntactic form.
 In the presence of subtyping, these principles are a little more complex,
@@ -546,9 +549,66 @@ relating the type derived from the premises to the desired type by a subtyping j
 For concision, I prove all inversion principles for a general typing rule
 rather than handling each rule explicitly.
 
-Before we can prove the inversion principles,
+Before we can prove these inversion principles,
 we need transitivity of the subtyping judgement,
-which in turn requires both confluence and transitivity of $\alpha$-cumulativity\index{$\alpha$-cumulativity}.
+which in turn requires both confluence and transitivity of $\alpha$-cumulativity\index{$\alpha$-cumulativity},
+as well a few inversion principles for the closure of reduction.
+
+\begin{lemma}[Inversion on closure of reduction (\rref{pi})] \label{lem:inversion-red}
+If $\red*{\Phi; \Gamma}{\funtype{x}{\sigma_1}{\tau_1}}{\tau}$,
+then $\tau = \funtype{x}{\sigma_2}{\tau_2}$,
+and we have $\red*{\Phi; \Gamma}{\sigma_1}{\sigma_2}$
+and $\red*{\Phi; \Gamma, \annot{x}{\sigma_1}}{\tau_1}{\tau_2}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\red*{\Phi; \Gamma}{\funtype{x}{\sigma_1}{\tau_1}}{\tau}$.
+\begin{itemize}[noitemsep, label=\textbf{Cases}, leftmargin=*, labelindent=\parindent]
+  \item \rref*{red*-refl}. Trivial by \rref{red*-refl} on $\sigma_1$ and $\tau_1$.
+  \item \rref*{red*-once}. By case analysis on $\red{\Phi; \Gamma}{\funtype{x}{\sigma_1}{\tau_1}}{\tau}$,
+    the only possible rule is a congruence rule.
+    Either $\red{\Phi; \Gamma}{\sigma_1}{\sigma_2}$ and $\tau_1 = \tau_2$,
+    so that the goals hold by \rref{red*-once, red*-refl} respectively,
+    or $\sigma_1 = \sigma_2$ and $\red{\Phi; \Gamma, \annot{x}{\sigma_1}}{\tau_1}{\tau_2}$,
+    so that the goals hold by \rref{red*-refl, red*-once} respectively.
+  \item \rref*{red*-trans}.
+    \vspace{-\baselineskip}
+    \begin{mathpar}
+    \inferrule{
+      \red*{\Phi; \Gamma}{\funtype{x}{\sigma_1}{\tau_1}}{\tau'} \\
+      \red*{\Phi; \Gamma}{\tau'}{\tau}
+    }{
+      \red*{\Phi; \Gamma}{\funtype{x}{\sigma_1}{\tau_1}}{\tau}
+    }
+    \end{mathpar}
+    Induction hypotheses:
+    \begin{itemize}[noitemsep]
+      \item $\tau' = \funtype{x}{\sigma_2}{\tau_2}$,
+        $\red*{\Phi; \Gamma}{\sigma_1}{\sigma_2}$, and
+        $\red*{\Phi; \Gamma, \annot{x}{\sigma_1}}{\tau_1}{\tau_2}$; and
+      \item $\tau = \funtype{x}{\sigma_3}{\tau_3}$,
+        $\red*{\Phi; \Gamma}{\sigma_2}{\sigma_3}$, and
+        $\red*{\Phi; \Gamma, \annot{x}{\sigma_2}}{\tau_2}{\tau_3}$.
+    \end{itemize}
+    By \rref{red*-refl, acum-refl, subtype-red}, we have $\subtype{\Phi; \Gamma}{\sigma_1}{\sigma_2}$.
+    Then by \cref{lem:replacement-subtyping}, we have $\red*{\Phi; \Gamma, \annot{x}{\sigma_1}}{\tau_2}{\tau_3}$.
+    Finally, by \rref{red*-trans} twice, we have
+    $\red*{\Phi; \Gamma}{\sigma_1}{\sigma_3}$ and
+    $\red*{\Phi; \Gamma, \annot{x}{\sigma_1}}{\tau_1}{\tau_3}$.
+\end{itemize}
+\end{proof}
+
+\begin{corollary}[Inversion on closure of reduction (\rref{forall, forall<})]
+If $\red*{\Phi; \Gamma}{\Funtype{\alpha}{\sigma}}{\tau}$
+or $\type{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\sigma}}{\tau}$,
+then $\tau = \Funtype{\alpha}{\sigma'}$ or $\tau = \Funtype<{\alpha}{s}{\sigma'}$,
+and $\red*{\Phi, \alpha; \Gamma}{\sigma}{\sigma'}$
+or $\red*{\Phi, \bound{\alpha}{s}; \Gamma}{\sigma}{\sigma'}$
+by the same argument as for \nameref{lem:inversion-red},
+using instead the congruence reduction rules for
+$\Funtype{\alpha}{\sigma}$ or $\Funtype<{\alpha}{s}{\sigma}$
+in the case of \rref*{red*-once}.
+\end{corollary}
 
 \begin{lemma}[Transitivity of $\alpha$-cumulativity] \label{lem:transitivity-acum}
 If $\acum{e_1}{e_2}$ and $\acum{e_2}{e_3}$ then $\acum{e_1}{e_3}$.
@@ -751,7 +811,7 @@ Then finally by \rref{subtype-red}, we have $\subtype{\Phi; \Gamma}{\tau_1}{\tau
 A diagram representing the proof is shown in \cref{fig:transitivity-subtyping},
 where again the dashed arrows represent closure of reduction $\rhd^*$.
 
-\begin{theorem}[Inversion] \label{thm:inversion}
+\begin{theorem}[Inversion on typing] \label{thm:inversion}
 Given a syntactic form $e$ and a typing rule $\mathcal{R} \neq \text{\upshape \rref*{conv*}}$ for that form,
 if $\mathcal{D}$ is a derivation ending in $\type{\Gamma}{e}{\tau}$
 and $\mathcal{J}_i$ are the judgement forms in the premises of $\mathcal{R}$,
@@ -786,6 +846,19 @@ By induction on the derivation of $\type{\Gamma}{e}{\tau}$.
     holds by \nameref{thm:transivity-subtyping}. \qedhere
 \end{itemize}
 \end{proof}
+
+With inversion on typing judgements,
+we can conclude that the natural premises hold up to subtyping
+without having to do case analysis on typing derivations and handle \rref{conv} every single time.
+For example, given $\type{\Phi; \Gamma}{\fun{x}{\sigma}{e}}{\tau}$,
+we can conclude the following setting $\mathcal{R} = \rref*{lam}$:
+\begin{itemize}[noitemsep]
+  \item $\type{\Phi; \Gamma}{\sigma}{U}$,
+  \item $\type{\Phi; \Gamma, \annot{x}{\sigma}}{e}{\sigma'}$, and
+  \item $\subtype{\Phi; \Gamma}{\funtype{x}{\sigma}{\sigma'}}{\tau}$.
+\end{itemize}
+Uses of inversion on typing will henceforth be referred to simply as inversion,
+without backreferences to the theorem statement.
 
 \subsection{Replacement by reduction}
 
