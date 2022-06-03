@@ -16,7 +16,7 @@ We begin with three basic properties that all judgements satisfy:
 and \emph{substitutivity}\index{substitutivity}, which allows the subsitution of an assumption by a well-typed term
 or a size variable by a size expression.
 Because term environments have definitions in addition to assumptions,
-substitutivity can only apply to variables that aren't already defined in the environment.
+substitutivity can only apply to variables that aren't bound to a definition in the environment.
 A final property is the congruence of the reflexive, transitive closure of reduction,
 which extends congruence of reduction to its closure.
 
@@ -433,7 +433,7 @@ Consider bounded size quantification as an example.
     \item $\red*{\Phi, \bound{\alpha}{s}; \Gamma}{\tau_2}{\tau'_1}$ and
     \item $\red*{\Phi, \bound{\alpha}{s}; \Gamma}{\tau'_1}{\tau'_2}$,
   \end{itemize}
-  where $\tau'_1$ and $\tau'_2$ are the corresponding full developments.
+  where $\tau'_1$ and $\tau'_2$ are the corresponding complete developments.
   Then quite straightforwardly, by \cref{lem:congruence}, we have
   \begin{itemize}[noitemsep]
     \item $\red*{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau_2}}{\Funtype<{\alpha}{s}{\tau'_1}}$ and
@@ -457,7 +457,7 @@ In this case, consider a size application that steps to an applied bounded size 
     \item $\red*{\Phi; \Gamma}{\Fun<{\alpha}{r}{e_2}}{e'_1}$ and
     \item $\red*{\Phi; \Gamma}{e'_1}{\Fun<{\alpha}{r}{e'_2}}$,
   \end{itemize}
-  where $e'_1$ and $e'_2$ are the corresponding full developments.
+  where $e'_1$ and $e'_2$ are the corresponding complete developments.
   Again, quite straightforwardly, by \cref{lem:congruence}, we have
   \begin{itemize}[noitemsep]
     \item $\red*{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e_2})}{s}}{\App{e'_1}{s}}$ and
@@ -484,14 +484,14 @@ as is the case for $\kw{let}$ expressions.
     \item $\red*{\Phi; \Gamma, \define{x}{\tau}{e_1}}{e_3}{e'_2}$ and
     \item $\red*{\Phi; \Gamma, \define{x}{\tau}{e_1}}{e'_2}{e'_3}$,
   \end{itemize}
-  where $e'_2$ and $e'_3$ are the corresponding full developments.
+  where $e'_2$ and $e'_3$ are the corresponding complete developments.
   By \cref{lem:congruence}, we have
   \begin{itemize}[noitemsep]
     \item $\red*{\Phi; \Gamma}{\letin{x}{\tau}{e_1}{e_3}}{\letin{x}{\tau}{e_1}{e'_2}}$ and
     \item $\red*{\Phi; \Gamma}{\subst{e'_2}{x}{e'_1}}{\subst{e'_3}{x}{e'_1}}$.
   \end{itemize}
   By \cref{lem:develop-red*}, we also have $\red*{\Phi; \Gamma}{e_1}{e'_1}$,
-  where $e'_1$ is the corresponding full development,
+  where $e'_1$ is the corresponding complete development,
   so applying \cref{lem:congruence} again with $\zeta$-reduction and chaining it all up,
   we have $\red*{\Phi; \Gamma}{\letin{x}{\tau}{e_1}{e_3}}{\subst{e'_2}{x}{e'_1}}$.
 \end{itemize}
@@ -791,7 +791,7 @@ By induction on the derivation of $\type{\Gamma}{e}{\tau}$.
 
 Similar to \nameref{lem:replacement-subtyping}\index{replacement},
 where a type annotation in the environment can be replaced by a subtype,
-a definition in the environment can also be replaced by a term it reduces to.
+a definition in the environment can also be replaced by a reduct.
 In contrast, the proof is more involved and requires \nameref{thm:confluence}.
 
 \begin{lemma} \label{lem:replacement-reduction-1}
@@ -1278,10 +1278,10 @@ since reduction rules are defined in terms of substitution.
 In essence, we need to show that the translation commutes with substitution,
 so that translating a term with a substitution is the same as
 translating both terms and then applying the substitution.
-Since there are three different forms of substitution,
-substituting a term variable for a term,
-an bounded size variable for a size,
-and an unbounded size variable for a size,
+Since there are three different forms of substitution
+(substituting a term variable for a term,
+a bounded size variable for a size,
+and an unbounded size variable for a size),
 we need to handle each separately,
 and we end up with three individual compositionality lemmas.
 
@@ -1445,7 +1445,7 @@ the second being a term exhibiting boundedness,
 but the proofs have the same structure.
 
 \begin{sublemma}\label{sublem:compos-size}
-$\subst{\compile{s}}{\alpha}{\compile{r}} = \compile{\subst{s}{\alpha}{r}}$.
+$\subst{\compile{s}}{\alphaT}{\compile{r}} = \compile{\subst{s}{\alpha}{r}}$.
 \end{sublemma}
 
 \begin{proof}
@@ -1664,13 +1664,13 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
     Then we have
     \begin{align*}
     &\subst{\compile{\Fun<{\beta}{r}{e}}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} \\
-    &= \subst{(\fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \compile{r}}{\compile{e}}})}{\alphaT, \alphaT^*}{\compile{s}, \eT'}
+    &= \subst{(\funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{r}}{\compile{e}}})}{\alphaT, \alphaT^*}{\compile{s}, \eT'}
     && \textit{by translation} \\
-    &= \fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \subst{\compile{r}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}}
+    &= \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \subst{\compile{r}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}}
     && \textit{by substitution} \\
-    &= \fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \compile{\subst{r}{\alpha}{s}}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}}
+    &= \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{\subst{r}{\alpha}{s}}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}}
     && \textit{by \cref{sublem:compos-size}, $\alphaT^* \notin \compile{r}$} \\
-    &= \fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \compile{\subst{r}{\alpha}{s}}}{\compile{\subst{e}{s}{\alpha}}}}
+    &= \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{\subst{r}{\alpha}{s}}}{\compile{\subst{e}{s}{\alpha}}}}
     && \textit{by IH} \\
     &= \compile{\Fun<{\beta}{\subst{r}{\alpha}{s}}{\subst{e}{\alpha}{s}}}
     && \textit{by translation} \\
@@ -1689,7 +1689,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
         \type{\Phi; \Gamma}{\App{e}{r}}{\subst{\tau}{\beta}{r}}
       }
     \end{mathpar}
-    Induction hypothesis: $\subst{e}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{e}{\alpha}{s}}$. \\
+    Induction hypothesis: $\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{e}{\alpha}{s}}$. \\
     By the translation, we have $\subsizeto{\Phi; \Gamma}{\sss{r}}{r'}{\eT''}$.
     On the left-hand, side we have
     \begin{align*}
@@ -1836,18 +1836,18 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     By inversion on $\type{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{e}})}{\compile{s}}}{\tauT}$,
     we have
     \begin{itemize}[noitemsep]
-      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\funT{\alphaT}{\SizeT}{\compile{e}}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$,
+      \item $\type{\compile{\Phi}, \compile{\Gamma}}{\funT{\alphaT}{\SizeT}{\compile{e}}}{\funtypeT{\alphaT}{\SizeT}{\tauT'}}$,
       \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{s}}{\SizeT}$, and
       \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\subst{\tauT'}{\alphaT}{\compile{s}}}{\tauT}$.
     \end{itemize}
-    By inversion once more on $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$,
+    By inversion once more on $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\funtypeT{\alphaT}{\SizeT}{\tauT'}}$,
     we have
     \begin{itemize}[noitemsep]
       \item $\type{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\UT}$,
       \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{e}}{\tauT''}$, and
-      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtype{\alphaT}{\SizeT}{\tauT''}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$.
+      \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\tauT''}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$.
     \end{itemize}
-    By inversion on $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtype{\alphaT}{\SizeT}{\tauT''}}{\funtype{\alphaT}{\SizeT}{\tauT'}}$,
+    By inversion on $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\tauT''}}{\funtypeT{\alphaT}{\SizeT}{\tauT'}}$,
     we have $\subtype{\compile{\Phi}, \compile{\Gamma}}{\tauT''}{\tauT'}$.
     \rref{conv*} then gives us $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{e}}{\tauT'}$.
     We can then use \rref{equiv-beta, equiv-conv} to get
@@ -1856,7 +1856,7 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\App{(\Fun{\alpha}{e})}{s}}}{\compile{\subst{e}{\alpha}{s}}}{\tauT}$$
   \item $\red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}$.\\
     Let $\subsizeto{\Phi}{\sss{s}}{r}{\eT'}$.
-    Then by inversion thrice on $\type{\compile{\Phi}, \compile{\Gamma}}{\app{(\fun{\alphaT}{\SizeT}{\fun{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}}})}{\compile{s}}{\eT'}}{\tauT}$
+    Then by inversion thrice on $\type{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\funT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}}})}{\compile{s}}{\eT'}}{\tauT}$
     and an application of \rref{conv*}, we have
     \begin{itemize}[noitemsep]
       \item $\type{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\UT}$,
@@ -1865,7 +1865,7 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
       \item $\type{\compile{\Phi}, \compile{\Gamma}}{\subst{\tauT'}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\tauT}$.
     \end{itemize}
     We can then use \rref{equiv-beta} twice and \rref{equiv-conv} to get
-    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\app{(\fun{\alphaT}{\SizeT}{\fun{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}}})}{\compile{s}}{\eT'}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\tauT}.$$
+    $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\funT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}}})}{\compile{s}}{\eT'}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\tauT}.$$
     Finally, by \nameref{lem:compos-size-bounded}, we obtain our goal.
     $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\App{(\Fun<{\alpha}{r}{e})}{s}}}{\compile{\subst{e}{\alpha}{s}}}{\tauT}$$
   \item $\red{\Phi; \Gamma}{\letin{x}{\sigma}{e'}{e}}{\subst{e}{x}{e'}}$.\\
@@ -1909,7 +1909,7 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
       \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e_1}}{\compile{\sigma}}$,
       \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e_2}}{\arrT*{\app{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{e_1}}}{\app{\WT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{s}}}}$,
       \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\app{\WT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}}}{\compile{P}}{\UT'}$,
-      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{r}}, \annotT{\zT_1}{\compile{\sigma}}, \annotT{\zT_2}{\app{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\zT_1}}}{\compile{e}}{\subst{\compile{P}}{\xT}{\app{\supT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}{\alpha}{\alpha^*}{\zT_1}{\zT_2}}}$, and
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{r}}, \annotT{\zT_1}{\compile{\sigma}}, \annotT{\zT_2}{\app{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\zT_1}}}{\compile{e}}{\subst{\compile{P}}{\xT}{\app{\supT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}{\alphaT}{\alphaT^*}{\zT_1}{\zT_2}}}$, and
       \item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\subst{\compile{P}}{\xT}{\app{\supT}{\compile{\sigma}}{(\funT{\xT}{\compile{\sigma}}{\compile{\tau}})}{\compile{r}}{\compile{s}}{\eT'}{\compile{e_1}}{\compile{e_2}}}}{\tauT}$
     \end{itemize}
     We can then use \rref{equiv-iota, equiv-conv} to get
@@ -1954,23 +1954,23 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     \compile{\Phi}, \compile{\Gamma} &\vdash \app{\wfind}{\sigmaT}{\eT}{\compile{s}} \\
     &\equiv \app{\wfacc}{\sigmaT}{\eT}{\compile{s}}{(\app{\accessible}{\compile{s}})} \\
       &\phantom{\equiv} \textit{by $\wfind$ and \rref*{equiv-beta}} \\
-    &\equiv \app{(\fixT{1}{\wfacc*}{\funtype{\alpha}{\SizeT}{\arrT*{\app{\AccT}{\alpha}}{\app{\sigmaT}{\alpha}}}}{ \\
-      &\phantom{\equiv} \quad \funT{\alpha}{\any}{\funT{\mathit{acc}}{\any}{\app{\eT}{\alpha}{(\funT{\beta}{\SizeT}{\funT{\beta^*}{\beta \szltT \alpha}{ \\
-      &\phantom{\equiv} \qquad \app{\wfacc*}{\beta}{(\matchT*{\mathit{acc}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})})}}})}}}})}{\compile{s}}{(\app{\accessible}{\compile{s}})} \\
+    &\equiv \app{(\fixT{1}{\wfacc*}{\funtypeT{\alphaT}{\SizeT}{\arrT*{\app{\AccT}{\alphaT}}{\app{\sigmaT}{\alphaT}}}}{ \\
+      &\phantom{\equiv} \quad \funT{\alphaT}{\any}{\funT{\access}{\any}{\app{\eT}{\alphaT}{(\funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \alphaT}{ \\
+      &\phantom{\equiv} \qquad \app{\wfacc*}{\betaT}{(\matchT*{\access}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}}})}}}})}{\compile{s}}{(\app{\accessible}{\compile{s}})} \\
       &\phantom{\equiv} \textit{by $\wfacc$ and \rref*{equiv-beta}} \\
-    &\equiv \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\beta^*}{\beta \szltT \compile{s}}{ \\
-      &\phantom{\equiv} \quad \app{\wfacc}{\sigmaT}{\eT}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})})}}} \\
+    &\equiv \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT^*}{\betaT \szltT \compile{s}}{ \\
+      &\phantom{\equiv} \quad \app{\wfacc}{\sigmaT}{\eT}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}}} \\
       &\phantom{\equiv} \textit{by \rref*{equiv-mu}, \rref*{equiv-beta}, and $\wfacc$} \\
     &: \app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}
     \end{align*}
     Meanwhile, for the right-hand side we have
     \begin{align*}
     &\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}} \\
-    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \compile{s}}{\app{\compile{\fix{f}{\alpha}{\sigma}{e}}}{\betaT}}}} \\
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\compile{\fix{f}{\alpha}{\sigma}{e}}}{\betaT}}}} \\
       &\phantom{=} \textit{by \nameref{lem:compos-size-unbounded} and \nameref{lem:term-compositionality}} \\
-    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfind}{\sigmaT}{\eT}{\betaT}}}} \\
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfind}{\sigmaT}{\eT}{\betaT}}}} \\
       &\phantom{=} \textit{by definition of translation of $\kw{fix}$} \\
-    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \fun{\betaT}{\SizeT}{\fun{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfacc}{\sigmaT}{\eT}{\betaT}{(\app{\accessible}{\betaT})}}}} \\
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfacc}{\sigmaT}{\eT}{\betaT}{(\app{\accessible}{\betaT})}}}} \\
       &\phantom{=} \textit{by $\wfind$}
     \end{align*}
     Note that the only difference between the left- and right-hand sides now
@@ -1979,13 +1979,13 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     From inversion, we know that $\compile{s}$ is well typed with type $\SizeT$.
     Then we can show that
     \begin{align*}
-    &\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{\app{\accIsProp}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})})}{(\app{\accessible}{\betaT})}}{\\
+    &\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{\app{\accIsProp}{\betaT}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}{(\app{\accessible}{\betaT})}}{\\
     &\phantom{\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{}{}}
-    \eq{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})}}{\app{\AccT}{\beta}}{\app{\accessible}{\betaT}}}.
+    \eq{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})}}{\app{\AccT}{\betaT}}{\app{\accessible}{\betaT}}}.
     \end{align*}
     By \rref{equiv-reflect}, we have
     \begin{align*}
-    &\defeq{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{p} \Rightarrow \app{p}{\beta}{\beta^*})}}{\app{\accessible}{\betaT}}{\app{\AccT}{\beta}}.
+    &\defeq{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})}}{\app{\accessible}{\betaT}}{\app{\AccT}{\betaT}}.
     \end{align*}
     Finally, by \rref{equiv-cong}, we can equate the left- and right-hand sides,
     and by \rref{equiv-conv}, we obtain our goal.
