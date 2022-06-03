@@ -61,7 +61,7 @@ What about going from $\W{x}{A}{B}{\infty}$ to $\W{x}{A}{B}{s}$?
 What should $s$ be?
 The size algebra could be augmented to be able to represent transfinite ordinals
 so that $s$ is again a size that is ``large enough'',
-but we can hardly expect programmers to be able to manipulate ordinals,
+but we can hardly expect programmers to manipulate ordinals,
 and I conjecture that we would lose any hope of deciding $\subsize*{}{}$
 without any user intervention.
 
@@ -110,7 +110,8 @@ and size expressions consequently treated as regular terms.
 There is no way to represent generalized full inductives as
 sized inductives existentially quantified by sizes
 and faithfully define their constructors without losing either
-decidability of subsizing or canonicity.
+decidability of subsizing from exposing the underlying ordinal representation of sizes,
+or canonicity from the inclusion of a noncomputing axiom.
 Representing ordinary full inductives (namely naturals) this way,
 however, has been previously explored~\citep{guarded, modal-sizes}.
 
@@ -203,7 +204,7 @@ when using this model.
 
 \section{Streams and Coinductives}
 
-Dually to inductive types, coinductive types allow for constructing
+Dual to inductive types, coinductive types allow for constructing
 potentially infinitely large elements in a principled manner,
 and are present in many proof assistants such as Coq, Agda, and Idris.
 Conventionally, while fixpoints are guarded by destructors\index{guardedness}
@@ -309,7 +310,8 @@ Suppose we have a function $\annot{f}{\arr*{A}{A}{A}}$ and some element $\annot{
 \begin{align*}
 & \Let{\zip}{\Funtype{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}}{ \\
 & \quad \cofix{\zip*}{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}{ \\
-& \qquad \fun{s_1}{\Stream{A}{\alpha}}{\fun{s_2}{\Stream{A}{\alpha}}{\scons{\beta}{\alpha}{\app{f}{\shd{s_1}}{\shd{s_2}}}{\beta}{\alpha}{\app{\App{\zip*}{\beta}}{(\App{\stl{s_1}}{\beta})}{(\App{\stl{s_2}}{\beta})}}}}}} \\
+& \qquad \fun{s_1}{\Stream{A}{\alpha}}{\fun{s_2}{\Stream{A}{\alpha}}{ \\
+& \qquad \quad \scons{\beta}{\alpha}{\app{f}{\shd{s_1}}{\shd{s_2}}}{\beta}{\alpha}{\app{\App{\zip*}{\beta}}{(\App{\stl{s_1}}{\beta})}{(\App{\stl{s_2}}{\beta})}}}}}}
 \end{align*}
 
 \begin{align*}
@@ -456,9 +458,14 @@ and not affect any important significant metatheoretical properties,
 it might be a mere symptom of a larger issue with how sizes are modelled,
 especially since prior sized type systems shown to be consistent
 haven't required any similar restrictions.
-Given that sizes are already modelled as transfinite ordinals,
-it may be inevitable that a more appropriate model, syntactic or otherwise,
-is more set-theoretical in nature.
+One possibility is to take inspiration from Agda and
+make $\SizeT$ live in a universe $\SizeUnivT$ independent of $\TypeT{}$,
+but the consistency of arbitrarily adding a new universe is questionable,
+especially when $\SizeUnivT$ needs to be slightly impredicative:
+$\arrT*{\TypeT{}}{\SizeT}$ would remain in $\SizeUnivT$
+(as would be the case for $\limT$)
+and $\funtypeT{\alpha}{\SizeT}{\N{\alpha}}$ would remain in $\TypeT{0}$
+(as would be the case for $\zeroT$).
 
 The main barrier to a syntactic model\index{syntactic model} of \lang with any coinductive types
 is the lack of an established target type theory with coinductive types
@@ -476,13 +483,13 @@ a well-founded induction principle, which is suspicious and also requires furthe
 Finally, \lang is missing some important but comparatively simple features
 from the perspective of the syntactic model, namely inductive types in general.
 They can be added directly to \lang as a generalization of the existing inductives,
-and I conjecture that the type preservation proofs would similarly straightforward.
-Alternatively, since already are well-founded trees,
+and I conjecture that the type preservation proofs would be a straightforward extension.
+Alternatively, since there already are well-founded trees,
 \lang could instead be augmented with dependent pairs and an equality type,
 both of which I also conjecture to be straightforward;
 then mutual inductives, indexed inductives \citep{whynotW}, some nested inductives \citep{barras},
 and even some inductive--inductive types \citep{ind-ind}
-can be encoded using W types and propositional equality.
+can be encoded, along with their induction principles, using W types and propositional equality.
 
 \hfill
 
@@ -534,7 +541,7 @@ along with sized naturals and well-founded trees.
 I gave examples of programming with sized inductives to write recursive programs
 that would have otherwise not passed the usual syntactic guard checks,
 as well as limitations of programming without the infinite size.
-I then showed that \lang is consistent, contingent on the consistency of \CICE,
+I then reduced the consistency of \lang to that of \CICE,
 an extensional dependent type theory, by translating \lang terms to \CICE terms
 and proving that the translation is type preserving.
 Finally, I discussed the tradeoffs in the design of \lang for this syntactic model to work,
