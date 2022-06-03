@@ -522,7 +522,7 @@ Note that for situtations involving substitution of a size expression rather tha
   Then by \cref{lem:develop-red*} and by \rref{red*-refl}, we have our goals
   \begin{itemize}[noitemsep]
     \item $\red*{\Phi; \Gamma}{\subst{e_1}{x}{e_2}}{\subst{e'_1}{x}{e'_2}}$ and
-    \item $\red*{\Phi; \Gamma}{\subst{e'_1}{x}{e'_2}}{\subst{e'_1}{x}{e'_2}}$.
+    \item $\red*{\Phi; \Gamma}{\subst{e'_1}{x}{e'_2}}{\subst{e'_1}{x}{e'_2}}$. \qedhere
   \end{itemize}
 \end{itemize}
 \end{proof}
@@ -594,7 +594,7 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{\funtype{x}{\sigma_1}{\ta
     Then by \cref{lem:replacement-subtyping}, we have $\red*{\Phi; \Gamma, \annot{x}{\sigma_1}}{\tau_2}{\tau_3}$.
     Finally, by \rref{red*-trans} twice, we have
     $\red*{\Phi; \Gamma}{\sigma_1}{\sigma_3}$ and
-    $\red*{\Phi; \Gamma, \annot{x}{\sigma_1}}{\tau_1}{\tau_3}$.
+    $\red*{\Phi; \Gamma, \annot{x}{\sigma_1}}{\tau_1}{\tau_3}$. \qedhere
 \end{itemize}
 \end{proof}
 
