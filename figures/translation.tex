@@ -118,6 +118,63 @@
   \end{figure}
 }
 
+\newcommand{\FigTransTermSquash}[1]{
+  \begin{figure}[ht]
+  \centering
+  \begin{multicols}{2}
+  \begin{align*}
+  \Aboxed{\compile{\Gamma} &= \GammaT} \\
+  \compile{\mt} &= \mt \\
+  \compile{\Gamma, \annot{x}{\tau}} &= \compile{\Gamma}, \annotT{\xT}{\compile{\tau}} \\
+  \compile{\Gamma, \define{x}{\tau}{e}} &= \compile{\Gamma}, \defineT{\xT}{\compile{\tau}}{\compile{e}} \\
+  \Aboxed{\compile{e} &= \eT} \\
+  \compile{x} &= \xT \\
+  \compile{U} &= \UT \\
+  \compile{\App{e}{s}} &= \app{\compile{e}}{\compile{s}} \qquad (\textrm{\rref{sapp}})
+  \end{align*}
+
+  \begin{align*}
+  \mathclap{\mathit{(continued)}} \\
+  \compile{\funtype{x}{\sigma}{\tau}} &= \funtypeT{\xT}{\compile{\sigma}}{\compile{\tau}_{\annot{x}{\sigma}}} \\
+  \compile{\fun{x}{\sigma}{e}} &= \funT{\xT}{\compile{\sigma}}{\compile{e}_{\annot{x}{\sigma}}} \\
+  \compile{\app{e_1}{e_2}} &= \app{\compile{e_1}}{\compile{e_2}} \\
+  \compile{\Funtype{\alpha}{\tau}} &= \funtypeT{\alphaT}{\SizeT}{\compile{\tau}_{\alpha}} \\
+  \compile{\Funtype<{\alpha}{s}{\tau}} &= \funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau}_{\bound{\alpha}{s}}}} \\
+  \compile{\Fun{\alpha}{e}} &= \funT{\alphaT}{\SizeT}{\compile{e}_{\alpha}} \\
+  \compile{\Fun<{\alpha}{s}{e}} &= \funT{\alphaT}{\SizeT}{\funT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}_{\bound{\alpha}{s}}}}
+  \end{align*}
+  \end{multicols}
+  \vspace{-2\baselineskip}
+  \begin{mathpar}
+  \fbox{$\typeto{\Phi; \Gamma}{e}{\tau}{\eT}$} \quad \cdots \hfill \\
+  \inferrule[\nameref{conv}]{
+    \cdots \\
+    \typeto{\Phi; \Gamma}{e}{\sigma}{\eT} \\
+    \subtype{\Phi; \Gamma}{\sigma}{\tau}
+  }{
+    \typeto{\Phi; \Gamma}{e}{\tau}{\eT}
+  }
+  \and
+  \inferrule[\nameref{sapp<}]{
+    \subsizeto{\Phi}{\sss{s}}{r}{\eT'} \\
+    \typeto{\Phi; \Gamma}{e}{\Funtype<{\alpha}{r}{\tau}}{\eT}
+  }{
+    \typeto{\Phi; \Gamma}{\App{e}{s}}{\subst{\tau}{\alpha}{s}}{\app{\eT}{\compile{s}}{\eT'}}
+  }
+  \and
+  \inferrule[\nameref{let}]{
+    \typeto{\Phi; \Gamma}{\sigma}{\UT}{\sigmaT} \\
+    \typeto{\Phi; \Gamma}{e_1}{\sigma}{\eT_1} \\
+    \typeto{\Phi; \Gamma, \define{x}{\sigma}{e_1}}{e_2}{\tau}{\eT_2}
+  }{
+    \typeto{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\subst{\tau}{x}{e_1}}{\letinT{\xT}{\sigmaT}{\eT_1}{\eT_2}}
+  }
+  \end{mathpar}
+  \caption{Translation of terms (base \lang) and term environments}
+  \label{#1}
+  \end{figure}
+}
+
 \newcommand{\FigTransInd}[2][p]{
   \begin{figure}[#1]
   \centering
