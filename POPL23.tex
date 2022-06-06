@@ -1,0 +1,1833 @@
+%% For double-blind review submission, w/o CCS and ACM Reference (max submission space)
+\documentclass[acmsmall,review,anonymous]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
+%% For double-blind review submission, w/ CCS and ACM Reference
+%\documentclass[acmsmall,review,anonymous]{acmart}\settopmatter{printfolios=true}
+%% For single-blind review submission, w/o CCS and ACM Reference (max submission space)
+%\documentclass[acmsmall,review]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
+%% For single-blind review submission, w/ CCS and ACM Reference
+%\documentclass[acmsmall,review]{acmart}\settopmatter{printfolios=true}
+%% For final camera-ready submission, w/ required CCS and ACM Reference
+%\documentclass[acmsmall]{acmart}\settopmatter{}
+
+
+%% Journal information
+%% Supplied to authors by publisher for camera-ready submission;
+%% use defaults for review submission.
+\acmJournal{PACMPL}
+\acmVolume{7}
+\acmNumber{POPL}
+\acmArticle{0}
+\acmYear{2023}
+\acmMonth{1}
+\acmDOI{} % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+\startPage{1}
+
+%% Copyright information
+%% Supplied to authors (based on authors' rights management selection;
+%% see authors.acm.org) by publisher for camera-ready submission;
+%% use 'none' for review submission.
+\setcopyright{none}
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+
+%% Bibliography style
+\bibliographystyle{ACM-Reference-Format}
+\citestyle{acmauthoryear}
+
+%% Packages
+\usepackage{style}
+
+%% Title information
+\title{Sized Dependent Types via Extensional Type Theory}
+
+%% Author information
+\author{Jonathan Chan}
+\orcid{0000-0003-0830-3180}
+\affiliation{
+  %\position{}
+  \department{Department of Computer Science}
+  \institution{University of British Columbia}
+  \streetaddress{2329 West Mall}
+  \city{Vancouver}
+  \state{British Columbia}
+  \postcode{V6T 1Z4}
+  \country{Canada}
+}
+\email{jcxz@cs.ubc.ca}
+\author{William J. Bowman}
+\orcid{0000-0002-6402-4840}
+\affiliation{
+  \position{Assistant Professor}
+  \department{Department of Computer Science}
+  \institution{University of British Columbia}
+  \streetaddress{2329 West Mall}
+  \city{Vancouver}
+  \state{British Columbia}
+  \postcode{V6T 1Z4}
+  \country{Canada}
+}
+\email{wjb@williamjbowman.com}
+
+%% Abstract
+%% Note: \begin{abstract}...\end{abstract} environment must come
+%% before \maketitle command
+\begin{abstract}
+Contemporary proof assistants such as Coq and Agda that are based on dependent type theories
+must forbid nonterminating recursive functions to ensure logical consistency of the type theory
+and decidability of type checking.
+This is currently done via guard predicates that only allow functions
+that are structurally recursive and that recur only on syntactically smaller arguments.
+However, these guard predicates are sometimes too restrictive and reject functions
+that aren't structurally recursive but are obviously terminating by inspection,
+creating extra work for the programmer to convince the guard checker.
+
+An alternative is to use sized types, a type-based termination checking method
+where inductively-defined types are annotated with sizes.
+Successful type checking guarantees that functions recur only on arguments whose types have smaller sizes,
+rather than merely on arguments that syntactically appear smaller,
+allowing more terminating functions to be accepted.
+There exist many formal models of sized dependent type theories,
+but none simultaneously feature higher-rank size quantification,
+which allows for passing around size-preserving functions,
+and bounded size quantification,
+which eliminates the need for complex monotonicity checks required by prior sized type systems.
+
+In this paper, we design a sized dependent type theory with higher-rank and bounded sizes (\lang),
+and prove its logical consistency with a syntactic model:
+by compiling \lang into the Extensional Calculus of Inductive Constructions (\CICE),
+a variant of the type theory on which Coq is based,
+and showing that this translation is type preserving,
+the consistency of \lang follows from the consistency of \CICE.
+\end{abstract}
+
+%% 2012 ACM Computing Classification System (CSS) concepts
+%% Generate at http://dl.acm.org/ccs/ccs.cfm
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10003752.10003790.10011740</concept_id>
+       <concept_desc>Theory of computation~Type theory</concept_desc>
+       <concept_significance>500</concept_significance>
+       </concept>
+   <concept>
+       <concept_id>10003752.10010124.10010125.10010130</concept_id>
+       <concept_desc>Theory of computation~Type structures</concept_desc>
+       <concept_significance>500</concept_significance>
+       </concept>
+ </ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Theory of computation~Type theory}
+\ccsdesc[500]{Theory of computation~Type structures}
+%% End of generated code
+
+%% Keywords
+%% comma separated list
+\keywords{type theory, dependent types, sized types, consistency}
+
+\begin{document}
+\maketitle
+
+\section{Introduction} \label{sec:introduction}
+
+\TODO: Adapt introduction.
+
+In the sections to follow, initial appearances in the text of new notation is \new{highlighted in grey}.
+Furthermore, we use ellipses \new{$\seq$} as metanotation for denoting a repeated sequence of some syntactic construct,
+overlines \new{$\vec{\phantom{I}}$} for sequences of variables or terms specifically (\eg $\vec{z}$, $\vec{p}$),
+and \new{$\mt$} for denoting an empty sequence (particularly for environments).
+Irrelevant constructs are omitted using an underscore \new{$\any$}.
+Metafunctions are introduced in the prose as needed.
+
+\section{Sized Dependent Types} \label{sec:sized-dep-types}
+
+\input{figures/sized.tex}
+\input{figures/ind.tex}
+
+Although sized types are quite pointless without any inductive types to be sized,
+we present first the sublanguage of \lang without any inductives
+to not only get the preliminary details out of the way first,
+but also to show that the sublanguage is independent of the inductives chosen.
+After that, naturals and well-founded trees are added as representative inductive types,
+followed by examples of programming with sized dependent types.
+
+\subsection{Base \lang}
+
+\FigSyntax{fig:syntax}
+\cref{fig:syntax} gives its syntax, which consists of universes $U$,
+sizes $s$, and terms $e$, which includes term functions and size abstractions.
+Note that the hierarchy of universes above $\Prop$ start at $\Type{1}$, not $\Type{0}$.
+Most judgements use two environments: a term environment $\Gamma$ with assumptions $\annot{x}{\tau}$
+and type-annotated definitions $\define{x}{\tau}{e}$,
+and a size environment $\Phi$ with unbounded and bounded size variables.
+We also use the assumption environment%
+$\Delta$ as a shorthand when writing nested expressions with assumptions;
+in particular, letting for instance $\Delta_{xy} = \annot{x}{\sigma_1}, \annot{y}{\sigma_2}$,
+We use \new{$\arr*{\Delta_{xy}}{\tau}$} to mean $\funtype{x}{\sigma_1}{\funtype{y}{\sigma_2}{\tau}}$.
+Similarly, we use \new{$\arr*{\sigma}{\tau}$} to mean the nondependent function type $\funtype{\any}{\sigma}{\tau}$
+As a loose convention, we use $\tau, \sigma$ for type-like terms,
+$P$ for the motive of eliminators,
+$z$ for variables representing constructor arguments, and
+$f, g$ for variables representing functions.
+
+As mentioned in \cref{sec:introduction}, the judgement forms of \lang include
+reduction, its various closures, $\alpha$-cumulativity, subtyping, and typing.
+On top of those, there are also judgement forms for subsizing, sizes,
+and well-formedness of size and term environments.
+
+\FigRed{fig:reduction}
+The reduction rules and their reflexive, transitive closure are described in \cref{fig:reduction}.
+\new{$\subst{e}{x}{e'}$} denotes capture-avoiding substitution of $x$ for $e'$ within $e$,
+and correspondingly \new{$\subst{e}{x_1, \seq, x_n}{e_1, \seq, e_n}$} denotes simultaneous substitution.
+For every syntactic form of a composite term there is a corresponding congruence rule,
+which is summarized by the last reduction rule using substitution;
+the full set of rules can be found in \cref{app:cong:red}.
+By convention, the reduction rules for function applications are also referred to as $\beta$-reduction,
+for $\kw{let}$ expressions as $\zeta$-reduction,
+and for defined variables as $\delta$-reduction.
+
+\FigSubtype{fig:subtyping}
+Rather than a single subtyping judgement like in
+\GCC,
+We use the same presentation as MetaCoq
+and split it into a subtyping judgement
+and a separate $\alpha$-cumulativity judgement,
+listed in \cref{fig:subtyping}.
+This overcomes some technical proof complications that appear in
+the single-judgement presentation due to the transitivity rule.
+Aside from the expected cumulativity of universes,
+the function type and size quantification are covariant in the codomain
+(\ie are $\alpha$-cumulative when their codomains are),
+while remaining invariant in the domain.
+All other types are invariant, as reflected by \rref{acum-refl}.
+A term is then a subtype of another if they are confluent up to $\alpha$-cumulativity.
+
+Notably, \lang does \emph{not} have a notion of $\eta$-conversion
+in either the reduction rules or in the subtyping rules,
+which would otherwise allow conversion between $\fun{x}{\tau}{\app{f}{x}}$ and $f$.
+Mixing $\eta$-conversion and untyped conversion is notoriously difficult~\citep{eta},
+and remains to date an unresolved problem in MetaCoq, so we exclude it here.
+
+\FigSubsize{fig:subsizing}
+
+\cref{fig:subsizing} describes a preorder on sizes such that
+the successor operator is monotonic with respect to the order.
+The base size $\circ$ is smaller than all sizes,
+and the strict preorder $\bound{\alpha}{s}$ arising from bounded quantification or abstraction
+is defined as $\sss{\alpha} \mathrel{\leqslant} s$.
+An additional size judgement ensures well-scopedness of sizes.
+The size environment must be well formed as well;
+its rules are listed in \cref{fig:wf},
+along with those for well-formedness of term environments.
+
+\FigWF{fig:wf}
+
+\FigTyping[h]{fig:typing}
+
+Finally, the typing rules for the base \lang are given in \cref{fig:typing}.
+They use the metafunctions $\axioms{\mt}$ for the type of a universe
+$\rules{\mt}{\mt}$ for the type of a function type,
+defined in \cref{fig:rules-axioms},
+and $\fresh{\seq}$ for fresh variables.
+
+\FigRulesAxioms{fig:rules-axioms}
+
+\rref{var, univ, let} are the usual rules for variables, universes, and $\kw{let}$ expressions in \GCC,
+while \rref{pi, lam, app} are the usual ones for functions.
+\rref{conv} uses the subtyping judgement and essentially allows casting a term
+from one type to a supertype as needed.
+\rref{forall, forall<, slam, slam<, sapp, sapp<} are the new rules relevant to sized types,
+describing bound and unbound size quantification, abstraction, and application,
+which work similarly to functions.
+Of note is the bounded size application rule,
+which only allows applications to smaller sizes following the subsizing judgement.
+
+\subsection{Inductive Types: Naturals and Well-Founded Trees} \label{subsec:ind-types}
+
+\FigSyntaxInd{fig:syntax-ind}
+\cref{fig:syntax-ind} extends the grammar with sized naturals, sized well-founded trees,
+$\kw{case}$ expressions, and fixpoint expressions.
+Informally, borrowing syntax from the definition of general inductives,
+sized naturals and well-founded trees can be thought of as being defined by the following:
+%
+\begin{align*}
+&\data{\N{\alpha}}{\Type{1}} && \data{\App{\app{\W*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\alpha}}{\Type{i+1}} \\
+&\quad \annot{\zero*}{\Funtype<{\beta}{\alpha}{\N{\alpha}}} && \quad \annot{\sup*}{\Funtype<{\beta}{\alpha}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\beta}}{A}{B}})}{\App{\app{\W*}{A}{B}}{\alpha}}}}} \\
+&\quad \annot{\succ*}{\Funtype<{\beta}{\alpha}{\arr*{\N{\beta}}{\N{\alpha}}}}
+\end{align*}
+
+The types of naturals and well-founded trees can then be considered to be (nonuniformly) parametrized by a size,
+and constructing an element of that type requires providing a strictly smaller size,
+which is the size%
+\footnote{The ``size of'' some construction is more precisely the size by which its \emph{inductive type} is parametrized.}
+of the constructor's recursive arguments.
+Constructors therefore always construct elements whose sizes are larger than their arguments'.
+In \lang, the constructors are annotated with their types
+since the parameter-like sizes cannot otherwise be synthesized.
+Additionally, W types have explicit binders for convenience:
+the variable $x$ is bound within $\tau$ in the type $\W{x}{\sigma}{\tau}{s}$.
+
+The expression
+$\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{z_1}{\seq}{z_m} \Rightarrow e_c) \seq}$
+contains three parts:
+the \emph{target} $e$ it destructs,
+the \emph{motive} $P$ denoting the return type of the expression abstracted over a target,
+and the \emph{branches} $e_c$, one for each constructor of the target's type,
+abstracted over the constructor's size and term arguments.
+Its reduction rules for each constructor are given in \cref{fig:reduction-ind},
+along with the reduction rule for fixpoint expressions.
+By convention, the reduction rules for $\kw{case}$ expressions
+are also referred to as $\iota$-reduction,
+and for fixpoint expressions as $\mu$-reduction.
+\FigRedInd{fig:reduction-ind}
+
+Fixpoints reduce when applied to some size $s$ by substitution of itself into its own body.
+Fixpoints' bodies are well typed when recursive applications occur only on smaller sizes,
+so the substitution wraps itself in a bound size abstraction.
+Most importantly, they reduce only when there exists some size strictly smaller than $s$;
+intuitively, this restriction prevents fixpoints from reducing indefinitely
+because subsizing is well founded, and there cannot be an infinite chain of smaller sizes.
+
+This reduction strategy supersedes the usual restriction that fixpoints only reduce
+when applied to a constructor,
+since all sized constructors carry a smaller size argument
+that will statisfy the subsizing premise.
+Furthermore, reduction can also occur when the fixpoint is applied to a successor size
+by reflexivity of subsizing,
+making the rule a strict supersession.
+
+\FigTypingInd{fig:typing-ind}
+
+The typing rules for all new constructs are given in \cref{fig:typing-ind}.
+One additional metafunction $\FV{\mt}$ produces the free variables in the given term.
+The type of naturals and well-founded trees are well typed
+when the sizes they are applied to are well formed, and
+their constructors are well typed when applied to smaller sizes.
+
+$\kw{case}$ expressions match on these size arguments in addition to the usual term arguments,
+asserting within their branches that they are strictly smaller than the target's size.
+The motive is dependent on the target,
+and the type of a branch is the motive with its target as the constructor being destructed.
+In other words, $\kw{case}$ expressions are induction principles:
+for instance, one proves $P$ for some natural $x$ when one can prove it
+for the base case where $x$ is some $\zero*$
+and for the step case where $x$ is some $\succ*$.
+
+As discussed, the body of a fixpoint is only well typed
+when the fixpoint is recursively applied to a smaller size,
+as enforced by its type in the environment when type checking the body.
+
+Sizes aside, the only difference from regular, unsized naturals and well-founded trees
+is that their types live in a universe one level higher than they usually are.
+$\N{s}$ lives in $\TypeT{1}$ rather than in $\Type{0}$,
+and $\W{x}{\sigma}{\tau}{s}$ lives in $\axioms{U}$ rather than in $U$.
+This is a direct consequence of the way that the translation is defined,
+and is necessary to maintain its type preservation properties.
+While not incorrect, inductive types living in the ``wrong'' universe is aesthetically unpleasant
+and removes some of the impredicativity of their parameters
+by preventing them from quantifying over the inductive types themselves.
+Potential methods of circumventing this undesirable trait to varying degrees of success
+is discussed later in \cref{subsec:infinity}.
+
+\subsection{Examples} \label{subsec:examples}
+
+Now that the rules of \lang have been established,
+this section presents examples of using \lang
+for programming and proving.
+Although it only has naturals and well-founded trees,
+We also use other sized inductive types as examples,
+informally defining them similarly to \cref{subsec:ind-types}.
+Additionally, we omit the type annotation of $\kw{let}$-bound expressions
+when the type is evident or deducible from context.
+
+\subsubsection{Size-preserving functions}
+
+One of the most important uses of sized types is the ability to define
+\emph{size-preserving} functions,
+where the sizes of the input and output are the same.
+This guarantees that the output is never larger than the input,
+and size-preserving functions can be used in recursive calls of fixpoints.
+For instance, the predecessor function $\pred$ which computes
+$\maximum{0, n - 1}$ for some number $n$ is size preserving.
+%
+\begin{align*}
+&\Let{\pred}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}}}{ \\
+&\Fun{\alpha}{\fun{n}{\N{\alpha}}{\match*{n}{ \\
+&\quad \App{\zero*}{\beta} \Rightarrow \zero{\alpha}{\beta} \\
+&\quad \app{\App{\succ*}{\beta}}{m} \Rightarrow \app{\App{\liftN}{\alpha}{\beta}}{m}}}}}
+\end{align*}
+
+The $\monus$ function, which computes $\maximum{0, n - m}$ given numbers $n, m$,
+is similarly size preserving in its first argument,
+since $n - m$ is never greater than $n$.
+
+\begin{align*}
+&\Let{\monus}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}}{ \\
+&\fix{\monus*}{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}{ \\
+&\quad \Fun{\beta}{\fun{n}{\N{\beta}}{\fun{m}{\N{\alpha}}{\match*{m}{ \\
+&\qquad \App{\zero*}{\gamma} \Rightarrow n \\
+&\qquad \app{\App{\succ*}{\gamma}}{k} \Rightarrow \app{\App{\monus*}{\gamma}{\beta}}{(\app{\App{\pred}{\beta}}{n})}{k}}}}}}}
+\end{align*}
+
+We see the benefit of size preservation with $\divv$,
+which computes Euclidean division of $n$ by $m$, or $\left\lceil\frac{n}{m+1}\right\rceil$.
+This is computed recursively by subtracting $m$ from the numerator using $\monus$
+until $\zero*$ is reached, and counting the number of times the subtraction is performed.
+The recursive call is done on the result of $\monus$;
+$\divv$ then only type checks because $\monus$ is size preserving.
+Because the first argument of the recursive call to $\divv$ isn't \emph{structurally}
+a subterm with the call to $\monus$ in the way,
+a guardedness check wouldn't accept the corresponding unsized function,
+as is the case for CIC.
+%
+\begin{align*}
+&\Let{\divv}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}}{ \\
+&\fix{\divv*}{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}{ \\
+&\quad \Fun{\beta}{\fun{n}{\N{\alpha}}{\fun{m}{\N{\beta}}{\match*{n}{ \\
+&\qquad \App{\zero*}{\gamma} \Rightarrow \zero{\alpha}{\gamma} \\
+&\qquad \app{\App{\succ*}{\gamma}}{k} \Rightarrow
+\succ{\alpha}{\gamma}{
+  (\app{\App{\divv*}{\gamma}{\beta}}{
+    (\app{\App{\monus}{\beta}{\gamma}}{k}{
+      (\app{\App{\pred}{\beta}}{m})})}{m})}}}}}}}
+\end{align*}
+
+\subsubsection{Higher-rank sizes}
+
+This example, which demonstrates higher-rank size quantification,
+is a traversal of a well-founded tree with a size-preserving function,
+adapted from the rose tree traversal example by \citet{NbE}.
+Given some size-preserving function on a well-founded tree,
+the function is applied to subtrees prior to traversal.
+Suppose that $B$ here is some type operator on $A$.
+%
+\begin{align*}
+&\Let{\traverseW}{\arr*{(\Funtype{\gamma}{\arr*{\W{x}{A}{\app{B}{x}}{\gamma}}{\W{x}{A}{\app{B}{x}}{\gamma}}})}{ \\
+&\phantom{\kw{let} \: \traverseW \mathrel{:} \phantom{}} \Funtype{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\alpha}}{\W{x}{A}{\app{B}{x}}{\alpha}}}}}{ \\
+&\quad \fun{f}{\Funtype{\gamma}{\arr*{\W{x}{A}{\app{B}{x}}{\gamma}}{\W{x}{A}{\app{B}{x}}{\gamma}}}}{ \\
+&\quad \fix{\traverse}{\alpha}{\arr*{\W{x}{A}{\app{B}{x}}{\alpha}}{\W{x}{A}{\app{B}{x}}{\alpha}}}{ \\
+&\qquad \fun{w}{\W{x}{A}{\app{B}{x}}{\alpha}}{\match*{w}{ \\
+&\qquad \quad \app{\App{\sup*}{\beta}}{a}{g} \Rightarrow \sup{x}{A}{\app{B}{x}}{\alpha}{\beta}{a}{(\fun{b}{\app{B}{a}}{\app{\App{\traverse}{\beta}}{(\app{\App{f}{\beta}}{(\app{g}{b})})}})}}}}}}
+\end{align*}
+
+\subsubsection{Limitations} \label{subsec:examples:limitations}
+
+As expressive as bounded, higher-rank sized types are,
+there still exist limitations to what can be expressed in comparison to ordinary inductive types
+or to sized type theories which have an infinite size,
+such as the ones listed in \TODO.
+Limitations typically arise when dealing with inductive definitions where
+recursive arguments appear as the return type of a function.
+Consider the following inductive definition
+representing the Brouwer notation for ordinals (see \eg \citet{ordinals})
+with zero, successor, and limit ordinals:
+%
+\begin{align*}
+&\data{\Ord{\alpha}}{\Type{1}} \\
+&\quad \annot{\zord*}{\Funtype<{\beta}{\alpha}{\Ord{\alpha}}} \\
+&\quad \annot{\sord*}{\Funtype<{\beta}{\alpha}{\arr*{\Ord{\beta}}{\Ord{\alpha}}}} \\
+&\quad \annot{\lord*}{\Funtype<{\beta}{\alpha}{\arr*{(\Funtype<{\gamma}{\beta}{\arr*{\N{\gamma}}{\Ord{\beta}}})}{\Ord{\alpha}}}}
+\end{align*}
+
+The limit ordinal, taking some function on naturals returning an ordinal,
+constructs an ordinal meant to be ``larger'' than any of the returned ordinals.
+Such a function should be able to return an ordinal far larger than any natural,
+hence the bounded size quantification in its domain.
+Conversely, the naturals embed quite naturally within the ordinals.
+%
+\begin{align*}
+&\Let{\natOrd}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\Ord{\alpha}}}}{ \\
+&\fix{\natOrd*}{\alpha}{\arr*{\N{\alpha}}{\Ord{\alpha}}}{ \\
+&\quad \fun{n}{\N{\alpha}}{\match*{n}{ \\
+&\qquad \App{\zero*}{\beta} \Rightarrow \zord{\alpha}{\beta} \\
+&\qquad \app{\App{\succ*}{\beta}}{m} \Rightarrow \sord{\alpha}{\beta}{(\app{\App{\natOrd*}{\beta}}{m})}}}}}
+\end{align*}
+
+In an unsized type theory, supposing that $\const{natOrd'}$ is an unsized version of $\natOrd$,
+the first limit ordinal $\const{\omega'}$ is easily defined as
+$\Let{\const{\omega'}}{\const{Ord}}{\app{\lord*}{\const{natOrd'}}}$.
+However, in \lang, things are not so easy; the na\"ive attempt yields the following:
+%
+\begin{align*}
+&\Let{\liftO}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\Ord{\beta}}{\Ord{\alpha}}}}}{\seq} \\
+&\Let{\omegaOrd}{\Ord{\sss{\hole}}}{\lord{\sss{\hole}}{\hole}{(\Fun<{\gamma}{\hole}{\fun{n}{\N{\gamma}}{\app{\App{\liftO}{\hole}{\gamma}}{(\app{\App{\natOrd}{\gamma}}{n})}}})}}
+\end{align*}
+
+Aside from the additional bounds and size lifting, there is one crucial problem: what size fills in the hole \new{$\hole$}?
+Intuitively, this size must be larger than the size of \emph{any} natural.
+Therefore, a corresponding ``limit size'' is needed;
+the infinite size in other sized type theories can fill this role since it's larger than all sizes
+and therefore the limit of \emph{all} sizes.
+We discuss more about the infinite size and its absence from \lang in \cref{subsec:infinity}.
+
+\section{Syntactic Model of \lang}
+
+\input{figures/cic.tex}
+\input{figures/definitions.tex}
+\input{figures/translation.tex}
+
+\lang is modelled in \CICE, as briefly described in \cref{sec:introduction}.
+The key idea is that sizes in \lang can themselves be represented as a inductive type in \CICE,
+and naturals and well-founded trees are then inductives with an additional size parameter.
+Sizes are represented as a (generalization of) the Brouwer notation for ordinals in type theory,
+and their order as an inductive type indexed by sizes.
+The order is \emph{well-founded}:
+there is no infinite sequence of ever-smaller sizes,
+and there is always a ``smallest'' size (or many of them).
+This property allows for \emph{well-founded induction},
+where to prove some property on sizes, one supposes that it holds for all strictly smaller sizes.
+
+Every fixpoint expression in \lang is modelled as an instance of well-founded induction in \CICE.
+To prove well-foundedness and in turn the induction principle,
+we show that sizes satisfy an \emph{accessiblity predicate}~\citep{accessibility}.
+For the type preservation proof to go through,
+\emph{definitional proof irrelevance}
+of accessibility predicates is required---that is,
+every proof of accessibility is definitionally equal to one another.
+This holds in extensional type theory via equality reflection
+but not in intensional type theory,
+which is why an extensional CIC is used.
+
+The first half of this section provides the syntax and judgements of \CICE.
+In addition to the notation used in \cref{sec:sized-dep-types},
+given variables $\vec{\xT} = \xT_1 \seq \xT_n$,
+terms $\vec{\eT} = \eT_1 \seq \eT_n$,
+and types $\vec{\tauT} = \tauT_1 \seq \tauT_n$,
+\new{$\annotT{\vec{\xT}}{\vec{\tauT}}$} denotes the assumption environment
+$\annotT*{\xT_1}{\tauT_1}, \seq, \annotT*{\xT_n}{\tauT_n}$,
+\new{$\subst{\eT}{\vec{\xT}}{\vec{\eT}}$} denotes the simultaneous substitution
+$\subst{\eT}{\xT_1, \seq, \xT_n}{\eT_1, \seq, \eT_n}$, 
+\new{$\funT{\vec{\xT}}{\vec{\tauT}}{\eT}$} denotes the $n$-ary function
+$\funT{\xT_1}{\tauT_1}{\seq \funT{\xT_n}{\tauT_n}{\eT}}$, and
+\new{$\type{\GammaT}{\vec{\eT}}{\vec{\tauT}}$} denotes the $n$ typing judgements
+$(\type{\GammaT}{\eT_1}{\tauT_1})$, \seq, $(\type{\GammaT, \annotT{\eT_1}{\tauT_1}, \seq, \annotT{\eT_{n-1}}{\tauT_{n-1}}}{\eT_n}{\tauT_n})$.
+
+The second half then describes the translation from \lang to \CICE,
+which is a metafunction from typing derivations of \lang to terms of \CICE.
+Therefore, the translation is only defined for well-typed \lang terms,
+but the type preservation theorem only applies to well-typed terms anyway.
+
+\subsection{Target Type Theory}
+
+\FigSyntaxCIC{fig:syntax-cic}
+The syntax of \CICE is given in \cref{fig:syntax-cic};
+differences from \lang include a 1-based index for the recursive argument of fixpoint expressions,
+$\tg{case}$ expression motives abstracted over the target's inductive type indices,
+and a homogeneous propositional equality type with the reflexivity constructor and $\JT*$ eliminator.
+New inductive types are defined using data definitions $\DT$,
+whose syntax resembles the informal presentation used in \cref{sec:sized-dep-types}.
+Metavariable usage convention is roughly the same as for \lang,
+with the addition of $\pT$ for inductive type parameters or proofs of equality
+and $\aT$ for inductive type indices.
+
+The well-formedness conditions on inductive data definitions,
+such as well-typedness and \emph{strict positivity},
+are entirely standard, so they aren't detailed here;
+see pCIC~\citep{pCIC} for instance for a full description.
+Inductive definitions in their full generality are not needed,
+and nonmutual, nonnested inductives suffice.
+Indeed, only six inductive definitions are used for the translation,
+for representing sizes, their order, their well-foundedness,
+and the empty type, naturals, and well-founded trees.
+
+The typed equivalence, subtyping, and typing judgements are defined mutually:
+equivalence depends on typing and subtyping,
+subtyping depends on equivalence,
+and typing depends on subtyping and equivalence.
+The mutual dependence is due to typed equivalence,
+since with untyped conversion as seen in \lang has no typing premises.
+We present first the equivalence rules in \cref{fig:equivalence},
+with the subtyping and typing rules to follow.
+
+Equivalence is, by definition, an equivalence relation,
+satisfying reflexivity, symmetry, and transitivity.
+Equivalence is also congruent, using the same summary of congruence rules as for \lang via \rref{equiv-cong};
+the full set of rules can similarly be found in \cref{app:cong:equiv}.
+An equivalence judgement can be converted to one annotated by a supertype via \rref{equiv-conv}.
+The key rule for extensionality is equality reflection in \rref{equiv-reflect},
+which definitionally equates two terms whenever there exists some proof of their propositional equality.
+
+\FigEquiv[h]{fig:equivalence}
+
+The remaining equivalence rules are typed versions of the usual reduction rules,
+with typing premises to ensure well-typedness of both sides.
+Functions have both a $\beta$-equivalence rule and an $\eta$-equivalence rule,
+and the rules for $\tg{let}$ expressions are exactly the same as in \lang.
+The $\JT*$ eliminator and $\tg{case}$ expressions reduce when applied to
+reflexivity and inductive constructors, respectively.
+
+\rref{equiv-mu} for fixpoint expressions is \emph{unguarded},
+meaning that fixpoints are equivalent to the substitution of itself into its own body
+regardless of what they are applied to.
+To maintain normalization,
+the usual guarded reduction rule in intensional CIC reduces fixpoints
+only when applied to a literal constructor in the recursive argument position.
+\vspace{-0.5\baselineskip}
+\begin{mathpar}
+\inferrule[\rlabel{$\equiv$-$\mu$-guarded}{equiv-mu-guarded}]{\cdots \\ \card{\vec{\eT}'} + 1 = \nT}{
+  \defeq{\GammaT}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\app{(\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\tauT}
+}
+\end{mathpar}
+
+Evidently \rref{equiv-mu-guarded} can be derived from \rref{equiv-mu} by congruence.
+On the other hand, for any particular inductive type $\XT$,
+letting $\tauT$ be $\arr{\vec{\xT}}{\vec{\sigmaT}}{\funtypeT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\tauT'}}$,
+\rref{equiv-mu} can be derived from \rref{equiv-mu-guarded} via reflection of the following provable propositional equality,
+freely using transitivity:
+
+\begin{align*}
+\allowdisplaybreaks
+\fixT{\nT}{\fT}{\tauT}{\eT} &\eq{}{}{} \funT{\vec{\xT}}{\vec{\sigmaT}}{\funT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\xT}}{\xT}}}
+\qquad \textrm{definitionally by \rref{equiv-eta}} \\
+& \eq{}{}{} \funT{\vec{\xT}}{\vec{\sigmaT}}{\funT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\matchT*{\xT}{\seq(\app{\cT}{\vec{\zT}} \RightarrowT \app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\xT}}{(\app{\cT}{\vec{\pT}}{\vec{\zT}})})\seq}}} \\
+& \eq{}{}{} \funT{\vec{\xT}}{\vec{\sigmaT}}{\funT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\matchT*{\xT}{\seq(\app{\cT}{\vec{\zT}} \RightarrowT \app{(\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}})}{\vec{\xT}}{(\app{\cT}{\vec{\pT}}{\vec{\zT}})})\seq}}} \\
+& \phantom{\eq{}{}{}} \textrm{definitionally by \rref{equiv-cong, equiv-mu-guarded}} \\
+& \eq{}{}{} \funT{\vec{\xT}}{\vec{\sigmaT}}{\funT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\app{(\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}})}{\vec{\xT}}{\xT}}} \\
+& \eq{}{}{} \subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}}
+\qquad \textrm{definitionally by \rref{equiv-eta}}
+\end{align*}
+
+Since \rref{equiv-mu} and \rref{equiv-mu-guarded} are metatheoretically equivalent,
+we choose to use \rref{equiv-mu} for its simplicity.
+
+\FigSubtypingCIC{fig:subtyping-cic}
+As opposed to \lang, for \CICE we use pCIC's presentation of subtyping,
+which has a typed equivalence premise in \rref{subtype-conv}.
+It also has an explicit rule for transitivity of subtyping since judgements such as
+$\subtype{\mt}{\app{(\funT{P}{\TypeT{\tg{1}}}{P})}{\PropT}}{\TypeT{\tg{0}}}$ would fail to hold otherwise.
+Like \rref{acum-pi}, \rref{subtype-pi} is invariant in the domain of function types.
+
+The typing and environment well-formedness rules are in \cref{fig:typing-cic}.
+Except for \rref{fix*}, the starred rules are the same as for \lang,
+with metafunctions $\axioms{\mt}$ and $\rules{\mt}{\mt}$ operating similarly on universes $\UT$
+as in \cref{fig:rules-axioms}.
+An additional premise to \rref{fix*} ensures that the $\nT$th argument is indeed an inductive type.
+% in addition to checking well-typedness of fixpoint bodies with possible recursive references.
+
+As previously mentioned, fixpoints must also be guarded:
+recursive calls can only occur on structurally smaller arguments of elements of inductives.
+The guard condition is well studied \citep{guard, guard-relax, Coq} and so omitted here.
+To justify uses of fixpoint expressions in the translation,
+we will provide either a mechanization or present a brief argument of guardedness.
+
+\FigTypingCIC[h]{fig:typing-cic}
+
+The new \rref{eq, refl, J} are for the propositional equality type,
+its constructor, and its eliminator.
+Given some equality proof $\pT$ of $\eqT{\eT_1}{\tauT}{\eT_2}$
+and a motive $\PT$ dependent on a proof of equality
+whose left-hand side is fixed at $\eT_1$ and right-hand side is variable,
+to prove $\app{\PT}{\eT_2}{\pT}$ it suffices to provide to $\JT*$ a proof that
+$\app{\PT}{\eT_1}{\refl{\eT_1}}$ holds.
+Other usual functions on proofs of equality can be derived from it,
+such as coercion (when the motive is \mbox{$\funT{A}{\UT}{\funT{\any}{\any}{A}}$})
+or substitution (when the motive ignores the second argument),
+as well as its symmetry, transitivity, and congruence.
+The proof of type preservation eliminates propositional equalities mostly through
+reflection rather than using $\JT*$,
+but we retain $\JT*$ in \CICE for completeness.
+
+\rref{ind, constr, case} assign types to inductive types, their constructors,
+and $\tg{case}$ expressions, under the premise that
+the relevant inductive data definition exists and is well formed.
+Here, the difference between the parameters and the indices of inductive types becomes apparent:
+the motive of a $\tg{case}$ expression is abstracted over the indices by $\vec{\yT}$
+in addition to the target by $\xT$, while the parameters $\vec{\pT}$ are fixed throughout.
+Therefore, when dealing with the types of indices and constructor arguments,
+the parameters are first substituted in place of $\vec{\wT}$.
+
+A $\tg{case}$ expression is well typed if its target is,
+if its motive is for any indices and target with those indices,
+and if each branch is well typed for that branch's constructor arguments,
+where its type is the motive with the appropriate indices and reconstructed target.
+For notational simplicity, the rule assumes that the binding variable names
+$\vec{\yT}$ and $\vec{\zT}$ are those found in the data definition,
+but of course these can be renamed at the expense of additional renaming substitutions.
+
+Additionally, the motive of a $\tg{case}$ expression is restricted by the metarelation $\elim{\mt}{\mt}{\mt}$,
+which indicates when \emph{large elimination} is allowed.
+$\elim{\any}{\TypeT{\iT}}{\any}$ and $\elim{\any}{\PropT}{\PropT}$ always hold,
+so that inductives in $\TypeT{}$ can be eliminated to any universe
+and inductives in $\PropT$ can be eliminated to $\PropT$,
+while $\elim{\XT}{\PropT}{\TypeT{\iT}}$ holds if the inductive $\XT$ in $\PropT$ satisfies further conditions.
+For the purposes of the translation, the only relevant conditions are that $\XT$ either have no constructors
+or have a single constructor whose arguments are all in $\PropT$.
+They can be loosened while still retaining consistency (see \eg \citet{SProp}).
+
+The typing premises of \rref{equiv-beta, equiv-zeta, equiv-rho, equiv-iota, equiv-mu}
+corresponding to some of the reduction rules duplicate the premises found in many of the typing rules,
+trivially ensuring that both sizes of these equivalences are well-typed with the same type
+(\ie \emph{subject equivalence}).
+
+\subsection{Preliminary Definitions} \label{subsec:prelim}
+
+Before defining the translation from \lang terms to \CICE terms,
+in this section we describe how the \CICE terms are constructed,
+which comprises the aforementioned six inductive data definitions
+and well-founded induction principle
+as well as the various properties which the order on sizes satisfies.
+
+\FigData{fig:data-defns}
+
+The inductive definitions are listed in \cref{fig:data-defns}
+along with some basic definitions we treat as global.
+$\botT$ is the usual empty type.
+$\SizeT$ is a generalization of the $\Ord*$ type introduced in \cref{subsec:examples},
+with the domain of the function passed to the limit size $\limT$ replaced by some arbitrary type.
+Although limit sizes aren't strictly necessary for the translation,
+since \lang only has successor sizes and size variables,
+we include them so that various solutions to the problem of the infinite size
+can be explored in \cref{subsec:infinity}.
+Furthermore, this allows for a simplification of the definition,
+since the zero size $\baseT$ can be defined as a limit size rather than as another constructor.
+
+The order on sizes $\mt \szleT \mt$ is defined by the three properties that must hold~\citep{ordinals}:
+\begin{itemize}[noitemsep]
+  \item $\monoT$: The successor operator $\sucT$ is monotone with respect to the order;
+  \item $\coconeT$: The limit operator $\limT$ constructs an upper bound in that
+    given some function $f$ returning a size,
+    any size smaller than any size returned by $f$ is also smaller than the limit of $f$;
+  \item $\limitT$: The limit operator on $f$ constructs a \emph{least} upper bound such that
+    if a size is larger than \emph{all} sizes returned by $f$
+    then it must also be larger than the limit of $f$.
+\end{itemize}
+
+Other properties of the order can be derived by induction from these constructors alone.
+A corresponding strict order $\mt \szltT \mt$ is also defined,
+and an accessibility predicate $\AccT$ is specialized to sizes and the strict order.
+Note that it lives in $\PropT$, as does the argument of its sole constructor $\accT$,
+so accessibility predicates are intended to be interpreted as proof irrelevant,
+and their large elimination is allowed.
+
+\FigDefns{fig:defns}
+
+Before moving on to naturals and well-founded trees,
+\cref{fig:defns} lists the names and types of a number of provable definitions.
+First is \emph{function extensionality},
+asserting that two functions $\annot{f, g}{\funtypeT{x}{A}{\app{B}{x}}}$ are propositionally equal if they are pointwise equal.
+In \CICE, they are in fact equivalent (\ie definitionally equal):
+given some proof $h$ of their pointwise equality,
+under the assumption $\annot{x}{A}$,
+the propositional equality $\eq{\app{f}{x}}{}{\app{g}{x}}$ by $\app{h}{x}$
+can be reflected into the corresponding definitional equality,
+which by \rref{equiv-eta} is then a definitional equality of $f$ and $g$.
+
+The remaining definitions have been mechanized in either Agda and Coq in
+\cref{app:mechanization:agda:prelim} and \cref:app:mechanization:coq:prelim, respectively,
+under the assumption of function extensionality as an axiom
+(which cannot be proven in intensional CIC).
+The mechanizations don't use any additional type-theoretic features beyond CIC,
+and the proofs could theoretically be written in plain CIC,
+but they would be far less comprehensible without the ergonomics provided by the proof assistants.
+As an example, the Coq proof for $\accessible$ consists of a dozen lines of tactics,
+while the full proof term generated from the tactics is 129 lines long.
+
+The definitions themselves describe properties of the order on sizes
+and of the accessibility predicate:
+\begin{itemize}[noitemsep]
+  \item $\baseleq$, $\reflleq$, $\transleq$, and $\sucleq$:
+    The order is reflexive and transitive (\ie a preorder)
+    such that $\baseT$ is smaller than or equal to all sizes
+    and the successor of a size is greater or equal to itself.
+  \item $\accIsProp$: Accessibility predicates are \emph{mere propositions}:
+    any two proofs of accessibility of a size are propositionally equal.
+  \item $\accleq$: Any size smaller or equal to an accessible size is itself accessible.
+  \item $\accessible$: All sizes are accessible; in other words, the order on sizes is well founded.
+  \item $\wfind$ and $\wfacc$: The well-founded induction principle on sizes with respect to the order,
+    proven by structural induction on the accessibility of sizes.
+\end{itemize}
+
+The only time equality reflection is needed is to prove $\accIsProp$ (via $\funext$),
+which in turn is the only other equality that is reflected for proving type preservation.
+Since $\AccT$ is in already $\PropT$, \CICE could be replaced by an intensional CIC
+with a universe of \emph{strict propositions} $\SPropT$
+of types whose elements are definitionally equal~\citep{SProp},
+then placing $\AccT$ in $\SPropT$.
+This is disallowed by \opcit because it breaks normalization;
+however, it doesn't break consistency,
+so it would remain suitable as the target language of a syntactic model.
+In any case, we use \CICE because equality reflection is more established in the literature
+and it allows us to use \rref{equiv-mu} in place of \rref{equiv-mu-guarded}.
+
+Finally, the naturals and the well-founded trees in \CICE are parametrized by a $\SizeT$.
+Their definitions respect the translation in the upcoming section,
+so that the types of $\NatT$ and $\WT$ and their constructors are preserved.
+
+\subsection{Translation}
+
+The key type preservation theorem states that well-typed terms of \lang translate to
+corresponding well-typed terms of CICE.
+However, terms are not the only thing requiring translation:
+well-typedness holds under some environment, so term environments need translations;
+sizes and their environments translate to terms and term environments as well;
+and derivations of size orders translate to terms which represent them.
+
+\FigTransSize{fig:trans:size}
+We begin with the translation of sizes and their environments in \cref{fig:trans:size},
+which are straightforward recursive metafunctions over their syntax.
+We use an asterisk superscript \new{$\mt^\ast$} on a variable $\alphaT$ to represent
+a fresh variable uniquely associated with $\alphaT$.
+Given some bound size variable $\alphaT$,
+$\alphaT^\ast$ represents the proof that the translated size is strictly smaller
+than its size bound.
+
+\FigTransSubsize{fig:trans:subsize}
+The translation of subsizing judgements, on the other hand,
+is a recursive metafunction over the \emph{subsizing derivation}.
+\cref{fig:trans:subsize} defines the translation to \CICE terms
+by induction on the subsizing rules, which recursively translates subderivations
+(omitting irrelevant size well-scopedness premises).
+
+The translation of terms and term environments are similarly defined
+as recursive metafunctions over the typing and well-formedness derivations,
+denoted by
+\mbox{$\typeto{\Phi; \Gamma}{e}{\tau}{\eT}$} and \mbox{$\wfto{\Phi}{\Gamma}{\GammaT}$}
+respectively.
+However, for concision, we use $\compile{e}$ to mean the translation of $e$
+when well typed under the current implicit environments,
+$\compile{e}_{\Phi}$ or $\compile{e}_{\Gamma}$ to mean the translation of $e$
+with the current implicit environments extended with $\Phi$ or $\Gamma$,
+and $\compile{\Gamma}$ to mean the translation of $\Gamma$
+when well formed under the current implicit size environment.
+
+\FigTransTermSquash{fig:trans:term}
+
+The translation for base \lang without inductives is given in \cref{fig:trans:term}
+in the more concise notation translated terms follow directly from subderivations
+and in the usual notation otherwise.
+Terms not involving sizes are translated in a straightforward recursive manner.
+Unbounded size quantifications and abstractions translate to quantifications and abstractions over $\SizeT$,
+while bounded ones have additional quantifications and abstractions over a proof of $\szltT$.
+Size applications translate to an additional application to a proof of $\szltT$
+when the size abstraction applied is bounded.
+
+Finally, \cref{fig:trans:ind} gives the translation for naturals, well-founded trees,
+$\kw{case}$ expressions, and fixpoint expressions from their typing derivations
+to a \CICE term (again omitting irrelevant premises).
+Aside from fixpoints, the translations are fairly straightforward,
+with an additional proof term from subsizing for constructors
+and dually an additional abstraction over such terms in the branches of $\tg{case}$ expressions.
+
+\FigTransInd[h]{fig:trans:ind}
+
+Fixpoints in \lang are not translated as fixpoints in \CICE.
+Doing so while preserving types would mean that \lang fixpoints
+need to be subject to the same guard conditions as \CICE fixpoints,
+which is clearly undesirable and not the case in the examples from \cref{subsec:examples}.
+Instead, every single \lang fixpoint, regardless of the inductive on which they recur,
+is translated to well-founded induction,
+which is defined via a \CICE fixpoint on accessibility predicates.
+Intuitively, the return type of a fixpoint corresponds to the motive of well-founded induction,
+while recursion on a strictly smaller size corresponds to the induction hypothesis,
+where the motive holds for all strictly smaller sizes.
+
+The main challenge with this translation is showing that the translations of a fixpoint
+and of its $\mu$-reduction are equivalent in \CICE,
+because this requires showing that the computational behaviour of well-founded induction
+is equivalent to the computational behaviour of the fixpoint.
+Once that has been established,
+showing type preservation of the translation is more or less going through the motions of the proof,
+since the remaining \lang terms translate almost directly to their syntactically corresponding terms.
+
+\section{Metatheory and Type Preservation}
+
+In this section, we outline the architecture of the type preservation proof,
+highlighting the interesting cases.
+The final proof is done by induction on the typing derivations of \lang,
+but since typing depends on subtyping,
+subtyping on $\alpha$-cumulativity and closure of reduction,
+closure of reduction on reduction, and reduction on substitution,
+we need to first prove that they too are all preserved by the translation.
+More precisely, we need to show that translation of substitution satisfies a \emph{compositionality} principle,
+that the translation of reduced terms are equivalent in \CICE,
+and that translated $\alpha$-cumulative terms and subtypes are correspondingly subtypes in \CICE.
+
+These proofs in turn require several well-known metatheoretical properties of \lang and \CICE.
+We begin first with these properties before moving on to the preservation proofs.
+
+\subsection{Metatheory}
+
+The metatheoretical properties we need of \lang are
+\emph{confluence} (two different reducts of a term further reduce to a coinciding term),
+transitivity of $\alpha$-cumulativity and subtyping (since it's not an explicit derivation rule),
+\emph{regularity} (well-typedness of the type of a well-typed term),
+and \emph{subject reduction} (well-typed terms reduce to well-typed terms).
+Significant lemmas are introduced as needed.
+
+\begin{theorem}[Confluence] \label{thm:confluence}
+If $\red*{\Phi; \Gamma}{e}{e_1}$ and $\red*{\Phi; \Gamma}{e}{e_2}$
+then there is some term $e'$ such that
+$\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
+\end{theorem}
+
+\begin{proof}
+We use the \emph{Z property}~\citep{Z, confluence} technique to prove confluence,
+first defining a \emph{complete developement} judgement $\develop{\Phi; \Gamma}{e}{e'}$,
+then showing that it satisfies the Z property:
+if $\red{\Phi; \Gamma}{e_1}{e_2}$ and $\red{\Phi; \Gamma}{e_i}{e'_i}$ for $i = 1, 2$,
+then $\red*{\Phi; \Gamma}{e_2}{e'_1}$ and $\red*{\Phi; \Gamma}{e'_1}{e'_2}$.
+Confluence then follows from the Z property by \opcit.
+Complete development is in essence the deterministic, simultaneous reduction
+of all visible redexes in a term from the inside out,
+and its complete definition is given in \cref{app:develop}.
+\end{proof}
+
+\begin{theorem}[Confluence up to $\alpha$-cumulativity] \label{thm:confluence-acum}
+If $\acum{e_1}{e_2}$ and $\red*{\Phi; \Gamma}{e_i}{e'_i}$ for $i = 1, 2$,
+then $\red*{\Phi; \Gamma}{e'_i}{e''_i}$ for $i = 1, 2$ and $\acum{e''_1}{e''_2}$.
+\end{theorem}
+
+\begin{proof}
+By induction on the derivation of $\acum{e_1}{e_2}$,
+making use of \nameref{thm:confluence}.
+\end{proof}
+
+\begin{lemma}[Transitivity of $\alpha$-cumulativity] \label{lem:acum-trans}
+If $\acum{e_1}{e_2}$ and $\acum{e_2}{e_3}$ then $\acum{e_1}{e_3}$.
+\end{lemma}
+
+\begin{proof}
+By nested induction on the derivations of $\acum{e_1}{e_2}$ and $\acum{e_2}{e_3}$.
+\end{proof}
+
+\begin{theorem}[Transitivity of subtyping] \label{thm:subtyping-trans}
+If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$ and $\subtype{\Phi; \Gamma}{\tau_2}{\tau_3}$
+then $\subtype{\Phi; \Gamma}{\tau_1}{\tau_3}$.
+\end{theorem}
+
+\begin{proof}
+By cases on the derivation of
+$\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$ and
+$\subtype{\Phi; \Gamma}{\tau_2}{\tau_3}$,
+making use of \nameref{thm:confluence}, \nameref{thm:confluence-acum},
+and \nameref{lem:acum-trans}.
+\end{proof}
+
+\begin{lemma} \label{lem:wf-subderiv}
+If $\wf{\Phi}{\Gamma_1, \define{x}{\tau}{e}, \Gamma_2}$
+then $\type{\Phi; \Gamma_1}{e}{\tau}$ is a subderivation.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\wf{\Phi}{\Gamma_1, \define{x}{\tau}{e}, \Gamma_2}$.
+\end{proof}
+
+\begin{theorem}[Regularity] \label{thm:regularity}
+If $\type{\Phi; \Gamma}{e}{\tau}$, then $\wf{}{\Phi}$, $\wf{\Phi}{\Gamma}$,
+and $\type{\Phi; \Gamma}{\tau}{U}$.
+\end{theorem}
+
+\begin{proof}
+By induction on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$,
+using \cref{lem:wf-subderiv} for \rref{var} when the variable refers to a definition.
+\end{proof}
+
+\begin{lemma}[Subject reduction] \label{lem:SR}
+If $\type{\Phi; \Gamma}{e}{\tau}$
+and $\red{\Phi; \Gamma}{e}{e'}$
+then $\type{\Phi; \Gamma}{e'}{\tau}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$
+and inversion on the derivation of $\type{\Phi; \Gamma}{e}{\tau}$,
+using \nameref{thm:subtyping-trans} and \nameref{thm:regularity} as needed.
+\end{proof}
+
+\begin{theorem}[Subject reduction] \label{thm:SR}
+If $\type{\Phi; \Gamma}{e}{\tau}$
+and $\red*{\Phi; \Gamma}{e}{e'}$
+then $\type{\Phi; \Gamma}{e'}{\tau}$.
+\end{theorem}
+
+\begin{proof}
+By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$,
+using \nameref{lem:SR} for \rref{red*-once}.
+\end{proof}
+
+The metatheory we need of \CICE are \emph{subject equivalence},
+or that the two equivalent terms are well typed,
+and \emph{consistency}, which take as a postulate.
+
+\begin{theorem}[Subject equivalence] \label{thm:SE}
+If $\defeq{\GammaT}{\eT_1}{\eT_2}{\tauT}$
+then $\type{\GammaT}{\eT_1}{\tauT}$ and $\type{\GammaT}{\eT_2}{\tauT}$.
+\end{theorem}
+
+\begin{postulate}[Consistency] \label{fact:consistency}
+There exists no term $\eT$ such that
+$\type{\mt}{\eT}{\funtypeT{\PT}{\PropT}{\PT}}$.
+\end{postulate}
+
+\subsection{Type Preservation} \label{subsec:preservation}
+
+In the following proofs, we assume well-typedness of the preliminary definitions of \cref{subsec:prelim}.
+The first few lemmas we need are compositionality of substitution.
+Because there are a number of different notions of substitution
+(term substitution into a term,
+size substitution into a size,
+bounded size substitution into a term,
+unbounded size substitution into a term),
+we need compositionality lemmas for them all.
+The proofs are tedious but straightforward.
+
+\begin{lemma}[Term compositionality] \label{lem:compos-term}
+If $\type{\Phi; \Gamma_1, \annot{x}{\tau'}, \Gamma_2}{e}{\tau}$
+and $\type{\Phi; \Gamma_1}{e'}{\tau'}$ then
+$\subst{\compile{e}}{\xT}{\compile{e'}} = \compile{\subst{e}{x}{e'}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\type{\Phi; \Gamma_1, \annot{x}{\tau'}, \Gamma_2}{e}{\tau}$.
+\end{proof}
+
+\begin{lemma}[Size compositionality] \label{lem:compos-size}
+$\subst{\compile{s}}{\alpha}{\compile{r}} = \compile{\subst{s}{\alpha}{r}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the structure of $s$.
+\end{proof}
+
+\begin{lemma}[Bounded compositionality of subsizing] \label{lem:compos-subsizing-bounded}
+If $\subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{s}{r}{\eT}$
+and $\subsizeto{\Phi_1}{\sss{s}'}{r'}{\eT'}$
+then $\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s}{\alpha}{s'}}{\subst{r}{\alpha}{s'}}{\subst{\eT}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2}{s}{r}{\eT}$,
+making use of \cref{lem:compos-size}.
+\end{proof}
+
+\begin{lemma}[Unbounded compositionality of subsizing] \label{lem:compos-subsizing-unbounded}
+If $\subsizeto{\Phi_1, \alpha, \Phi_2}{s}{r}{\eT}$ and $\wf{\Phi_1}{s'}$ then
+$\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s}{\alpha}{s'}}{\subst{r}{\alpha}{s'}}{\subst{\eT}{\alphaT}{\compile{s'}}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\subsizeto{\Phi_1, \alpha, \Phi_2}{s}{r}{\eT}$,
+making use of \cref{lem:compos-size}.
+\end{proof}
+
+\begin{lemma}[Bounded size compositionality] \label{lem:compos-bounded}
+If $\type{\Phi_1, \bound{\alpha}{r}, \Phi_2; \Gamma}{e}{\tau}$
+and $\subsizeto{\Phi_1}{\sss{s}}{r}{\eT'}$ then
+$\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{e}{\alpha}{s}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\type{\Phi_1, \bound{\alpha}{r}, \Phi_2; \Gamma}{e}{\tau}$,
+making use of \cref{lem:compos-subsizing-bounded}.
+\end{proof}
+
+\begin{lemma}[Unbounded size compositionality] \label{lem:compos-unbounded}
+If $\type{\Phi_1, \alpha, \Phi_2; \Gamma}{e}{\tau}$
+and $\wf{\Phi_1}{s}$ then
+$\subst{\compile{e}}{\alphaT}{\compile{s}} = \compile{\subst{e}{\alpha}{s}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\type{\Phi_1, \alpha, \Phi_2; \Gamma}{e}{\tau}$,
+making use of \cref{lem:compos-subsizing-unbounded}.
+\end{proof}
+
+Now we are able to prove preservation of reduction,
+making use of various compositionality lemmas where substitution is involved.
+
+\begin{lemma}[Preservation of reduction] \label{lem:pres-red}
+If $\red{\Phi; \Gamma}{e}{e'}$,
+$\type{\Phi; \Gamma}{e}{\tau}$, and
+$\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\tauT}$,
+then $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$,
+where $\type{\Phi; \Gamma}{e'}{\tau}$ is given by \nameref{lem:SR}.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$,
+using \nameref{lem:compos-term}, \nameref{lem:compos-bounded}, and \nameref{lem:compos-unbounded}
+where term and (un)bounded size substitution are involved.
+Inversion on the derivation of $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\tauT}$
+is used to derive the typing premises needed to construct some of the equivalence derivations.
+The majority of cases are straightforward; the interesting case is that of fixpoints,
+since they reduce to applications of well-founded induction on sizes.
+We therefore cover only that case here.
+\begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
+  \item $\red[]{\Phi; \Gamma}{
+      \App{(\fix{f}{\alpha}{\sigma}{e})}{s}
+    }{
+      \subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}
+    }$.\\
+    By definition of the translation, we have
+    $$\type{\compile{\Phi}, \compile{\Gamma}}{
+      \begin{aligned}
+      & \app{\wfind}{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\\
+      & \quad (\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}{\compile{e}}})}{\compile{s}}
+      \end{aligned}
+    }{\tauT},$$
+    where $\wfind$ (and $\wfacc$) are defined in \cref{fig:defns}.
+    Because of the sheer volume of the terms involved in the translation, $\wfind$, and $\wfacc$,
+    Well-typedness premises when applying equivalence rules are omitted,
+    especially since all of these terms are known to be well typed.
+    Do note, however, that by repeated applications of inversion, we have
+    $\subtype{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}}{\tauT}$. \\[\baselineskip]
+    Let $\sigmaT$ be $\funT{\alphaT}{\SizeT}{\compile{\sigma}}$,
+    and let $\eT$ be $\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}{\compile{e}}}$.
+    Liberally using \rref{equiv-trans}, for the left-hand side we then have
+    \begin{align*}
+    \compile{\Phi}, \compile{\Gamma} &\vdash \app{\wfind}{\sigmaT}{\eT}{\compile{s}} \\
+    &\equiv \app{\wfacc}{\sigmaT}{\eT}{\compile{s}}{(\app{\accessible}{\compile{s}})} \qquad \textrm{by $\wfind$ and \rref*{equiv-beta}} \\
+    &\equiv \app{(\fixT{1}{\wfacc*}{\funtypeT{\alphaT}{\SizeT}{\arrT*{\app{\AccT}{\alphaT}}{\app{\sigmaT}{\alphaT}}}}{ \\
+      &\phantom{\equiv} \quad \funT{\alphaT}{\any}{\funT{\access}{\any}{\app{\eT}{\alphaT}{(\funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \alphaT}{ \\
+      &\phantom{\equiv} \qquad \app{\wfacc*}{\betaT}{(\matchT*{\access}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}}})}}}})}{\compile{s}}{(\app{\accessible}{\compile{s}})} \\
+      &\phantom{\equiv} \textrm{by $\wfacc$ and \rref*{equiv-beta}} \\
+    &\equiv \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT^*}{\betaT \szltT \compile{s}}{ \\
+      &\phantom{\equiv} \quad \app{\wfacc}{\sigmaT}{\eT}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}}} \\
+      &\phantom{\equiv} \textrm{by \rref*{equiv-mu}, \rref*{equiv-beta}, and $\wfacc$} \\
+    &: \app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}
+    \end{align*}
+    Meanwhile, for the right-hand side we have
+    \begin{align*}
+    &\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}} \\
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\compile{\fix{f}{\alpha}{\sigma}{e}}}{\betaT}}}} \\
+      &\phantom{=} \textrm{by \cref{lem:compos-unbounded} and \cref{lem:compos-term}} \\
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfind}{\sigmaT}{\eT}{\betaT}}}} \textrm{by translation of $\kw{fix}$} \\
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfacc}{\sigmaT}{\eT}{\betaT}{(\app{\accessible}{\betaT})}}}} \qquad \textrm{by $\wfind$}
+    \end{align*}
+    Note that the only difference between the left- and right-hand sides now
+    is the proof of $\app{\AccT}{\betaT}$ for some $\betaT \szltT \compile{s}$,
+    but we know that such proofs are propositionally equal to one another.
+    From inversion, we know that $\compile{s}$ is well typed with type $\SizeT$.
+    Then we can show that
+    \begin{align*}
+    &\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{\app{\accIsProp}{\betaT}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}{(\app{\accessible}{\betaT})}}{\\
+    &\phantom{\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{}{}}
+    \eq{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})}}{\app{\AccT}{\betaT}}{\app{\accessible}{\betaT}}}.
+    \end{align*}
+    By \rref{equiv-reflect}, we have
+    \begin{align*}
+    &\defeq{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})}}{\app{\accessible}{\betaT}}{\app{\AccT}{\betaT}}.
+    \end{align*}
+    Finally, by \rref{equiv-cong}, we can equate the left- and right-hand sides,
+    and by \rref{equiv-conv}, we obtain our goal.
+    \begin{align*}
+    \defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\App{(\fix{f}{\alpha}{\sigma}{e})}{s}}}{\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}}}{\tauT} \qedhere
+    \end{align*}
+\end{itemize}
+\end{proof}
+
+The remaining preservation proofs are rather straightforward in comparison.
+We therefore don't cover any of the cases in detail,
+only mentioning where prior lemmas are used in later ones.
+
+\begin{lemma}[Preservation of reflexive, transitive closure of reduction] \label{lem:pres-red*}
+If $\red*{\Phi; \Gamma}{e}{e'}$,
+$\type{\Phi; \Gamma}{e}{\tau}$, and
+$\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\tauT}$,
+then $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{e'}}{\tauT}$,
+where $\type{\Phi; \Gamma}{e'}{\tau}$ is given by \nameref{thm:SR}.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
+\nameref{lem:pres-red} is used for \rref{red*-once},
+while \nameref{thm:SR} and \nameref{thm:SE} are used for \rref{red*-trans}
+to ensure that the middle term in transitivity and its translation are well typed.
+\end{proof}
+
+\begin{lemma}[Preservation of $\alpha$-cumulativity] \label{lem:pres-acum}
+If $\acum{\tau_1}{\tau_2}$,
+$\type{\Phi; \Gamma}{\tau_i}{U_i}$ for $i = 1, 2$, and
+$\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_i}}{\UT_i}$ for $i = 1, 2$,
+then $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\acum{\tau_1}{\tau_2}$
+inverting on the derivations of $\type{\Phi; \Gamma}{\tau_i}{U_i}$
+and $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_i}}{\UT_i}$
+to apply the induction hypotheses.
+\end{proof}
+
+\begin{lemma}[Preservation of subtyping] \label{lem:pres-subtyping}
+If $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$,
+$\type{\Phi; \Gamma}{\tau_i}{U}$ for $i = 1, 2$, and
+$\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_i}}{\compile{U}}$ for $i = 1, 2$,
+then $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
+\end{lemma}
+
+\begin{proof}
+By cases on the derivation of $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$,
+using \nameref{lem:pres-red*}, \nameref{lem:pres-acum},
+\nameref{thm:SR}, and \nameref{thm:SE}.
+\end{proof}
+
+\begin{lemma}[Preservation of sizes] \label{lem:pres-size}
+If $\wf{}{\Phi}$ then $\wf{}{\compile{\Phi}}$; and
+if $\wf{\Phi}{s}$ then $\type{\compile{\Phi}}{\compile{s}}{\SizeT}$.
+\end{lemma}
+
+\begin{proof}
+By mutual induction on the derivations of $\wf{}{\Phi}$ and $\wf{\Phi}{s}$.
+\end{proof}
+
+\begin{lemma}[Preservation of subsizing] \label{lem:pres-subsizing}
+If $\subsizeto{\Phi}{r}{s}{\eT}$
+then $\type{\compile{\Phi}}{\eT}{\compile{r} \szleT \compile{s}}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of $\subsizeto{\Phi}{r}{s}{\eT}$.
+\end{proof}
+
+\begin{theorem}[Type preservation] \label{thm:type-pres}
+If $\wf{\Phi}{\Gamma}$ then $\wf{}{\compile{\Phi}, \compile{\Gamma}}$; and
+if $\type{\Phi; \Gamma}{e}{\tau}$ then $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{e}}{\compile{\tau}}$.
+\end{theorem}
+
+\begin{proof}
+By mutual induction on the derivations of $\wf{\Phi}{\Gamma}$ and $\type{\Phi; \Gamma}{e}{\tau}$,
+using \nameref{lem:pres-size} and \nameref{lem:pres-subsizing}
+where the translations of sizes, size environments, and subsizing are involved.
+\nameref{lem:pres-subtyping} is used for \rref{conv}.
+\end{proof}
+
+Finally, the consistency of \lang follows from the consistency of \CICE and type preservation.
+
+\begin{theorem}[Consistency of \lang] \label{thm:consistency}
+There exists no term $e$ such that $\type{\mt \mathbin{;} \mt}{e}{\funtypeT{\PT}{\PropT}{\PT}}$.
+\end{theorem}
+
+\begin{proof}
+Suppose that there were such a term $e$.
+By \nameref{thm:type-pres}, we would have that
+$\type{\mt}{\compile{e}}{\funtypeT{\PT}{\PropT}{\PT}}$ holds.
+However, this contradicts \cref{fact:consistency},
+so there must not be such a term.
+\end{proof}
+
+\section{Discussion and Conclusions} \label{sec:discussion}
+
+\lang is neither perfect nor complete:
+the nature of the syntatic model requires that inductives live in a universe
+higher than that in which their corresponding unsized types would live,
+and it's missing features such as an infinite size and coinductives.
+In this chapter, we discuss some of these shortcomings
+and give some possible directions for future work based on them.
+
+\subsection{The Infinite Size} \label{subsec:infinity}
+
+In prior sized type systems, the infinite size $\infty$ is applied to sized inductive types
+to represent a ``full'' inductive type encompassing that inductive at all sizes,
+which essentially corresponds to the usual unsized inductive.
+Whereas an inductive of some size $s$ can be thought of as the type of elements
+with at most $s$ many layers of constructors,
+the full inductive can be thought of as the type of elements with any number of layers of constructors.
+
+The infinite size is characterized by its subsizing behaviour:
+$\subsize*{s}{\infty}$ holds for \emph{any} $s$.
+This includes its own successor, \ie $\subsize*{\sss{\infty}}{\infty}$,
+leading to non--well-founded sequences of strictly ``decreasing'' sizes:
+$\dots < \infty < \infty < \infty$.
+Naturally, there's no way to model the infinite size as an element of $\SizeT$
+given that we've shown that $\SizeT$s \emph{are} well founded.
+If there were, then it'd be possible to prove an inconsistency.
+Let $\inftyT$ be the translation of $\infty$,
+and let $\inftyltinfty$ be the translation of $\subsize*{\sss{\infty}}{\infty}$.
+\begin{align*}
+&\LetT{\tg{{\neg}wf\inftyT}}{\arrT*{\app{\AccT}{\inftyT}}{\botT}}{\funT{\mathit{acc}}{\app{\AccT}{\inftyT}}{\matchT*{\mathit{acc}}{\app{\accT}{p} \RightarrowT \app{p}{\inftyT}{\inftyltinfty}}}} \\
+&\LetT{\tg{false}}{\botT}{\app{\tg{{\neg}wf\inftyT}}{(\app{\accessible}{\inftyT})}}
+\end{align*}
+
+In set-theoretic models of sized type systems with an infinite size,
+sizes are modelled as set-theoretic (transfinite) ordinals,
+the infinite size isn't modelled as a single ordinal;
+instead, for each use of the infinite size,
+its set-theoretic interpretation is an ordinal that is ``large enough'' in that context.
+For instance, the interpretation of the infinite size of $\N{\infty}$
+is the first limit ordinal $\omega$.
+
+This strategy doesn't adapt well to \lang with its size abstractions and syntactic model,
+since it requires a non-local translation of sizes.
+For instance, given the size application $\App{e}{\infty}$,
+what $\infty$ translates to would hypothetically depend on what $e$ translates to,
+and likely require further static analysis of $\compile{e}$ beyond a simple translation
+over typing derivations.
+
+Since the motivation for having the infinite size is specifically for representing full inductives,
+one alternative could be to define the full inductive separately
+and provide functions to and from the corresponding sized inductive,
+such as the following for $\W*$.
+\begin{align*}
+& \data{\App{\app{\W*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\infty}}{\Type{i+1}} \\
+& \quad \annot{\constr{sup\infty}}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\infty}}{A}{B}})}{\App{\app{\W*}{A}{B}}{\infty}}}}
+\end{align*}
+
+Defining a function from $\W{x}{A}{B}{s}$ to $\W{x}{A}{B}{\infty}$ is trivial,
+since we're discarding size information.
+What about going from $\W{x}{A}{B}{\infty}$ to $\W{x}{A}{B}{s}$?
+What should $s$ be?
+The size algebra could be augmented to be able to represent transfinite ordinals
+so that $s$ is again a size that is ``large enough'',
+but we can hardly expect programmers to manipulate ordinals,
+and we conjecture that we would lose any hope of deciding $\subsize*{}{}$
+without any user intervention.
+
+The key insight is that what's important about an element of a full inductive
+isn't its precise size and depth of constructors,
+but merely that it has \emph{some} unknown size.
+Another alternative to the infinite size, then, could be to represent a full inductive
+as an existentially-quantified sized inductive,
+\ie $\Pairtype{\alpha}{\N{\alpha}}$ and $\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}$.
+Existential quantification is defined using an encoding for \emph{weak dependent pairs},
+whose components can't be projected out, since the first component is a size and not a term.
+We omit type annotations when deducible from context.
+\begin{align*}
+\Pairtype{\alpha}{\tau} &= \funtype{\sigma}{\Type{i}}{\arr*{(\Funtype{\alpha}{(\arr*{\tau}{\sigma})})}{\sigma}} \\
+\Pair{s}{e}_{\Pairtype{\alpha}{\tau}} &= \fun{\sigma}{\Type{i}}{\fun{f}{\Funtype{\alpha}{(\arr*{\tau}{\sigma})}}{\app{\App{f}{s}}{e}}} \\
+\unpair{\alpha}{x}{\alpha}{\tau}{e_1}{\annot{e_2}{\sigma}} &= \app{e_1}{\sigma}{(\Fun{\alpha}{\fun{x}{\tau}{e_2}})}
+\end{align*}
+
+There is still a limitation similar to that in \cref{subsec:examples:limitations}
+when trying to represent the constructors of full inductives.
+For $\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}$, we need a ``constructor'' of the following type.
+\begin{align*}
+\annot{\const{sup'}}{\arr{x}{A}{\arr*{(\arr*{B}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}}}}
+\end{align*}
+All we need is a function
+$$\annot{\const{ac}}{\arr{x}{A}{\arr*{(\arr*{B}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{\Pairtype{\alpha}{(\arr*{B}{\W{x}{A}{B}{\alpha}})}}}}$$
+and we're good to go.
+\begin{align*}
+\app{\const{sup'}}{x}{f} =
+\unpair*{\alpha}{f'}{\app{\const{ac}}{x}{f}}{\Pair{\sss{\alpha}}{\sup{x}{A}{B}{\sss{\alpha}}{\alpha}{x}{f'}}}
+\end{align*}
+
+Unfortunately, as the name might suggest,
+$\const{ac}$ is an instance of the axiom of choice\punctstack{,}%
+\footnote{The ``choice'' made here is the existentially-quantified size in the consequent:
+the axiom asserts that there's always a way to choose a size such that
+all of the well-founded trees returned have that size.}
+which for weak existentials is nonconstructive,
+so there's no hope of implementing $\const{ac}$.
+However, if we take weak existentials as a primitive of \lang
+rather than being defined as an encoding,
+and model them by strong dependent pairs in \CICE,
+then the translation of $\const{ac}$ \emph{can} be implemented as a function,
+also making use of the limit operator.
+In other words, the syntactic model justifies the axiom $\const{ac}$ in the source.
+The mechanization of $\compile{\const{ac}}$ in Agda and Coq are given in
+\cref{app:mechanization:agda:W} and \cref{app:mechanization:coq:W}, respectively.
+
+Nevertheless, $\const{ac}$ remains a noncomputing axiom
+unless the size algebra is augmented to include a limit operator
+and size expressions consequently treated as regular terms.
+There is no way to represent generalized full inductives as
+sized inductives existentially quantified by sizes
+and faithfully define their constructors without losing either
+decidability of subsizing from exposing the underlying ordinal representation of sizes,
+or canonicity from the inclusion of a noncomputing axiom.
+Representing ordinary full inductives (namely naturals) this way,
+however, has been previously explored~\citep{guarded, modal-sizes}.
+
+\subsection{Universe Levels of Inductives} \label{subsec:universe-levels}
+
+The universes in which the type of natural numbers and W types in \lang live
+are, in a sense, one level higher than is usually expected;
+their typing rules are reproduced below.
+$\N*$ is typically in $\Type{0}$,
+while $\W*$ is typically in $U$ rather than $\axioms{U}$.
+\begin{mathpar}
+\inferrule[\rref*{nat}]{
+  \wf{\Phi}{\Gamma} \\
+  \wf{\Phi}{s}
+}{
+  \infer{\Phi; \Gamma}{\N{s}}{\Type{1}}
+}
+\and
+\inferrule[\rref*{wft}]{
+  \wf{\Phi}{s} \\
+  \infer{\Phi; \Gamma}{\sigma}{U} \\\\
+  \infer{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{U}
+}{
+  \infer{\Phi; \Gamma}{\W{x}{\sigma}{\tau}{s}}{\axioms{U}}
+}
+\end{mathpar}
+
+This is due to how the translation is defined:
+$\NatT$ and $\WT$ have a $\SizeT$ as parameter,
+the $\limT$ operator quantifies over the type of the domain of its function argument,
+and that type must be ``large'' enough to accomodate the correct type.
+For $\app{\WT}{\sigmaT}{\tauT}{\sT}$,
+the domain is $\app{\tauT}{\aT}$ for some $\aT$\punctstack{,}%
+\footnote{For generalized inductives, given a recursive argument in the form of a function,
+the domain of $\limT$ should emcompass the domain of that function.}
+as is the case for the definition of $\compile{\const{ac}}$,
+so if its universe is $\TypeT{\iT}$,
+then the universe of the type of $\sT$ must be $\TypeT{\tg{i+1}}$,
+according to the definition of $\SizeT$, reproduced below.
+\begin{align*}
+&\dataT{\SizeT}{\TypeT{\tg{i+1}}} \\
+&\quad \annotT{\sucT}{\arrT*{\SizeT}{\SizeT}} \\
+&\quad \annotT{\limT}{\funtypeT{A}{\TypeT{\iT}}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}}
+\end{align*}
+
+This is a nonnegotiable condition:
+defining $\SizeT$ to be in the same universe as that which $\limT$ quantifies over
+leads to $\szltT$ no longer being well founded,
+since in this hypothetical scenario $\SizeT$ itself could be applied to $\limT$
+to define an $\inftyT$ size.
+\begin{align*}
+&\LetT{\inftyT}{\SizeT}{\app{\limT}{\SizeT}{(\funT{\xT}{\SizeT}{\xT})}} \\
+&\LetT{\inftyltinfty}{\inftyT \szltT \inftyT}{\app{\coconeT}{\SizeT}{(\app{\sucT}{\inftyT})}{(\funT{\xT}{\SizeT}{\xT})}{(\app{\sucT}{\inftyT})}{(\app{\reflleq}{(\app{\sucT}{\inftyT})})}}
+\end{align*}
+
+One way to ``shrink'' the universe of $\SizeT$, so to speak,
+could be to parametrize it over the type over which $\limT$ currently quantifies over,
+yielding the following inductive definition.
+\begin{align*}
+&\dataT{\app{\SizeT}{(\annotT{A}{\TypeT{\iT}})}}{\TypeT{\iT}} \\
+&\quad \annotT{\sucT}{\arrT*{\SizeT}{\SizeT}} \\
+&\quad \annotT{\limT}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}
+\end{align*}
+
+The problem with this alternative is that for $\app{\WT}{\sigmaT}{\tauT}$,
+the parameter of its size parameter would be $\app{\tauT}{\aT}$,
+where $\annotT{\aT}{\sigmaT}$ is the third formal argument to its constructor $\supT$,
+but this argument is only part of the constructor, not the type.
+The intuition is that the parametrized $\SizeT$ is too restrictive
+and there aren't ``enough'' sizes to cover all well-founded trees of any particular type.
+
+In a sense, it's reasonable to expect that $\SizeT$ needs to live in a larger universe.
+The role of $\SizeT$ is to represent all of the possible sizes of a given full inductive,
+so we would expect $\SizeT$ to be just as large as the inductive itself.
+Aside from situations where the inductive is impredicative, \ie in $\PropT$,
+parametrizing over $\SizeT$ then necessarily requires moving up a universe
+so that it's not essentially quantifying over itself.
+
+If having inductive types in the correct universe were more important than
+the potential expressibility of infinitude,
+we could eliminate $\limT$ altogether and model sizes as ordinary naturals.
+Then $\SizeT$ would live in $\Type{0}$, $\NatT$ and $\WT$ would live in the correct universes,
+as well as $\N*$ and $\W*$.
+Although this would affect the judgements of both \lang and \CICE,
+this wouldn't affect the proofs, since the changes are the same for both languages.
+However, this does mean giving up $\const{ac}$
+and likely any hope of defining any infinitary constructs like $\const{\omega}$
+when using this model.
+
+\section{Streams and Coinductives}
+
+Dual to inductive types, coinductive types allow for constructing
+potentially infinitely large elements in a principled manner,
+and are present in many proof assistants such as Coq, Agda, and Idris.
+Conventionally, while fixpoints are guarded by destructors
+and destruct elements of inductives by recurring only on syntactically smaller elements,
+cofixpoints are guarded by constructors and occur only as a syntactic argument to a constructor~\citep{guard}.
+Since coinductives aren't present in pCIC,
+upon which \CICE is based, we don't include them in \lang either,
+as they would lack a translation in the syntactic model.
+Nevertheless, we can speculate on how they might appear and interact with sizes.
+Here, we define the classic example of coinductive streams,
+composed of a head element and a tail stream.
+\begin{mathpar}
+\inferrule[\rlabel*{stream}]{
+  \wf{\Phi}{s} \\
+  \infer{\Phi; \Gamma}{\tau}{U}
+}{
+  \infer{\Phi; \Gamma}{\Stream{\tau}{s}}{U}
+}
+\and
+\inferrule[\rlabel*{hd}]{
+  \infer{\Phi; \Gamma}{e}{\Stream{\tau}{s}}
+}{
+  \infer{\Phi; \Gamma}{\shd{e}}{\tau}
+}
+\and
+\inferrule[\rlabel*{tl}]{
+  \infer{\Phi; \Gamma}{e}{\Stream{\tau}{s}}
+}{
+  \infer{\Phi; \Gamma}{\stl{e}}{\Funtype<{\alpha}{s}{\Stream{\tau}{\alpha}}}
+}
+\and
+\inferrule[\rlabel*{scons}]{
+  \infer{\Phi; \Gamma}{e_1}{\tau} \\
+  \infer{\Phi, \bound{\alpha}{s}; \Gamma}{e_2}{\Stream{\tau}{\alpha}}
+}{
+  \infer{\Phi; \Gamma}{\scons{\alpha}{s}{e_1}{\alpha}{s}{e_2}}{\Stream{\tau}{s}}
+}
+\and
+\inferrule[\rlabel*{cofix}]{
+  \infer{\Phi, \alpha; \Gamma}{\sigma}{U} \\
+  \fresh{\beta} \\
+  \check{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\sigma}{\alpha}{\beta}}}}{e}{\sigma}
+}{
+  \infer{\Phi; \Gamma}{\cofix{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}
+}
+\end{mathpar}
+
+Just as the size of an inductive informally indicates at most how many layers of constructors its elements contain,
+the size of a coinductive informally indicates \emph{at least} how many layers,
+and in the case of $\app{\Stream*}{A}$, at least how many elements of $A$ it contains.
+Of course, streams may contain an infinite number of elements,
+so the analogy works better in the relative sense:
+if a stream contains at least $s$ elements,
+then its tail must contain at least $\bound{\alpha}{s}$, strictly fewer, elements.
+The reduction rules of streams, omitted here, operate as expected:
+$\shd{}$ projects out the head and $\stl{}$ projects out the tail.
+
+To actually construct infinite streams, we need cofixpoint expressions.
+The natural correspondence of guardedness in sized types
+is that cofixpoint bodies must construct coinductives larger than
+their own occurrences inside the body,
+which coincides with the structure of \rref{fix}.
+Cofixpoints also reduce when applied to a size that has some subsize,
+just like fixpoints.
+Interestingly, this suggests that cofixpoints might also be translated in the syntactic model
+to well-founded induction on sizes despite constructing a coinductive type.
+
+\section{Future Directions}
+
+There is still a long way to go towards a sized dependent type system
+that is expressive, consistent, and useable.
+We've seen from \cref{subsec:examples:limitations} that working without an infinite size
+or full inductives is verbose at best, in the case of $\msort$ and $\qsort$,
+and impossible at worse, in the case of $\const{\omega}$,
+while attempts at including them either involve inconsistency, undecidability, or noncanonicity.
+Alternate approaches need to be investigated to circumvent these problems.
+
+While the issue with the universe levels of inductive types appears to be cosmetic
+and not affect any important significant metatheoretical properties,
+it might be a mere symptom of a larger issue with how sizes are modelled,
+especially since prior sized type systems shown to be consistent
+haven't required any similar restrictions.
+One possibility is to take inspiration from Agda and
+make $\SizeT$ live in a universe $\SizeUnivT$ independent of $\TypeT{}$,
+but the consistency of arbitrarily adding a new universe is questionable,
+especially when $\SizeUnivT$ needs to be slightly impredicative:
+$\arrT*{\TypeT{}}{\SizeT}$ would remain in $\SizeUnivT$
+(as would be the case for $\limT$)
+and $\funtypeT{\alpha}{\SizeT}{\N{\alpha}}$ would remain in $\TypeT{0}$
+(as would be the case for $\zeroT$).
+
+The main barrier to a syntactic model of \lang with any coinductive types
+is the lack of an established target type theory with coinductive types
+with nice properties.
+Whereas pCIC and pCuIC lack them,
+MetaCoq mechanizes Coq-style coinductive types,
+but necessarily cannot prove its own consistency.
+Meanwhile, older CICs with coinductive types and cofixpoints guarded by constructors
+(\eg \citet{guard}) have issues with subject reduction~\citep{coind-SR},
+which is a necessary property for proving type preservation in \cref{subsec:preservation}.
+Another potential issue is the translation of cofixpoints into applications of
+a well-founded induction principle, which is suspicious and also requires further investigation.
+
+Finally, \lang is missing some important but comparatively simple features
+from the perspective of the syntactic model, namely inductive types in general.
+They can be added directly to \lang as a generalization of the existing inductives,
+and we conjecture that the type preservation proofs would be a straightforward extension.
+Alternatively, since there already are well-founded trees,
+\lang could instead be augmented with dependent pairs and an equality type,
+both of which we also conjecture to be straightforward;
+then mutual inductives, indexed inductives \citep{whynotW}, some nested inductives \citep{barras},
+and even some inductive--inductive types \citep{ind-ind}
+can be encoded, along with their induction principles, using W types and propositional equality.
+
+\hfill
+
+In terms of metatheory, \lang is missing proof of two desirable properties:
+strong normalization and decidability of type checking.
+Because \nameref{lem:pres-red} only preserves reduction up to equivalence in \CICE,
+not reduction, normalization doesn't hold immediately from the translation.
+In particular, the proof of \nameref{lem:pres-red} uses equality reflection
+to obtain an equivalence between two proofs of accessibility of a size,
+and \citet{SProp} show that this equivalence can lead to nonnormalization in
+particular inconsistent environments,
+as is the case for $\tg{false}$.
+
+Even so, we conjecture that translation of a \lang term will never lead to
+a \CICE term with a subterm in an appropriate inconsistent environment that leads to nonormalization,
+because the translation will never yield an assumption of the form $\sT \szltT \sT$.
+By inspection of the translation, the only fitting subsizing relation possible is of the form $\alphaT \szltT \alphaT$,
+and the only possible sources $\Funtype<{\alpha}{\alpha}{\tau}$, $\Fun<{\alpha}{\alpha}{e}$ are ill-scoped.
+Since fixpoints only reduce when applied to sizes that have a subsize
+and we can't obtain infinitely decreasing chains of subsizes,
+they can't unfold endlessly and must stop eventually.
+
+Decidability of type checking, meanwhile, rests not only on strong normalization,
+but also on decidability of subsizing, \ie deciding whether $\bound{r}{s}$ holds.
+The trickiest rule is transitivity of subsizing,
+but we conjecture that subsizing, too, is decidable,
+as the size environment only contains a finite number of bounded size variables,
+and sizes can only have a finite number of successor operators applied.
+Moreover, Agda has transitive subsizing, and so far hasn't had issues with its decidability.
+
+\hfill
+
+As for implementation, the consistency of \lang shows that sized types for inductives in Agda
+are likely to be consistent were the infinite size removed.
+This immediately poses a significant problem to Agda's standard library,
+as 20 of the 33 files that use sized types in version 1.7.1 of the standard library
+make use of the infinite size.
+Furthermore, 30 of those files deal with coinductives rather than inductives,
+and it remains to be seen whether \lang with coinductives really is consistent as well.
+The addition of the $\const{ac}$ axiom to recover some of the expressivity of the infinite size
+isn't ideal for a proof assistant either, since it would block computation.
+
+\section{Conclusion}
+
+In this thesis, we introduced \lang, a sized dependent type theory
+with higher-rank size quantification and bounded size quantification,
+but without an infinite size that is strictly greater than itself,
+along with sized naturals and well-founded trees.
+we gave examples of programming with sized inductives to write recursive programs
+that would have otherwise not passed the usual syntactic guard checks,
+as well as limitations of programming without the infinite size.
+We then reduced the consistency of \lang to that of \CICE,
+an extensional dependent type theory, by translating \lang terms to \CICE terms
+and proving that the translation is type preserving.
+Finally, we discussed the tradeoffs in the design of \lang for this syntactic model to work,
+namely the lack of an infinite size and raising the universe levels of the inductives,
+as well as some potential extensions and future work.
+
+%% Acknowledgments
+\begin{acks}
+%\grantsponsor{id}{name}{url}
+%\grantnum{id}{num}
+This research was supported by the Canada Graduate Scholarships -- Master’s (CGS M) programme.
+Cette recherche a \'et\'e financ\'ee par le Programme de bourses d'\'etudes sup\'erieures
+du Canada au niveau de la maitrise (BESC M).
+\end{acks}
+
+%% Bibliography
+\bibliography{biblio}
+
+%% Appendix
+\appendix
+\section{Appendix}
+
+\input{figures/congruence.tex}
+\input{figures/takahashi.tex}
+
+\allowdisplaybreaks
+
+\subsection{Congruence Rules for Reduction in \lang} \label{app:cong:red}
+
+\FigCongRed{fig:cong:red*}
+\FigCongRedCase{fig:cong:red*-case}
+
+\subsection{Congruence Rules for Equivalence in \CICE} \label{app:cong:equiv}
+
+\FigCongEquiv{fig:cong:equiv}
+
+\subsection{Rules for Complete Development of \lang} \label{app:develop}
+
+\FigTakahashiFull{fig:develop}
+
+\setmonofont{iosevka.ttc}
+
+\subsection{Mechanized \CICE Definitions in Coq}
+
+The following type check on Coq 8.15.1.
+
+\subsubsection{Preliminary definitions} \label{app:mechanization:coq:prelim}
+
+\begin{minted}{coq}
+From Equations Require Import Equations.
+Require Import Coq.Program.Equality.
+Require Import Coq.Unicode.Utf8_core.
+
+Reserved Notation "r ≤ s" (at level 70, no associativity).
+
+Inductive Size : Type :=
+| suc : Size → Size
+| lim : ∀ {A : Type}, (A → Size) → Size.
+
+Inductive Leq : Size → Size → Type :=
+| mono : ∀ {r s}, r ≤ s → suc r ≤ suc s
+| cocone : ∀ {s A f} (a : A), s ≤ f a → s ≤ lim f
+| limiting : ∀ {s A f}, (∀ (a : A), f a ≤ s) → lim f ≤ s
+where "r ≤ s" := (Leq r s).
+
+Definition Lt r s : Type := suc r ≤ s.
+Notation "r < s" := (Lt r s).
+
+Definition base : Size := lim (False_rect Size).
+
+Definition baseLeq s : base ≤ s :=
+  limiting (λ a, (False_rect (_ ≤ s) a)).
+
+Fixpoint reflLeq {s} : s ≤ s :=
+  match s with
+  | suc s => mono reflLeq
+  | lim f => limiting (λ a, cocone a reflLeq)
+  end.
+
+Property transLeq {r s t} (rs : r ≤ s) (st : s ≤ t) : r ≤ t.
+Admitted.
+
+(*
+Derive NoConfusion for Size.
+Equations transLeq {r s t : Size} (rs : r ≤ s) (st : s ≤ t) : r ≤ t :=
+  transLeq (mono rs) (mono st) := mono (transLeq rs st);
+  transLeq rs (cocone a sfa) := cocone a (transLeq rs sfa);
+  transLeq (limiting fas) st := limiting (λ a, transLeq (fas a) st);
+  transLeq (cocone a rfa) (limiting fat) := transLeq rfa (fat a).
+*)
+
+Fixpoint sucLeq s : s ≤ suc s :=
+  match s with
+  | suc s => mono (sucLeq s)
+  | lim f => limiting (λ a, transLeq (sucLeq (f a)) (mono (cocone a reflLeq)))
+  end.
+
+Inductive Acc (s : Size) : Prop :=
+acc { accLt : ∀ r, r < s → Acc r }.
+Arguments accLt {_}.
+
+Axiom funext : ∀ {A} {B : A → Type} {p q : ∀ x, B x},
+  (∀ x, p x = q x) → p = q.
+
+Equations accIsProp {s} (acc1 acc2 : Acc s) : acc1 = acc2 :=
+| acc _ p, acc _ q =>
+  f_equal _ (funext (λ r, funext (λ rs, accIsProp (p r rs) (q r rs)))).
+
+Lemma accLeq : ∀ r s, r ≤ s → Acc s → Acc r.
+Proof.
+  intros r s rs acc.
+  induction acc as [s p IH].
+  exact (acc r (λ t tr, p t (transLeq tr rs))).
+Qed.
+
+Theorem wf : ∀ s, Acc s.
+Proof.
+  intros s.
+  induction s as [s IH | A f IH].
+  - refine (acc (suc s) (λ r rsucs, accLeq r s _ IH)).
+    inversion rsucs as [r' s' rs | |].
+    exact rs.
+  - refine (acc (lim f) (λ r rlimf, _)).
+    inversion rlimf as [| r' A' f' a rfa eqr eqA |].
+    dependent destruction H.
+    destruct (IH a) as [p].
+    exact (p r rfa).
+Qed.
+
+Definition wfInd P IH s : P s :=
+  let wfInd := fix wfAcc s acc {struct acc} :=
+    IH s (λ r rs, wfAcc r (acc.(accLt) r rs))
+  in wfInd s (wf s).
+\end{minted}
+
+\subsubsection{W Types} \label{app:mechanization:coq:W}
+
+\begin{minted}{coq}
+Import SigTNotations.
+
+Inductive W (A : Type) (B : A → Type) (s : Size) : Type :=
+| sup : ∀ r, r < s → ∀ a, (B a → W A B r) → W A B s.
+Arguments sup {_ _ _}.
+
+Definition ac {A B} a (f : B a → {s & W A B s}) : {s & B a → W A B s} :=
+  let f' b :=
+    match (f b).2 with
+    | sup r rs a f => sup r (transLeq rs (cocone b reflLeq)) a f
+    end
+  in (lim (λ b, (f b).1) ; f').
+\end{minted}
+
+\subsection{Mechanized \CICE Definitions in Agda}
+
+The following type check on Agda 2.6.2.
+
+\subsubsection{Preliminary definitions} \label{app:mechanization:agda:prelim}
+
+\begin{minted}{agda}
+{-# OPTIONS --without-K #-}
+
+open import Agda.Primitive using (Level; lsuc)
+open import Relation.Binary.PropositionalEquality.Core using (_≡_; cong)
+open import Data.Empty using (⊥; ⊥-elim)
+
+variable
+  ℓ ℓ′ : Level
+  A C : Set ℓ
+  B : A → Set ℓ
+
+infix 30 ↑_
+infix 30 ⊔_
+
+data Size {ℓ} : Set (lsuc ℓ) where
+  ↑_ : Size {ℓ} → Size
+  ⊔_ : {A : Set ℓ} → (A → Size {ℓ}) → Size
+
+data _≤_ {ℓ} : Size {ℓ} → Size {ℓ} → Set (lsuc ℓ) where
+  ↑s≤↑s : ∀ {r s} → r ≤ s → ↑ r ≤ ↑ s
+  s≤⊔f  : ∀ {s} f (a : A) → s ≤ f a → s ≤ ⊔ f
+  ⊔f≤s  : ∀ {s} f → (∀ (a : A) → f a ≤ s) → ⊔ f ≤ s
+
+◯ : Size
+◯ = ⊔ ⊥-elim
+
+◯≤s : ∀ {s} → ◯ ≤ s
+◯≤s = ⊔f≤s ⊥-elim λ ()
+
+s≤s : ∀ {s : Size {ℓ}} → s ≤ s
+s≤s {s = ↑ s} = ↑s≤↑s s≤s
+s≤s {s = ⊔ f} = ⊔f≤s f (λ a → s≤⊔f f a s≤s)
+
+s≤s≤s : ∀ {r s t : Size {ℓ}} → r ≤ s → s ≤ t → r ≤ t
+s≤s≤s (↑s≤↑s r≤s) (↑s≤↑s s≤t) = ↑s≤↑s (s≤s≤s r≤s s≤t)
+s≤s≤s r≤s (s≤⊔f f a s≤fa) = s≤⊔f f a (s≤s≤s r≤s s≤fa)
+s≤s≤s (⊔f≤s f fa≤s) s≤t = ⊔f≤s f (λ a → s≤s≤s (fa≤s a) s≤t)
+s≤s≤s (s≤⊔f f a s≤fa) (⊔f≤s f fa≤t) = s≤s≤s s≤fa (fa≤t a)
+
+s≤↑s : ∀ {s : Size {ℓ}} → s ≤ ↑ s
+s≤↑s {s = ↑ s} = ↑s≤↑s s≤↑s
+s≤↑s {s = ⊔ f} = ⊔f≤s f (λ a → s≤s≤s s≤↑s (↑s≤↑s (s≤⊔f f a s≤s)))
+
+_<_ : Size {ℓ} → Size {ℓ} → Set (lsuc ℓ)
+r < s = ↑ r ≤ s
+
+record Acc (s : Size {ℓ}) : Set (lsuc ℓ) where
+  inductive
+  pattern
+  constructor acc
+  field acc< : (∀ r → r < s → Acc r)
+open Acc
+
+accIsProp : ∀ {s : Size {ℓ}} → (acc1 acc2 : Acc s) → acc1 ≡ acc2
+accIsProp (acc p) (acc q) =
+  cong acc (funext p q (λ r → funext (p r) (q r) (λ r<s → accIsProp (p r r<s) (q r r<s))))
+  where postulate funext : ∀ (p q : ∀ x → B x) → (∀ x → p x ≡ q x) → p ≡ q
+
+acc≤ : ∀ {r s : Size {ℓ}} → r ≤ s → Acc s → Acc r
+acc≤ r≤s (acc p) = acc (λ t t<r → p t (s≤s≤s t<r r≤s))
+
+wf : ∀ (s : Size {ℓ}) → Acc s
+wf (↑ s) = acc (λ { _ (↑s≤↑s r≤s) → acc≤ r≤s (wf s) })
+wf (⊔ f) = acc (λ { r (s≤⊔f f a r<fa) → (wf (f a)).acc< r r<fa })
+
+wfInd : ∀ (P : Size {ℓ} → Set ℓ′) → (∀ s → (∀ r → r < s → P r) → P s) → ∀ s → P s
+wfInd P f s = wfAcc s (wf s)
+  where
+  wfAcc : ∀ s → Acc s → P s
+  wfAcc s (acc p) = f s (λ r r<s → wfAcc r (p r r<s))
+\end{minted}
+
+\subsubsection{W Types} \label{app:mechanization:agda:W}
+
+\begin{minted}{agda}
+open import Data.Product using (proj₁; proj₂; Σ-syntax; _,_)
+
+data W (A : Set ℓ) (B : A → Set ℓ) (s : Size {ℓ}) : Set (lsuc ℓ) where
+  sup : ∀ r → r < s → (a : A) → (B a → W A B r) → W A B s
+
+ac : ∀ a → (B a → Σ[ s ∈ Size ] W A B s) → Σ[ s ∈ Size ] (B a → W A B s)
+ac a f = ⊔ (λ b → proj₁ (f b)) , f′
+  where
+  f′ : _
+  f′ b with proj₂ (f b)
+  ... | sup r r<s a f = sup r (s≤s≤s r<s (s≤⊔f _ b s≤s)) a f
+\end{minted}
+\end{document}
