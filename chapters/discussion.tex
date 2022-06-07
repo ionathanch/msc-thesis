@@ -1,7 +1,7 @@
 \chapter{Discussion and Conclusions}\label{ch:discussion}
 
 \lang is neither perfect nor complete:
-the nature of the syntatic model requires that inductives live in a universe
+the nature of the syntactic model requires that inductives live in a universe
 higher than that in which their corresponding unsized types would live,
 and it's missing features such as an infinite size and coinductives.
 In this chapter, I discuss some of these shortcomings
@@ -142,11 +142,11 @@ while $\W*$ is typically in $U$ rather than $\axioms{U}$.
 This is due to how the translation is defined:
 $\NatT$ and $\WT$ have a $\SizeT$ as parameter,
 the $\limT$ operator quantifies over the type of the domain of its function argument,
-and that type must be ``large'' enough to accomodate the correct type.
+and that type must be ``large'' enough to accommodate the correct type.
 For $\app{\WT}{\sigmaT}{\tauT}{\sT}$,
 the domain is $\app{\tauT}{\aT}$ for some $\aT$\punctstack{,}%
 \footnote{For generalized inductives, given a recursive argument in the form of a function,
-the domain of $\limT$ should emcompass the domain of that function.}
+the domain of $\limT$ should encompass the domain of that function.}
 as is the case for the definition of $\compile{\const{ac}}$,
 so if its universe is $\TypeT{\iT}$,
 then the universe of the type of $\sT$ must be $\TypeT{\tg{i+1}}$,
@@ -361,7 +361,7 @@ since it allows encoding M types, the dual of W types, not just streams.
 
 \section{Designing for Syntactic Modelling}
 
-Choosing to use a syntactic model imposes some contraints on the design
+Choosing to use a syntactic model imposes some constraints on the design
 of the source and target languages, as well as on the proof architecture.
 Most notably, proof of correctness of syntactic models proceed
 by induction on the source derivations,
@@ -504,7 +504,7 @@ particular inconsistent environments,
 as is the case for $\tg{false}$.
 
 Even so, I conjecture that translation of a \lang term will never lead to
-a \CICE term with a subterm in an appropriate inconsistent environment that leads to nonormalization,
+a \CICE term with a subterm in an appropriate inconsistent environment that leads to nonnormalization,
 because the translation will never yield an assumption of the form $\sT \szltT \sT$.
 By inspection of the translation, the only fitting subsizing relation possible is of the form $\alphaT \szltT \alphaT$,
 and the only possible sources $\Funtype<{\alpha}{\alpha}{\tau}$, $\Fun<{\alpha}{\alpha}{e}$ are ill-scoped.
