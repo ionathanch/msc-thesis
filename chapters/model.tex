@@ -19,7 +19,7 @@ where to prove some property on sizes, one supposes that it holds for all strict
 
 Every fixpoint expression in \lang is modelled as an instance of well-founded induction in \CICE.
 To prove well-foundedness and in turn the induction principle,
-I show that sizes satisfy an \emph{accessiblity predicate}\index{accessibility predicate}~\citep{accessibility}.
+I show that sizes satisfy an \emph{accessibility predicate}\index{accessibility predicate}~\citep{accessibility}.
 For the type preservation proof to go through,
 \emph{definitional proof irrelevance}\index{proof irrelevance}
 of accessibility predicates is required---that is,
@@ -95,7 +95,7 @@ which definitionally equates two terms whenever there exists some proof of their
 Typed equivalence is required in the presence of equality reflection since
 inconsistencies are derivable when using untyped conversion\index{conversion}.
 For instance, supposing that \lang had equality reflection and using \new{$\approx$} to denote conversion,
-in the empty environment, freely using transivity,
+in the empty environment, freely using transitivity,
 %
 \begin{align*}
   \const{0'} &\approx \app{(\fun{p}{\eq{\const{0'}}{\N{\hat{\hat{\circ}}}}{\const{1}}}{\const{0'}})}{\refl{\const{0'}}} &&\textrm{by $\beta$-reduction} \\
