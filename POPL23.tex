@@ -176,7 +176,47 @@ reduction, its various closures, $\alpha$-cumulativity, subtyping, and typing.
 On top of those, there are also judgement forms for subsizing, sizes,
 and well-formedness of size and term environments.
 
-\FigRed{fig:reduction}
+\begin{figure}[h]
+\centering
+\begin{mathpar}
+\fbox{$\red{\Phi; \Gamma}{e}{e}$} \qquad
+\fbox{$\red*{\Phi; \Gamma}{e}{e}$} \hfill
+\inferrule[]{
+  (\define{x}{\tau}{e}) \in \Gamma
+}{
+  \red{\Phi; \Gamma}{x}{e}
+}
+\and \inferrule[]{~}{\red{\Phi; \Gamma}{\app{(\fun{x}{\tau}{e})}{e'}}{\subst{e}{x}{e'}}}
+%\and \inferrule[]{~}{\red{\Phi; \Gamma}{\J{}{d}{\refl{}}}{d}}
+\and \inferrule[]{~}{\red{\Phi; \Gamma}{\App{(\Fun{\alpha}{e})}{s}}{\subst{e}{\alpha}{s}}}
+\and \inferrule[]{~}{\red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}}
+\and \inferrule[]{~}{\red{\Phi; \Gamma}{\letin{x}{\tau}{e'}{e}}{\subst{e}{x}{e'}}}
+%\and \inferrule[]{~}{\red{\Phi; \Gamma}{\unpair{\alpha}{x}{\Pair{s}{e'}}{e}}{\subst{e}{\alpha, x}{s, e'}}}
+\and \inferrule[\rlabel{$\rhd$-cong}{red-cong}]{
+  \red{\Phi'; \Gamma'}{e'}{e''}
+}{
+  \red{\Phi; \Gamma}{\subst{e}{x}{e'}}{\subst{e}{x}{e''}}
+}
+\\\\
+\inferrule[\rlabel{$\rhd^*$-once}{red*-once}]{
+  \red{\Phi; \Gamma}{e_1}{e_2}
+}{
+  \red*{\Phi; \Gamma}{e_1}{e_2}
+}
+\and
+\inferrule[\rlabel{$\rhd^*$-refl}{red*-refl}]{~}{\red*{\Phi; \Gamma}{e}{e}}
+\and
+\inferrule[\rlabel{$\rhd^*$-trans}{red*-trans}]{
+  \red*{\Phi; \Gamma}{e_1}{e_2} \\
+  \red*{\Phi; \Gamma}{e_2}{e_3}
+}{
+  \red*{\Phi; \Gamma}{e_1}{e_3}
+}
+\end{mathpar}
+\caption{Reduction rules (base \lang)}
+\label{fig:reduction}
+\end{figure}
+
 The reduction rules and their reflexive, transitive closure are described in \cref{fig:reduction}.
 \new{$\subst{e}{x}{e'}$} denotes capture-avoiding substitution of $x$ for $e'$ within $e$,
 and correspondingly \new{$\subst{e}{x_1, \seq, x_n}{e_1, \seq, e_n}$} denotes simultaneous substitution.
@@ -226,12 +266,9 @@ along with those for well-formedness of term environments.
 \FigTyping[h]{fig:typing}
 
 Finally, the typing rules for the base \lang are given in \cref{fig:typing}.
-They use the metafunctions $\axioms{\mt}$ for the type of a universe
-$\rules{\mt}{\mt}$ for the type of a function type,
-defined in \cref{fig:rules-axioms},
-and $\fresh{\seq}$ for fresh variables.
-
-\FigRulesAxioms{fig:rules-axioms}
+They use two metafunctions defined by
+$\axioms{\Prop} = \Type{1}$ and $\axioms{\Type{i}} = \Type{i+1}$;
+and by $\rules{U}{\Prop} = \Prop$, $\rules{\Prop}{U} = U$, and $\rules{\Type{i}}{\Type{j}} = \Type{\maximum{i, j}}$.
 
 \rref{var, univ, let} are the usual rules for variables, universes, and $\kw{let}$ expressions in \GCC,
 while \rref{pi, lam, app} are the usual ones for functions.
@@ -300,20 +337,16 @@ making the rule a strict supersession.
 \FigTypingInd{fig:typing-ind}
 
 The typing rules for all new constructs are given in \cref{fig:typing-ind}.
-One additional metafunction $\FV{\mt}$ produces the free variables in the given term.
+There are two additional metafunctions:
+$\FV{\mt}$, which produces the free variables in the given term,
+and $\fresh{\seq}$, which asserts the freshness of the given variables.
 The type of naturals and well-founded trees are well typed
 when the sizes they are applied to are well formed, and
 their constructors are well typed when applied to smaller sizes.
-
 $\kw{case}$ expressions match on these size arguments in addition to the usual term arguments,
 asserting within their branches that they are strictly smaller than the target's size.
 The motive is dependent on the target,
 and the type of a branch is the motive with its target as the constructor being destructed.
-In other words, $\kw{case}$ expressions are induction principles:
-for instance, one proves $P$ for some natural $x$ when one can prove it
-for the base case where $x$ is some $\zero*$
-and for the step case where $x$ is some $\succ*$.
-
 As discussed, the body of a fixpoint is only well typed
 when the fixpoint is recursively applied to a smaller size,
 as enforced by its type in the environment when type checking the body.
@@ -361,7 +394,7 @@ $\maximum{0, n - 1}$ for some number $n$ is size preserving.
 The $\monus$ function, which computes $\maximum{0, n - m}$ given numbers $n, m$,
 is similarly size preserving in its first argument,
 since $n - m$ is never greater than $n$.
-
+%
 \begin{align*}
 &\Let{\monus}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}}{ \\
 &\fix{\monus*}{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}{ \\
@@ -563,7 +596,6 @@ regardless of what they are applied to.
 To maintain normalization,
 the usual guarded reduction rule in intensional CIC reduces fixpoints
 only when applied to a literal constructor in the recursive argument position.
-\vspace{-0.5\baselineskip}
 \begin{mathpar}
 \inferrule[\rlabel{$\equiv$-$\mu$-guarded}{equiv-mu-guarded}]{\cdots \\ \card{\vec{\eT}'} + 1 = \nT}{
   \defeq{\GammaT}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\app{(\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\tauT}
@@ -571,28 +603,52 @@ only when applied to a literal constructor in the recursive argument position.
 \end{mathpar}
 
 Evidently \rref{equiv-mu-guarded} can be derived from \rref{equiv-mu} by congruence.
-On the other hand, for any particular inductive type $\XT$,
-letting $\tauT$ be $\arr{\vec{\xT}}{\vec{\sigmaT}}{\funtypeT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\tauT'}}$,
-\rref{equiv-mu} can be derived from \rref{equiv-mu-guarded} via reflection of the following provable propositional equality,
-freely using transitivity:
-
-\begin{align*}
-\allowdisplaybreaks
-\fixT{\nT}{\fT}{\tauT}{\eT} &\eq{}{}{} \funT{\vec{\xT}}{\vec{\sigmaT}}{\funT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\xT}}{\xT}}}
-\qquad \textrm{definitionally by \rref{equiv-eta}} \\
-& \eq{}{}{} \funT{\vec{\xT}}{\vec{\sigmaT}}{\funT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\matchT*{\xT}{\seq(\app{\cT}{\vec{\zT}} \RightarrowT \app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\xT}}{(\app{\cT}{\vec{\pT}}{\vec{\zT}})})\seq}}} \\
-& \eq{}{}{} \funT{\vec{\xT}}{\vec{\sigmaT}}{\funT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\matchT*{\xT}{\seq(\app{\cT}{\vec{\zT}} \RightarrowT \app{(\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}})}{\vec{\xT}}{(\app{\cT}{\vec{\pT}}{\vec{\zT}})})\seq}}} \\
-& \phantom{\eq{}{}{}} \textrm{definitionally by \rref{equiv-cong, equiv-mu-guarded}} \\
-& \eq{}{}{} \funT{\vec{\xT}}{\vec{\sigmaT}}{\funT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\app{(\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}})}{\vec{\xT}}{\xT}}} \\
-& \eq{}{}{} \subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}}
-\qquad \textrm{definitionally by \rref{equiv-eta}}
-\end{align*}
-
+On the other hand,
+\rref{equiv-mu} can be derived from \rref{equiv-mu-guarded}
+by reflecting a proof of their propositional equality,
+which can be constructed transitively using applications of \rref{equiv-eta, equiv-cong}.
 Since \rref{equiv-mu} and \rref{equiv-mu-guarded} are metatheoretically equivalent,
 we choose to use \rref{equiv-mu} for its simplicity.
 
-\FigSubtypingCIC{fig:subtyping-cic}
-As opposed to \lang, for \CICE we use pCIC's presentation of subtyping,
+\begin{figure}[h]
+\centering
+\begin{mathpar}
+\fbox{$\subtype{\GammaT}{\tauT}{\tauT}$} \hfill
+\inferrule[\rlabel{$\preccurlyeq$-conv}{subtype-conv}]{
+  \defeq{\GammaT}{\tauT_1}{\tauT_2}{\UT}
+}{
+  \subtype{\GammaT}{\tauT_1}{\tauT_2}
+}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-trans}{subtype-trans}]{
+  \subtype{\GammaT}{\tauT_1}{\tauT_2} \\
+  \subtype{\GammaT}{\tauT_2}{\tauT_3}
+}{
+  \subtype{\GammaT}{\tauT_1}{\tauT_3}
+}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-prop}{subtype-prop}]{~}{
+  \subtype{\GammaT}{\PropT}{\TypeT{\iT}}
+}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-type}{subtype-type}]{
+  \iT \leq \jT
+}{
+  \subtype{\GammaT}{\TypeT{\iT}}{\TypeT{\jT}}
+}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-pi}{subtype-pi}]{
+  \defeq{\GammaT}{\sigmaT_1}{\sigmaT_2}{\UT} \\
+  \subtype{\GammaT, \annotT{\xT}{\sigmaT_2}}{\tauT_1}{\tauT_2}
+}{
+  \subtype{\GammaT}{\funtypeT{\xT}{\sigmaT_1}{\tauT_1}}{\funtypeT{\xT}{\sigmaT_2}{\tauT_2}}
+}
+\end{mathpar}
+\caption{Subtyping rules (\CICE)}
+\label{fig:subtyping-cic}
+\end{figure}
+
+As opposed to \lang, for \CICE we use pCIC's presentation of subtyping in \cref{fig:subtyping-cic},
 which has a typed equivalence premise in \rref{subtype-conv}.
 It also has an explicit rule for transitivity of subtyping since judgements such as
 $\subtype{\mt}{\app{(\funT{P}{\TypeT{\tg{1}}}{P})}{\PropT}}{\TypeT{\tg{0}}}$ would fail to hold otherwise.
@@ -601,9 +657,8 @@ Like \rref{acum-pi}, \rref{subtype-pi} is invariant in the domain of function ty
 The typing and environment well-formedness rules are in \cref{fig:typing-cic}.
 Except for \rref{fix*}, the starred rules are the same as for \lang,
 with metafunctions $\axioms{\mt}$ and $\rules{\mt}{\mt}$ operating similarly on universes $\UT$
-as in \cref{fig:rules-axioms}.
+as for $U$.
 An additional premise to \rref{fix*} ensures that the $\nT$th argument is indeed an inductive type.
-% in addition to checking well-typedness of fixpoint bodies with possible recursive references.
 
 As previously mentioned, fixpoints must also be guarded:
 recursive calls can only occur on structurally smaller arguments of elements of inductives.
@@ -615,15 +670,6 @@ we will provide either a mechanization or present a brief argument of guardednes
 
 The new \rref{eq, refl, J} are for the propositional equality type,
 its constructor, and its eliminator.
-Given some equality proof $\pT$ of $\eqT{\eT_1}{\tauT}{\eT_2}$
-and a motive $\PT$ dependent on a proof of equality
-whose left-hand side is fixed at $\eT_1$ and right-hand side is variable,
-to prove $\app{\PT}{\eT_2}{\pT}$ it suffices to provide to $\JT*$ a proof that
-$\app{\PT}{\eT_1}{\refl{\eT_1}}$ holds.
-Other usual functions on proofs of equality can be derived from it,
-such as coercion (when the motive is \mbox{$\funT{A}{\UT}{\funT{\any}{\any}{A}}$})
-or substitution (when the motive ignores the second argument),
-as well as its symmetry, transitivity, and congruence.
 The proof of type preservation eliminates propositional equalities mostly through
 reflection rather than using $\JT*$,
 but we retain $\JT*$ in \CICE for completeness.
@@ -714,8 +760,8 @@ can be reflected into the corresponding definitional equality,
 which by \rref{equiv-eta} is then a definitional equality of $f$ and $g$.
 
 The remaining definitions have been mechanized in either Agda and Coq in
-\cref{app:mechanization:agda:prelim} and \cref:app:mechanization:coq:prelim, respectively,
-under the assumption of function extensionality as an axiom
+\cref{app:mechanization:agda:prelim} and \cref{app:mechanization:coq:prelim},
+respectively, under the assumption of function extensionality as an axiom
 (which cannot be proven in intensional CIC).
 The mechanizations don't use any additional type-theoretic features beyond CIC,
 and the proofs could theoretically be written in plain CIC,
@@ -772,7 +818,45 @@ Given some bound size variable $\alphaT$,
 $\alphaT^\ast$ represents the proof that the translated size is strictly smaller
 than its size bound.
 
-\FigTransSubsize{fig:trans:subsize}
+\begin{figure}[h]
+\centering
+\begin{mathpar}
+\fbox{$\subsizeto{\Phi}{s}{s}{\eT}$} \hfill
+\inferrule{
+  (\bound{\alpha}{s}) \in \Phi
+}{
+  \subsizeto{\Phi}{\sss{\alpha}}{s}{\alphaT^*}
+}
+\and
+\inferrule{\wf{\Phi}{s}}{
+  \subsizeto{\Phi}{\circ}{s}{\app{\baseleq}{\compile{s}}}
+}
+\and
+\inferrule{\wf{\Phi}{s}}{
+  \subsizeto{\Phi}{s}{s}{\app{\reflleq}{\compile{s}}}
+}
+\and
+\inferrule{\wf{\Phi}{s}}{
+  \subsizeto{\Phi}{s}{\sss{s}}{\app{\sucleq}{\compile{s}}}
+}
+\hfill
+\inferrule{
+  \subsizeto{\Phi}{r}{s}{\eT}
+}{
+  \subsizeto{\Phi}{\sss{r}}{\sss{s}}{\app{\monoT}{\compile{r}}{\compile{s}}{\eT}}
+}
+\hfill
+\inferrule{
+  \subsizeto{\Phi}{s_1}{s_2}{\eT_{12}} \\
+  \subsizeto{\Phi}{s_2}{s_3}{\eT_{23}}
+}{
+  \subsizeto{\Phi}{s_1}{s_3}{\app{\transleq}{\compile{s_1}}{\compile{s_2}}{\compile{s_3}}{\eT_{12}}{\eT_{23}}}
+}
+\end{mathpar}
+\caption{Translation of subsizing}
+\label{fig:trans:subsize}
+\end{figure}
+
 The translation of subsizing judgements, on the other hand,
 is a recursive metafunction over the \emph{subsizing derivation}.
 \cref{fig:trans:subsize} defines the translation to \CICE terms
@@ -1212,7 +1296,7 @@ so there must not be such a term.
 \lang is neither perfect nor complete:
 the nature of the syntatic model requires that inductives live in a universe
 higher than that in which their corresponding unsized types would live,
-and it's missing features such as an infinite size and coinductives.
+and it's missing features such as an infinite size.
 In this chapter, we discuss some of these shortcomings
 and give some possible directions for future work based on them.
 
@@ -1416,82 +1500,13 @@ However, this does mean giving up $\const{ac}$
 and likely any hope of defining any infinitary constructs like $\const{\omega}$
 when using this model.
 
-\section{Streams and Coinductives}
-
-Dual to inductive types, coinductive types allow for constructing
-potentially infinitely large elements in a principled manner,
-and are present in many proof assistants such as Coq, Agda, and Idris.
-Conventionally, while fixpoints are guarded by destructors
-and destruct elements of inductives by recurring only on syntactically smaller elements,
-cofixpoints are guarded by constructors and occur only as a syntactic argument to a constructor~\citep{guard}.
-Since coinductives aren't present in pCIC,
-upon which \CICE is based, we don't include them in \lang either,
-as they would lack a translation in the syntactic model.
-Nevertheless, we can speculate on how they might appear and interact with sizes.
-Here, we define the classic example of coinductive streams,
-composed of a head element and a tail stream.
-\begin{mathpar}
-\inferrule[\rlabel*{stream}]{
-  \wf{\Phi}{s} \\
-  \infer{\Phi; \Gamma}{\tau}{U}
-}{
-  \infer{\Phi; \Gamma}{\Stream{\tau}{s}}{U}
-}
-\and
-\inferrule[\rlabel*{hd}]{
-  \infer{\Phi; \Gamma}{e}{\Stream{\tau}{s}}
-}{
-  \infer{\Phi; \Gamma}{\shd{e}}{\tau}
-}
-\and
-\inferrule[\rlabel*{tl}]{
-  \infer{\Phi; \Gamma}{e}{\Stream{\tau}{s}}
-}{
-  \infer{\Phi; \Gamma}{\stl{e}}{\Funtype<{\alpha}{s}{\Stream{\tau}{\alpha}}}
-}
-\and
-\inferrule[\rlabel*{scons}]{
-  \infer{\Phi; \Gamma}{e_1}{\tau} \\
-  \infer{\Phi, \bound{\alpha}{s}; \Gamma}{e_2}{\Stream{\tau}{\alpha}}
-}{
-  \infer{\Phi; \Gamma}{\scons{\alpha}{s}{e_1}{\alpha}{s}{e_2}}{\Stream{\tau}{s}}
-}
-\and
-\inferrule[\rlabel*{cofix}]{
-  \infer{\Phi, \alpha; \Gamma}{\sigma}{U} \\
-  \fresh{\beta} \\
-  \check{\Phi, \alpha; \Gamma, \annot{f}{\Funtype<{\beta}{\alpha}{\subst{\sigma}{\alpha}{\beta}}}}{e}{\sigma}
-}{
-  \infer{\Phi; \Gamma}{\cofix{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}
-}
-\end{mathpar}
-
-Just as the size of an inductive informally indicates at most how many layers of constructors its elements contain,
-the size of a coinductive informally indicates \emph{at least} how many layers,
-and in the case of $\app{\Stream*}{A}$, at least how many elements of $A$ it contains.
-Of course, streams may contain an infinite number of elements,
-so the analogy works better in the relative sense:
-if a stream contains at least $s$ elements,
-then its tail must contain at least $\bound{\alpha}{s}$, strictly fewer, elements.
-The reduction rules of streams, omitted here, operate as expected:
-$\shd{}$ projects out the head and $\stl{}$ projects out the tail.
-
-To actually construct infinite streams, we need cofixpoint expressions.
-The natural correspondence of guardedness in sized types
-is that cofixpoint bodies must construct coinductives larger than
-their own occurrences inside the body,
-which coincides with the structure of \rref{fix}.
-Cofixpoints also reduce when applied to a size that has some subsize,
-just like fixpoints.
-Interestingly, this suggests that cofixpoints might also be translated in the syntactic model
-to well-founded induction on sizes despite constructing a coinductive type.
-
 \section{Future Directions}
 
 There is still a long way to go towards a sized dependent type system
 that is expressive, consistent, and useable.
-We've seen from \cref{subsec:examples:limitations} that working without an infinite size
-or full inductives is verbose at best, in the case of $\msort$ and $\qsort$,
+We've seen from \cref{subsec:examples} that working without an infinite size
+or full inductives is verbose at best,
+requiring tedious manipulation of existentially-quantified sizes,
 and impossible at worse, in the case of $\const{\omega}$,
 while attempts at including them either involve inconsistency, undecidability, or noncanonicity.
 Alternate approaches need to be investigated to circumvent these problems.
@@ -1510,6 +1525,18 @@ $\arrT*{\TypeT{}}{\SizeT}$ would remain in $\SizeUnivT$
 and $\funtypeT{\alpha}{\SizeT}{\N{\alpha}}$ would remain in $\TypeT{0}$
 (as would be the case for $\zeroT$).
 
+Additionally, \lang is missing some important but comparatively simple features
+from the perspective of the syntactic model, namely inductive types in general.
+They can be added directly to \lang as a generalization of the existing inductives,
+and we conjecture that the type preservation proofs would be a straightforward extension.
+Alternatively, since there already are well-founded trees,
+\lang could instead be augmented with dependent pairs and an equality type,
+both of which we also conjecture to be straightforward;
+then mutual inductives, indexed inductives \citep{whynotW}, some nested inductives \citep{barras},
+and even some inductive--inductive types \citep{ind-ind}
+can be encoded, along with their induction principles, using W types and propositional equality.
+
+Dually, \lang is also missing coinductive types.
 The main barrier to a syntactic model of \lang with any coinductive types
 is the lack of an established target type theory with coinductive types
 with nice properties.
@@ -1521,17 +1548,6 @@ Meanwhile, older CICs with coinductive types and cofixpoints guarded by construc
 which is a necessary property for proving type preservation in \cref{subsec:preservation}.
 Another potential issue is the translation of cofixpoints into applications of
 a well-founded induction principle, which is suspicious and also requires further investigation.
-
-Finally, \lang is missing some important but comparatively simple features
-from the perspective of the syntactic model, namely inductive types in general.
-They can be added directly to \lang as a generalization of the existing inductives,
-and we conjecture that the type preservation proofs would be a straightforward extension.
-Alternatively, since there already are well-founded trees,
-\lang could instead be augmented with dependent pairs and an equality type,
-both of which we also conjecture to be straightforward;
-then mutual inductives, indexed inductives \citep{whynotW}, some nested inductives \citep{barras},
-and even some inductive--inductive types \citep{ind-ind}
-can be encoded, along with their induction principles, using W types and propositional equality.
 
 \hfill
 
@@ -1576,7 +1592,7 @@ isn't ideal for a proof assistant either, since it would block computation.
 
 \section{Conclusion}
 
-In this thesis, we introduced \lang, a sized dependent type theory
+In this paper, we introduced \lang, a sized dependent type theory
 with higher-rank size quantification and bounded size quantification,
 but without an infinite size that is strictly greater than itself,
 along with sized naturals and well-founded trees.
