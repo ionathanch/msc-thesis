@@ -6,7 +6,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: docker run -v $(pwd):/workdir -w /workdir texlive/texlive latexmk --synctex=0
+      - run: docker run -v $(pwd):/workdir -w /workdir texlive/texlive latexmk --synctex=0 POPL23.tex
       - uses: actions/upload-artifact@v3
         with:
           name: thesis.pdf
           path: thesis.pdf
+      - uses: actions/upload-artifact@v3
+        with:
+          name: POPL23.pdf
+          path: POPL23.pdf
