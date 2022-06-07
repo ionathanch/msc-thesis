@@ -38,6 +38,9 @@
 %% Packages
 \usepackage{style}
 
+%% Shrink caption spacing
+\captionsetup{skip=5pt}
+
 %% Title information
 \title{Sized Dependent Types via Extensional Type Theory}
 
@@ -411,8 +414,7 @@ The recursive call is done on the result of $\monus$;
 $\divv$ then only type checks because $\monus$ is size preserving.
 Because the first argument of the recursive call to $\divv$ isn't \emph{structurally}
 a subterm with the call to $\monus$ in the way,
-a guardedness check wouldn't accept the corresponding unsized function,
-as is the case for CIC.
+a guardedness check wouldn't accept the corresponding unsized function.
 %
 \begin{align*}
 &\Let{\divv}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}}{ \\
