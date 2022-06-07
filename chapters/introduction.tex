@@ -10,7 +10,7 @@ desirable metatheoretical properties of the type system ---
 strings get be treated as integers, booleans can be called like functions,
 and the language falls to chaos and ruin.
 
-The balancing act is particulary perilous for type systems
+The balancing act is particularly perilous for type systems
 used by proof assistants for mechanized theorem proving,
 because a lack of expressivity can make it too much of a burden to be practically useful,
 while it's all to easy to add some convenient, seemingly innocuous feature
@@ -84,7 +84,7 @@ The issue gets even more complicated with more complex forms of reduction like r
 \subsection{Recursive programming with sized types} \label{ss}
 
 Inductively defined data and recursive functions on them
-are indispensible tools of programming,
+are indispensable tools of programming,
 allowing the expression of a variety of constructs, programs,
 and in the case of dependent types, their properties.
 A crucial restriction on recursive functions
@@ -172,7 +172,7 @@ Notice that the implementation of the mapping function isn't required,
 merely its type, thereby avoiding the issues with inlining and unfolding.
 
 This thesis then introduces Sizey \textsc{mc}Type Theory (\lang),
-a sized dependent type theory that I prove to be logically consistent consistent
+a sized dependent type theory that I prove to be logically consistent
 and therefore suitable for both recursive programming and theorem proving.
 
 \section{Overview}
@@ -365,7 +365,7 @@ augmented with inductive types and \emph{equality reflection}\index{equality ref
 where a definitional equality between terms can be derived from a propositional one between them.
 The most notable difference from \lang, aside from these features and sized types,
 is that \CICE uses a typed, declarative equality rather than an untyped, algorithmic equality
-to better accomodate equality reflection.
+to better accommodate equality reflection.
 For concision and to avoid confusion, I henceforth refer to the former as \emph{equivalence}\index{equivalence},
 and to the latter as \emph{conversion}\index{conversion}.
 
@@ -537,7 +537,7 @@ which in turn is used to prove the inversion principles for the typing judgement
 This proof structure is possible by virtue of the non-mutuality of the judgements of \lang
 due to the use of untyped conversion\index{conversion} (and hence untyped reduction).
 If it were instead typed, then it would mutually depend on typing and subtyping as well,
-and proving the above lemmas would require require a seven-part mutual induction on the derivations.
+and proving the above lemmas would require a seven-part mutual induction on the derivations.
 
 \section{Related Work}
 
@@ -711,6 +711,6 @@ Next, in \cref{ch:model} I describe \CICE and define the translation from \lang 
 Following that, in \cref{ch:proofs} I prove various necessary metatheoretical properties
 including confluence and subject reduction,
 and elaborate on the proof of type preservation and its associated lemmas.
-I conclude in \cref{ch:discussion}, dicussing some of the shortcomings of \lang,
+I conclude in \cref{ch:discussion}, discussing some of the shortcomings of \lang,
 namely the universe levels of the inductive types and the lack of an infinite size,
 as well directions for future improvement.

@@ -215,7 +215,7 @@ because subsizing is well founded, and there cannot be an infinite chain of smal
 This reduction strategy supersedes the usual restriction that fixpoints only reduce
 when applied to a constructor,
 since all sized constructors carry a smaller size argument
-that will statisfy the subsizing premise.
+that will satisfy the subsizing premise.
 Furthermore, reduction can also occur when the fixpoint is applied to a successor size
 by reflexivity of subsizing, \ie $\App{(\fix{f}{\alpha}{\tau}{e})}{\sss{s}}$ will reduce to
 $\subst{e}{\alpha, f}{\sss{s}, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\tau}{e})}{\beta}}}$
@@ -434,7 +434,7 @@ but it can easily be translated to proper \lang as a fixpoint and two $\kw{case}
 
 Implementing sized quicksort~\citep{term-check} and mergesort~\citep{Abel-diss} are perhaps the most classic examples,
 demonstrating their ease of programming compared to na\"ive unsized implementations that otherwise
-impose a signficant termination proof burden to the programmer.
+impose a significant termination proof burden to the programmer.
 Although \lang has no lists for simplicity's sake,
 they are no more complicated than naturals.
 Using the same informal syntax from \cref{sec:ind-types},
