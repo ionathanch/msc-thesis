@@ -332,7 +332,7 @@ because subsizing is well founded, and there cannot be an infinite chain of smal
 This reduction strategy supersedes the usual restriction that fixpoints only reduce
 when applied to a constructor,
 since all sized constructors carry a smaller size argument
-that will statisfy the subsizing premise.
+that will satisfy the subsizing premise.
 Furthermore, reduction can also occur when the fixpoint is applied to a successor size
 by reflexivity of subsizing,
 making the rule a strict supersession.
@@ -515,7 +515,7 @@ where to prove some property on sizes, one supposes that it holds for all strict
 
 Every fixpoint expression in \lang is modelled as an instance of well-founded induction in \CICE.
 To prove well-foundedness and in turn the induction principle,
-we show that sizes satisfy an \emph{accessiblity predicate}~\citep{accessibility}.
+we show that sizes satisfy an \emph{accessibility predicate}~\citep{accessibility}.
 For the type preservation proof to go through,
 \emph{definitional proof irrelevance}
 of accessibility predicates is required---that is,
@@ -949,7 +949,7 @@ $\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
 
 \begin{proof}
 We use the \emph{Z property}~\citep{Z, confluence} technique to prove confluence,
-first defining a \emph{complete developement} judgement $\develop{\Phi; \Gamma}{e}{e'}$,
+first defining a \emph{complete development} judgement $\develop{\Phi; \Gamma}{e}{e'}$,
 then showing that it satisfies the Z property:
 if $\red{\Phi; \Gamma}{e_1}{e_2}$ and $\red{\Phi; \Gamma}{e_i}{e'_i}$ for $i = 1, 2$,
 then $\red*{\Phi; \Gamma}{e_2}{e'_1}$ and $\red*{\Phi; \Gamma}{e'_1}{e'_2}$.
@@ -1296,7 +1296,7 @@ so there must not be such a term.
 \section{Discussion and Conclusions} \label{sec:discussion}
 
 \lang is neither perfect nor complete:
-the nature of the syntatic model requires that inductives live in a universe
+the nature of the syntactic model requires that inductives live in a universe
 higher than that in which their corresponding unsized types would live,
 and it's missing features such as an infinite size.
 In this chapter, we discuss some of these shortcomings
@@ -1443,11 +1443,11 @@ while $\W*$ is typically in $U$ rather than $\axioms{U}$.
 This is due to how the translation is defined:
 $\NatT$ and $\WT$ have a $\SizeT$ as parameter,
 the $\limT$ operator quantifies over the type of the domain of its function argument,
-and that type must be ``large'' enough to accomodate the correct type.
+and that type must be ``large'' enough to accommodate the correct type.
 For $\app{\WT}{\sigmaT}{\tauT}{\sT}$,
 the domain is $\app{\tauT}{\aT}$ for some $\aT$\punctstack{,}%
 \footnote{For generalized inductives, given a recursive argument in the form of a function,
-the domain of $\limT$ should emcompass the domain of that function.}
+the domain of $\limT$ should encompass the domain of that function.}
 as is the case for the definition of $\compile{\const{ac}}$,
 so if its universe is $\TypeT{\iT}$,
 then the universe of the type of $\sT$ must be $\TypeT{\tg{i+1}}$,
@@ -1564,7 +1564,7 @@ particular inconsistent environments,
 as is the case for $\tg{false}$.
 
 Even so, we conjecture that translation of a \lang term will never lead to
-a \CICE term with a subterm in an appropriate inconsistent environment that leads to nonormalization,
+a \CICE term with a subterm in an appropriate inconsistent environment that leads to nonnormalization,
 because the translation will never yield an assumption of the form $\sT \szltT \sT$.
 By inspection of the translation, the only fitting subsizing relation possible is of the form $\alphaT \szltT \alphaT$,
 and the only possible sources $\Funtype<{\alpha}{\alpha}{\tau}$, $\Fun<{\alpha}{\alpha}{e}$ are ill-scoped.
