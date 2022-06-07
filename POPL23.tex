@@ -1181,7 +1181,7 @@ We therefore cover only that case here.
     &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfind}{\sigmaT}{\eT}{\betaT}}}} \textrm{by translation of $\kw{fix}$} \\
     &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfacc}{\sigmaT}{\eT}{\betaT}{(\app{\accessible}{\betaT})}}}} \qquad \textrm{by $\wfind$}
     \end{align*}
-    Note that the only difference between the left- and right-hand sides now
+    The only difference between the left- and right-hand sides now
     is the proof of $\app{\AccT}{\betaT}$ for some $\betaT \szltT \compile{s}$,
     but we know that such proofs are propositionally equal to one another.
     From inversion, we know that $\compile{s}$ is well typed with type $\SizeT$.

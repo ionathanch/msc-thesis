@@ -1335,7 +1335,7 @@ $\alpha$-cumulativity, the closure of reduction, subtyping, and typing itself.
 These lemmas require further sublemmas;
 the subsequent subsections group the sublemmas with their lemma or theorem.
 
-Many of these lemmas make use of the translation of terms $e$ and term environments $\Gamma$
+Many of these lemmas use the translation of terms $e$ and term environments $\Gamma$
 using the shorthand $\compile{e}$ and $\compile{\Gamma}$,
 omitting environment extensions for concision.
 If not specified, the well-formedness of $\Gamma$ and well-typedness of $e$
@@ -1752,7 +1752,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
     \end{align*}
   \item[\textbf{Cases}] \rref*{sapp<}, \rref*{zero}, \rref*{succ}, \rref*{sup}.
     In these cases, there are additional terms generated rom translation subsizing judgements;
-    here is where we make use of \cref{sublem:compos-subsize-bounded}.
+    here is where we use \cref{sublem:compos-subsize-bounded}.
     I prove only the case of \rref*{sapp<} as example.
     \begin{mathpar}
       \inferrule{
@@ -2046,7 +2046,7 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfacc}{\sigmaT}{\eT}{\betaT}{(\app{\accessible}{\betaT})}}}} \\
       &\phantom{=} \textit{by $\wfind$}
     \end{align*}
-    Note that the only difference between the left- and right-hand sides now
+    The only difference between the left- and right-hand sides now
     is the proof of $\app{\AccT}{\betaT}$ for some $\betaT \szltT \compile{s}$,
     but we know that such proofs are propositionally equal to one another.
     From inversion, we know that $\compile{s}$ is well typed with type $\SizeT$.
@@ -2110,8 +2110,7 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
 
 The proof of preservation for reduction closed under reflexivity and transitivity is relatively straightforward,
 since most of the work was done in the preservation proof for reduction itself.
-This, too, requires well-typedness of the translated term as a premise
-in order to apply preservation of reduction.
+This, too, requires well-typedness of the translated term as a premise to apply preservation of reduction.
 
 \begin{lemma}[Preservation of reflexive, transitive closure of reduction] \label{lem:pres-red*}
 Suppose we have the following:
@@ -2188,7 +2187,7 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{e}{e'}$.
     Similarly, by \rref{subtype-conv}, we have $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma'}}$,
     and by \nameref{lem:replacement-subtyping*} and \nameref{lem:replacement-equivalence},
     we have $\type{\compile{\Phi}, \compile{\Gamma}, \defineT{\xT}{\compile{\sigma'}}{\compile{e'_1}}}{\compile{e_2}}{\tauT'}$.
-    This allows us to apply the induction hypothesis to the third premise,
+    This lets us to apply the induction hypothesis to the third premise,
     yielding $\defeq{\compile{\Phi}, \compile{\Gamma}, \defineT{\xT}{\compile{\sigma'}}{\compile{e'_1}}}{\compile{e_2}}{\compile{e'_2}}{\tauT'}$.
     By \rref{subtype-conv, equiv-conv, equiv-cong} and \nameref{thm:transitivity-subtyping}, we have
     \begin{itemize}[noitemsep]
