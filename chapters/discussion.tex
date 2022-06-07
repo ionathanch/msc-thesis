@@ -525,8 +525,7 @@ Moreover, Agda has transitive subsizing, and so far hasn't had issues with its d
 As for implementation, the consistency of \lang shows that sized types for inductives in Agda
 are likely to be consistent were the infinite size\index{infinite size} removed.
 This immediately poses a significant problem to Agda's standard library,
-as 20 of the 33 files that use sized types in version 1.7.1 of the standard library
-make use of the infinite size.
+as 20 of the 33 files that use sized types in version 1.7.1 of the standard library use the infinite size.
 Furthermore, 30 of those files deal with coinductives rather than inductives,
 and it remains to be seen whether \lang with coinductives really is consistent as well.
 The addition of the $\const{ac}$ axiom to recover some of the expressivity of the infinite size

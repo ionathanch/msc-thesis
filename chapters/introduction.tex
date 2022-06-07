@@ -284,7 +284,7 @@ This is the standard for size expressions in sized type systems.
 Some augment the size grammar with addition of or scalar multiplication of size variables,
 for instance, increasing expressivity at the expense of added complexity in size checking.
 To keep things simple, I don't include these features and stick to successor sizes.
-Note that size expressions here are \emph{not} terms,
+Size expressions here are \emph{not} terms,
 and their quantifications, abstractions, and applications
 are syntactically distinct from those of terms,
 similar to how, in nondependent polymorphic type systems,
@@ -446,7 +446,7 @@ I present them here only to motivate the proof structure.
 
 We therefore need some lemmas showing that the translation respects
 substitution, reduction, the closure of reduction, $\alpha$-cumulativity, and subtyping
-in order to prove type preservation.
+to prove type preservation.
 In short, substitution satisfies a \emph{compositionality}\index{compositionality} principle,
 reduction of terms are equivalent by the \CICE equivalence judgement
 $\defeq{\GammaT}{\eT_1}{\eT_2}{\tauT}$,
@@ -706,7 +706,7 @@ and the existence of an infinite size.
 \vspace*{-0.5\baselineskip}
 
 \noindent In the upcoming \cref{ch:sized-dep-types}, I describe the syntax and judgements of \lang in detail
-and provide example programs in \lang that make use of sized types.
+and provide example programs in \lang that use sized types.
 Next, in \cref{ch:model} I describe \CICE and define the translation from \lang to \CICE.
 Following that, in \cref{ch:proofs} I prove various necessary metatheoretical properties
 including confluence and subject reduction,
