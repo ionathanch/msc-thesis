@@ -38,11 +38,23 @@
 %% Packages
 \usepackage{style}
 
-%% Shrink caption spacing
+%% Newbox in style is too big, so we renew the new
+\newlength{\fboxsepdefault}
+\setlength{\fboxsepdefault}{\fboxsep}
+\renewcommand{\new}[1]{%
+  \setlength{\fboxsep}{3pt}%
+  \colorbox{newcolour}{#1}%
+  \setlength{\fboxsep}{\fboxsepdefault}%
+}
+
+%% Tricks for LaTeX shrinking
+\setlength{\abovedisplayskip}{1pt}
+\setlength{\belowdisplayskip}{1pt}
+\setlist{labelindent=\parindent,leftmargin=*}
 \captionsetup{skip=5pt}
 
 %% Title information
-\title{Sized Dependent Types via Extensional Type Theory}
+\title{A Syntactic Model of Sized Dependent Types}
 
 %% Author information
 \author{Jonathan Chan}
@@ -134,9 +146,280 @@ the consistency of \lang follows from the consistency of \CICE.
 
 \section{Introduction} \label{sec:introduction}
 
-\TODO: Adapt introduction.
+Consistency is key when it comes to proof assistants
+such as Coq, Agda, and Idris that are founded on the types-as-propositions paradigm---%
+it cannot be that every type is inhabited,
+or else this means that every proposition is provable.
+Logical inconsistency is easily derivable in the presence of unrestricted recursion:
+given the universe $\Prop$ of all propositions,
+the recursive function $f = \fun{P}{\Prop}{\app{f}{P}}$ can be assigned the type $\funtype{P}{\Prop}{P}$,
+enabling proving any proposition,
+and furthermore reduces endlessly:
+$$\fun{P}{\Prop}{\app{f}{P}} \ \rhd \ \fun{P}{\Prop}{\app{(\fun{P}{\Prop}{\app{f}{P}})}{P}} \ \rhd \ \fun{P}{\Prop}{\app{f}{P}} \ \rhd \ \dots$$
+Therefore, to prevent inconsistency,
+these proof assistants impose restrictions on recursive functions using \emph{termination checks},
+since for their underlying type theories, consistency coincides with the eventual termination of all functions\punctstack{.}%
+\footnote{Some proof assistants such as Lean are consistent but may have nonterminating functions
+due to other features of their type theories.}
 
-In the sections to follow, initial appearances in the text of new notation is \new{highlighted in grey}.
+The usual termination checks are done syntactically using a \emph{guardedness check}:
+recursion must be done on inductive-defined types,
+and recursive calls can only occur on syntactic subarguments.
+For instance, if a recursive function on naturals is given the successor $\app{\succ*}{n}$,
+then it can only recur on $n$;
+if a recursive function on cons lists is given a nonempty list $\app{\cons*}{\hd}{\tl}$
+then it can only recur on the tail $\tl$.
+
+While the guardedness check, being based on the elimination principles of inductive types,
+yields terminating functions and a consistent type theory,
+it disallows calling some other function on a subargument prior to a recursive call,
+even if that function doesn't change the structure of that subargument,
+because the input of the recursive call is no longer exactly the syntactic subargument.
+For instance, a recursive function on lists cannot first map over the sublist,
+even though the usual mapping function doesn't change the length of a list
+and therefore presents no threat to termination.
+
+Some proof assistants (Coq, for one) will inline functions and even unfold recursive functions
+so that the guardedness check has more information
+and that more recursive functions pass the check.
+However, this too has its disadvantages:
+\begin{itemize}
+  \item Programs become nonmodular and noncompositional:
+    not only do recursive functions that require inlining
+    depend on the implementation of inlined functions,
+    they may also depend on their specific implementation details,
+    and even a minor syntactic change otherwise equivalent to the original
+    can break guardedness~\citep{CIC-hat-minus}.
+  \item As aptly summarized by \citet{coqterm},
+    \begin{quote}
+    \textit{{\rm [\ldots]} unfold{\rm [ing]} all the definitions used in the body of the function, do{\rm [ing]} reductions, e.t.c.
+    {\rm [\ldots]} makes typechecking extremely slow at times.
+    Also, the unfoldings can cause the code to bloat by orders of magnitude and become impossible to debug.}
+    \end{quote}
+\end{itemize}
+
+In cases where the guardedness check fails on terminating functions,
+the programmer can refactor the function to recur on a different, related argument,
+such as the length of a list in the example above,
+but this requires additional work and may bloat programs
+with extra code solely for satisfying the guardedness check
+that detracts from the programs' original intent.
+Alternatives to the syntactic guardedness check that avoid these issues are type-based checks,
+where the type system itself is augmented so that successful type checking
+immediately guarantees termination and consistency.
+
+The one this paper discusses on is \emph{sized typing}\punctstack{,}%
+\footnote{The other common one uses \emph{guarded types}~\citep{guarded-types}.}
+where inductive types are annotated with size information,
+and constructors construct constructions whose size is larger than that of their subarguments.
+In short, the notion of a ``smaller'' subargument is encoded within the types,
+no longer requiring syntactic analysis to determine.
+Finally, a recursive function is well typed only if it recurs on an argument
+whose size is smaller than that of the original argument.
+
+Because well-typedness is the only required condition,
+calling some other function before a recursive call is allowed
+as long as that function is \emph{size preserving}.
+For the list mapping example above,
+this means that if the sublist of elements of type $\tau$ has size $s$,
+then the mapping function must have type $\arr*{\List{\tau}{s}}{\List{\tau}{s}}$.
+Notice that the implementation of the mapping function isn't required,
+merely its type, thereby avoiding the issues with inlining and unfolding.
+
+This paper then introduces Sizey \textsc{mc}Type Theory (\lang),
+a sized dependent type theory that we prove to be logically consistent
+and therefore suitable for both recursive programming and theorem proving.
+We do so using a \emph{syntactic model}:
+\lang is first translated into a target type theory in whose consistency we have more confidence,
+and then we prove this translation to be \emph{type preserving}.
+By type preservation, consistency of the target type theory then implies that of the source.
+
+But what need is there for yet another sized type system?
+Since \citet{hughes}, there has been a little over two decades' worth of past work on sized types.
+\citet{flationary} notes that it has been the topic of at least five dissertations.
+This paper alone names eight different type theories with sized types.
+There have been many advancements along the way,
+but none quite satisfactory to close the matter,
+especially when it comes to dependent types.
+
+\lang and this thesis as a whole does not aim to resolve
+all of the remaining problems of sized types left open by these past works.
+Instead, the purpose is twofold:
+
+\begin{itemize}
+  \item To fill an existing gap in sized dependent type theories.
+    Two modern sized type features are higher-rank and bounded size quantification,
+    and there exist a few dependent type theories with one or the other,
+    but not both, to our knowledge.
+    On the other hand, they are currently in Agda's implementation of sized types.
+    By proving the consistency of \lang, a novel type theory with these two features,
+    We bring the theoretical state-of-the-art closer to practice.
+  \item To demonstrate the viability of using a syntactic model to prove consistency
+    of a sized type theory.
+    Doing so from scratch through a set-theoretic model is notoriously difficult,
+    and often requires sacrifices to and constraints on the type theory;
+    see Sacchini's dissertation~\citep{CIC-hat-minus} or \CIChatstar~\citep{CIC-hat-star},
+    for instance.
+    Instead, a syntactic model relies on the consistency of the language in which I'm modelling,
+    allowing me to focus on only the interesting parts of the sized type theory
+    rather than on consistency as a whole.
+\end{itemize}
+
+\subsection{Related Work}
+
+There are many variations on dependent type theory with a variety of features;
+in this paper, we refer to five specific works:
+
+\begin{itemize}
+  \item The Predicative Calculus of Inductive Constructions~\citep{pCIC} (pCIC)
+    is a dependent type theory with a cumulative hierarchy of universes,
+    local definitions, and inductive types.
+  \item The Predicative Calculus of Cumulative Inductive Constructions~\citep{pCuIC} (pCuIC)
+    further adds cumulativity between inductive types to pCIC.
+    It comes the closest to formally describing the underlying type theory of Coq.
+  \item The MetaCoq project~\citep{MetaCoq} mechanizes pCuIC
+    and some of its metatheory within Coq itself.
+  \item Martin-L\"of type theory~\citep{MLTT} (MLTT) has a noncumulative universe hierarchy
+    along with some basic types:
+    the empty type, the unit type, dependent pair types, disjoint sum types,
+    a propositional equality type, the naturals, and W types.
+  \item Extensional Type Theory (ETT) has a noncumulative universe hierarchy,
+    dependent pair types, a propositional equality type,
+    and most importantly, features equality reflection.
+\end{itemize}
+
+The target language to which \lang is translated in the syntactic model is
+the Extensional Calculus of Inductive Constructions (\CICE),
+which is based on pCIC with extensionality inspired by ETT.
+On the other hand, \lang is based on MetaCoq's presentation of type theory,
+but with naturals and well-founded trees%
+\footnote{We refer to the inhabitants of W types as well-founded trees.}
+as representatives in place of inductive types
+to more clearly see how concrete types are modelled
+and to avoid the additional burden that comes with generalizing to inductive types.
+
+Sized types have a similarly long history;
+the first sized dependent type theory is \CIChat~\citep{CIC-hat}
+which adds implicit and fully-inferrable sized types to pCIC.
+\cref{tab:sized-types} lists the sized dependent type theories that follow \CIChat,
+along with the main features we focus on:
+explicit size quantification,
+higher-rank size quantification,
+bounded size quantification,
+and consistency.
+We explain these sized type features and why they're desirable
+in the subsection to follow.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l c c c c}
+Type theory & Explicit sizes? & Higher-rank? & Bounded? & Consistent? \\
+\hline
+\CIChat~\citep{CIC-hat} & \crossmark & \crossmark & \crossmark & \interromark \\
+\CIChatminus~\citep{CIC-hat-minus} & \crossmark & \crossmark & \crossmark & \checkmark* \\
+\CChatomega~\citep{CC-hat-omega} & \crossmark & \crossmark & \crossmark & \checkmark* \\
+\CIChatl~\citep{CIC-hat-l} & \crossmark & \crossmark & \crossmark & \checkmark* \\
+\CIChatsub~\citep{CIC-hat-sub} & \crossmark & \crossmark & \checkmark* & \checkmark* \\
+\CIChatstar~\citep{CIC-hat-star} & \crossmark & \crossmark & \crossmark & \interromark \\
+\citet{NbE} & \checkmark* & \checkmark* & \crossmark & \checkmark* \\
+MiniAgda~\citep{MiniAgda, flationary} & \checkmark* & \checkmark* & \checkmark* & \crossmark \\
+\textbf{\lang} & \checkmark* & \checkmark* & \checkmark* & \checkmark*%
+\textsuperscript{\labelcref{foot:CICE-consistency}}
+\end{tabular}
+\caption{Sized dependent type theories and their properties}
+\label{tab:sized-types}
+\end{table}
+
+\footnotetext[4]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
+
+\subsection{Overview}
+
+Sized types are introduced with explicit size quantification $\Funtype{\alpha}{\tau}$,
+size abstraction $\Fun{\alpha}{e}$, and size application $\App{e}{s}$.
+Sizes themselves consist of size variables as well as a \emph{base size}
+and a \emph{size successor operator}.
+Size expressions here are \emph{not} terms,
+and their quantifications, abstractions, and applications
+are syntactically distinct from those of terms,
+similar to how, in nondependent polymorphic type systems,
+types are distinct from terms.
+
+Having explicit sizes differs from some most prior sized type systems where,
+extending the type polymorphism analogy,
+there is only implicit \emph{rank-1} or
+\emph{prenex} size quantification:
+size quantifications never appear inside of a type,
+and in fact all size abstractions and applications are fully inferred.
+Explicit sizes, in contrast, let us express
+\emph{higher-rank} size quantification,
+which allow for more expressiveness:
+for instance, supposing we have cons lists parametrized over some sized type $\tau$,
+one could write a size-preserving mapping function over a list
+that leaves the sizes untouched.
+The type of such a function might be
+$$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\app{\List*}{(\App{\tau}{\alpha})}}{\app{\List*}{(\App{\tau}{\alpha})}}}.$$
+Along with higher-rank sizes, we also include \emph{bounded} size quantification $\Funtype<{\alpha}{s}{\tau}$
+and abstraction $\Fun<{\alpha}{s}{e}$.
+An order on sizes is induced by these bound instantiations and the successor operator;
+this order has nothing to do with subtyping,
+and in particular we do \emph{not} have subtyping relations between
+$\N{\alpha}$ and $\N{\sss{\alpha}}$, for instance.
+Fixpoint expressions recur on smaller sizes according to the order,
+summarized by the below typing rule.
+%
+\begin{mathpar}
+\inferrule[]{
+  \check{\Phi, \alpha; \Gamma, f: \Funtype<{\beta}{\alpha}{\subst{\tau}{\alpha}{\beta}}}{e}{\tau}
+}{
+  \infer{\Phi; \Gamma}{\fix{f}{\alpha}{\tau}{e}}{\Funtype{\alpha}{\tau}}
+}
+\end{mathpar}
+
+Bounded sizes were originally introduced to avoid complex
+\emph{semi-continuity} or approximative \emph{polarity}
+requirements on fixpoints' types in the presence of an \emph{infinite size}\index{infinite size}
+that is strictly larger than all sizes~\citep{flationary}.
+Although we don't include an infinite size,
+this style of recursion is more elegant because it corresponds neatly to well-founded induction on sizes.
+
+Notably, these three features are all found in Agda's implementation of sized types.
+The only missing feature is the infinite size,
+since its properties and its use are known to be inconsistent in Agda.
+A demonstration of the inconsistency of a hypothetical infinite size in \lang
+is given in \cref{subsec:infinity}.
+On the other hand, the lack of an infinite size prevents
+certain infinitary constructs from being expressed;
+\cref{subsec:examples:limitations} gives a concrete example.
+
+In the syntactic model, sizes and their order is translated to inductive definitions in \CICE,
+and quantification over (bounded) sizes is simply translated
+to abstractions over the translation of sizes (and their orders).
+The entire translation must be \emph{type preserving}:
+if some term $e$ is well typed under some environments $\Phi; \Gamma$ with some type $\tau$,
+then the translated term $\compile{e}$ must also be well typed
+under the translated environment $\compile{\Phi}, \compile{\Gamma}$
+with the translated type $\compile{\tau}$.
+By the consistency of \CICE and a type-preserving translation to it,
+we can prove the consistency of \lang:
+there exists no term $e$ such that
+$\type{\mt \mathbin{;} \mt}{e}{\funtypeT{\PT}{\PropT}{\PT}}$.
+
+\begin{center}
+\mbox{* * *}
+\end{center}
+
+\noindent In \cref{sec:sized-dep-types}, we describe the syntax and judgements of \lang in detail
+and provide example programs in \lang that use sized types.
+Next, in \cref{sec:model} we describe \CICE and define the translation from \lang to \CICE.
+Following that, in \cref{sec:proofs} we set up the proof architecture of
+metatheoretical properties of \lang and CICE and various preservation lemmas
+needed to prove type preservation and logical consistency,
+briefly summarizing their proofs but handling interesting cases in detail.
+We conclude in \cref{sec:discussion}, discussing some of the shortcomings of \lang,
+which deal with the universe levels of the inductive types and the lack of an infinite size,
+as well directions for future investigation.
+
+In these sections to follow, initial appearances in the text of new notation is highlighted in grey.
 Furthermore, we use ellipses \new{$\seq$} as metanotation for denoting a repeated sequence of some syntactic construct,
 overlines \new{$\vec{\phantom{I}}$} for sequences of variables or terms specifically (\eg $\vec{z}$, $\vec{p}$),
 and \new{$\mt$} for denoting an empty sequence (particularly for environments).
@@ -451,7 +734,7 @@ Suppose that $B$ here is some type operator on $A$.
 As expressive as bounded, higher-rank sized types are,
 there still exist limitations to what can be expressed in comparison to ordinary inductive types
 or to sized type theories which have an infinite size,
-such as the ones listed in \TODO.
+such as the ones listed in \cref{tab:sized-types}.
 Limitations typically arise when dealing with inductive definitions where
 recursive arguments appear as the return type of a function.
 Consider the following inductive definition
@@ -496,7 +779,7 @@ the infinite size in other sized type theories can fill this role since it's lar
 and therefore the limit of \emph{all} sizes.
 We discuss more about the infinite size and its absence from \lang in \cref{subsec:infinity}.
 
-\section{Syntactic Model of \lang}
+\section{Syntactic Model of \lang} \label{sec:model}
 
 \input{figures/cic.tex}
 \input{figures/definitions.tex}
@@ -916,7 +1199,7 @@ Once that has been established,
 showing type preservation of the translation is more or less going through the motions of the proof,
 since the remaining \lang terms translate almost directly to their syntactically corresponding terms.
 
-\section{Metatheory and Type Preservation}
+\section{Metatheory and Type Preservation} \label{sec:proofs}
 
 In this section, we outline the architecture of the type preservation proof,
 highlighting the interesting cases.
