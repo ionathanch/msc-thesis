@@ -368,6 +368,7 @@ by induction on the source derivations,
 so \lang uses untyped conversion to avoid a dependency between typing and definitional equality,
 which would otherwise require a large and complex mutually inductive proof of type preservation.
 
+\iffalse
 Strictly speaking, such a proof would still be possible,
 since the compositionality lemmas are merely up to syntactic equality.
 If they were instead up to typed equivalence
@@ -382,6 +383,7 @@ but this can't be constructed even from
 $\type{\Phi; \Gamma}{y}{\tau}$
 as it's not a premise and therefore the mutual type preservation induction hypothesis can't be applied.
 Still, I use untyped conversion to avoid any other potential complications with the mutual induction.
+\fi
 
 On the other hand, induction isn't done on the derivations of the target,
 but since equality reflection is needed for translation-specific reasons,
@@ -390,19 +392,34 @@ arising from reflecting propositional equality into transitive, untyped conversi
 as detailed in \cref{sec:target}.
 
 Due to the incongruity between untyped conversion in the source and typed equivalence in the target,
-the na\"ive proof attempts at preservation would be missing crucial typing information
+the na\"ive proof attempts at preservation using only the relevant source derivation
+and well-typedness of the source terms would be missing crucial typing information
 to construct the target derivations, especially for equivalence.
 This is why, in all of the preservation lemmas, well-typedness of the translated terms
-are required as premises, essentially replacing what would've been mutual or circular appeals
+are also required as premises, essentially replacing what would've been mutual or circular appeals
 to type preservation with just the right amount of typing information.
 
-Quite unexpectedly, this also has an effect on whether conversion
-in the source is declarative or algorithmic.
-If it were declarative like \CICE's equivalence, with no reduction rules or their closures,
+Quite unexpectedly, requiring well-typedness of translated terms
+also has an effect on whether conversion in the source is declarative or algorithmic.
+If conversion were declarative like \CICE's equivalence, with no reduction rules or their closures,
 then transitivity of subtyping would need to be an explicit rule rather than a theorem.
-But in preservation of subtyping, we need well-typedness of all translated terms---%
-where would we derive the well-typedness of the middle term arising from the premises
-of such a transitivity rule?
+%
+\begin{mathpar}
+\inferrule{
+  \subtype{\Phi; \Gamma}{\tau_1}{\tau_2} \\
+  \subtype{\Phi; \Gamma}{\tau_2}{\tau_3}
+}{
+  \subtype{\Phi; \Gamma}{\tau_1}{\tau_3}
+}
+\end{mathpar}
+%
+Recall that preservation of subtyping states that if $\subtype{\Phi; \Gamma}{\tau_1}{\tau_3}$ holds
+and $\tau_i, \compile{\tau_i}$ for $i = 1, 2$ are well typed,
+then $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_3}}$ holds.
+To apply the induction hypotheses in the above transitivity case,
+we would need well-typedness of all of $\compile{\tau_1}, \compile{\tau_2}, \compile{\tau_3}$;
+for the first and last, they're provided as premises.
+But where would we derive the well-typedness of $\compile{\tau_2}$?
 There's no ``subject subtyping'' as there is for subject reduction, and indeed,
 $\subtype{\mt; \mt}{\Type{1}}{\App{(\fix{f}{\alpha}{\N{\alpha}}{\Type{2}})}{\sss{\circ}}}$
 holds while the right-hand side, which is convertible to $\Type{2}$, isn't even well typed.
@@ -428,9 +445,9 @@ but since reduction is untyped, its type can't be derived:
 it must be provided by the $\kw{let}$ expression itself.
 
 Although not directly related to the type preservation proofs,
-proving confluence requires that the notion of $\rhd^*$ be exactly the
-reflexive, transitive closure of $\rhd$, so the congruence rules need to be
-a part of $\rhd$ and not of $\rhd^*$ (as is the case for the languages compiled in \citet{wjb}).
+proving confluence requires that the notion of $\rhd^*$ be
+exactly the reflexive, transitive closure of $\rhd$,
+so the congruence rules need to be a part of $\rhd$ and not of $\rhd^*$.
 
 Some of these constraints are not so serious:
 $\kw{let}$ expressions without type annotations, for instance,
