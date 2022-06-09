@@ -204,12 +204,12 @@ Instead, the purpose is threefold:
     see Sacchini's dissertation~\citep{CIC-hat-minus} or \CIChatstar~\citep{CIC-hat-star},
     for instance.
     Instead, a syntactic model relies on the consistency of the language in which I'm modelling,
-    allowing me to focus on only the unique parts of the sized type theory
+    allowing me to focus on only the interesting parts of the sized type theory
     rather than on consistency as a whole.
   \item To reopen the discussion on sized dependent types.
     Since the discovery of the inconsistency of Agda's sized types~\citep{infinity},
     progress appears to have stagnated a little.
-    In later chapters, I examine these difficulties as they might apply to \lang
+    In \cref{ch:discussion}, I examine these difficulties as they might apply to \lang
     and its interpretation in the syntactic model.
 \end{itemize}
 
@@ -375,7 +375,7 @@ in the context of syntactic modelling,
 this is known as \emph{soundness} with respect to the translation target.}:
 if some term $e$ is well typed under some environments $\Phi; \Gamma$ with some type $\tau$,
 then the translated term $\compile{e}$ must also be well typed
-under the translated environment $\compile{\Phi}\compile{\Gamma}$
+under the translated environment $\compile{\Phi}, \compile{\Gamma}$
 with the translated type $\compile{\tau}$.
 By the consistency of \CICE and a type-preserving translation to it,
 we prove the consistency of \lang.
@@ -713,4 +713,4 @@ including confluence and subject reduction,
 and elaborate on the proof of type preservation and its associated lemmas.
 I conclude in \cref{ch:discussion}, discussing some of the shortcomings of \lang,
 namely the universe levels of the inductive types and the lack of an infinite size,
-as well directions for future improvement.
+as well directions for future investigation.
