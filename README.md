@@ -20,5 +20,3 @@
 
 * Revisit `% TODO`s eventually
 * Pick a name for source language
-* Acknowledgements
-* Fix weird page break/spacing issues
