@@ -50,8 +50,11 @@
 %% Tricks for LaTeX shrinking
 \setlength{\abovedisplayskip}{1pt}
 \setlength{\belowdisplayskip}{1pt}
+\setlength{\textfloatsep}{5pt}
+\setlength{\intextsep}{5pt}
 \setlist{labelindent=\parindent,leftmargin=*}
 \captionsetup{skip=5pt}
+%\renewcommand{\fbox}[1]{\relax}
 
 %% Title information
 \title{A Syntactic Model of Sized Dependent Types}
@@ -408,7 +411,7 @@ $\type{\mt \mathbin{;} \mt}{e}{\funtypeT{\PT}{\PropT}{\PT}}$.
 \mbox{* * *}
 \end{center}
 
-\noindent In \cref{sec:sized-dep-types}, we describe the syntax and judgements of \lang in detail
+\noindent In the upcoming \cref{sec:sized-dep-types}, we describe the syntax and judgements of \lang in detail
 and provide example programs in \lang that use sized types.
 Next, in \cref{sec:model} we describe \CICE and define the translation from \lang to \CICE.
 Following that, in \cref{sec:proofs} we set up the proof architecture of
@@ -447,7 +450,7 @@ Note that the hierarchy of universes above $\Prop$ start at $\Type{1}$, not $\Ty
 Most judgements use two environments: a term environment $\Gamma$ with assumptions $\annot{x}{\tau}$
 and type-annotated definitions $\define{x}{\tau}{e}$,
 and a size environment $\Phi$ with unbounded and bounded size variables.
-We also use the assumption environment%
+We also use the assumption environment
 $\Delta$ as a shorthand when writing nested expressions with assumptions;
 in particular, letting for instance $\Delta_{xy} = \annot{x}{\sigma_1}, \annot{y}{\sigma_2}$,
 We use \new{$\arr*{\Delta_{xy}}{\tau}$} to mean $\funtype{x}{\sigma_1}{\funtype{y}{\sigma_2}{\tau}}$.
@@ -514,9 +517,8 @@ for $\kw{let}$ expressions as $\zeta$-reduction,
 and for defined variables as $\delta$-reduction.
 
 \FigSubtype{fig:subtyping}
-Rather than a single subtyping judgement like in
-\GCC,
-We use the same presentation as MetaCoq
+Rather than a single subtyping judgement like in \GCC,
+we use the same presentation as MetaCoq
 and split it into a subtyping judgement
 and a separate $\alpha$-cumulativity judgement,
 listed in \cref{fig:subtyping}.
@@ -528,12 +530,6 @@ the function type and size quantification are covariant in the codomain
 while remaining invariant in the domain.
 All other types are invariant, as reflected by \rref{acum-refl}.
 A term is then a subtype of another if they are confluent up to $\alpha$-cumulativity.
-
-Notably, \lang does \emph{not} have a notion of $\eta$-conversion
-in either the reduction rules or in the subtyping rules,
-which would otherwise allow conversion between $\fun{x}{\tau}{\app{f}{x}}$ and $f$.
-Mixing $\eta$-conversion and untyped conversion is notoriously difficult~\citep{eta},
-and remains to date an unresolved problem in MetaCoq, so we exclude it here.
 
 \FigSubsize{fig:subsizing}
 
@@ -612,14 +608,6 @@ Most importantly, they reduce only when there exists some size strictly smaller 
 intuitively, this restriction prevents fixpoints from reducing indefinitely
 because subsizing is well founded, and there cannot be an infinite chain of smaller sizes.
 
-This reduction strategy supersedes the usual restriction that fixpoints only reduce
-when applied to a constructor,
-since all sized constructors carry a smaller size argument
-that will satisfy the subsizing premise.
-Furthermore, reduction can also occur when the fixpoint is applied to a successor size
-by reflexivity of subsizing,
-making the rule a strict supersession.
-
 \FigTypingInd{fig:typing-ind}
 
 The typing rules for all new constructs are given in \cref{fig:typing-ind}.
@@ -667,19 +655,13 @@ One of the most important uses of sized types is the ability to define
 where the sizes of the input and output are the same.
 This guarantees that the output is never larger than the input,
 and size-preserving functions can be used in recursive calls of fixpoints.
-For instance, the predecessor function $\pred$ which computes
-$\maximum{0, n - 1}$ for some number $n$ is size preserving.
-%
-\begin{align*}
-&\Let{\pred}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}}}{ \\
-&\Fun{\alpha}{\fun{n}{\N{\alpha}}{\match*{n}{ \\
-&\quad \App{\zero*}{\beta} \Rightarrow \zero{\alpha}{\beta} \\
-&\quad \app{\App{\succ*}{\beta}}{m} \Rightarrow \app{\App{\liftN}{\alpha}{\beta}}{m}}}}}
-\end{align*}
-
-The $\monus$ function, which computes $\maximum{0, n - m}$ given numbers $n, m$,
-is similarly size preserving in its first argument,
+For instance, the $\monus$ function, which computes $\maximum{0, n - m}$ given numbers $n, m$,
+is size preserving in its first argument,
 since $n - m$ is never greater than $n$.
+Here, $\pred$ is another size-preserving function
+$\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}}$
+that computes $\maximum{0, n - 1}$ for some number $n$
+whose definition is omitted for space.
 %
 \begin{align*}
 &\Let{\monus}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}}{ \\
@@ -698,7 +680,7 @@ $\divv$ then only type checks because $\monus$ is size preserving.
 Because the first argument of the recursive call to $\divv$ isn't \emph{structurally}
 a subterm with the call to $\monus$ in the way,
 a guardedness check wouldn't accept the corresponding unsized function.
-%
+
 \begin{align*}
 &\Let{\divv}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}}{ \\
 &\fix{\divv*}{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}{ \\
@@ -752,16 +734,9 @@ The limit ordinal, taking some function on naturals returning an ordinal,
 constructs an ordinal meant to be ``larger'' than any of the returned ordinals.
 Such a function should be able to return an ordinal far larger than any natural,
 hence the bounded size quantification in its domain.
-Conversely, the naturals embed quite naturally within the ordinals.
-%
-\begin{align*}
-&\Let{\natOrd}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\Ord{\alpha}}}}{ \\
-&\fix{\natOrd*}{\alpha}{\arr*{\N{\alpha}}{\Ord{\alpha}}}{ \\
-&\quad \fun{n}{\N{\alpha}}{\match*{n}{ \\
-&\qquad \App{\zero*}{\beta} \Rightarrow \zord{\alpha}{\beta} \\
-&\qquad \app{\App{\succ*}{\beta}}{m} \Rightarrow \sord{\alpha}{\beta}{(\app{\App{\natOrd*}{\beta}}{m})}}}}}
-\end{align*}
-
+Conversely, the naturals embed quite naturally within the ordinals;
+let $\natOrd$ be such an embedding function
+$\Funtype{\alpha}{\arr*{\N{\alpha}}{\Ord{\alpha}}}$.
 In an unsized type theory, supposing that $\const{natOrd'}$ is an unsized version of $\natOrd$,
 the first limit ordinal $\const{\omega'}$ is easily defined as
 $\Let{\const{\omega'}}{\const{Ord}}{\app{\lord*}{\const{natOrd'}}}$.
@@ -1094,7 +1069,9 @@ well-typedness holds under some environment, so term environments need translati
 sizes and their environments translate to terms and term environments as well;
 and derivations of size orders translate to terms which represent them.
 
+\vspace{-2\baselineskip}
 \FigTransSize{fig:trans:size}
+
 We begin with the translation of sizes and their environments in \cref{fig:trans:size},
 which are straightforward recursive metafunctions over their syntax.
 We use an asterisk superscript \new{$\mt^\ast$} on a variable $\alphaT$ to represent
@@ -1102,6 +1079,12 @@ a fresh variable uniquely associated with $\alphaT$.
 Given some bound size variable $\alphaT$,
 $\alphaT^\ast$ represents the proof that the translated size is strictly smaller
 than its size bound.
+
+The translation of subsizing judgements, on the other hand,
+is a recursive metafunction over the \emph{subsizing derivation}.
+\cref{fig:trans:subsize} defines the translation to \CICE terms
+by induction on the subsizing rules, which recursively translates subderivations
+(omitting irrelevant size well-scopedness premises).
 
 \begin{figure}[h]
 \centering
@@ -1142,12 +1125,6 @@ than its size bound.
 \label{fig:trans:subsize}
 \end{figure}
 
-The translation of subsizing judgements, on the other hand,
-is a recursive metafunction over the \emph{subsizing derivation}.
-\cref{fig:trans:subsize} defines the translation to \CICE terms
-by induction on the subsizing rules, which recursively translates subderivations
-(omitting irrelevant size well-scopedness premises).
-
 The translation of terms and term environments are similarly defined
 as recursive metafunctions over the typing and well-formedness derivations,
 denoted by
@@ -1160,6 +1137,7 @@ with the current implicit environments extended with $\Phi$ or $\Gamma$,
 and $\compile{\Gamma}$ to mean the translation of $\Gamma$
 when well formed under the current implicit size environment.
 
+\vspace{-2\baselineskip}
 \FigTransTermSquash{fig:trans:term}
 
 The translation for base \lang without inductives is given in \cref{fig:trans:term}
@@ -1702,27 +1680,10 @@ however, has been previously explored~\citep{guarded, modal-sizes}.
 \subsection{Universe Levels of Inductives} \label{subsec:universe-levels}
 
 The universes in which the type of natural numbers and W types in \lang live
-are, in a sense, one level higher than is usually expected;
-their typing rules are reproduced below.
+are, in a sense, one level higher than is usually expected,
+as given by \rref{nat, wft}.
 $\N*$ is typically in $\Type{0}$,
 while $\W*$ is typically in $U$ rather than $\axioms{U}$.
-\begin{mathpar}
-\inferrule[\rref*{nat}]{
-  \wf{\Phi}{\Gamma} \\
-  \wf{\Phi}{s}
-}{
-  \infer{\Phi; \Gamma}{\N{s}}{\Type{1}}
-}
-\and
-\inferrule[\rref*{wft}]{
-  \wf{\Phi}{s} \\
-  \infer{\Phi; \Gamma}{\sigma}{U} \\\\
-  \infer{\Phi; \Gamma, \annot{x}{\sigma}}{\tau}{U}
-}{
-  \infer{\Phi; \Gamma}{\W{x}{\sigma}{\tau}{s}}{\axioms{U}}
-}
-\end{mathpar}
-
 This is due to how the translation is defined:
 $\NatT$ and $\WT$ have a $\SizeT$ as parameter,
 the $\limT$ operator quantifies over the type of the domain of its function argument,
@@ -1734,12 +1695,7 @@ the domain of $\limT$ should encompass the domain of that function.}
 as is the case for the definition of $\compile{\const{ac}}$,
 so if its universe is $\TypeT{\iT}$,
 then the universe of the type of $\sT$ must be $\TypeT{\tg{i+1}}$,
-according to the definition of $\SizeT$, reproduced below.
-\begin{align*}
-&\dataT{\SizeT}{\TypeT{\tg{i+1}}} \\
-&\quad \annotT{\sucT}{\arrT*{\SizeT}{\SizeT}} \\
-&\quad \annotT{\limT}{\funtypeT{A}{\TypeT{\iT}}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}}
-\end{align*}
+according to the definition of $\SizeT$.
 
 This is a nonnegotiable condition:
 defining $\SizeT$ to be in the same universe as that which $\limT$ quantifies over
@@ -1766,13 +1722,6 @@ where $\annotT{\aT}{\sigmaT}$ is the third formal argument to its constructor $\
 but this argument is only part of the constructor, not the type.
 The intuition is that the parametrized $\SizeT$ is too restrictive
 and there aren't ``enough'' sizes to cover all well-founded trees of any particular type.
-
-In a sense, it's reasonable to expect that $\SizeT$ needs to live in a larger universe.
-The role of $\SizeT$ is to represent all of the possible sizes of a given full inductive,
-so we would expect $\SizeT$ to be just as large as the inductive itself.
-Aside from situations where the inductive is impredicative, \ie in $\PropT$,
-parametrizing over $\SizeT$ then necessarily requires moving up a universe
-so that it's not essentially quantifying over itself.
 
 If having inductive types in the correct universe were more important than
 the potential expressibility of infinitude,
@@ -1862,18 +1811,6 @@ but we conjecture that subsizing, too, is decidable,
 as the size environment only contains a finite number of bounded size variables,
 and sizes can only have a finite number of successor operators applied.
 Moreover, Agda has transitive subsizing, and so far hasn't had issues with its decidability.
-
-\hfill
-
-As for implementation, the consistency of \lang shows that sized types for inductives in Agda
-are likely to be consistent were the infinite size removed.
-This immediately poses a significant problem to Agda's standard library,
-as 20 of the 33 files that use sized types in version 1.7.1 of the standard library
-make use of the infinite size.
-Furthermore, 30 of those files deal with coinductives rather than inductives,
-and it remains to be seen whether \lang with coinductives really is consistent as well.
-The addition of the $\const{ac}$ axiom to recover some of the expressivity of the infinite size
-isn't ideal for a proof assistant either, since it would block computation.
 
 \section{Conclusion}
 
