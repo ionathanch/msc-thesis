@@ -8,7 +8,7 @@
   e &\Coloneqq \mathrlap{\cdots \mid \N{s} \mid \zero{s}{s} \mid \succ{s}{s}{e} \mid \W{x}{\tau}{\tau}{s} \mid \sup{x}{\tau}{\tau}{s}{s}{e}{e}} \\
   &\mid \mathrlap{\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{\vec{z}} \Rightarrow e) \seq} \mid \fix{f}{\alpha}{\tau}{e}}
   \end{align*}
-  \caption[Syntax (naturals, well-founded trees, $\kw{case}$, fixpoints)]{Syntax (naturals, well-founded trees, \\ and $\kw{case}$ and fixpoint expressions)}
+  \caption[Syntax (naturals, well-founded trees, $\kw{case}$, fixpoints)]{Syntax (naturals, well-founded trees, and $\kw{case}$ and fixpoint expressions)}
   \label{#1}
   \end{figure}
 }
@@ -18,7 +18,7 @@
   \centering
   \begin{mathpar}
   \vspace{-2ex}
-  \fbox{$\red{\Phi; \Gamma}{e}{e}$} \quad \cdots \hfill \\
+  \fbox{$\red{\Phi; \Gamma}{e}{e}$} \quad \cdots \and %\hfill \\
   \inferrule[]{~}{
     \red[]{\Phi; \Gamma}{\match*{\App{\zero*_{\any}}{s}}{(\App{\zero*}{\alpha} \Rightarrow e_z) (\app{\App{\succ*}{\any}}{\any} \Rightarrow \any)}}{\subst{e_z}{\alpha}{s}}
   }
@@ -49,7 +49,7 @@
 \newcommand{\FigTypingInd}[1]{
   \begin{figure}[h]
   \begin{mathpar}
-  \fbox{$\type{\Phi; \Gamma}{e}{\tau}$} \quad \cdots \hfill \\
+  \fbox{$\type{\Phi; \Gamma}{e}{\tau}$} \quad \cdots \and %\hfill \\
   \inferrule[\rlabel*{nat}]{
     \wf{\Phi}{\Gamma} \\
     \wf{\Phi}{s}
@@ -116,7 +116,7 @@
     \infer{\Phi; \Gamma}{\fix{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}
   }
   \end{mathpar}
-  \caption[Typing rules (naturals, well-founded trees, $\kw{case}$, fixpoints)]{Typing rules (naturals, well-founded trees, \\ and $\kw{case}$ and fixpoint expressions)}
+  \caption[Typing rules (naturals, well-founded trees, $\kw{case}$, fixpoints)]{Typing rules (naturals, well-founded trees, and $\kw{case}$ and fixpoint expressions)}
   \label{#1}
   \end{figure}
 }
