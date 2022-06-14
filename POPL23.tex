@@ -359,8 +359,8 @@ An order on sizes is induced by these bound instantiations and the successor ope
 this order has nothing to do with subtyping,
 and in particular we do \emph{not} have subtyping relations between
 $\N{\alpha}$ and $\N{\sss{\alpha}}$, for instance.
-Fixpoint expressions recur on smaller sizes according to the order,
-summarized by the below typing rule.
+This leads to a more natural typing rule for fixpoint expressions,
+which recur on smaller sizes according to the order:
 %
 \begin{mathpar}
 \inferrule[]{
@@ -370,20 +370,26 @@ summarized by the below typing rule.
 }
 \end{mathpar}
 
-Bounded sizes were introduced to avoid complex
-\emph{semi-continuity} or approximative \emph{polarity}
-requirements on fixpoints' types in the presence of an \emph{infinite size}\index{infinite size}
-that is strictly larger than all sizes,
-and to prevent inconsistency with pattern matching~\citep{flationary}.
+Without bounded quantification,
+where $\alpha$ may appear in $\tau$ must be restricted by
+complex \emph{semi-continuity} requirements or imprecise approximations thereof
+to avoid inconsistencies; according to \citet{flationary},
+\begin{quote}
+\textit{A technical condition like semi-continuity can kill a system
+as a candidate for the foundation of logics and programming
+{\rm [\ldots]} Most systems for type-based termination replace semi-continuity by a rough approximation,
+trading expressivity for simplicity}
+\end{quote}
 
 Notably, these three features are all found in Agda's implementation of sized types.
-The only missing feature is the infinite size,
+On the other hand, \lang excludes Agda's \emph{infinite size},
 since its properties and its use are known to be inconsistent.
-A demonstration of the inconsistency of a hypothetical infinite size in \lang
-is given in \cref{subsec:infinity}.
-On the other hand, the lack of an infinite size prevents
-certain infinitary constructs from being expressed;
-\cref{subsec:examples:limitations} gives a concrete example.
+While applications of the infinite size to finitely-branching
+inductives such as naturals and lists can be recovered with \emph{existential size quantification},
+this isn't possible for infinitely-branching inductives
+such as ordinals and well-founded trees.
+We give a concrete example of an inexpressible infinitary construct in \cref{subsec:examples:limitations},
+and discuss where using existential sizes breaks down for well-founded trees in \cref{subsec:infinity}.
 
 In the syntactic model, sizes and their order are translated to inductive definitions in \CICE,
 and quantification over (bounded) sizes is translated
@@ -604,13 +610,6 @@ The typing rules for all new constructs are given in \cref{fig:typing-ind}.
 There are two additional metafunctions:
 $\FV{\mt}$, which produces the free variables in the given term,
 and $\fresh{\seq}$, which asserts the freshness of the given variables.
-The type of naturals and well-founded trees are well typed
-when the sizes they are applied to are well formed, and
-their constructors are well typed when applied to smaller sizes.
-$\kw{case}$ expressions match on these size arguments in addition to the usual term arguments,
-asserting within their branches that they are strictly smaller than the target's size.
-The motive is dependent on the target,
-and the type of a branch is the motive with its target as the constructor being destructed.
 As discussed, the body of a fixpoint is only well typed
 when the fixpoint is recursively applied to a smaller size,
 as enforced by its type in the environment when type checking the body.
@@ -730,10 +729,10 @@ $\Funtype{\alpha}{\arr*{\N{\alpha}}{\Ord{\alpha}}}$.
 In an unsized type theory, supposing that $\const{natOrd'}$ is an unsized version of $\natOrd$,
 the first limit ordinal $\const{\omega'}$ is easily defined as
 $\Let{\const{\omega'}}{\const{Ord}}{\app{\lord*}{\const{natOrd'}}}$.
-However, in \lang, things are not so easy; the na\"ive attempt yields the following:
+However, in \lang, things are not so easy; given a function $\App{\liftO}{\alpha}{\beta}$
+that lifts an ordinal $\Ord{\beta}$ to a larger-sized ordinal $\Ord{\alpha}$, we might try:
 %
 \begin{align*}
-&\Let{\liftO}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\Ord{\beta}}{\Ord{\alpha}}}}}{\seq} \\
 &\Let{\omegaOrd}{\Ord{\sss{\hole}}}{\lord{\sss{\hole}}{\hole}{(\Fun<{\gamma}{\hole}{\fun{n}{\N{\gamma}}{\app{\App{\liftO}{\hole}{\gamma}}{(\app{\App{\natOrd}{\gamma}}{n})}}})}}
 \end{align*}
 
@@ -927,21 +926,7 @@ but we retain $\JT*$ in \CICE for completeness.
 \rref{ind, constr, case} assign types to inductive types, their constructors,
 and $\tg{case}$ expressions, under the premise that
 the relevant inductive data definition exists and is well formed.
-Here, the difference between the parameters and the indices of inductive types becomes apparent:
-the motive of a $\tg{case}$ expression is abstracted over the indices by $\vec{\yT}$
-in addition to the target by $\xT$, while the parameters $\vec{\pT}$ are fixed throughout.
-Therefore, when dealing with the types of indices and constructor arguments,
-the parameters are first substituted in place of $\vec{\wT}$.
-
-A $\tg{case}$ expression is well typed if its target is,
-if its motive is for any indices and target with those indices,
-and if each branch is well typed for that branch's constructor arguments,
-where its type is the motive with the appropriate indices and reconstructed target.
-For notational simplicity, the rule assumes that the binding variable names
-$\vec{\yT}$ and $\vec{\zT}$ are those found in the data definition,
-but of course these can be renamed at the expense of additional renaming substitutions.
-
-Additionally, the motive of a $\tg{case}$ expression is restricted by the metarelation $\elim{\mt}{\mt}{\mt}$,
+The motive of a $\tg{case}$ expression is restricted by the metarelation $\elim{\mt}{\mt}{\mt}$,
 which indicates when \emph{large elimination} is allowed.
 $\elim{\any}{\TypeT{\iT}}{\any}$ and $\elim{\any}{\PropT}{\PropT}$ always hold,
 so that inductives in $\TypeT{}$ can be eliminated to any universe
@@ -1127,7 +1112,6 @@ with the current implicit environments extended with $\Phi$ or $\Gamma$,
 and $\compile{\Gamma}$ to mean the translation of $\Gamma$
 when well formed under the current implicit size environment.
 
-\vspace{-2\baselineskip}
 \FigTransTermSquash{fig:trans:term}
 
 The translation for base \lang without inductives is given in \cref{fig:trans:term}
