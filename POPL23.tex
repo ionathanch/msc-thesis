@@ -813,38 +813,96 @@ Indeed, only six inductive definitions are used for the translation,
 for representing sizes, their order, their well-foundedness,
 and the empty type, naturals, and well-founded trees.
 
+\begin{figure}[h]
+\centering
+\begin{mathpar}
+\fbox{$\type{\GammaT}{\eT}{\tauT}$} \qquad
+\fbox{$\subtype{\GammaT}{\tauT}{\tauT}$} \qquad
+\fbox{$\defeq{\GammaT}{\eT}{\eT}{\tauT}$} \hfill \\
+\inferrule[\rlabel*{conv*}]{
+  \type{\GammaT}{\eT}{\sigmaT} \\
+  \type{\GammaT}{\sigmaT}{\UT} \\\\
+  \type{\GammaT}{\tauT}{\UT} \\
+  \subtype{\GammaT}{\sigmaT}{\tauT}
+}{
+  \type{\GammaT}{\eT}{\tauT}
+}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-conv}{subtype-conv}]{
+  \defeq{\GammaT}{\tauT_1}{\tauT_2}{\UT}
+}{
+  \subtype{\GammaT}{\tauT_1}{\tauT_2}
+}
+\and
+\inferrule[\rlabel{$\equiv$-refl}{equiv-refl}]{
+  \type{\GammaT}{\eT}{\tauT}
+}{
+  \defeq{\GammaT}{\eT}{\eT}{\tauT}
+}
+\and
+\inferrule[\rlabel{$\equiv$-conv}{equiv-conv}]{
+  \subtype{\GammaT}{\sigmaT}{\tauT} \\\\
+  \defeq{\GammaT}{\eT_1}{\eT_2}{\sigmaT}
+}{
+  \defeq{\GammaT}{\eT_1}{\eT_2}{\tauT}
+}
+\and
+\inferrule[\rlabel{$\equiv$-reflect}{equiv-reflect}]{
+  \type{\GammaT}{\pT}{\eqT{\eT_1}{\tauT}{\eT_2}}
+}{
+  \defeq{\GammaT}{\eT_1}{\eT_2}{\tauT}
+}
+\and
+\inferrule[\rlabel{$\equiv$-$\mu$}{equiv-mu}]{
+  \type{\GammaT}{\tauT}{\UT} \\
+  \defeq{\GammaT}{\tauT}{\arr*{\DeltaT}{\funtypeT{\any}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\tauT'}}}{\UT} \\\\
+  \card{\DeltaT} + 1 = \nT \\
+  \type{\GammaT, \annotT{\fT}{\tauT}}{\eT}{\tauT}
+}{
+  \defeq{\GammaT}{\fixT{\nT}{\fT}{\tauT}{\eT}}{\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}}}{\tauT}
+}
+\and
+\inferrule[\rlabel*{fix*}]{
+  \type{\GammaT}{\tauT}{\UT} \\
+  \defeq{\GammaT}{\tauT}{\arr*{\DeltaT}{\funtypeT{\any}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\tauT'}}}{\UT} \\
+  \card{\DeltaT} + 1 = \nT \\
+  \type{\GammaT, \annotT{\fT}{\tauT}}{\eT}{\tauT}
+}{
+  \type{\GammaT}{\fixT{\nT}{\fT}{\tauT}{\eT}}{\tauT}
+}
+\end{mathpar}
+\caption{Excerpt of typing, subtyping, and equivalence rules}
+\label{fig:equiv-sub-type}
+\end{figure}
+
 The typed equivalence, subtyping, and typing judgements are defined mutually:
 equivalence depends on typing and subtyping,
 subtyping depends on equivalence,
 and typing depends on subtyping and equivalence.
 The mutual dependence is due to typed equivalence,
 since with untyped conversion as seen in \lang has no typing premises.
-We present first the equivalence rules in \cref{fig:equivalence},
-with the subtyping and typing rules to follow.
+The judgement rules are all standard,
+so \cref{fig:equiv-sub-type} presents only an excerpt;
+the full rules are found in \cref{app:equiv}.
+The first row contains the main mutual dependencies between the judgements,
+followed by notable \rref{equiv-reflect, equiv-mu, fix*}.
 
-Equivalence is, by definition, an equivalence relation,
-satisfying reflexivity, symmetry, and transitivity.
-Equivalence is also congruent, using the same summary of congruence rules as for \lang via \rref{equiv-cong};
-the full set of rules can similarly be found in \cref{app:cong:equiv}.
+To summarize, equivalence is, by definition, an equivalence relation,
+satisfying reflexivity, symmetry, and transitivity as well as congruence.
 An equivalence judgement can be converted to one annotated by a supertype via \rref{equiv-conv}.
 The key rule for extensionality is equality reflection in \rref{equiv-reflect},
 which definitionally equates two terms whenever there exists some proof of their propositional equality.
+The remaining equivalence rules are typed versions of the usual reduction rules
+for functions, $\tg{let}$ expressions, $\tg{case}$ expressions, and fixpoint expressions,
+as well as $\eta$-equivalence for functions.
 
-\FigEquiv[h]{fig:equivalence}
-
-The remaining equivalence rules are typed versions of the usual reduction rules,
-with typing premises to ensure well-typedness of both sides.
-Functions have both a $\beta$-equivalence rule and an $\eta$-equivalence rule,
-and the rules for $\tg{let}$ expressions are exactly the same as in \lang.
-The $\JT*$ eliminator and $\tg{case}$ expressions reduce when applied to
-reflexivity and inductive constructors, respectively.
-
-\rref{equiv-mu} for fixpoint expressions is \emph{unguarded},
+\rref{equiv-mu} for fixpoints is \emph{unguarded},
 meaning that fixpoints are equivalent to the substitution of itself into its own body
 regardless of what they are applied to.
 To maintain normalization,
 the usual guarded reduction rule in intensional CIC reduces fixpoints
 only when applied to a literal constructor in the recursive argument position.
+
 \begin{mathpar}
 \inferrule[\rlabel{$\equiv$-$\mu$-guarded}{equiv-mu-guarded}]{\cdots \\ \card{\vec{\eT}'} + 1 = \nT}{
   \defeq{\GammaT}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\app{(\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\tauT}
@@ -855,91 +913,21 @@ Evidently \rref{equiv-mu-guarded} can be derived from \rref{equiv-mu} by congrue
 On the other hand,
 \rref{equiv-mu} can be derived from \rref{equiv-mu-guarded}
 by reflecting a proof of their propositional equality,
-which can be constructed transitively using applications of \rref{equiv-eta, equiv-cong}.
+which can be constructed using transitivity, congruence, and $\eta$-equivalence.
 Since \rref{equiv-mu} and \rref{equiv-mu-guarded} are metatheoretically equivalent,
 we choose to use \rref{equiv-mu} for its simplicity.
 
-\begin{figure}[h]
-\centering
-\begin{mathpar}
-\fbox{$\subtype{\GammaT}{\tauT}{\tauT}$} \hfill
-\inferrule[\rlabel{$\preccurlyeq$-conv}{subtype-conv}]{
-  \defeq{\GammaT}{\tauT_1}{\tauT_2}{\UT}
-}{
-  \subtype{\GammaT}{\tauT_1}{\tauT_2}
-}
-\and
-\inferrule[\rlabel{$\preccurlyeq$-trans}{subtype-trans}]{
-  \subtype{\GammaT}{\tauT_1}{\tauT_2} \\
-  \subtype{\GammaT}{\tauT_2}{\tauT_3}
-}{
-  \subtype{\GammaT}{\tauT_1}{\tauT_3}
-}
-\and
-\inferrule[\rlabel{$\preccurlyeq$-prop}{subtype-prop}]{~}{
-  \subtype{\GammaT}{\PropT}{\TypeT{\iT}}
-}
-\and
-\inferrule[\rlabel{$\preccurlyeq$-type}{subtype-type}]{
-  \iT \leq \jT
-}{
-  \subtype{\GammaT}{\TypeT{\iT}}{\TypeT{\jT}}
-}
-\and
-\inferrule[\rlabel{$\preccurlyeq$-pi}{subtype-pi}]{
-  \defeq{\GammaT}{\sigmaT_1}{\sigmaT_2}{\UT} \\
-  \subtype{\GammaT, \annotT{\xT}{\sigmaT_2}}{\tauT_1}{\tauT_2}
-}{
-  \subtype{\GammaT}{\funtypeT{\xT}{\sigmaT_1}{\tauT_1}}{\funtypeT{\xT}{\sigmaT_2}{\tauT_2}}
-}
-\end{mathpar}
-\caption{Subtyping rules (\CICE)}
-\label{fig:subtyping-cic}
-\end{figure}
-
-As opposed to \lang, for \CICE we use pCIC's presentation of subtyping in \cref{fig:subtyping-cic},
+As opposed to \lang, for \CICE we use pCIC's presentation of subtyping,
 which has a typed equivalence premise in \rref{subtype-conv}.
 It also has an explicit rule for transitivity of subtyping since judgements such as
 $\subtype{\mt}{\app{(\funT{P}{\TypeT{\tg{1}}}{P})}{\PropT}}{\TypeT{\tg{0}}}$ would fail to hold otherwise.
-Like \rref{acum-pi}, \rref{subtype-pi} is invariant in the domain of function types.
-
-The typing and environment well-formedness rules are in \cref{fig:typing-cic}.
-Except for \rref{fix*}, the starred rules are the same as for \lang,
-with metafunctions $\axioms{\mt}$ and $\rules{\mt}{\mt}$ operating similarly on universes $\UT$
-as for $U$.
+Finally, the typing and environment well-formedness rules are similar to those in \lang.
 An additional premise to \rref{fix*} ensures that the $\nT$th argument is indeed an inductive type.
-
 As previously mentioned, fixpoints must also be guarded:
 recursive calls can only occur on structurally smaller arguments of elements of inductives.
 The guard condition is well studied \citep{guard, guard-relax, Coq} and so omitted here.
 To justify uses of fixpoint expressions in the translation,
 we will provide either a mechanization or present a brief argument of guardedness.
-
-\FigTypingCIC[h]{fig:typing-cic}
-
-The new \rref{eq, refl, J} are for the propositional equality type,
-its constructor, and its eliminator.
-The proof of type preservation eliminates propositional equalities mostly through
-reflection rather than using $\JT*$,
-but we retain $\JT*$ in \CICE for completeness.
-
-\rref{ind, constr, case} assign types to inductive types, their constructors,
-and $\tg{case}$ expressions, under the premise that
-the relevant inductive data definition exists and is well formed.
-The motive of a $\tg{case}$ expression is restricted by the metarelation $\elim{\mt}{\mt}{\mt}$,
-which indicates when \emph{large elimination} is allowed.
-$\elim{\any}{\TypeT{\iT}}{\any}$ and $\elim{\any}{\PropT}{\PropT}$ always hold,
-so that inductives in $\TypeT{}$ can be eliminated to any universe
-and inductives in $\PropT$ can be eliminated to $\PropT$,
-while $\elim{\XT}{\PropT}{\TypeT{\iT}}$ holds if the inductive $\XT$ in $\PropT$ satisfies further conditions.
-For the purposes of the translation, the only relevant conditions are that $\XT$ either have no constructors
-or have a single constructor whose arguments are all in $\PropT$.
-They can be loosened while still retaining consistency (see \eg \citet{SProp}).
-
-The typing premises of \rref{equiv-beta, equiv-zeta, equiv-rho, equiv-iota, equiv-mu}
-corresponding to some of the reduction rules duplicate the premises found in many of the typing rules,
-trivially ensuring that both sizes of these equivalences are well-typed with the same type
-(\ie \emph{subject equivalence}).
 
 \subsection{Preliminary Definitions} \label{subsec:prelim}
 
@@ -966,7 +954,7 @@ since the zero size $\baseT$ can be defined as a limit size rather than as anoth
 The order on sizes $\mt \szleT \mt$ is defined by the three properties that must hold~\citep{ordinals}:
 \begin{itemize}[noitemsep]
   \item $\monoT$: The successor operator $\sucT$ is monotone with respect to the order;
-  \item $\coconeT$: The limit operator $\limT$ constructs an upper bound in that
+  \item $\coconeT$: The limit operator $\limT$ constructs an upper bound, \ie
     given some function $f$ returning a size,
     any size smaller than any size returned by $f$ is also smaller than the limit of $f$;
   \item $\limitT$: The limit operator on $f$ constructs a \emph{least} upper bound such that
@@ -992,7 +980,7 @@ given some proof $h$ of their pointwise equality,
 under the assumption $\annot{x}{A}$,
 the propositional equality $\eq{\app{f}{x}}{}{\app{g}{x}}$ by $\app{h}{x}$
 can be reflected into the corresponding definitional equality,
-which by \rref{equiv-eta} is then a definitional equality of $f$ and $g$.
+which by $\eta$-equivalence is then a definitional equality of $f$ and $g$.
 
 The remaining definitions have been mechanized in either Agda and Coq in
 \cref{app:mechanization:agda:prelim} and \cref{app:mechanization:coq:prelim},
@@ -1010,7 +998,7 @@ and of the accessibility predicate:
   \item $\baseleq$, $\reflleq$, $\transleq$, and $\sucleq$:
     The order is reflexive and transitive (\ie a preorder)
     such that $\baseT$ is smaller than or equal to all sizes
-    and the successor of a size is greater or equal to itself.
+    and the successor sizes are greater or equal.
   \item $\accIsProp$: Accessibility predicates are \emph{mere propositions}:
     any two proofs of accessibility of a size are propositionally equal.
   \item $\accleq$: Any size smaller or equal to an accessible size is itself accessible.
@@ -1389,23 +1377,23 @@ We therefore cover only that case here.
     }{\tauT},$$
     where $\wfind$ (and $\wfacc$) are defined in \cref{fig:defns}.
     Because of the sheer volume of the terms involved in the translation, $\wfind$, and $\wfacc$,
-    Well-typedness premises when applying equivalence rules are omitted,
+    well-typedness premises when applying equivalence rules are omitted,
     especially since all of these terms are known to be well typed.
     Do note, however, that by repeated applications of inversion, we have
     $\subtype{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}}{\tauT}$. \\[\baselineskip]
     Let $\sigmaT$ be $\funT{\alphaT}{\SizeT}{\compile{\sigma}}$,
     and let $\eT$ be $\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}{\compile{e}}}$.
-    Liberally using \rref{equiv-trans}, for the left-hand side we then have
+    Liberally using transitivity, for the left-hand side we then have
     \begin{align*}
     \compile{\Phi}, \compile{\Gamma} &\vdash \app{\wfind}{\sigmaT}{\eT}{\compile{s}} \\
-    &\equiv \app{\wfacc}{\sigmaT}{\eT}{\compile{s}}{(\app{\accessible}{\compile{s}})} \qquad \textrm{by $\wfind$ and \rref*{equiv-beta}} \\
+    &\equiv \app{\wfacc}{\sigmaT}{\eT}{\compile{s}}{(\app{\accessible}{\compile{s}})} \qquad \textrm{by $\wfind$} \\
     &\equiv \app{(\fixT{1}{\wfacc*}{\funtypeT{\alphaT}{\SizeT}{\arrT*{\app{\AccT}{\alphaT}}{\app{\sigmaT}{\alphaT}}}}{ \\
       &\phantom{\equiv} \quad \funT{\alphaT}{\any}{\funT{\access}{\any}{\app{\eT}{\alphaT}{(\funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \alphaT}{ \\
       &\phantom{\equiv} \qquad \app{\wfacc*}{\betaT}{(\matchT*{\access}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}}})}}}})}{\compile{s}}{(\app{\accessible}{\compile{s}})} \\
-      &\phantom{\equiv} \textrm{by $\wfacc$ and \rref*{equiv-beta}} \\
+      &\phantom{\equiv} \textrm{by $\wfacc$} \\
     &\equiv \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT^*}{\betaT \szltT \compile{s}}{ \\
       &\phantom{\equiv} \quad \app{\wfacc}{\sigmaT}{\eT}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}}} \\
-      &\phantom{\equiv} \textrm{by \rref*{equiv-mu}, \rref*{equiv-beta}, and $\wfacc$} \\
+      &\phantom{\equiv} \textrm{by \rref*{equiv-mu} and $\wfacc$} \\
     &: \app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}
     \end{align*}
     Meanwhile, for the right-hand side we have
@@ -1430,11 +1418,12 @@ We therefore cover only that case here.
     \begin{align*}
     &\defeq{\compile{\Phi}, \compile{\Gamma}, \annotT{\betaT}{\SizeT}, \annotT{\betaT^*}{\betaT \szltT \compile{s}}}{\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})}}{\app{\accessible}{\betaT}}{\app{\AccT}{\betaT}}.
     \end{align*}
-    Finally, by \rref{equiv-cong}, we can equate the left- and right-hand sides,
+    Finally, by congruence, we can equate the left- and right-hand sides,
     and by \rref{equiv-conv}, we obtain our goal.
     \begin{align*}
-    \defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\App{(\fix{f}{\alpha}{\sigma}{e})}{s}}}{\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}}}{\tauT} \qedhere
+    \defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\App{(\fix{f}{\alpha}{\sigma}{e})}{s}}}{\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}}}{\tauT}
     \end{align*}
+    \qedhere
 \end{itemize}
 \end{proof}
 
@@ -1815,6 +1804,7 @@ du Canada au niveau de la maitrise (BESC M).
 \bibliography{biblio}
 
 %% Appendix
+\clearpage
 \appendix
 \section{Appendix}
 
@@ -1825,19 +1815,87 @@ du Canada au niveau de la maitrise (BESC M).
 
 \subsection{Congruence Rules for Reduction in \lang} \label{app:cong:red}
 
+\begin{figure}[h]
+\centering
+\fbox{$\red{\Phi; \Gamma}{\tau}{\tau}$} \qquad $\cdots$ \hfill
 \FigCongRed{fig:cong:red*}
+\caption{Reduction congruence rules (1 of 2)}
+\label{fig:cong:red*}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\fbox{$\red{\Phi; \Gamma}{\tau}{\tau}$} \qquad $\cdots$ \hfill
 \FigCongRedCase{fig:cong:red*-case}
+\caption{Reduction congruence rules (2 of 2)}
+\label{fig:cong:red*}
+\end{figure}
 
-\subsection{Congruence Rules for Equivalence in \CICE} \label{app:cong:equiv}
+\clearpage
+\subsection{Equivalence, Subtyping, and Typing Rules of \CICE} \label{app:equiv}
 
+\FigEquiv[h]{fig:equiv-cic}
+\begin{figure}[h]
+\centering
+\fbox{$\defeq{\GammaT}{\eT}{\eT}{\tauT}$} \qquad $\cdots$ \hfill
 \FigCongEquiv{fig:cong:equiv}
+\caption{Equivalence congruence rules}
+\label{fig:cong:equiv}
+\end{figure}
+\begin{figure}[h]
+\centering
+\begin{mathpar}
+\fbox{$\subtype{\GammaT}{\tauT}{\tauT}$}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-conv}{subtype-conv}]{
+  \defeq{\GammaT}{\tauT_1}{\tauT_2}{\UT}
+}{
+  \subtype{\GammaT}{\tauT_1}{\tauT_2}
+}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-prop}{subtype-prop}]{~}{
+  \subtype{\GammaT}{\PropT}{\TypeT{\iT}}
+}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-type}{subtype-type}]{
+  \iT \leq \jT
+}{
+  \subtype{\GammaT}{\TypeT{\iT}}{\TypeT{\jT}}
+}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-trans}{subtype-trans}]{
+  \subtype{\GammaT}{\tauT_1}{\tauT_2} \\
+  \subtype{\GammaT}{\tauT_2}{\tauT_3}
+}{
+  \subtype{\GammaT}{\tauT_1}{\tauT_3}
+}
+\and
+\inferrule[\rlabel{$\preccurlyeq$-pi}{subtype-pi}]{
+  \defeq{\GammaT}{\sigmaT_1}{\sigmaT_2}{\UT} \\
+  \subtype{\GammaT, \annotT{\xT}{\sigmaT_2}}{\tauT_1}{\tauT_2}
+}{
+  \subtype{\GammaT}{\funtypeT{\xT}{\sigmaT_1}{\tauT_1}}{\funtypeT{\xT}{\sigmaT_2}{\tauT_2}}
+}
+\end{mathpar}
+\caption{Subtyping rules (\CICE)}
+\label{fig:subtyping-cic}
+\end{figure}
+\FigTypingCIC[h]{fig:typing-cic}
 
+\clearpage
 \subsection{Rules for Complete Development of \lang} \label{app:develop}
 
-\FigTakahashiFull{fig:develop}
+\FigTakahashi{fig:develop}
+\begin{figure}[h]
+\centering
+\fbox{$\develop{\Phi; \Gamma}{e}{e}$} \qquad $\cdots$ \hfill
+\FigCongTakahashi{fig:cong:develop}
+\label{fig:develop:cong}
+\caption{Congruence rules for complete development}
+\end{figure}
 
+\clearpage
 \setmonofont{iosevka.ttc}
-
 \subsection{Mechanized \CICE Definitions in Coq}
 
 The following type check on Coq 8.15.1.
@@ -2010,7 +2068,8 @@ open Acc
 
 accIsProp : ∀ {s : Size {ℓ}} → (acc1 acc2 : Acc s) → acc1 ≡ acc2
 accIsProp (acc p) (acc q) =
-  cong acc (funext p q (λ r → funext (p r) (q r) (λ r<s → accIsProp (p r r<s) (q r r<s))))
+  cong acc (funext p q (λ r → funext (p r) (q r) (λ r<s →
+    accIsProp (p r r<s) (q r r<s))))
   where postulate funext : ∀ (p q : ∀ x → B x) → (∀ x → p x ≡ q x) → p ≡ q
 
 acc≤ : ∀ {r s : Size {ℓ}} → r ≤ s → Acc s → Acc r
@@ -2020,7 +2079,8 @@ wf : ∀ (s : Size {ℓ}) → Acc s
 wf (↑ s) = acc (λ { _ (↑s≤↑s r≤s) → acc≤ r≤s (wf s) })
 wf (⊔ f) = acc (λ { r (s≤⊔f f a r<fa) → (wf (f a)).acc< r r<fa })
 
-wfInd : ∀ (P : Size {ℓ} → Set ℓ′) → (∀ s → (∀ r → r < s → P r) → P s) → ∀ s → P s
+wfInd : ∀ (P : Size {ℓ} → Set ℓ′) → (∀ s → (∀ r → r < s → P r) → P s) →
+  ∀ s → P s
 wfInd P f s = wfAcc s (wf s)
   where
   wfAcc : ∀ s → Acc s → P s
