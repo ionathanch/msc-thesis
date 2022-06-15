@@ -459,7 +459,10 @@ $f, g$ for variables representing functions.
 As mentioned in \cref{sec:introduction}, the judgement forms of \lang include
 reduction, its various closures, $\alpha$-cumulativity, subtyping, and typing.
 On top of those, there are also judgement forms for subsizing, sizes,
-and well-formedness of size and term environments.
+and well-formedness of size and
+term environments \fbox{$\wf{}{\Phi}$}, \fbox{$\wf{\Phi}{\Gamma}$};
+since well-formedness rules are straightforward I omit them here,
+but they can be found in \cref{app:cong:red}.
 
 \begin{figure}[h]
 \centering
@@ -513,6 +516,7 @@ for $\kw{let}$ expressions as $\zeta$-reduction,
 and for defined variables as $\delta$-reduction.
 
 \FigSubtype{fig:subtyping}
+
 Rather than a single subtyping judgement like in \GCC,
 we use the same presentation as MetaCoq
 and split it into a subtyping judgement
@@ -527,20 +531,14 @@ while remaining invariant in the domain.
 All other types are invariant, as reflected by \rref{acum-refl}.
 A term is then a subtype of another if they are confluent up to $\alpha$-cumulativity.
 
-\FigSubsize{fig:subsizing}
-
 \cref{fig:subsizing} describes a preorder on sizes such that
 the successor operator is monotonic with respect to the order.
 The base size $\circ$ is smaller than all sizes,
 and the strict preorder $\bound{\alpha}{s}$ arising from bounded quantification or abstraction
 is defined as $\sss{\alpha} \mathrel{\leqslant} s$.
 An additional size judgement ensures well-scopedness of sizes.
-The size environment must be well formed as well;
-its rules are listed in \cref{fig:wf},
-along with those for well-formedness of term environments.
 
-\FigWF{fig:wf}
-
+\FigSubsize{fig:subsizing}
 \FigTyping[h]{fig:typing}
 
 Finally, the typing rules for the base \lang are given in \cref{fig:typing}.
@@ -565,7 +563,7 @@ which only allows applications to smaller sizes following the subsizing judgemen
 $\kw{case}$ expressions, and fixpoint expressions.
 Informally, borrowing syntax from the definition of general inductives,
 sized naturals and well-founded trees can be thought of as being defined by the following:
-%
+
 \begin{align*}
 &\data{\N{\alpha}}{\Type{1}} && \data{\App{\app{\W*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\alpha}}{\Type{i+1}} \\
 &\quad \annot{\zero*}{\Funtype<{\beta}{\alpha}{\N{\alpha}}} && \quad \annot{\sup*}{\Funtype<{\beta}{\alpha}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\beta}}{A}{B}})}{\App{\app{\W*}{A}{B}}{\alpha}}}}} \\
@@ -669,7 +667,7 @@ $\divv$ then only type checks because $\monus$ is size preserving.
 Because the first argument of the recursive call to $\divv$ isn't \emph{structurally}
 a subterm with the call to $\monus$ in the way,
 a guardedness check wouldn't accept the corresponding unsized function.
-
+%
 \begin{align*}
 &\Let{\divv}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}}{ \\
 &\fix{\divv*}{\alpha}{\Funtype{\beta}{\arr*{\N{\alpha}}{\N{\beta}}{\N{\alpha}}}}{ \\
@@ -711,7 +709,7 @@ recursive arguments appear as the return type of a function.
 Consider the following inductive definition
 representing the Brouwer notation for ordinals (see \eg \citet{ordinals})
 with zero, successor, and limit ordinals:
-%
+
 \begin{align*}
 &\data{\Ord{\alpha}}{\Type{1}} \\
 &\quad \annot{\zord*}{\Funtype<{\beta}{\alpha}{\Ord{\alpha}}} \\
@@ -902,9 +900,9 @@ regardless of what they are applied to.
 To maintain normalization,
 the usual guarded reduction rule in intensional CIC reduces fixpoints
 only when applied to a literal constructor in the recursive argument position.
-
+\vspace{-0.5\baselineskip}
 \begin{mathpar}
-\inferrule[\rlabel{$\equiv$-$\mu$-guarded}{equiv-mu-guarded}]{\cdots \\ \card{\vec{\eT}'} + 1 = \nT}{
+\inferrule*[right=\rlabel{$\equiv$-$\mu$-guarded}{equiv-mu-guarded}]{\cdots \\ \card{\vec{\eT}'} + 1 = \nT}{
   \defeq{\GammaT}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\app{(\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\tauT}
 }
 \end{mathpar}
@@ -1813,8 +1811,9 @@ du Canada au niveau de la maitrise (BESC M).
 
 \allowdisplaybreaks
 
-\subsection{Congruence Rules for Reduction in \lang} \label{app:cong:red}
+\subsection{Well-Formedness and Reduction Congruence Rules of \lang} \label{app:cong:red}
 
+\FigWF{fig:wf}
 \begin{figure}[h]
 \centering
 \fbox{$\red{\Phi; \Gamma}{\tau}{\tau}$} \qquad $\cdots$ \hfill
