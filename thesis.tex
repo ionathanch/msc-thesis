@@ -22,8 +22,7 @@
 \usepackage{style}
 
 % backreferences styled as ↪ page(s) x, y, and z
-\newcommand{\decline}[3]{\ifcase #1 #3\or #2\else #3\fi}
-\renewcommand{\backrefalt}[4]{\textcolor{gray}{$\hookrightarrow$~\decline{#1}{page}{pages}~#2}}
+\renewcommand{\backrefalt}[4]{\textcolor{gray}{\ifcase #1\or $\hookrightarrow$~page~#2\else $\hookrightarrow$~pages~#2\fi}}
 
 % links must be in "dark blue"
 % https://www.grad.ubc.ca/current-students/dissertation-thesis-preparation/fonts-print
@@ -89,6 +88,7 @@
 \include{chapters/proofs.tex}
 \include{chapters/discussion.tex}
 
+\phantom{\citep{phantom}}
 \bibliographystyle{plainnat}
 \begin{singlespace}
 \raggedright
