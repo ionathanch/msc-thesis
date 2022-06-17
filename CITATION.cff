@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+authors:
+- family-names: Chan
+  given-names: Jonathan
+  affiliation: University of British Columbia
+  orcid: https://orcid.org/0000-0003-0830-3180
+title: Sized Dependent Types via Extensional Type Theory
+repository-code: https://github.com/ionathanch/msc-thesis
+license: MIT
+preferred-citation:
+  type: mastersthesis
+  title: Sized Dependent Types via Extensional Type Theory
+  authors:
+  - family-names: Chan
+    given-names: Jonathan
+    affiliation: University of British Columbia
+    orcid: https://orcid.org/0000-0003-0830-3180
+  institution:
+    name: University of British Columbia
+  month: 7
+  year: 2022
+  doi: TBD
+  repository-code: https://github.com/ionathanch/msc-thesis
+  license: CC-BY-4.0
