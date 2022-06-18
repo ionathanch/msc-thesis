@@ -480,21 +480,21 @@ but they can be found in \cref{app:cong:red}.
 \and \inferrule[]{~}{\red{\Phi; \Gamma}{\App{(\Fun<{\alpha}{r}{e})}{s}}{\subst{e}{\alpha}{s}}}
 \and \inferrule[]{~}{\red{\Phi; \Gamma}{\letin{x}{\tau}{e'}{e}}{\subst{e}{x}{e'}}}
 %\and \inferrule[]{~}{\red{\Phi; \Gamma}{\unpair{\alpha}{x}{\Pair{s}{e'}}{e}}{\subst{e}{\alpha, x}{s, e'}}}
-\and \inferrule[\rlabel{$\rhd$-cong}{red-cong}]{
+\and \inferrule*[right=\rlabel{$\rhd$-cong}{red-cong}]{
   \red{\Phi'; \Gamma'}{e'}{e''}
 }{
   \red{\Phi; \Gamma}{\subst{e}{x}{e'}}{\subst{e}{x}{e''}}
 }
-\\\\
-\inferrule[\rlabel{$\rhd^*$-once}{red*-once}]{
+\\
+\inferrule*[right=\rlabel{$\rhd^*$-once}{red*-once}]{
   \red{\Phi; \Gamma}{e_1}{e_2}
 }{
   \red*{\Phi; \Gamma}{e_1}{e_2}
 }
-\and
-\inferrule[\rlabel{$\rhd^*$-refl}{red*-refl}]{~}{\red*{\Phi; \Gamma}{e}{e}}
-\and
-\inferrule[\rlabel{$\rhd^*$-trans}{red*-trans}]{
+\quad
+\inferrule*[right=\rlabel{$\rhd^*$-refl}{red*-refl}]{~}{\red*{\Phi; \Gamma}{e}{e}}
+\quad
+\inferrule*[right=\rlabel{$\rhd^*$-trans}{red*-trans}]{
   \red*{\Phi; \Gamma}{e_1}{e_2} \\
   \red*{\Phi; \Gamma}{e_2}{e_3}
 }{
@@ -626,13 +626,11 @@ is discussed later in \cref{subsec:infinity}.
 
 \subsection{Examples} \label{subsec:examples}
 
-Now that the rules of \lang have been established,
-this section presents examples of using \lang
-for programming and proving.
+This section presents examples of using \lang for programming and proving.
 Although it only has naturals and well-founded trees,
-We also use other sized inductive types as examples,
+we also use other sized inductive types as examples,
 informally defining them similarly to \cref{subsec:ind-types}.
-Additionally, we omit the type annotation of $\kw{let}$-bound expressions
+We omit the type annotation of $\kw{let}$-bound expressions
 when the type is evident or deducible from context.
 
 \subsubsection{Size-preserving functions}
@@ -647,8 +645,7 @@ is size preserving in its first argument,
 since $n - m$ is never greater than $n$.
 Here, $\pred$ is another size-preserving function
 $\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}}$
-that computes $\maximum{0, n - 1}$ for some number $n$
-whose definition is omitted for space.
+that computes $\maximum{0, n - 1}$ for some number $n$.
 %
 \begin{align*}
 &\Let{\monus}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}}{ \\
@@ -734,12 +731,12 @@ that lifts an ordinal $\Ord{\beta}$ to a larger-sized ordinal $\Ord{\alpha}$, we
 &\Let{\omegaOrd}{\Ord{\sss{\hole}}}{\lord{\sss{\hole}}{\hole}{(\Fun<{\gamma}{\hole}{\fun{n}{\N{\gamma}}{\app{\App{\liftO}{\hole}{\gamma}}{(\app{\App{\natOrd}{\gamma}}{n})}}})}}
 \end{align*}
 
-Aside from the additional bounds and size lifting, there is one crucial problem: what size fills in the hole \new{$\hole$}?
+The crucial problem is: what size fills in the hole \new{$\hole$}?
 Intuitively, this size must be larger than the size of \emph{any} natural.
 Therefore, a corresponding ``limit size'' is needed;
 the infinite size in other sized type theories can fill this role since it's larger than all sizes
 and therefore the limit of \emph{all} sizes.
-We discuss more about the infinite size and its absence from \lang in \cref{subsec:infinity}.
+We discuss the infinite size further in \cref{subsec:infinity}.
 
 \section{Syntactic Model of \lang} \label{sec:model}
 
@@ -747,12 +744,12 @@ We discuss more about the infinite size and its absence from \lang in \cref{subs
 \input{figures/definitions.tex}
 \input{figures/translation.tex}
 
-\lang is modelled in \CICE, as briefly described in \cref{sec:introduction}.
+\lang is modelled in \CICE.
 The key idea is that sizes in \lang can themselves be represented as a inductive type in \CICE,
 and naturals and well-founded trees are then inductives with an additional size parameter.
 Sizes are represented as a (generalization of) the Brouwer notation for ordinals in type theory,
 and their order as an inductive type indexed by sizes.
-The order is \emph{well-founded}:
+The order is \emph{well founded}:
 there is no infinite sequence of ever-smaller sizes,
 and there is always a ``smallest'' size (or many of them).
 This property allows for \emph{well-founded induction},
@@ -763,13 +760,15 @@ To prove well-foundedness and in turn the induction principle,
 we show that sizes satisfy an \emph{accessibility predicate}~\citep{accessibility}.
 For the type preservation proof to go through,
 \emph{definitional proof irrelevance}
-of accessibility predicates is required---that is,
-every proof of accessibility is definitionally equal to one another.
+of accessibility predicates is required---all proofs of accessibility
+are definitionally equal.
 This holds in extensional type theory via equality reflection
 but not in intensional type theory,
-which is why an extensional CIC is used.
+hence our use of extensional CIC is used.
 
-The first half of this section provides the syntax and judgements of \CICE.
+We start by briefly reviewing the syntax and judgements of \CICE.
+We then describe the translation from \lang to \CICE,
+which is a metafunction from typing derivations of \lang to terms of \CICE.
 In addition to the notation used in \cref{sec:sized-dep-types},
 given variables $\vec{\xT} = \xT_1 \seq \xT_n$,
 terms $\vec{\eT} = \eT_1 \seq \eT_n$,
@@ -782,11 +781,6 @@ $\subst{\eT}{\xT_1, \seq, \xT_n}{\eT_1, \seq, \eT_n}$,
 $\funT{\xT_1}{\tauT_1}{\seq \funT{\xT_n}{\tauT_n}{\eT}}$, and
 \new{$\type{\GammaT}{\vec{\eT}}{\vec{\tauT}}$} denotes the $n$ typing judgements
 $(\type{\GammaT}{\eT_1}{\tauT_1})$, \seq, $(\type{\GammaT, \annotT{\eT_1}{\tauT_1}, \seq, \annotT{\eT_{n-1}}{\tauT_{n-1}}}{\eT_n}{\tauT_n})$.
-
-The second half then describes the translation from \lang to \CICE,
-which is a metafunction from typing derivations of \lang to terms of \CICE.
-Therefore, the translation is only defined for well-typed \lang terms,
-but the type preservation theorem only applies to well-typed terms anyway.
 
 \subsection{Target Type Theory}
 
@@ -803,8 +797,8 @@ and $\aT$ for inductive type indices.
 
 The well-formedness conditions on inductive data definitions,
 such as well-typedness and \emph{strict positivity},
-are entirely standard, so they aren't detailed here;
-see pCIC~\citep{pCIC} for instance for a full description.
+are entirely standard, so we omit them;
+see \eg pCIC~\citep{pCIC} for instance for a full description.
 Inductive definitions in their full generality are not needed,
 and nonmutual, nonnested inductives suffice.
 Indeed, only six inductive definitions are used for the translation,
@@ -1030,7 +1024,6 @@ well-typedness holds under some environment, so term environments need translati
 sizes and their environments translate to terms and term environments as well;
 and derivations of size orders translate to terms which represent them.
 
-\vspace{-2\baselineskip}
 \FigTransSize{fig:trans:size}
 
 We begin with the translation of sizes and their environments in \cref{fig:trans:size},
