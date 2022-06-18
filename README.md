@@ -1,4 +1,4 @@
-# Sized Dependent Types in Extensional Type Theory
+# Sized Dependent Types via Extensional Type Theory
 
 ## Graduation Checklist
 
@@ -20,3 +20,4 @@
 
 * Revisit `% TODO`s eventually
 * Pick a name for source language
+* Cite thesis in POPL paper
