@@ -217,7 +217,7 @@ In short, the notion of a ``smaller'' argument is encoded within the types.
 Finally, a recursive function is well typed only if it recurs on an argument
 whose size is smaller than that of the original argument.
 
-Because well-typedness is the only required condition,
+Because well typedness is the only required condition,
 calling some other function before a recursive call is allowed
 as long as that function is \emph{size preserving}.
 For the list mapping example above,
@@ -459,9 +459,9 @@ $f, g$ for variables representing functions.
 As mentioned in \cref{sec:introduction}, the judgement forms of \lang include
 reduction, its various closures, $\alpha$-cumulativity, subtyping, and typing.
 On top of those, there are also judgement forms for subsizing, sizes,
-and well-formedness of size and
+and well formedness of size and
 term environments \fbox{$\wf{}{\Phi}$}, \fbox{$\wf{\Phi}{\Gamma}$};
-since well-formedness rules are straightforward I omit them here,
+since well formedness rules are straightforward I omit them here,
 but they can be found in \cref{app:cong:red}.
 
 \begin{figure}[h]
@@ -536,7 +536,7 @@ the successor operator is monotonic with respect to the order.
 The base size $\circ$ is smaller than all sizes,
 and the strict preorder $\bound{\alpha}{s}$ arising from bounded quantification or abstraction
 is defined as $\sss{\alpha} \mathrel{\leqslant} s$.
-An additional size judgement ensures well-scopedness of sizes.
+An additional size judgement ensures well scopedness of sizes.
 
 \FigSubsize{fig:subsizing}
 \FigTyping[h]{fig:typing}
@@ -756,7 +756,7 @@ This property allows for \emph{well-founded induction},
 where to prove some property on sizes, one supposes that it holds for all strictly smaller sizes.
 
 Every fixpoint expression in \lang is modelled as an instance of well-founded induction in \CICE.
-To prove well-foundedness and in turn the induction principle,
+To prove well foundedness and in turn the induction principle,
 we show that sizes satisfy an \emph{accessibility predicate}~\citep{accessibility}.
 For the type preservation proof to go through,
 \emph{definitional proof irrelevance}
@@ -795,14 +795,14 @@ Metavariable usage convention is roughly the same as for \lang,
 with the addition of $\pT$ for inductive type parameters or proofs of equality
 and $\aT$ for inductive type indices.
 
-The well-formedness conditions on inductive data definitions,
-such as well-typedness and \emph{strict positivity},
+The well formedness conditions on inductive data definitions,
+such as well typedness and \emph{strict positivity},
 are entirely standard, so we omit them;
 see \eg pCIC~\citep{pCIC} for instance for a full description.
 Inductive definitions in their full generality are not needed,
 and nonmutual, nonnested inductives suffice.
 Indeed, only six inductive definitions are used for the translation,
-for representing sizes, their order, their well-foundedness,
+for representing sizes, their order, their well foundedness,
 and the empty type, naturals, and well-founded trees.
 
 \begin{figure}[h]
@@ -913,7 +913,7 @@ As opposed to \lang, for \CICE we use pCIC's presentation of subtyping,
 which has a typed equivalence premise in \rref{subtype-conv}.
 It also has an explicit rule for transitivity of subtyping since judgements such as
 $\subtype{\mt}{\app{(\funT{P}{\TypeT{\tg{1}}}{P})}{\PropT}}{\TypeT{\tg{0}}}$ would fail to hold otherwise.
-Finally, the typing and environment well-formedness rules are similar to those in \lang.
+Finally, the typing and environment well formedness rules are similar to those in \lang.
 An additional premise to \rref{fix*} ensures that the $\nT$th argument is indeed an inductive type.
 As previously mentioned, fixpoints must also be guarded:
 recursive calls can only occur on structurally smaller arguments of elements of inductives.
@@ -1020,7 +1020,7 @@ so that the types of $\NatT$ and $\WT$ and their constructors are preserved.
 The key type preservation theorem states that well-typed terms of \lang translate to
 corresponding well-typed terms of CICE.
 However, terms are not the only thing requiring translation:
-well-typedness holds under some environment, so term environments need translations;
+well typedness holds under some environment, so term environments need translations;
 sizes and their environments translate to terms and term environments as well;
 and derivations of size orders translate to terms which represent them.
 
@@ -1038,7 +1038,7 @@ The translation of subsizing judgements, on the other hand,
 is a recursive metafunction over the \emph{subsizing derivation}.
 \cref{fig:trans:subsize} defines the translation to \CICE terms
 by induction on the subsizing rules, which recursively translates subderivations
-(omitting irrelevant size well-scopedness premises).
+(omitting irrelevant size well scopedness premises).
 
 \begin{figure}[h]
 \centering
@@ -1080,7 +1080,7 @@ by induction on the subsizing rules, which recursively translates subderivations
 \end{figure}
 
 The translation of terms and term environments are similarly defined
-as recursive metafunctions over the typing and well-formedness derivations,
+as recursive metafunctions over the typing and well formedness derivations,
 denoted by
 \mbox{$\typeto{\Phi; \Gamma}{e}{\tau}{\eT}$} and \mbox{$\wfto{\Phi}{\Gamma}{\GammaT}$}
 respectively.
@@ -1151,7 +1151,7 @@ We begin first with these properties before moving on to the preservation proofs
 The metatheoretical properties we need of \lang are
 \emph{confluence} (two different reducts of a term further reduce to a coinciding term),
 transitivity of $\alpha$-cumulativity and subtyping (since it's not an explicit derivation rule),
-\emph{regularity} (well-typedness of the type of a well-typed term),
+\emph{regularity} (well typedness of the type of a well-typed term),
 and \emph{subject reduction} (well-typed terms reduce to well-typed terms).
 Significant lemmas are introduced as needed.
 
@@ -1262,7 +1262,7 @@ $\type{\mt}{\eT}{\funtypeT{\PT}{\PropT}{\PT}}$.
 
 \subsection{Type Preservation} \label{subsec:preservation}
 
-In the following proofs, we assume well-typedness of the preliminary definitions of \cref{subsec:prelim}.
+In the following proofs, we assume well typedness of the preliminary definitions of \cref{subsec:prelim}.
 The first few lemmas we need are compositionality of substitution.
 Because there are a number of different notions of substitution
 (term substitution into a term,
@@ -1368,7 +1368,7 @@ We therefore cover only that case here.
     }{\tauT},$$
     where $\wfind$ (and $\wfacc$) are defined in \cref{fig:defns}.
     Because of the sheer volume of the terms involved in the translation, $\wfind$, and $\wfacc$,
-    well-typedness premises when applying equivalence rules are omitted,
+    well typedness premises when applying equivalence rules are omitted,
     especially since all of these terms are known to be well typed.
     Do note, however, that by repeated applications of inversion, we have
     $\subtype{\compile{\Phi}, \compile{\Gamma}}{\app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}}{\tauT}$. \\[\baselineskip]
@@ -1804,7 +1804,7 @@ du Canada au niveau de la maitrise (BESC M).
 
 \allowdisplaybreaks
 
-\subsection{Well-Formedness and Reduction Congruence Rules of \lang} \label{app:cong:red}
+\subsection{well formedness and Reduction Congruence Rules of \lang} \label{app:cong:red}
 
 \FigWF{fig:wf}
 \begin{figure}[h]
