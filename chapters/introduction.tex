@@ -169,7 +169,7 @@ For the list mapping example above,
 this means that if the sublist of elements of type $\tau$ has size $s$,
 then the mapping function must have type $\arr*{\List{\tau}{s}}{\List{\tau}{s}}$.
 Notice that the implementation of the mapping function isn't required,
-merely its type, thereby avoiding the issues with inlining and unfolding.
+merely its type, restoring modularity and compositionality.
 
 This thesis then introduces Sizey \textsc{mc}Type Theory (\lang),
 a sized dependent type theory that I prove to be logically consistent
@@ -276,9 +276,9 @@ to inductive types in general.
 
 \subsection{Sized types}\label{sec:sized-types}
 
-Sized types are introduced with explicit size quantification $\Funtype{\alpha}{\tau}$,
+Sized types begin with explicit size quantification $\Funtype{\alpha}{\tau}$,
 size abstraction $\Fun{\alpha}{e}$, and size application $\App{e}{s}$.
-Sizes themselves consist of size variables as well as a \emph{base size}
+Sizes themselves consist of size variables, a \emph{base size},
 and a \emph{size successor operator}.
 This is the standard for size expressions in sized type systems.
 Some augment the size grammar with addition of or scalar multiplication of size variables,
@@ -301,7 +301,7 @@ Explicit sizes, in contrast, let us express
 which allow for more expressiveness:
 for instance, supposing we have cons lists parametrized over some sized type $\tau$,
 one could write a size-preserving mapping function over a list
-that leaves the sizes untouched.
+that leaves the size of its elements untouched.
 The type of such a function might be
 
 \vspace{-0.25\baselineskip}
@@ -324,12 +324,22 @@ summarized by the below typing rule.
 }
 \end{mathpar}
 
-Bounded sizes were originally introduced to avoid complex
-\emph{semi-continuity} or approximative \emph{polarity}
-requirements on fixpoints' types in the presence of an \emph{infinite size}\index{infinite size}
-that is strictly larger than all sizes~\citep{flationary}.
-Although I don't include an infinite size,
-this style of recursion is more elegant because it corresponds neatly to well-founded induction on sizes.
+Bounded sizes were originally introduced to avoid inconsistencies
+from pattern-matching on sizes~\citep{MiniAgda}.
+Although \lang has no pattern-matching mechanism,
+this style of recursion is more elegant because it corresponds neatly to well-founded induction on sizes,
+and because it does away with complex \emph{semi-continuity} or approximative \emph{polarity}
+requirements on fixpoints' types that would otherwise be needed for consistency.
+Indeed, to \citet{flationary},
+
+\begin{quote}
+\begin{singlespace}
+\textit{A technical condition like semi-continuity can kill a system
+as a candidate for the foundation of logics and programming
+{\rm [\ldots]} Most systems for type-based termination replace semi-continuity by a rough approximation,
+trading expressivity for simplicity}.
+\end{singlespace}
+\end{quote}
 
 In summary, the sized type features I include are:
 
@@ -344,8 +354,9 @@ In summary, the sized type features I include are:
 \end{itemize}
 
 Notably, these are all features found in Agda's implementation of sized types.
-The only missing feature is the infinite size,
-since its properties and its use are known to be inconsistent in Agda.
+On the other hand, \lang excludes Agda's \emph{infinite size}\index{infinite size}
+that is strictly larger than all sizes,
+since this property is known to be inconsistent in Agda.
 A demonstration of the inconsistency of a hypothetical infinite size in \lang
 is given in \cref{sec:infinity}.
 On the other hand, the lack of an infinite size prevents
@@ -712,5 +723,6 @@ Following that, in \cref{ch:proofs} I prove various necessary metatheoretical pr
 including confluence and subject reduction,
 and elaborate on the proof of type preservation and its associated lemmas.
 I conclude in \cref{ch:discussion}, discussing some of the shortcomings of \lang,
-namely the universe levels of the inductive types and the lack of an infinite size,
+namely the universe levels of the inductive types and
+decreased expressivity arising from removing the infinite size,
 as well directions for future investigation.
