@@ -21,9 +21,8 @@ Every fixpoint expression in \lang is modelled as an instance of well-founded in
 To prove well-foundedness and in turn the induction principle,
 I show that sizes satisfy an \emph{accessibility predicate}\index{accessibility predicate}~\citep{accessibility}.
 For the type preservation proof to go through,
-\emph{definitional proof irrelevance}\index{proof irrelevance}
-of accessibility predicates is required---that is,
-every proof of accessibility is definitionally equal to one another.
+\emph{definitional proof irrelevance}\index{proof irrelevance} of accessibility predicates
+is required---every proof of accessibility is definitionally equal to one another.
 This holds in extensional type theory via equality reflection\index{equality reflection}
 but not in intensional type theory,
 which is why an extensional CIC is used.
@@ -63,7 +62,7 @@ and $\aT$ for inductive type indices.
 
 The well-formedness conditions on inductive data definitions,
 such as well-typedness and \emph{strict positivity}\index{strict positivity},
-are entirely standard, so I don't detail them here;
+are entirely standard, so I omit them here;
 see pCIC\index{Calculus of Inductive Constructions!Predicative \textasciitilde}~\citep{pCIC}
 for instance for a full description.
 Inductive definitions in their full generality are not needed,
