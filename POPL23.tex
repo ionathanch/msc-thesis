@@ -92,24 +92,24 @@
 %% before \maketitle command
 \begin{abstract}
 Contemporary proof assistants based on dependent type theories
-must restrict nonterminating recursive functions to ensure logical consistency of the type theory
+restrict nonterminating recursive functions to ensure logical consistency of the type theory
 and decidability of type checking.
 This is done via guard predicates that only allow functions
 that are structurally recursive and that recur only on syntactically smaller arguments.
-However, guard predicates are too restrictive and reject functions
+However, guard predicates are restrictive and reject functions
 that aren't structurally recursive but are obviously terminating,
 creating extra work for the programmer to convince the guard checker.
 
 An alternative is sized types, a type-based termination checking method
-where inductively-defined types are annotated with sizes.
+where inductively defined types are annotated with sizes.
 Type checking guarantees that functions recur only on arguments whose types have smaller sizes,
 rather than on arguments that syntactically appear smaller,
-allowing more terminating functions to be accepted.
-Unfortunately, models of sized dependent type theories fail to support pragmatic features
+accepting more terminating functions.
+Unfortunately, models of sized dependent types fail to support pragmatic features
 such as higher-rank size quantification,
-which allows for passing around size-preserving functions,
+which allows for first-class size-preserving functions,
 and bounded size quantification,
-which eliminates the need for complex monotonicity checks required by prior sized type systems.
+which eliminates complex monotonicity checks required by prior sized type systems.
 
 We present a sized dependent type theory with higher-rank and bounded sizes (\lang),
 and prove its logical consistency with a syntactic model:
