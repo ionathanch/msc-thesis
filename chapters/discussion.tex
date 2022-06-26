@@ -95,11 +95,32 @@ all of the well-founded trees returned have that size.}
 which for weak existentials\index{weak dependent pair} (whose elements we can't project out)
 is nonconstructive,
 so there's no hope of implementing $\const{ac}$.
-However, if we take weak existentials as a primitive of \lang
-rather than being defined as an encoding,
-and model them by strong dependent pairs in \CICE,
-then the translation of $\const{ac}$ \emph{can} be implemented as a function,
-also making use of the limit operator.
+Even if size expressions were terms and
+projections out to some primitive type $\Size$ of sizes were allowed,
+implementing $\const{ac}$ still requires some notion of limit sizes $\slim{A}{f}$ on functions
+$\annot{f}{\arr{A}{\Type{}}{\arr*{A}{\Size}}}$ and the below subsizing derivation rules,
+which would be undecidable in general if $A$ has uncountably many elements
+from which the first rule must select an $a$.
+%
+\begin{mathpar}
+\inferrule{
+\subsize{\Phi; \Gamma}{s}{\app{f}{A}{a}}
+}{
+\subsize{\Phi; \Gamma}{s}{\slim{A}{f}}
+}
+\and
+\inferrule{
+\subsize{\Phi; \Gamma, \annot{x}{A}}{\app{f}{A}{x}}{s}
+}{
+\subsize{\Phi; \Gamma}{\slim{A}{f}}{s}
+}
+\end{mathpar}
+
+Even so, taking weak existentials as a primitive of \lang
+rather than defining them by an encoding,
+and modelling them by strong dependent pairs in \CICE,
+the \emph{translation} of $\const{ac}$ can be implemented as a function,
+making use of the limit operator.
 In other words, the syntactic model\index{syntactic model} justifies the axiom $\const{ac}$ in the source.
 The mechanization of $\compile{\const{ac}}$ in Agda and Coq are given in
 \cref{app:mechanization:agda:W} and \cref{app:mechanization:coq:W}, respectively.
