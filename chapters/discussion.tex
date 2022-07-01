@@ -292,7 +292,6 @@ just like fixpoints.
 Interestingly, this suggests that cofixpoints might also be translated in the syntactic model
 to well-founded induction\index{well-founded induction} on sizes despite constructing a coinductive type.
 
-\clearpage % TODO: clearpage
 With cofixpoints, we can then construct an infinite stream of some single element.
 Let $A$ in the definitions to follow be some type.
 \begin{align*}
@@ -314,7 +313,6 @@ or interleaving two streams by alternation.
 & \Let{\odds}{\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\Stream{A}{\beta}})}{\Stream{A}{\alpha}}}}{ \\
 & \quad \cofix{\odds*}{\alpha}{\arr*{(\Funtype{\beta}{\Stream{A}{\beta}})}{\Stream{A}{\alpha}}}{ \\
 & \qquad \fun{s}{\Funtype{\beta}{\Stream{A}{\beta}}}{\scons{\beta}{\alpha}{\shd{(\App{s}{\alpha})}}{\beta}{\alpha}{\app{\App{\odds*}{\beta}}{(\Fun{\gamma}{\App{\stl{(\App{\stl{(\App{s}{\sss{\sss{\gamma}}})}}{\sss{\gamma}})}}{\gamma}})}}}}} \\
-\hfill \\
 & \Let{\interleave}{\Funtype{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}}{ \\
 & \quad \cofix{\interleave*}{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}{ \\
 & \qquad \fun{s_1}{\Stream{A}{\alpha}}{\fun{s_2}{\Stream{A}{\alpha}}{\scons{\beta}{\alpha}{\shd{s_1}}{\beta}{\alpha}{ \\
@@ -327,14 +325,12 @@ One common example from Haskell is defining a stream of Fibonacci numbers using,
 in our case, a size-preserving zipping function.
 Suppose we have a function $\annot{f}{\arr*{A}{A}{A}}$ and some element $\annot{a}{A}$.
 (For the actual Fibonacci numbers, $A$ would be the naturals, $f$ would be addition, and $a$ would be 1.)
+
 \begin{align*}
 & \Let{\zip}{\Funtype{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}}{ \\
 & \quad \cofix{\zip*}{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}{ \\
 & \qquad \fun{s_1}{\Stream{A}{\alpha}}{\fun{s_2}{\Stream{A}{\alpha}}{ \\
-& \qquad \quad \scons{\beta}{\alpha}{\app{f}{\shd{s_1}}{\shd{s_2}}}{\beta}{\alpha}{\app{\App{\zip*}{\beta}}{(\App{\stl{s_1}}{\beta})}{(\App{\stl{s_2}}{\beta})}}}}}}
-\end{align*}
-
-\begin{align*}
+& \qquad \quad \scons{\beta}{\alpha}{\app{f}{\shd{s_1}}{\shd{s_2}}}{\beta}{\alpha}{\app{\App{\zip*}{\beta}}{(\App{\stl{s_1}}{\beta})}{(\App{\stl{s_2}}{\beta})}}}}}} \\
 & \Let{\fibs}{\Funtype{\alpha}{\Stream{A}{\alpha}}}{ \\
 & \quad \cofix{\fibs*}{\alpha}{\Stream{A}{\alpha}}{ \\
 & \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\scons{\gamma}{\beta}{a}{\gamma}{\beta}{\app{\App{\zip}{\gamma}}{(\App{\fibs*}{\gamma})}{(\App{\stl{(\App{\fibs*}{\beta})}}{\gamma})}}}}}
@@ -374,7 +370,6 @@ since it allows encoding M types, the dual of W types, not just streams.
 \begin{align*}
 & \data{\Stream{(\annot{A}{\Type{i}})}{\alpha}}{\Type{i+1}} \\
 & \quad \annot{\scons*}{\arr*{A}{\Thunk{(\app{\Stream*}{A})}{\alpha}}{\Stream{A}{\alpha}}} \\
-\hfill \\
 & \data{\App{\app{\M*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\alpha}}{\Type{i+1}} \\
 & \quad \annot{\inf*}{\arr{a}{A}{\arr*{(\arr*{\app{B}{a}}{\Thunk{(\app{\M*}{A}{B})}{\alpha}})}{\App{\app{\M*}{A}{B}}{\alpha}}}}
 \end{align*}
