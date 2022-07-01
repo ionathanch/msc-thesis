@@ -204,8 +204,8 @@ such as the length of a list in the example above,
 but this requires additional work and may bloat programs
 with extra code solely for satisfying the guardedness check.
 Alternatives to the guardedness check that avoid these issues are type-based checks,
-where the type system itself is augmented so that successful type checking
-guarantees consistency.
+where the type system itself is augmented so that type checking
+guarantees consistency without syntactically analyzing function terms.
 
 This paper discusses one, \emph{sized typing}\punctstack{,}%
 \footnote{The other common one uses \emph{guarded types}~\citep{guarded-types}.}
@@ -250,16 +250,16 @@ Our purpose is twofold:
     but not both, to our knowledge.
     On the other hand, they are currently in Agda's implementation of sized types.
     By proving the consistency of \lang, a novel type theory with these two features,
-    we bring the theoretical state-of-the-art closer to practice.
+    we bring the theoretical state-of-the-art closer to practice,
+    while increasing trust in the corresponding sublanguage of sized types in Agda.
   \item To demonstrate the viability of using a syntactic model to prove consistency
     of a sized type theory.
     Doing so from scratch through a set-theoretic model is notoriously difficult,
     and often requires sacrifices to and constraints on the type theory;
     see Sacchini's dissertation~\citep{CIC-hat-minus} or \CIChatstar~\citep{CIC-hat-star},
     for instance.
-    Instead, a syntactic model relies on the consistency of the language in which we're modelling,
-    allowing us to focus on only the interesting parts of the sized type theory
-    rather than on consistency as a whole.
+    Meanwhile, a syntactic model into a similar type theory lets us highlight
+    the differences unique to sized types.
 \end{itemize}
 
 \subsection{Related Work}
@@ -1375,23 +1375,23 @@ We therefore cover only that case here.
     Liberally using transitivity, for the left-hand side we then have
     \begin{align*}
     \compile{\Phi}, \compile{\Gamma} &\vdash \app{\wfind}{\sigmaT}{\eT}{\compile{s}} \\
-    &\equiv \app{\wfacc}{\sigmaT}{\eT}{\compile{s}}{(\app{\accessible}{\compile{s}})} \qquad \textrm{by $\wfind$} \\
+    &\equiv \app{\wfacc}{\sigmaT}{\eT}{\compile{s}}{(\app{\accessible}{\compile{s}})} \quad \textrm{by $\wfind$} \\
     &\equiv \app{(\fixT{1}{\wfacc*}{\funtypeT{\alphaT}{\SizeT}{\arrT*{\app{\AccT}{\alphaT}}{\app{\sigmaT}{\alphaT}}}}{ \\
       &\phantom{\equiv} \quad \funT{\alphaT}{\any}{\funT{\access}{\any}{\app{\eT}{\alphaT}{(\funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \alphaT}{ \\
-      &\phantom{\equiv} \qquad \app{\wfacc*}{\betaT}{(\matchT*{\access}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}}})}}}})}{\compile{s}}{(\app{\accessible}{\compile{s}})} \\
-      &\phantom{\equiv} \textrm{by $\wfacc$} \\
+      &\phantom{\equiv} \qquad \app{\wfacc*}{\betaT}{(\matchT*{\access}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}}})}}}})}{\compile{s}}{(\app{\accessible}{\compile{s}})} \quad \textrm{by $\wfacc$} \\
     &\equiv \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT^*}{\betaT \szltT \compile{s}}{ \\
-      &\phantom{\equiv} \quad \app{\wfacc}{\sigmaT}{\eT}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}}} \\
-      &\phantom{\equiv} \textrm{by \rref*{equiv-mu} and $\wfacc$} \\
+      &\phantom{\equiv} \quad \app{\wfacc}{\sigmaT}{\eT}{\beta}{(\matchT*{\app{\accessible}{\compile{s}}}{(\app{\accT}{\pT} \Rightarrow \app{\pT}{\betaT}{\betaT^*})})}}} \quad \textrm{by \rref*{equiv-mu} and $\wfacc$} \\
     &: \app{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\compile{s}}
     \end{align*}
     Meanwhile, for the right-hand side we have
+
     \begin{align*}
+    \allowdisplaybreaks
     &\compile{\subst{e}{\alpha, f}{s, \Fun<{\beta}{s}{\App{(\fix{f}{\alpha}{\sigma}{e})}{\beta}}}} \\
     &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\compile{\fix{f}{\alpha}{\sigma}{e}}}{\betaT}}}} \\
       &\phantom{=} \textrm{by \cref{lem:compos-unbounded} and \cref{lem:compos-term}} \\
-    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfind}{\sigmaT}{\eT}{\betaT}}}} \textrm{by translation of $\kw{fix}$} \\
-    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfacc}{\sigmaT}{\eT}{\betaT}{(\app{\accessible}{\betaT})}}}} \qquad \textrm{by $\wfind$}
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfind}{\sigmaT}{\eT}{\betaT}}}} \quad \textrm{by translation of $\kw{fix}$} \\
+    &= \subst{\compile{e}}{\alphaT, \fT}{\compile{s}, \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{s}}{\app{\wfacc}{\sigmaT}{\eT}{\betaT}{(\app{\accessible}{\betaT})}}}} \quad \textrm{by $\wfind$}
     \end{align*}
     The only difference between the left- and right-hand sides now
     is the proof of $\app{\AccT}{\betaT}$ for some $\betaT \szltT \compile{s}$,
@@ -1775,7 +1775,7 @@ an extensional dependent type theory, by translating \lang terms to \CICE terms
 and proving that the translation is type preserving.
 Finally, we discussed the tradeoffs in the design of \lang for this syntactic model to work,
 namely the lack of an infinite size and raising the universe levels of the inductives,
-as well as some potential extensions and future work.
+as well as potential extensions and future work.
 
 %% Acknowledgments
 \begin{acks}
