@@ -308,6 +308,7 @@ We introduce and motivate these features in the next subsection.
 
 \begin{table}[h]
 \centering
+\small
 \begin{tabular}{l c c c c}
 Type theory & Explicit sizes? & Higher-rank? & Bounded? & Consistent? \\
 \hline
@@ -1601,18 +1602,15 @@ and we're good to go.
 \unpair*{\alpha}{f'}{\app{\const{ac}}{x}{f}}{\Pair{\sss{\alpha}}{\sup{x}{A}{B}{\sss{\alpha}}{\alpha}{x}{f'}}}
 \end{align*}
 
-Unfortunately, as the name might suggest,
-$\const{ac}$ is an instance of the axiom of choice\punctstack{,}%
-\footnote{The ``choice'' made here is the existentially-quantified size in the consequent:
-the axiom asserts that there's always a way to choose a size such that
-all of the well-founded trees returned have that size.}
-which for weak existentials is nonconstructive,
-so there's no hope of implementing $\const{ac}$.
-However, if we take weak existentials as a primitive of \lang
-rather than being defined as an encoding,
+Unfortunately, $\const{ac}$ can't be implemented for weak existentials
+and can only be an axiom.
+If we were to instead add strong dependent pairs of sizes and types,
+$\const{ac}$ would still require a notion of a limit of a function returning sizes
+and its subsizing properties, which would render checking subsizing undecidable.
+
+Even so, if we take existentials as a primitive of \lang
 and model them by strong dependent pairs in \CICE,
-then the translation of $\const{ac}$ \emph{can} be implemented as a function,
-also making use of the limit operator.
+then the \emph{translation} of $\const{ac}$ can be implemented as a function.
 In other words, the syntactic model justifies the axiom $\const{ac}$ in the source.
 The mechanization of $\compile{\const{ac}}$ in Agda and Coq are given in
 \cref{app:mechanization:agda:W} and \cref{app:mechanization:coq:W}, respectively.
