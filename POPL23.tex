@@ -101,7 +101,7 @@ that aren't structurally recursive but are obviously terminating,
 creating extra work for the programmer to convince the guard checker.
 
 An alternative is sized types, a type-based termination checking method
-where inductively defined types are annotated with sizes.
+where inductively-defined types are annotated with sizes.
 Type checking guarantees that functions recur only on arguments whose types have smaller sizes,
 rather than on arguments that syntactically appear smaller,
 accepting more terminating functions.
@@ -165,7 +165,7 @@ such as Lean 3~\citep{impred-proof-irrel}, due to interactions between definitio
 and impredicativity.}
 
 The usual termination checks are done syntactically using a \emph{guardedness check}:
-recursion must be done on inductively defined types,
+recursion must be done on inductively-defined types,
 and recursive calls must occur on syntactic subarguments.
 For instance, if a recursive function on naturals is given the successor $\app{\succ*}{n}$,
 then it must recur on $n$;
@@ -297,7 +297,7 @@ Supporting inductive types would be straightforward, since \CICE already support
 
 Sized types have a similarly long history;
 the first sized dependent type theory is \CIChat~\citep{CIC-hat}
-which adds implicit and fully inferrable sized types to pCIC.
+which adds implicit and fully-inferrable sized types to pCIC.
 \cref{tab:sized-types} lists the sized dependent type theories that follow \CIChat,
 and the main features we study:
 explicit size quantification,
@@ -384,14 +384,14 @@ On the other hand, \lang excludes Agda's \emph{infinite size},
 since its properties and its use are known to be inconsistent.
 While applications of the infinite size to finitely branching
 inductives such as naturals and lists can be recovered with \emph{existential size quantification},
-this isn't possible for infinitely branching inductives
+this isn't possible for infinitely-branching inductives
 such as ordinals and well-founded trees.
 We give a concrete example of an inexpressible infinitary construct in \cref{subsec:examples:limitations},
 and discuss where using existential sizes breaks down for well-founded trees in \cref{subsec:infinity}.
 
 In the syntactic model, sizes and their order are translated to inductive definitions in \CICE,
 and quantification over (bounded) sizes is translated
-to abstractions over (the translation of) sizes (and their orders).
+to abstractions over the translation of sizes (and their orders).
 The entire translation must be \emph{type preserving}:
 if some term $e$ is well typed under some environments $\Phi; \Gamma$ with some type $\tau$,
 then the translated term $\compile{e}$ must also be well typed
