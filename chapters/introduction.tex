@@ -7,8 +7,8 @@ because some of the onus of ensuring a program is valid is shifted
 from the programmer to the process of type checking.
 On the other hand, too much expressivity can destroy
 desirable metatheoretical properties of the type system ---
-strings get be treated as integers, booleans can be called like functions,
-and the language falls to chaos and ruin.
+an expressive type system with undecidable type checking,
+in the end, may be useless in practice.
 
 The balancing act is particularly perilous for type systems
 used by proof assistants for mechanized theorem proving,
@@ -21,7 +21,7 @@ This thesis deals with dependent type theory, which is commonly used for theorem
 together with sized types, a feature for inductively defined types
 used to increase the expressivity of recursive functions,
 and shows that dependent types can be extended with state-of-the-art sized types
-without sacrificing key metatheoretical properties.
+without sacrificing the key metatheoretical property of logical consistency.
 
 \section{Background}
 
@@ -41,7 +41,9 @@ because it encodes universal quantification by allowing types to \emph{depend on
 the type $\funtype{x}{A}{\app{P}{x}}$ can be interpreted as the statement
 ``for all objects $x$ in $A$, $P$ holds of $x$'',
 with the consequent $\app{P}{x}$ depending on the term $x$.
-Other logical constructs can be encoded as well, for example:
+The proof of such a proposition is an inhabitant of the type,
+which could be some function $\fun{x}{A}{e}$.
+Other logical constructs can be encoded in this manner, for example:
 
 \begin{itemize}
   \item Falsehood ($\bot$) as $\funtype{P}{\Prop}{P}$,
@@ -49,37 +51,42 @@ Other logical constructs can be encoded as well, for example:
     the statement that \emph{all} propositions hold;
   \item Implication as $\funtype{\any}{A}{B}$
     (or $\arr*{A}{B}$ for short),
-    where $B$ holds only when given a proof of $A$;
+    where $B$ must hold when given a proof of $A$;
   \item Negation as $\arr*{A}{\bot}$,
     or that proving $A$ will yield a falsehood; and
   \item Truthhood as $\funtype{P}{\Prop}{\arr*{P}{P}}$\punctstack{,}%
-    \footnote{This encoding is slightly simpler than
+    \footnote{This encoding is slightly shorter than
     the negation of falsehood $\arr*{\bot}{\bot}$,
     particularly when written out in full.}
     which is trivially inhabited by the identity function
     $\fun{P}{\Prop}{\fun{p}{P}{p}}$;
 \end{itemize}
-and many other logical connectives such as existential quantification, conjunction, disjunction, and equality.
+as well as many other logical connectives such as existential quantification, conjunction, disjunction, and propositional equality.
 
 A key metatheoretical property that a type theory must satisfy
 for its interpretation as a logical system to be valid is \emph{consistency}:
 falsehood cannot be proven.
 In other words, there must not be any term whose type is $\funtype{P}{\Prop}{P}$.
 Otherwise, any proposition would be provable,
-including those we know to be obviously untrue,
-such as $0 = 1$.
+which defeats the purpose of using a logical system for valid reasoning.
 
 The two most important components of a formal description of a dependent type theory
 are its typing judgement, whose rules describe when a term has a certain type,
-and its equality judgement(s), whose rules describe when two terms are equal.
-The latter is relevant in dependent types because they allow determining that,
+and its equality judgement, whose rules describe when two terms are equal.
+The equality judgement, also known as definitional equality,
+is \emph{not} the same as propositional equality:
+the former is a relation between two terms that's checked by the type checker,
+while the latter is a type that may be inhabited by a proof term.
+
+Definitional equality is relevant in dependent types because they allow determining that,
 for instance, a proof of \mbox{$\app{P}{(1 + 1)}$}
 is in fact also a proof of $\app{P}{2}$.
-Naturally, equality is sometimes described in terms of reduction judgements,
-governed by the rules of computation.
+Equality is sometimes described in terms of reduction judgements,
+governed by rules of computation.
 This means that, in contrast to nondependent type systems,
 whether type checking always terminates depends on whether the language is normalizing.
-The issue gets even more complicated with more complex forms of reduction like recursion.
+More complex forms of reduction such as recursion present further challenges
+to normalization and thus type checking.
 
 \subsection{Recursive programming with sized types} \label{ss}
 
@@ -87,15 +94,15 @@ Inductively defined data and recursive functions on them
 are indispensable tools of programming,
 allowing the expression of a variety of constructs, programs,
 and in the case of dependent types, their properties.
-A crucial restriction on recursive functions
-in proof assistants such as Agda, Coq, Idris, Lean, and more
+A crucial restriction on recursive functions in proof assistants such as
+Agda~\citep{Agda}, Coq~\citep{Coq}, Idris~\citep{Idris}, Lean~\citep{Lean}, and more
 is that recursive functions must be \emph{guarded by destructors}\index{guardedness}
 and only recur on structurally smaller arguments~\citep{guard}.
-This guardedness check is statically done before or during type checking and,
-to vastly simplify, ensures that recursive calls occur only on syntactic subarguments:
+This guardedness check is performed statically before or during type checking
+and ensures that recursive calls occur only on syntactic subarguments:
 if the original argument is some natural $\app{\succ*}{n}$ that is the successor of $n$,
 then the function recurs only on $n$;
-if it's some cons list $\app{\cons*}{\hd}{\tl}$
+if it's some nonempty list $\app{\cons*}{\hd}{\tl}$
 consisting of an element and the rest of the list $\tl$,
 then it recurs only on $\tl$; and so on.
 
@@ -152,8 +159,8 @@ Alternatives to the syntactic guardedness check that avoid these issues are type
 where the type system itself is augmented so that successful type checking
 immediately guarantees termination and consistency.
 
-The one this thesis focuses on is \emph{sized typing}\punctstack{,}%
-\footnote{The other common one uses \emph{guarded types}~\citep{guarded-types}.}
+The alternative this thesis focuses on is \emph{sized typing}\punctstack{,}%
+\footnote{The other common alternative uses \emph{guarded types}~\citep{guarded-types}.}
 where inductive types are annotated with size information,
 and constructors construct constructions whose size is larger than that of their subarguments.
 In short, the notion of a ``smaller'' subargument is encoded within the types,
@@ -181,11 +188,11 @@ Since \citet{hughes}, there has been a little over two decades' worth of past wo
 \citet{flationary} notes that it has been the topic of at least five dissertations.
 This chapter alone names a dozen different type systems with sized types.
 There have been many advancements along the way,
-but none quite satisfactory to close the matter,
+but there still remains many open problems,
 especially when it comes to dependent types.
 
 \lang and this thesis as a whole does not aim to resolve
-all of the remaining problems of sized types left open by these past works.
+all of these existing problems with sized types.
 Instead, the purpose is threefold:
 
 \begin{itemize}
@@ -195,7 +202,7 @@ Instead, the purpose is threefold:
     but not both, to my knowledge.
     On the other hand, they are currently in Agda's implementation of sized types.
     By proving the consistency of \lang, a novel type theory with these two features,
-    I bring the theoretical state-of-the-art closer to practice. \\
+    I bring the theoretical state-of-the-art closer to practice.
   \item To demonstrate the viability of using a syntactic model to prove consistency
     of a sized type theory.
     Doing so from scratch through a set-theoretic model is notoriously difficult,
@@ -205,11 +212,11 @@ Instead, the purpose is threefold:
     Instead, a syntactic model relies on the consistency of the language in which I'm modelling,
     allowing me to focus on only the interesting parts of the sized type theory
     rather than on consistency as a whole.
-  \item To reopen the discussion on sized dependent types.
-    Since the discovery of the inconsistency of Agda's sized types~\citep{infinity},
-    progress appears to have stagnated a little.
-    In \cref{ch:discussion}, I examine these difficulties as they might apply to \lang
-    and its interpretation in the syntactic model.
+  \item To present some potential first steps towards improving Agda's implementation of sized types,
+    which is currently inconsistent~\citep{infinity}.
+    In \cref{ch:discussion}, I frame the issues in the context of \lang
+    and its interpretation in the model,
+    and explore possible solutions.
 \end{itemize}
 
 In this section I describe and justify the design of
@@ -233,14 +240,14 @@ which has the following features:
   \item A \textbf{cumulative universe hierarchy}\index{cumulativity} such that $\Type{i}: \Type{i+1}$,
     any term in $\Type{i}$ is also in $\Type{j}$ given \emph{universe levels}\index{universe level} $i \leq j$,
     and there is a subtyping relation\index{subtyping} on types induced by this inclusion; and
-  \item \textbf{Untyped definitional equality} stating when two terms are judgementally equal to one another.
+  \item \textbf{Untyped definitional equality} stating when two terms are equal to one another.
 \end{itemize}
 
 These features cover many modern proof assistants.
 To name a few, in terms of universes,
-Coq and Arend have all of the above;
+Coq and Arend~\citep{Arend} have all of the above;
 Lean lacks cumulativity; and
-Agda and \Fstar lack cumulativity and an impredicative universe.
+Agda and \Fstar~\citep{F-star} lack cumulativity and an impredicative universe.
 On the other hand, these proof assistants all have some form of
 \emph{universe level polymorphism},
 but this is much more complex and largely orthogonal to sized types
@@ -277,8 +284,8 @@ to inductive types in general.
 
 Sized types begin with explicit size quantification $\Funtype{\alpha}{\tau}$,
 size abstraction $\Fun{\alpha}{e}$, and size application $\App{e}{s}$.
-Sizes themselves consist of size variables, a \emph{base size},
-and a \emph{size successor operator}.
+Sizes themselves consist of size variables $\alpha$, a \emph{base size} $\circ$,
+and a \emph{size successor operator} $\sss{s}$.
 This is the standard for size expressions in sized type systems.
 Some augment the size grammar with addition of or scalar multiplication of size variables,
 for instance, increasing expressivity at the expense of added complexity in size checking.
@@ -301,7 +308,7 @@ which are more expressive.
 For instance, supposing we have cons lists parametrized over some sized type $\tau$,
 one could write a size-preserving mapping function over a list
 that leaves the size of its elements untouched.
-The type of such a function might be
+The type of such a function could be
 
 \vspace{-0.25\baselineskip}
 $$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\app{\List*}{(\App{\tau}{\alpha})}}{\app{\List*}{(\App{\tau}{\alpha})}}}.$$
@@ -372,14 +379,15 @@ the \emph{Extensional Calculus of Inductive Constructions}\index{Calculus of Ind
 (\CICE)~\citep{CICE}.
 It, too, has a cumulative hierarchy of universes \ala Russell and an impredicative universe,
 augmented with inductive types and \emph{equality reflection}\index{equality reflection},
-where a definitional equality between terms can be derived from a propositional one between them.
+which is a rule for definitional equality between terms requiring as premise
+a proof of propositional equality between them.
 The most notable difference from \lang, aside from these features and sized types,
 is that \CICE uses a typed, declarative equality rather than an untyped, algorithmic equality
 to better accommodate equality reflection.
-For concision and to avoid confusion, I henceforth refer to the former as \emph{equivalence}\index{equivalence},
-and to the latter as \emph{conversion}\index{conversion}.
+For concision, I henceforth refer to \CICE's typed, declarative equality as \emph{equivalence}\index{equivalence},
+and to \lang's untyped, algorithmic equality as \emph{conversion}\index{conversion}.
 
-This translation from \lang to \CICE must be \emph{type preserving}\index{type preservation}%
+To prove consistency, this translation from \lang to \CICE must be \emph{type preserving}\index{type preservation}%
 \footnote{This terminology comes from compilation;
 in the context of syntactic modelling,
 this is known as \emph{soundness} with respect to the translation target.}:
@@ -388,16 +396,15 @@ then the translated term $\compile{e}$ must also be well typed
 under the translated environment $\compile{\Phi}, \compile{\Gamma}$
 with the translated type $\compile{\tau}$.
 By the consistency of \CICE and a type-preserving translation to it,
-we prove the consistency of \lang.
+we then prove the consistency of \lang.
 
-\begin{postulate}[Consistency of \CICE]\label{fact:consistency-cice}
+\begin{postulate}[Consistency of \CICE]\label{fact:consistency-cice} \hfill \\
 There exists no term $\eT$ such that
 \mbox{$\type{\mt}{\eT}{\funtypeT{\PT}{\PropT}{\PT}}$}.
 \end{postulate}
 
-\begin{theorem}[Consistency of \lang]\label{thm:overview:consistency}
-Suppose $\compile{\bot} = \funtypeT{\PT}{\PropT}{\PT}$.
-Then there exists no term $e$ such that \mbox{$\type{\mt \mathbin{;} \mt}{e}{\bot}$}.
+\begin{theorem}[Consistency of \lang]\label{thm:overview:consistency} \hfill \\
+There exists no term $e$ such that \mbox{$\type{\mt \mathbin{;} \mt}{e}{\funtype{P}{\Prop}{P}}$}.
 \end{theorem}
 \begin{proof}
 Suppose that there were such a term $e$.
@@ -407,18 +414,18 @@ However, this contradicts \cref{fact:consistency-cice},
 so there must not be such a term.
 \end{proof}
 
-What remains, then, is to define $\bot$ and an appropriate translation from \lang to \CICE
-such that $\compile{\bot} = \funtypeT{\PT}{\PropT}{\PT}$,
+What remains, then, is to define an appropriate translation from \lang to \CICE,
 and to show that this translation is type preserving.
 I define my translation by induction on the typing derivations of \lang
 rather than merely over its syntax,
-ensuring that only well-typed terms need to be considered.
+since additional information only present in the typing derivations is required.
 
 Type preservation of the translation is proven by induction on not only the typing derivations,
 but also the derivations of the judgements on which the typing rules depend.
 In particular, typing depends on subtyping\index{subtyping} $\preccurlyeq$,
 which in turn depends on \emph{$\alpha$-cumulativity}\index{$\alpha$-cumulativity}
 $\sqsubseteq$~\citep{MetaCoq}
+(\ie $\alpha$-equivalence up to cumulativity)
 and on the reflexive, transitive closure of reduction $\rhd^*$.
 Finally, this closure of reduction depends on the reduction rules $\rhd$,
 most of which are defined by substitution.
@@ -464,6 +471,7 @@ and $\alpha$-cumulative terms and subtypes are correspondingly \CICE subtypes.
 I summarize them here, omitting some hypotheses and sublemmas,
 solely to outline the proof architecture,
 which roughly follows the structure of type-preserving compilation by~\citet{wjb}.
+The full proofs can be found in \cref{ch:proofs}.
 
 \begin{lemma}[Compositionality]\label{lem:overview:compositionality}\hfill
 \begin{enumerate}[noitemsep]
@@ -634,15 +642,16 @@ as well as the types of naturals and well-founded trees as mentioned.
 They can all be implemented as inductive types in pCIC.
 
 The source language \lang and target language \CICE in this thesis aren't exactly
-a single type theory from the literature augmented with sized types.
+equivalent to any single type theory from the literature augmented with sized types.
 In short, \lang is based on \GCC but with MetaCoq's alternate subtyping rules
 and augmented with naturals and well-founded trees,
 while \CICE is based on pCIC with extensionality inspired by ETT.
+I elaborate further on the design decisions of these languages later in \cref{sec:design}.
 
 \subsection{Sized type systems}
 
 Sized dependent type systems date all the way back to \CCR by \citet{CCR},
-although its sized types are formulated quite differently from ``modern'' sized types.
+although its sized types are formulated quite differently from modern sized types.
 The first sized dependent type theory recognized as such is \CIChat by \citet{CIC-hat},
 which adds prenex sizes
 and a size inference algorithm to CIC.
@@ -693,16 +702,17 @@ MiniAgda~\citep{MiniAgda, flationary} & \checkmark* & \checkmark* & \checkmark* 
 \cref{tab:sized-types} lists the sized dependent type theories that follow \CIChat,
 along with the main features I focus on:
 explicit, higher-rank, bounded size quantification,
-and with whether the type theory has been proven consistent.
+and whether the type theory has been proven consistent.
 The type theory of MiniAgda, on which the sized types implemented in Agda are based,
 is the only prior one with all three sized type features,
 but is known to be inconsistent~\citep{infinity}.
 (Interestingly, \Fcopomega~\citep{F-omega-cop}, which extends System F$_\omega$ with (co)inductive types and sized types,
-has all three properties \emph{and} has been proven to be strongly normalizing.)
+has all three properties \emph{and} has been proven to be strongly normalizing,
+but their proof methods don't appear to extend to dependent types.)
 One of the goals of \lang, as mentioned, is to fill in this gap
 with a consistent sized dependent type theory with all of the desired features.
 However, it's missing two properties that all of these type theories do have:
-inductive types in the ``correct'' universes
+inductive types in the expected universes
 (as we'll see shortly, the type of naturals and well-founded trees
 are one universe higher than is conventional),
 and the existence of an infinite size.

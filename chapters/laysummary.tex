@@ -2,12 +2,12 @@
 
 While people communicate to one another by speaking or writing in natural languages,
 we communicate with computers via programming languages to tell them to, say, perform a calculation.
-Just as what is said or written needs to be grammatically correct to make any sense,
-programs written in these programming languages need to be checked to ensure that they behave nicely.
-One desirable property of programs might be termination:
-we want to be certain that they will eventually finish running at some point.
+Just as what's said or written must be grammatically correct to make any sense,
+programs written in these programming languages must be checked to ensure that they behave nicely.
+One desirable property of programs can be termination:
+we want to be certain that they'll eventually finish running at some point.
 It's impossible to devise a check that can always pick out all terminating programs,
-but termination checks can be improved upon to accept more and more programs.
+but approximate termination checks can be improved upon to accept more and more terminating programs.
 The topic of this thesis is using \emph{sized types}, a powerful strategy for termination checking,
 in the setting of a programming language for mathematicians to write computer-verified proofs,
-and proving that the programs it accepts will actually terminate.
+and proving that the programs sized typing accepts will actually terminate.
