@@ -105,11 +105,13 @@ where inductively-defined types are annotated with sizes.
 Type checking guarantees that functions recur only on arguments whose types have smaller sizes,
 rather than on arguments that syntactically appear smaller,
 accepting more terminating functions.
-Unfortunately, models of sized dependent types fail to support pragmatic features
-such as higher-rank size quantification,
-which allows for first-class size-preserving functions,
-and bounded size quantification,
-which eliminates complex monotonicity checks required by prior sized type systems.
+Some existing models of sized dependent type theories
+support features for more expressive sized types,
+namely higher-rank size quantification
+(which allows for passing around size-preserving functions)
+and bounded size quantification
+(which eliminates the need for complex monotonicity checks),
+but unfortunately none simultaneously support both.
 
 We present a sized dependent type theory with higher-rank and bounded sizes (\lang),
 and prove its logical consistency with a syntactic model:
@@ -150,7 +152,7 @@ the consistency of \lang follows from the consistency of \CICE.
 \section{Introduction} \label{sec:introduction}
 
 In proof assistants such as Coq, Agda, and Idris that are founded on the
-types-as-propositions paradigm, logical inconsistency could easily derivable in the
+types-as-propositions paradigm, logical inconsistency is easily derivable in the
 presence of unrestricted recursion:
 given the universe $\Prop$ of all propositions,
 the recursive function $f = \fun{P}{\Prop}{\app{f}{P}}$ can be assigned the type $\funtype{P}{\Prop}{P}$,
@@ -207,11 +209,11 @@ Alternatives to the guardedness check that avoid these issues are type-based che
 where the type system itself is augmented so that type checking
 guarantees consistency without syntactically analyzing function terms.
 
-This paper discusses one, \emph{sized typing}\punctstack{,}%
+This paper discusses one alternative, \emph{sized typing}\punctstack{,}%
 \footnote{The other common one uses \emph{guarded types}~\citep{guarded-types}.}
 where inductive types are annotated with size information,
-and constructors construct constructions whose size is larger than that of their arguments.
-In short, the notion of a ``smaller'' argument is encoded within the types.
+and constructors construct constructions whose size is larger than that of their arguments:
+the notion of a ``smaller'' argument is then encoded within the types.
 Finally, a recursive function is well typed only if it recurs on an argument
 whose size is smaller than that of the original argument.
 
@@ -237,10 +239,10 @@ Since \citet{hughes}, there has been a little over two decades' worth of past wo
 \citet{flationary} notes that it has been the topic of at least five dissertations.
 This paper alone names eight different type theories with sized types.
 There have been many advancements along the way,
-but none quite satisfactory to close the matter,
+but there still remains many open problems,
 especially when it comes to dependent types.
 
-\lang does not aim to resolve all the remaining problems of sized types.
+\lang does not aim to resolve all the existing problems with sized types.
 Our purpose is twofold:
 
 \begin{itemize}
@@ -331,8 +333,8 @@ MiniAgda~\citep{MiniAgda, flationary} & \checkmark* & \checkmark* & \checkmark* 
 
 Sized types consist of explicit size quantification $\Funtype{\alpha}{\tau}$,
 size abstraction $\Fun{\alpha}{e}$, and size application $\App{e}{s}$.
-Sizes consist of size variables, a \emph{base size}
-and a \emph{size successor operator}.
+Sizes consist of size variables, a base size $\circ$
+and a size successor operator $\sss{s}$.
 Size expressions are \emph{not} terms,
 and their quantifications, abstractions, and applications
 are syntactically distinct from those of terms,
