@@ -8,31 +8,32 @@ these proof assistants forbid nonterminating recursive functions
 using guard predicates that only allow structurally recursive functions
 recurring only on syntactically smaller arguments.
 However, these guard predicates are sometimes too restrictive
-and reject obviously-terminating functions that aren't otherwise structurally recursive,
-creating extra work for the programmer to convince the guard checker.
+and reject simple terminating functions that aren't otherwise structurally recursive.
 
 An alternative is to use type-based termination checking such as sized types,
 where inductively-defined types are annotated with sizes.
 Successful type checking guarantees that functions recur only on arguments whose types have smaller sizes,
 rather than merely on syntactic subarguments.
-There exist many sized dependent type theories,
-but none simultaneously feature higher-rank size quantification,
-which allows for passing around size-preserving functions,
-and bounded size quantification,
-which eliminates the need for complex monotonicity checks required by prior sized type systems.
+Some existing models of sized dependent type theories
+support features for more expressive sized types,
+namely higher-rank size quantification
+(which allows for passing around size-preserving functions)
+and bounded size quantification
+(which eliminates the need for complex monotonicity checks),
+but unfortunately none simultaneously support both.
+Meanwhile, the only implementation of sized types in a major proof assistant, Agda,
+does support these features, but is unfortunately logically inconsistent.
 
 In this thesis, I design a sized dependent type theory with higher-rank and bounded sizes (\lang),
-and show that it's suitable for theorem proving by proving its logical consistency with a syntactic model:
+and show that it's suitable for theorem proving by proving its consistency with a syntactic model:
 by compiling \lang into the Extensional Calculus of Inductive Constructions (\CICE),
 a variant of Coq's core type theory,
 and showing that this translation is type preserving,
 the consistency of \lang follows from the consistency of \CICE.
-This approach, unfortunately, refutes the existence of an ``infinite'' size strictly greater than all sizes,
-which is present in prior sized type systems to overcome the limitations of finitary size expressions,
-meaning that some infinitary constructs aren't definable in \lang.
 
+This approach refutes the existence of an ``infinite'' size strictly greater than all sizes,
+which is present in prior sized type systems to overcome the limitations of finitary size expressions,
+meaning that some infinitary constructs unfortunately aren't definable in \lang.
 Even so, \lang provides a valid foundation for sized types in a proof assistant,
 opening the way for future work on recovering expressivity lost from the lack of an infinite size
-and on restricting sized types in Agda,
-the only (inconsistent!) implementation of sized types in a major proof assistant,
-to be consistent.
+and on restricting sized types in Agda to be consistent.
