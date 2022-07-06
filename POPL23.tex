@@ -171,7 +171,7 @@ recursion must be done on inductively-defined types,
 and recursive calls must occur on syntactic subarguments.
 For instance, if a recursive function on naturals is given the successor $\app{\succ*}{n}$,
 then it must recur on $n$;
-if a recursive function on cons lists is given a nonempty list $\app{\cons*}{\hd}{\tl}$
+if a recursive function on cons lists is given a nonempty list $\app{\cons*}{\hd}{\tl}$,
 then it must recur on the tail $\tl$.
 
 While the guardedness check, being based on the elimination principles of inductive types,
@@ -205,9 +205,9 @@ the programmer can refactor the function to recur on a different, related argume
 such as the length of a list in the example above,
 but this requires additional work and may bloat programs
 with extra code solely for satisfying the guardedness check.
-Alternatives to the guardedness check that avoid these issues are type-based checks,
+Alternatives that avoid these issues are type-based checks,
 where the type system itself is augmented so that type checking
-guarantees consistency without syntactically analyzing function terms.
+guarantees consistency without syntactically analyzing function bodies.
 
 This paper discusses one alternative, \emph{sized typing}\punctstack{,}%
 \footnote{The other common one uses \emph{guarded types}~\citep{guarded-types}.}
@@ -220,7 +220,7 @@ whose size is smaller than that of the original argument.
 Because well typedness is the only required condition,
 calling some other function before a recursive call is allowed
 as long as that function's type indicates it is \emph{size preserving}.
-For example, in the list mapping example above,
+For example, in the list mapping example,
 if the sublist (whose elements have type $\tau$) has size $s$,
 then the mapping function must have type $\arr*{\List{\tau}{s}}{\List{\tau}{s}}$.
 The implementation of the map isn't required, merely its type, restoring
@@ -350,10 +350,11 @@ and all size abstractions and applications are fully inferred.
 Explicit sizes, in contrast, let us express
 \emph{higher-rank} size quantification,
 which are more expressive.
-For instance, consider a cons lists parametrized over some sized type $\tau$;
-one could write a size-preserving mapping function over a list,
+For instance, consider a list parametrized over some sized type $\tau$:
+one could write a size-preserving mapping function over a list
 of type
-$$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\app{\List*}{(\App{\tau}{\alpha})}}{\app{\List*}{(\App{\tau}{\alpha})}}}.$$
+$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\app{\List*}{(\App{\tau}{\alpha})}}{\app{\List*}{(\App{\tau}{\alpha})}}}$.
+
 We also include \emph{bounded} size quantification $\Funtype<{\alpha}{s}{\tau}$
 and abstraction $\Fun<{\alpha}{s}{e}$.
 An order on sizes is induced by these bound instantiations and the successor operator;
@@ -509,7 +510,7 @@ The reduction rules and their reflexive, transitive closure are described in \cr
 \new{$\subst{e}{x}{e'}$} denotes capture-avoiding substitution of $x$ for $e'$ within $e$,
 and correspondingly \new{$\subst{e}{x_1, \seq, x_n}{e_1, \seq, e_n}$} denotes simultaneous substitution.
 For every syntactic form of a composite term there is a corresponding congruence rule,
-which is summarized by the last reduction rule using substitution;
+which is summarized by \rref{red-cong} using substitution;
 the full set of rules can be found in \cref{app:cong:red}.
 By convention, the reduction rules for function applications are also referred to as $\beta$-reduction,
 for $\kw{let}$ expressions as $\zeta$-reduction,
@@ -576,6 +577,10 @@ which is the size%
 \footnote{The ``size of'' some construction is more precisely the size by which its \emph{inductive type} is parametrized.}
 of the constructor's recursive arguments.
 Constructors therefore always construct elements whose sizes are larger than their arguments'.
+Since constructor argument sizes are bounded by above,
+the size of an inductive represents the size an element of the inductive can \emph{at most} have,
+and it can always be lifted to a larger size, but never lowered to a smaller one.
+
 In \lang, the constructors are annotated with their types
 since the parameter-like sizes cannot otherwise be synthesized.
 Additionally, W types have explicit binders for convenience:
@@ -626,7 +631,7 @@ is discussed later in \cref{subsec:infinity}.
 
 \subsection{Examples} \label{subsec:examples}
 
-This section presents examples of using \lang for programming and proving.
+This section presents examples of using \lang for programming.
 Although it only has naturals and well-founded trees,
 we also use other sized inductive types as examples,
 informally defining them similarly to \cref{subsec:ind-types}.
@@ -637,10 +642,10 @@ when the type is evident or deducible from context.
 
 One of the most important uses of sized types is the ability to define
 \emph{size-preserving} functions,
-where the sizes of the input and output are the same.
+where the sizes of the input and output types are the same.
 This guarantees that the output is never larger than the input,
 and size-preserving functions can be used in recursive calls of fixpoints.
-For instance, the $\monus$ function, which computes $\maximum{0, n - m}$ given numbers $n, m$,
+For instance, the $\monus$ function, which computes $\maximum{0, n - m}$,
 is size preserving in its first argument,
 since $n - m$ is never greater than $n$.
 Here, $\pred$ is another size-preserving function
@@ -706,7 +711,7 @@ recursive arguments appear as the return type of a function.
 Consider the following inductive definition
 representing the Brouwer notation for ordinals (see \eg \citet{ordinals})
 with zero, successor, and limit ordinals:
-
+%
 \begin{align*}
 &\data{\Ord{\alpha}}{\Type{1}} \\
 &\quad \annot{\zord*}{\Funtype<{\beta}{\alpha}{\Ord{\alpha}}} \\
@@ -764,7 +769,7 @@ of accessibility predicates is required---all proofs of accessibility
 are definitionally equal.
 This holds in extensional type theory via equality reflection
 but not in intensional type theory,
-hence our use of extensional CIC is used.
+hence our use of extensional CIC.
 
 We start by briefly reviewing the syntax and judgements of \CICE.
 We then describe the translation from \lang to \CICE,
@@ -801,7 +806,7 @@ are entirely standard, so we omit them;
 see \eg pCIC~\citep{pCIC} for instance for a full description.
 Inductive definitions in their full generality are not needed,
 and nonmutual, nonnested inductives suffice.
-Indeed, only six inductive definitions are used for the translation,
+Indeed, only six inductive definitions are used for the translation
 for representing sizes, their order, their well foundedness,
 and the empty type, naturals, and well-founded trees.
 
@@ -871,8 +876,6 @@ The typed equivalence, subtyping, and typing judgements are defined mutually:
 equivalence depends on typing and subtyping,
 subtyping depends on equivalence,
 and typing depends on subtyping and equivalence.
-The mutual dependence is due to typed equivalence,
-since with untyped conversion as seen in \lang has no typing premises.
 The judgement rules are all standard,
 so \cref{fig:equiv-sub-type} presents only an excerpt;
 the full rules are found in \cref{app:equiv}.
@@ -1037,8 +1040,7 @@ than its size bound.
 The translation of subsizing judgements, on the other hand,
 is a recursive metafunction over the \emph{subsizing derivation}.
 \cref{fig:trans:subsize} defines the translation to \CICE terms
-by induction on the subsizing rules, which recursively translates subderivations
-(omitting irrelevant size well scopedness premises).
+by induction on the subsizing rules, which recursively translates subderivations.
 
 \begin{figure}[h]
 \centering
@@ -1497,7 +1499,7 @@ where the translations of sizes, size environments, and subsizing are involved.
 Finally, the consistency of \lang follows from the consistency of \CICE and type preservation.
 
 \begin{theorem}[Consistency of \lang] \label{thm:consistency}
-There exists no term $e$ such that $\type{\mt \mathbin{;} \mt}{e}{\funtypeT{\PT}{\PropT}{\PT}}$.
+There exists no term $e$ such that $\type{\mt \mathbin{;} \mt}{e}{\funtype{P}{\Prop}{P}}$.
 \end{theorem}
 
 \begin{proof}
@@ -1689,8 +1691,7 @@ when using this model.
 
 There is still a long way to go towards a sized dependent type system
 that is expressive, consistent, and useable.
-We've seen from \cref{subsec:examples} that working without an infinite size
-or full inductives is verbose at best,
+Working without an infinite size or full inductives is verbose at best,
 requiring tedious manipulation of existentially-quantified sizes,
 and impossible at worse, in the case of $\const{\omega}$,
 while attempts at including them either involve inconsistency, undecidability, or noncanonicity.
@@ -1753,7 +1754,7 @@ By inspection of the translation, the only fitting subsizing relation possible i
 and the only possible sources $\Funtype<{\alpha}{\alpha}{\tau}$, $\Fun<{\alpha}{\alpha}{e}$ are ill-scoped.
 Since fixpoints only reduce when applied to sizes that have a subsize
 and we can't obtain infinitely decreasing chains of subsizes,
-they can't unfold endlessly and must stop eventually.
+they can't unfold endlessly.
 
 Decidability of type checking, meanwhile, rests not only on strong normalization,
 but also on decidability of subsizing, \ie deciding whether $\bound{r}{s}$ holds.
@@ -1761,7 +1762,7 @@ The trickiest rule is transitivity of subsizing,
 but we conjecture that subsizing, too, is decidable,
 as the size environment only contains a finite number of bounded size variables,
 and sizes can only have a finite number of successor operators applied.
-Moreover, Agda has transitive subsizing, and so far hasn't had issues with its decidability.
+Moreover, Agda has transitive subsizing, and hasn't had issues with decidability.
 
 \section{Conclusion}
 
@@ -1769,7 +1770,7 @@ In this paper, we introduced \lang, a sized dependent type theory
 with higher-rank size quantification and bounded size quantification,
 but without an infinite size that is strictly greater than itself,
 along with sized naturals and well-founded trees.
-we gave examples of programming with sized inductives to write recursive programs
+We gave examples of programming with sized inductives to write recursive programs
 that would have otherwise not passed the usual syntactic guard checks,
 as well as limitations of programming without the infinite size.
 We then reduced the consistency of \lang to that of \CICE,
@@ -1801,7 +1802,7 @@ du Canada au niveau de la maitrise (BESC M).
 
 \allowdisplaybreaks
 
-\subsection{well formedness and Reduction Congruence Rules of \lang} \label{app:cong:red}
+\subsection{Well Formedness and Reduction Congruence Rules of \lang} \label{app:cong:red}
 
 \FigWF{fig:wf}
 \begin{figure}[h]
