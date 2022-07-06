@@ -53,7 +53,7 @@ The reduction rules and their reflexive, transitive closure are described in \cr
 \new{$\subst{e}{x}{e'}$} denotes capture-avoiding substitution of $x$ for $e'$ within $e$,
 and correspondingly \new{$\subst{e}{x_1, \seq, x_n}{e_1, \seq, e_n}$} denotes simultaneous substitution.
 For every syntactic form of a composite term there is a corresponding congruence rule,
-which is summarized by the last reduction rule using substitution;
+which is summarized by \rref{red-cong} using substitution;
 the full set of rules can be found in \cref{app:cong:red}.
 By convention, the reduction rules for function applications are also referred to as $\beta$-reduction,
 for $\kw{let}$ expressions as $\zeta$-reduction,
@@ -186,6 +186,13 @@ which is the size%
 \footnote{The ``size of'' some construction is more precisely the size by which its \emph{inductive type} is parametrized.}
 of the constructor's recursive arguments.
 Constructors therefore always construct elements whose sizes are larger than their arguments'.
+Since constructor argument sizes are bounded by above,
+the argument can have \emph{any} smaller size,
+and the size of an inductive represents the size its elements can \emph{at most} have;
+consequently, an element of a sized inductive can always be lifted to an inductive with a larger size,
+but never lowered to a smaller one.
+This is demonstrated concretely in \cref{subsec:concrete}.
+
 In \lang, the constructors are annotated with their types
 since the parameter-like sizes cannot otherwise be synthesized.
 Additionally, W types have explicit binders for convenience:
@@ -265,7 +272,7 @@ informally defining them similarly to \cref{sec:ind-types}.
 Additionally, I omit the type annotation of $\kw{let}$-bound expressions
 when the type is evident or deducible from context.
 
-\subsection{Concrete natural numbers}
+\subsection{Concrete natural numbers} \label{subsec:concrete}
 
 Concrete numbers can be constructed easily using the base size $\circ$ as a starting point
 and its successors as strictly larger sizes.

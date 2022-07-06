@@ -67,7 +67,7 @@ see pCIC\index{Calculus of Inductive Constructions!Predicative \textasciitilde}~
 for instance for a full description.
 Inductive definitions in their full generality are not needed,
 and nonmutual, nonnested inductives suffice.
-Indeed, only six inductive definitions are used for the translation,
+Indeed, only six inductive definitions are used for the translation
 for representing sizes, their order, their well-foundedness,
 and the empty type, naturals, and well-founded trees.
 
@@ -75,8 +75,6 @@ The typed equivalence\index{equivalence}, subtyping, and typing judgements are d
 equivalence depends on typing and subtyping,
 subtyping depends on equivalence,
 and typing depends on subtyping and equivalence.
-The mutual dependence is due to typed equivalence,
-since with untyped conversion as seen in \lang has no typing premises.
 I present first the equivalence rules in \cref{fig:equivalence},
 with the subtyping and typing rules to follow.
 
@@ -357,8 +355,7 @@ than its size bound.
 The translation of subsizing judgements, on the other hand,
 is a recursive metafunction over the \emph{subsizing derivation}.
 \cref{fig:trans:subsize} defines the translation to \CICE terms
-by induction on the subsizing rules, which recursively translates subderivations
-(omitting irrelevant size well-scopedness premises).
+by induction on the subsizing rules, which recursively translates subderivations.
 
 The translation of terms and term environments are similarly defined
 as recursive metafunctions over the typing and well-formedness derivations,
@@ -385,7 +382,7 @@ when the size abstraction applied is bounded.
 
 Finally, \cref{fig:trans:ind} gives the translation for naturals, well-founded trees,
 $\kw{case}$ expressions, and fixpoint expressions from their typing derivations
-to a \CICE term (again omitting irrelevant premises).
+to a \CICE term (omitting irrelevant side conditions).
 Aside from fixpoints, the translations are fairly straightforward,
 with an additional proof term from subsizing for constructors
 and dually an additional abstraction over such terms in the branches of $\tg{case}$ expressions.
