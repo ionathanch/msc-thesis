@@ -157,7 +157,7 @@ with extra code solely for satisfying the guardedness check
 that detracts from the programs' original intent.
 Alternatives to the syntactic guardedness check that avoid these issues are type-based checks,
 where the type system itself is augmented so that successful type checking
-immediately guarantees termination and consistency.
+guarantees termination and consistency without requiring additional syntactic analysis.
 
 The alternative this thesis focuses on is \emph{sized typing}\punctstack{,}%
 \footnote{The other common alternative uses \emph{guarded types}~\citep{guarded-types}.}
@@ -305,10 +305,9 @@ and in fact all size abstractions and applications are fully inferred.
 Explicit sizes, in contrast, let us use
 \emph{higher-rank} size quantification,
 which are more expressive.
-For instance, supposing we have cons lists parametrized over some sized type $\tau$,
+For instance, supposing we have lists parametrized over some sized type $\tau$,
 one could write a size-preserving mapping function over a list
-that leaves the size of its elements untouched.
-The type of such a function could be
+that leaves the size of its elements untouched, whose type could be
 
 \vspace{-0.25\baselineskip}
 $$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\app{\List*}{(\App{\tau}{\alpha})}}{\app{\List*}{(\App{\tau}{\alpha})}}}.$$
