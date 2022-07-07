@@ -3,7 +3,7 @@
 \input{figures/sized.tex}
 \input{figures/ind.tex}
 
-This chapter can be divided into two halves:
+This chapter is divided into two halves:
 the first gives the formal description of the syntax, judgements, and rules of \lang,
 while the second provides a number of examples written in \lang to show how sized types can be used.
 They are kept separate so that the examples don't detract from the formal description
@@ -27,8 +27,11 @@ but also to show that the sublanguage is independent of the chosen inductive typ
 
 \FigSyntax{fig:syntax}
 \cref{fig:syntax} gives its syntax, which consists of universes $U$,
-sizes $s$, and terms $e$, which includes term functions and size abstractions.
+sizes $s$, and terms $e$, which include term functions and size abstractions.
 Note that the hierarchy of universes above $\Prop$ start at $\Type{1}$, not $\Type{0}$.
+Sizes consist of size variables (distinct from term variables),
+a base size $\circ$, and successors of sizes $\sss{s}$.
+
 Most judgements use two environments: a term environment $\Gamma$ with assumptions $\annot{x}{\tau}$
 and type-annotated definitions $\define{x}{\tau}{e}$,
 and a size environment $\Phi$ with unbounded and bounded size variables.
@@ -39,7 +42,7 @@ in particular, letting for instance $\Delta_{xy} = \annot{x}{\sigma_1}, \annot{y
 I use \new{$\arr*{\Delta_{xy}}{\tau}$} to mean $\funtype{x}{\sigma_1}{\funtype{y}{\sigma_2}{\tau}}$.
 Similarly, I use \new{$\arr*{\sigma}{\tau}$} to mean the nondependent function type $\funtype{\any}{\sigma}{\tau}$
 As a loose convention, I use $\tau, \sigma$ for type-like terms,
-$P$ for the \emph{motive} of eliminators,
+$P$ for the motive of eliminators,
 $z$ for variables representing constructor arguments, and
 $f, g$ for variables representing functions.
 
@@ -111,10 +114,14 @@ along with those for well-formedness of term environments.
 \FigRulesAxioms{fig:rules-axioms}
 \FigTyping{fig:typing}
 Finally, the typing rules for the base \lang are given in \cref{fig:typing}.
-They use the metafunctions $\axioms{\mt}$ for the type of a universe,
-$\rules{\mt}{\mt}$ for the type of a function type,
-defined in \cref{fig:rules-axioms},
-and $\fresh{\seq}$ for fresh variables.
+They use the metafunctions $\fresh{\seq}$ for fresh variables,
+$\axioms{\mt}$ for the type of a universe, and
+$\rules{\mt}{\mt}$ for the universe of a function type,
+defined in \cref{fig:rules-axioms}.
+The first case of $\rules*$ encompasses impredicativity of $\Prop$,
+since a function type $\arr*{\sigma}{\tau}$ where $\sigma : U$ and $\tau : \Prop$
+would also be in $\Prop$, and if $U = \Type{1}$ then this function type itself
+could be passed to the function.
 
 \clearpage % TODO: clearpage
 \rref{var, univ, let} are the usual rules for variables, universes, and $\kw{let}$ expressions
@@ -195,17 +202,29 @@ This is demonstrated concretely in \cref{subsec:concrete}.
 
 In \lang, the constructors are annotated with their types
 since the parameter-like sizes cannot otherwise be synthesized.
-Additionally, W types have explicit binders for convenience:
+For instance, $\succ{s}{r}{e}$ constructs a natural of size $s$,
+while taking as argument a natural with size $r < s$.
+Although $\zero*$ has no recursive arguments,
+it still takes a smaller size argument solely for uniformity with $\succ*$.
+Additionally, W types have explicit binders for the first type parameter for convenience,
+much like dependent function types:
 the variable $x$ is bound within $\tau$ in the type $\W{x}{\sigma}{\tau}{s}$.
 
-The expression
-$\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{z_1}{\seq}{z_m} \Rightarrow e_c) \seq}$
-contains three parts:
-the \emph{target} $e$ it destructs,
-the motive $P$ denoting the return type of the expression abstracted over a target,
-and the \emph{branches} $e_c$, one for each constructor of the target's type,
-abstracted over the constructor's size and term arguments.
-Its reduction rules for each constructor are given in \cref{fig:reduction-ind},
+The dependent $\kw{case}$ expression, or the destructor for an inductive element,
+consists of three parts:
+\begin{itemize}
+  \item The target being destructed, either a natural or a well-founded tree in \lang;
+  \item A motive with a free size variable for what's being destructed,
+    representing the return type of the entire expression when substituted by the target
+    and the types of each of the branches when substituted by the constructors; and
+  \item A branch each constructor of the inductive,
+    with a free size variable for the size argument
+    and free term variables for the other constructor arguments.
+\end{itemize}
+
+The purpose of the motive will become clearer shortly when looking at how the expression is typed;
+it otherwise behaves like an ordinary nondependent $\kw{case}$ expression on different constructors.
+The reduction rules of $\kw{case}$ expressions for each constructor are given in \cref{fig:reduction-ind},
 along with the reduction rule for fixpoint expressions.
 By convention, the reduction rules for $\kw{case}$ expressions
 are also referred to as $\iota$-reduction,
@@ -232,18 +251,28 @@ since $s < \sss{s}$.
 
 The typing rules for all new constructs are given in \cref{fig:typing-ind}.
 One additional metafunction $\FV{\mt}$ produces the free variables in the given term.
-The type of naturals and well-founded trees are well typed
+The types of naturals and well-founded trees are well typed
 when the sizes they are applied to are well formed, and
 their constructors are well typed when applied to smaller sizes.
 
 $\kw{case}$ expressions match on these size arguments in addition to the usual term arguments,
 asserting within their branches that they are strictly smaller than the target's size.
-The motive is dependent on the target,
-and the type of a branch is the motive with its target as the constructor being destructed.
-In other words, $\kw{case}$ expressions are inversion principles:
-for instance, one proves $P$ for some natural $x$ when one can prove it
-for the base case where $x$ is some $\zero*$
-and for the step case where $x$ is some $\succ*$.
+The entire expression can be thought of as an inversion principle where the motive $P$ is the goal:
+one proves $P$ for some natural $x$, for instance, when one can prove it
+for the case where $x$ is $\zero*$
+and the case where $x$ is a $\succ*$.
+Alternatively, it can be thought of as an applied destructor:
+informally borrowing syntax from dependent pattern matching, the destructor
+$$\fun{y}{\N{s}}{\match{y}{\fun*{x}{P}}{(\App{\zero*}{\alpha} \Rightarrow e_z)(\app{\App{\succ*}{\beta}}{z} \Rightarrow e_s)}}$$
+on naturals is equivalent to a definition by case analysis
+\begin{align*}
+\Let{&\const{destruct}}{\funtype{y}{\N{s}}{\subst{P}{x}{y}}}{\\
+&\app{\const{destruct}}{\app{(\zero{s}{\alpha})}{\phantom{z}}} = e_z \\
+&\app{\const{destruct}}{(\succ{s}{\beta}{z}) = e_s}}
+\end{align*}
+where the branches must have types $\subst{P}{x}{\zero{s}{\alpha}}$
+and $\subst{P}{x}{\succ{s}{\beta}{z}}$, respectively,
+depending on which branch is being filled in.
 
 As discussed, the body of a fixpoint is only well typed
 when the fixpoint is recursively applied to a smaller size,
@@ -276,7 +305,7 @@ when the type is evident or deducible from context.
 
 Concrete numbers can be constructed easily using the base size $\circ$ as a starting point
 and its successors as strictly larger sizes.
-For convenience, I use the notation \new{$s+n$} for some fixed $n$ to mean the $n$th size successor of $s$.
+For convenience, I use the notation \new{$s+n$} for some constant $n$ to mean the $n$th size successor of $s$.
 The same number can be represented as terms of different types by changing the annotation since,
 for instance, both $\circ+2$ and $\circ+3$ are strictly larger than $\sss{\circ}$.
 Similarly, two different naturals can have the same size
@@ -290,7 +319,6 @@ how many layers of constructors deep an element is.
 &\Let{\const{1'}&&}{\N{\circ+3}&&}{\succ{\circ+3}{\hat{\circ}}{\const{0}}} \\
 \end{alignat*}
 
-\clearpage % TODO: clearpage
 Two terms representing the same number might not be definitionally equal,
 as shown by the terms $\const{0}$ and $\const{0'}$,
 or by $\const{1}$ and $\const{1'}$;
@@ -335,7 +363,7 @@ where the sizes of the input and output are the same.
 This guarantees that the output is never larger than the input,
 and size-preserving functions can be used in recursive calls of fixpoints.
 For instance, the predecessor function $\pred$ which computes
-$\maximum{0, n - 1}$ for some number $n$ is size preserving.
+$\maximum{0, n - 1}$ for some number $n$ can be size preserving.
 %
 \begin{align*}
 &\Let{\pred}{\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}}}{ \\
@@ -360,7 +388,7 @@ We see the benefit of size preservation with $\divv$,
 which computes Euclidean division of $n$ by $m$, or $\left\lceil\frac{n}{m+1}\right\rceil$.
 This is computed recursively by subtracting $m$ from the numerator using $\monus$
 until $\zero*$ is reached, and counting the number of times the subtraction is performed.
-The recursive call is done on the result of $\monus$;
+The recursive call is performed on the result of $\monus$;
 $\divv$ then only type checks because $\monus$ is size preserving.
 Because the first argument of the recursive call to $\divv$ isn't \emph{structurally}
 a subterm with the call to $\monus$ in the way,
@@ -388,7 +416,7 @@ So far, none of these examples have made use of dependent types:
 their unsized variants could have all been written in System F.
 We therefore now turn to the $n$-ary size-preserving function type,
 which does \emph{large elimination}\index{large elimination}
-on a natural $n$, \ie returns a type.
+on a natural $n$: it returns a type of some universe $U$.
 This example is due to \citet{MiniAgda}.
 
 \begin{align*}
@@ -443,7 +471,7 @@ Implementing sized quicksort~\citep{term-check} and mergesort~\citep{Abel-diss} 
 demonstrating their ease of programming compared to na\"ive unsized implementations that otherwise
 impose a significant termination proof burden to the programmer.
 Although \lang has no lists for simplicity's sake,
-they are no more complicated than naturals.
+they are no more complicated to support than naturals.
 Using the same informal syntax from \cref{sec:ind-types},
 they can be defined by the following:
 
@@ -458,7 +486,7 @@ A similar lifting function for lists can be defined, whose type is
 $$\annot{\liftL}{\funtype{A}{\Type{i}}{\Funtype{\alpha}{\Funtype<{\beta}{\alpha}{\arr*{\List{A}{\beta}}{\List{A}{\alpha}}}}}}.$$
 
 I also use an encoding for \emph{weak dependent pairs}\index{weak dependent pair}
-to express pairing a sized type with some particular size
+to express pairing a particular size with a type of that size
 in situations where the size expressions of \lang aren't expressive enough
 to specify the exact size.
 %
@@ -544,7 +572,7 @@ Both involve recursive calls on lists that are not structurally smaller,
 but do have smaller sizes,
 and differ in where $\ifleq$ is applied ($\partition$ or $\mrg$).
 
-\vspace{-\baselineskip}
+\vspace{-2\baselineskip}
 \begin{multicols}{2}
 \begin{align*}
 &\Let{\qsort}{\Funtype{\alpha}{\arr*{\List{A}{\alpha}}{\Pairtype{\gamma}{\List{A}{\gamma}}}}}{ \\
@@ -596,6 +624,9 @@ Suppose that $B$ here is some type operator on $A$.
 &\qquad \quad \app{\App{\sup*}{\beta}}{a}{g} \Rightarrow \sup{x}{A}{\app{B}{x}}{\alpha}{\beta}{a}{(\fun{b}{\app{B}{a}}{\app{\App{\traverse}{\beta}}{(\app{\App{f}{\beta}}{(\app{g}{b})})}})}}}}}}
 \end{align*}
 
+Because $f$ is size polymorphic, it can be applied at any point in the traversal,
+and because it's size preserving, the recursive call $\traverse$ can take its result as argument.
+
 \subsection{Limitations} \label{sec:examples:limitations}
 
 As expressive as bounded, higher-rank sized types are,
@@ -617,7 +648,7 @@ with zero, successor, and limit ordinals:
 
 The limit ordinal, taking some function on naturals returning an ordinal,
 constructs an ordinal meant to be ``larger'' than any of the returned ordinals.
-Such a function should be able to return an ordinal far larger than any natural,
+Such a function should be able to return an ordinal larger than any natural,
 hence the bounded size quantification in its domain.
 Conversely, the naturals embed quite naturally within the ordinals.
 %
