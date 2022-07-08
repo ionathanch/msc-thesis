@@ -57,7 +57,7 @@
     \subsizeto{\Phi}{s_1}{s_3}{\app{\transleq}{\compile{s_1}}{\compile{s_2}}{\compile{s_3}}{\eT_{12}}{\eT_{23}}}
   }
   \end{mathpar}
-  \caption{Translation of subsizing}
+  \caption[Translation of subsizing]{Translation of subsizing derivations}
   \label{#1}
   \end{figure}
 }
@@ -130,7 +130,7 @@
   \Aboxed{\compile{e} &= \eT} \\
   \compile{x} &= \xT \\
   \compile{U} &= \UT \\
-  \compile{\App{e}{s}} &= \app{\compile{e}}{\compile{s}} \qquad (\textrm{\rref{sapp}})
+  \compile{\App{e}{s}} &= \app{\compile{e}}{\compile{s}} \qquad (for \textrm{\rref{sapp}})
   \end{align*}
 
   \begin{align*}

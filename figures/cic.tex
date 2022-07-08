@@ -96,7 +96,7 @@
   \and
   \inferrule[\rlabel{$\equiv$-$\rho$}{equiv-rho}]{
     \type{\GammaT}{\eT}{\tauT} \\
-    \type{\GammaT}{\PT}{\funtypeT{\yT}{\tauT}{\funtypeT{\zT}{\eqT{\eT}{\tauT}{\yT}}{\UT}}} \\
+    \type{\GammaT}{\PT}{\funtypeT{\yT}{\tauT}{\arrT*{\eqT{\eT}{\tauT}{\yT}}{\UT}}} \\
     \type{\GammaT}{\dT}{\app{\PT}{\eT}{\reflT{\eT}}}
   }{
     \defeq{\GammaT}{\JT{\PT}{\dT}{\reflT{\eT}}}{\dT}{\app{\PT}{\eT}{\reflT{\eT}}}
@@ -125,7 +125,6 @@
     \card{\DeltaT_c} = n \\
     \textrm{For every $1 \leq i \leq n$:} \\
     (\annotT{\cT_i}{\arrT*{(\annotT{\vec{\zT}_i}{\vec{\tauT}_i})}{\app{\XT}{\vec{\pT}}{\vec{\aT}_i}}}) \in \subst{\DeltaT_c}{\vec{\wT}}{\vec{\pT}} \\
-    \vec{\zT}_i \notin \FV{\PT} \\
     \type{\GammaT, \annotT{\vec{\zT}_i}{\vec{\tauT}_i}}{\eT_i}{\subst{\PT}{\vec{\yT}, \vec{\xT}}{\vec{\aT}_i, \app{\cT_i}{\vec{\pT}}{\vec{\zT}_i}}} \\\\
     j \in 1 \seq n \\
     \type{\GammaT}{\vec{\eT}}{\vec{\tauT}_j} \\
@@ -238,7 +237,7 @@
   \and
   \inferrule[\rlabel*{J}]{
     \type{\GammaT}{\pT}{\eqT{\eT_1}{\tauT}{\eT_2}} \\
-    \type{\GammaT}{\PT}{\funtypeT{\yT}{\tauT}{\funtypeT{\zT}{\eqT{\eT_1}{\tauT}{\yT}}{\UT}}} \\
+    \type{\GammaT}{\PT}{\funtypeT{\yT}{\tauT}{\arrT*{\eqT{\eT_1}{\tauT}{\yT}}{\UT}}} \\
     \type{\GammaT}{\dT}{\app{\PT}{\eT_1}{\reflT{\eT_1}}}
   }{
     \type{\GammaT}{\JT{\PT}{\dT}{\pT}}{\app{\PT}{\eT_2}{\pT}}
@@ -268,7 +267,6 @@
     \card{\DeltaT_c} = n \\
     \textrm{For every $1 \leq i \leq n$:} \\
     (\annotT{\cT_i}{\arrT*{(\annotT{\vec{\zT}_i}{\vec{\tauT}_i})}{\app{\XT}{\vec{\pT}}{\vec{\aT}_i}}}) \in \subst{\DeltaT_c}{\vec{\wT}}{\vec{\pT}} \\
-    \vec{\zT}_i \notin \FV{\PT} \\
     \type{\GammaT, \annotT{\vec{\zT}_i}{\vec{\tauT}_i}}{\eT_i}{\subst{\PT}{\vec{\yT}, \vec{\xT}}{\vec{\aT}_i, \app{\cT_i}{\vec{\pT}}{\vec{\zT}_i}}}
   }{
     \type{\GammaT}{\matchT{\eT}{\funT*{\vec{\yT}}{\xT}{\PT}}{(\app{\cT_1}{\vec{\zT}_1} \RightarrowT \eT_1)\seq(\app{\cT_n}{\vec{\zT}_n} \RightarrowT \eT_n)}}{\subst{\PT}{\vec{\yT}, \xT}{\vec{\aT}, \eT}}
