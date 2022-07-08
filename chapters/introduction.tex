@@ -70,23 +70,77 @@ In other words, there must not be any term whose type is $\funtype{P}{\Prop}{P}$
 Otherwise, any proposition would be provable,
 which defeats the purpose of using a logical system for valid reasoning.
 
+\subsection{Digression: Notions of equality}
+
 The two most important components of a formal description of a dependent type theory
 are its typing judgement, whose rules describe when a term has a certain type,
 and its equality judgement, whose rules describe when two terms are equal.
-The equality judgement, also known as definitional equality,
-is \emph{not} the same as propositional equality:
-the former is a relation between two terms that's checked by the type checker,
-while the latter is a type that may be inhabited by a proof term.
+The latter is also known as \emph{definitional equality}\index{definitional equality},
+which encompasses $\alpha$-equivalence (or syntactic equality up to bound variable renaming)
+and reduction (such as substituting a $\kw{let}$-bound expression into the body).
+Definitional equality can be \emph{untyped},
+simply relating two terms under some environment,
+or \emph{typed}, requiring typing premises as needed to ensure well-typedness of both terms.
+Typing and equality judgements can also be defined in an \emph{algorithmic} style,
+where the decision procedure for determining well-typedness or equality
+can be read more or less directly off of the rules,
+or in a \emph{declarative} style in contrast, where constructing a derivation tree for a judgement
+may not be decidable at all.
+Definitional equality is also called \emph{conversion} or \emph{equivalence},
+but I use these terms to mean different, specific notions of equality in the upcoming chapters.
+
+A type theory can also have a notion of \emph{propositional equality}\index{propositional equality},
+which is a proposition---a type---stating the equality of two terms,
+and \emph{not}, in contrast to definitional equality, a judgement.
+Two definitionally equal terms are propositionally equal by the reflexivity proof term
+as shown in the below typing rule.
+
+In an \emph{intensional} type theory with propositional equality,
+definitional equality is in a sense less expressive than propositional equality,
+since more terms are propositionally equal than they are definitionally equal.
+For instance, given arbitrary naturals $x$ and $y$,
+$x + y$ and $y + x$ aren't definitionally equal since they aren't syntactically the same
+and don't further reduce to anything definitionally equal,
+but they can be proven to be propositionally equal by induction on $x$ and $y$.
+In practice, definitionally equal terms are those that can automatically be verified by the proof assistant,
+while propositional equalities are those whose proofs are supplied by the proof programmer.
+
+\vspace{-0.5\baselineskip}
+\begin{mathpar}
+\inferrule[reflexivity]{
+  \defeq{\Phi; \Gamma}{e_1}{e_2}{\tau}
+}{
+  \type{\Phi; \Gamma}{\refl{}}{\eq{e_1}{\tau}{e_2}}
+}
+\and
+\inferrule[reflection]{
+  \type{\Phi; \Gamma}{p}{\eq{e_1}{\tau}{e_2}}
+}{
+  \defeq{\Phi; \Gamma}{e_1}{e_2}{\tau}
+}
+\end{mathpar}
+
+On the other hand, in an \emph{extensional} type theory, where we have the above equality reflection rule,
+two terms are definitionally equal as long as there exists some proof of their propositional equality.
+In general, finding a proof of an arbitrary propositional equality if it exists is undecidable~\citep{extensional-concepts},
+so deciding definitional equality in extensional type theory is consequently undecidable as well,
+and therefore unsuitable in a proof assistant.
+However, equality reflection doesn't affect the consistency of the type theory (\cf \opcit).
+
+Finally, definitional/propositional \emph{proof irrelevance}\index{proof irrelevance}
+is the notion that it shouldn't matter how a proposition is proven so long as it's provable,
+so any two terms inhabiting the same proposition should be definitionally/propositionally equal.
+This won't come up again until \cref{ch:model}.
 
 Definitional equality is relevant in dependent types because they allow determining that,
 for instance, a proof of \mbox{$\app{P}{(1 + 1)}$}
 is in fact also a proof of $\app{P}{2}$.
-Equality is sometimes described in terms of reduction judgements,
-governed by rules of computation.
-This means that, in contrast to nondependent type systems,
-whether type checking always terminates depends on whether the language is normalizing.
+Because reduction is a part of definitional equality,
+in contrast to nondependent type systems,
+whether type checking always terminates depends on whether
+the language is terminating with respect to its reduction rules.
 More complex forms of reduction such as recursion present further challenges
-to normalization and thus type checking.
+to termination and thus type checking.
 
 \subsection{Recursive programming with sized types} \label{ss}
 
@@ -273,7 +327,7 @@ On the other hand, well-founded trees are an example of \emph{generalized} induc
 with recursive arguments that are functions that return well-founded trees.
 They can encode all (nonnested) inductives,
 as well as their induction principles \citep{whynotW} if there are dependent pair types
-and a \emph{propositional equality}\index{propositional equality} type.
+and a propositional equality\index{propositional equality} type.
 I don't add inductive types in general in their place
 because the syntactic baggage that comes with handling the generalization
 obscures the intuition behind sized inductive types and the syntactic model,
@@ -377,9 +431,7 @@ in whose consistency we have more confidence---in this case,
 the \emph{Extensional Calculus of Inductive Constructions}\index{Calculus of Inductive Constructions!Extensional \textasciitilde}
 (\CICE)~\citep{CICE}.
 It, too, has a cumulative hierarchy of universes \ala Russell and an impredicative universe,
-augmented with inductive types and \emph{equality reflection}\index{equality reflection},
-which is a rule for definitional equality between terms requiring as premise
-a proof of propositional equality between them.
+augmented with inductive types and equality reflection.
 The most notable difference from \lang, aside from these features and sized types,
 is that \CICE uses a typed, declarative equality rather than an untyped, algorithmic equality
 to better accommodate equality reflection.
