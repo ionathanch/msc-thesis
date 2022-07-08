@@ -91,7 +91,6 @@
   \and
   \inferrule[\rlabel*{case-nat}]{
     \infer{\Phi; \Gamma}{e}{\N{s}} \\
-    z \notin \FV{P} \\
     \infer{\Phi; \Gamma, \annot{x}{\N{s}}}{P}{U} \\\\
     \check{\Phi, \bound{\alpha}{s}; \Gamma}{e_z}{\subst{P}{x}{\zero{s}{\alpha}}} \\
     \check{\Phi, \bound{\beta}{s}; \Gamma, \annot{z}{\N{\beta}}}{e_s}{\subst{P}{x}{\succ{s}{\beta}{z}}}
@@ -101,7 +100,6 @@
   \and
   \inferrule[\rlabel*{case-wft}]{
     \infer{\Phi; \Gamma}{e}{\W{y}{\sigma}{\tau}{s}} \\
-    z_1, z_2 \notin \FV{P} \\
     \infer{\Phi; \Gamma, \annot{x}{\W{y}{\sigma}{\tau}{s}}}{P}{U} \\
     \check{\Phi, \bound{\alpha}{s}; \Gamma, \annot{z_1}{\sigma}, \annot{z_2}{\arr*{\subst{\tau}{y}{z_1}}{\W{y}{\tau}{\sigma}{\alpha}}}}{e_s}{\subst{P}{x}{\sup{y}{\sigma}{\tau}{s}{\alpha}{z_1}{z_2}}}
   }{

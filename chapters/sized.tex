@@ -46,6 +46,11 @@ $P$ for the motive of eliminators,
 $z$ for variables representing constructor arguments, and
 $f, g$ for variables representing functions.
 
+To avoid tedious complications with variables and renaming,
+I assume that shadowing is disallowed
+and that variable names coincide where needed instead of explicitly stating $\alpha$-equivalence.
+This lets me write fewer variable substitutions and checks for variable freshness.
+
 As mentioned in \cref{ch:introduction}, the judgement forms of \lang include
 reduction, its various closures, $\alpha$-cumulativity, subtyping, and typing.
 On top of those, there are also judgement forms for subsizing, sizes,
@@ -98,7 +103,6 @@ which would otherwise allow conversion between $\fun{x}{\tau}{\app{f}{x}}$ and $
 Mixing $\eta$-conversion and untyped conversion is notoriously difficult~\citep{eta},
 and remains to date an unresolved problem in MetaCoq\index{MetaCoq}, so I exclude it here.
 
-\clearpage % TODO: clearpage
 \FigSubsize{fig:subsizing}
 \cref{fig:subsizing} describes a preorder on sizes such that
 the successor operator is monotonic with respect to the order.
@@ -123,7 +127,6 @@ since a function type $\arr*{\sigma}{\tau}$ where $\sigma : U$ and $\tau : \Prop
 would also be in $\Prop$, and if $U = \Type{1}$ then this function type itself
 could be passed to the function.
 
-\clearpage % TODO: clearpage
 \rref{var, univ, let} are the usual rules for variables, universes, and $\kw{let}$ expressions
 in \GCC,\index{Calculus of Constructions!Generalized \textasciitilde}
 while \rref{pi, lam, app} are the usual ones for functions.
@@ -265,6 +268,7 @@ Alternatively, it can be thought of as an applied destructor:
 informally borrowing syntax from dependent pattern matching, the destructor
 $$\fun{y}{\N{s}}{\match{y}{\fun*{x}{P}}{(\App{\zero*}{\alpha} \Rightarrow e_z)(\app{\App{\succ*}{\beta}}{z} \Rightarrow e_s)}}$$
 on naturals is equivalent to a definition by case analysis
+
 \begin{align*}
 \Let{&\const{destruct}}{\funtype{y}{\N{s}}{\subst{P}{x}{y}}}{\\
 &\app{\const{destruct}}{\app{(\zero{s}{\alpha})}{\phantom{z}}} = e_z \\
@@ -415,8 +419,11 @@ as is the case for CIC.
 So far, none of these examples have made use of dependent types:
 their unsized variants could have all been written in System F.
 We therefore now turn to the $n$-ary size-preserving function type,
-which does \emph{large elimination}\index{large elimination}
-on a natural $n$: it returns a type of some universe $U$.
+which does \emph{large elimination}\index{large elimination},
+where the return type lives in a larger universe
+than that of the input type.
+(In this case, $n$ is a natural whose type lives in $\Type{1}$,
+while the return type lives in $\Type{2}$).
 This example is due to \citet{MiniAgda}.
 
 \begin{align*}

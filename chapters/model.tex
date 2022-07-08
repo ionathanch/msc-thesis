@@ -24,9 +24,9 @@ and provides an inductive structure for structural recursion that matches the se
 For the type preservation proof to go through,
 definitional proof irrelevance\index{proof irrelevance} of accessibility predicates
 is required.
-This holds in extensional type theory via equality reflection\index{equality reflection},
-since the propositional equality is provable,
-but not in intensional type theory, which is why I use an extensional CIC.
+Since the proof irrelevance holds propositionally,
+I use an extensional CIC to obtain the definitional equality
+from the propositional equality via equality reflection\index{equality reflection}.
 
 The first half of this chapter provides the syntax and judgements of \CICE.
 In addition to the notation used in \cref{ch:sized-dep-types},
@@ -41,7 +41,11 @@ $\subst{\eT}{\xT_1, \seq, \xT_n}{\eT_1, \seq, \eT_n}$,
 $\funT{\xT_1}{\tauT_1}{\seq \funT{\xT_n}{\tauT_n}{\eT}}$, and
 \new{$\type{\GammaT}{\vec{\eT}}{\vec{\tauT}}$} denotes the $n$ typing judgements
 $(\type{\GammaT}{\eT_1}{\tauT_1})$, \seq, $(\type{\GammaT, \annotT{\eT_1}{\tauT_1}, \seq, \annotT{\eT_{n-1}}{\tauT_{n-1}}}{\eT_n}{\tauT_n})$.
+I also assume that shadowing is disallowed and that variable names coincide
+just as in \lang for convenience, to avoid renaming as much as possible.
 
+% TODO: clearpage
+\clearpage
 The second half then describes the translation from \lang to \CICE,
 which is a metafunction from typing derivations of \lang to terms of \CICE.
 Therefore, the translation is only defined for well-typed \lang terms,
@@ -89,7 +93,6 @@ which definitionally equates two terms whenever there exists some proof of their
 
 \FigEquiv{fig:equivalence}
 
-\clearpage
 Typed equivalence is required in the presence of equality reflection since
 inconsistencies are derivable when using untyped conversion\index{conversion}.
 For instance, supposing that \lang had equality reflection and using \new{$\approx$} to denote conversion,
@@ -144,7 +147,7 @@ On the other hand, for any particular inductive type $\XT$,
 letting $\tauT$ be $\arr{\vec{\xT}}{\vec{\sigmaT}}{\funtypeT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\tauT'}}$,
 \rref{equiv-mu} can be derived from \rref{equiv-mu-guarded} via reflection of the following provable propositional equality,
 freely using transitivity:
-
+%
 \begin{align*}
 \fixT{\nT}{\fT}{\tauT}{\eT} &\eq{}{}{} \funT{\vec{\xT}}{\vec{\sigmaT}}{\funT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\xT}}{\xT}}}
 \qquad \textrm{definitionally by \rref{equiv-eta}} \\
@@ -158,7 +161,7 @@ freely using transitivity:
 \qquad \textrm{definitionally by \rref{equiv-eta}}
 \end{align*}
 
-Since \rref{equiv-mu} and \rref{equiv-mu-guarded} are metatheoretically equivalent,
+Since \rref{equiv-mu} and \rref{equiv-mu-guarded} are metatheoretically equivalent in extensional CIC,
 I choose to use \rref{equiv-mu} for its simplicity.
 
 \FigSubtypingCIC{fig:subtyping-cic}
@@ -188,20 +191,17 @@ I will provide either a mechanization or present a brief argument of guardedness
 The new \rref{eq, refl, J} are for the propositional equality\index{propositional equality} type,
 its constructor, and its eliminator.
 Given some equality proof $\pT$ of $\eqT{\eT_1}{\tauT}{\eT_2}$
-and a motive $\PT$ dependent on a proof of equality
-whose left-hand side is fixed at $\eT_1$ and right-hand side is variable\punctstack{,}%
+and a motive $\PT$ that depends on some equality $\eqT{\eT_1}{\tauT}{\yT}$ for any $\yT$\punctstack{,}%
 \footnote{Occasionally referred to as \emph{Paulin-Mohring}'s equality~\citep{CIC},
 as opposed to \emph{Martin-L\"of}'s equality~\citep{MLTT}
-where the left-hand side is variable as well.}
+where the motive instead has type $\funtypeT{\xT}{\tauT}{\funtypeT{\yT}{\tauT}{\arrT*{\eqT{\xT}{\tauT}{\yT}}{\UT}}}$.}
 to prove $\app{\PT}{\eT_2}{\pT}$ it suffices to provide to $\JT*$ a proof that
-$\app{\PT}{\eT_1}{\refl{\eT_1}}$ holds.
+$\app{\PT}{\eT_1}{\reflT{\eT_1}}$ holds.
+In terms of pattern matching, this is equivalent to case analysis of $\pT$ as $\reflT{\eT_1}$.
 Other usual functions on proofs of equality can be derived from it,
 such as coercion (when the motive is \mbox{$\funT{A}{\UT}{\funT{\any}{\any}{A}}$})
 or substitution (when the motive ignores the second argument),
-as well as its symmetry, transitivity, and congruence.
-The proof of type preservation eliminates propositional equalities mostly through
-reflection\index{equality reflection} rather than using $\JT*$,
-but I retain $\JT*$ in \CICE for completeness\punctstack{.}%
+as well as its symmetry, transitivity, and congruence.%
 \footnote{The combined presence of $\JT*$ and equality reflection also allows proving the
 \emph{uniqueness of identity proofs} (UIP)\index{uniqueness of identity proofs},
 or that all proofs of an equality $\eqT{a}{A}{b}$ are themselves equal to one another,
@@ -225,7 +225,7 @@ $\vec{\yT}$ and $\vec{\zT}$ are those found in the data definition,
 but of course these can be renamed at the expense of additional renaming substitutions.
 
 Additionally, the motive of a $\tg{case}$ expression is restricted by the metarelation $\elim{\mt}{\mt}{\mt}$,
-which indicates when \emph{large elimination}\index{large elimination} is allowed.
+which indicates when large elimination\index{large elimination} is allowed.
 $\elim{\any}{\TypeT{\iT}}{\any}$ and $\elim{\any}{\PropT}{\PropT}$ always hold,
 so that inductives in $\TypeT{}$ can be eliminated to any universe
 and inductives in $\PropT$ can be eliminated to $\PropT$,
@@ -237,13 +237,13 @@ They can be loosened while still retaining consistency (see \eg \citet{SProp}).
 The typing premises of
 \rref{equiv-beta, equiv-zeta, equiv-rho, equiv-iota, equiv-mu}
 corresponding to some of the reduction rules duplicate the premises found in many of the typing rules,
-trivially ensuring that both sizes of these equivalences are well typed with the same type
-(a property known as \emph{subject equivalence}\index{subject reduction}).
+trivially ensuring \emph{subject equivalence}\index{subject reduction}
+(\ie well-typedness of both sides).
 
 \section{Preliminary Definitions}
 
 Before defining the translation from \lang terms to \CICE terms,
-in this section I describe how the \CICE terms are constructed,
+in this section I describe how the necessary \CICE terms are constructed,
 which comprises the aforementioned six inductive data definitions
 and well-founded induction principle
 as well as the various properties which the order on sizes satisfies.
@@ -289,17 +289,17 @@ asserting that two functions $\annot{f, g}{\funtypeT{x}{A}{\app{B}{x}}}$ are pro
 In \CICE, they are in fact equivalent (\ie definitionally equal):
 given some proof $h$ of their pointwise equality,
 under the assumption $\annot{x}{A}$,
-the propositional equality $\eq{\app{f}{x}}{}{\app{g}{x}}$ by $\app{h}{x}$
+the propositional equality $\eq{\app{f}{x}}{}{\app{g}{x}}$ proven by $\app{h}{x}$
 can be reflected into the corresponding definitional equality,
 which by \rref{equiv-eta} is then a definitional equality of $f$ and $g$.
 
 The remaining definitions have been mechanized in either Agda and Coq in
 \cref{app:mechanization:agda:prelim} and \cref{app:mechanization:coq:prelim}, respectively,
 under the assumption of function extensionality as an axiom
-(which cannot be proven in intensional CIC).
+(which cannot be proven in, but is consistent with, intensional CIC).
 The mechanizations don't use any additional type-theoretic features beyond CIC,
 and the proofs could theoretically be written in plain CIC,
-but they would be far less comprehensible without the ergonomics provided by the proof assistants.
+but they would be far less manageable without the ergonomics provided by the proof assistants.
 As an example, the Coq proof for $\accessible$ consists of a dozen lines of tactics,
 while the full proof term generated from the tactics is 129 lines long.
 
@@ -310,7 +310,7 @@ and of the accessibility predicate:
     The order is reflexive and transitive (\ie a preorder)
     such that $\baseT$ is smaller than or equal to all sizes
     and the successor of a size is greater or equal to itself.
-  \item $\accIsProp$: Accessibility predicates are \emph{mere propositions}\index{mere proposition}:
+  \item $\accIsProp$: Accessibility predicates are mere propositions\index{mere proposition}:
     any two proofs of accessibility of a size are propositionally equal.
   \item $\accleq$: Any size smaller or equal to an accessible size is itself accessible.
   \item $\accessible$: All sizes are accessible; in other words, the order on sizes is well founded.
@@ -373,7 +373,7 @@ when well formed under the current implicit size environment.
 \FigTransTerm{fig:trans:term}
 
 The translation for base \lang without inductives is given in \cref{fig:trans:term}
-in the more concise notation translated terms follow directly from subderivations
+in the more concise notation when translated terms follow directly from subderivations
 and in the usual notation otherwise.
 Terms not involving sizes are translated in a straightforward recursive manner.
 Unbounded size quantifications and abstractions translate to quantifications and abstractions over $\SizeT$,
@@ -393,7 +393,7 @@ and dually an additional abstraction over such terms in the branches of $\tg{cas
 Fixpoints in \lang are not translated as fixpoints in \CICE.
 Doing so while preserving types would mean that \lang fixpoints
 need to be subject to the same guard conditions as \CICE fixpoints,
-which is clearly undesirable and not the case in the examples from \cref{sec:examples}.
+which would defeat the purpose of using sized types.
 Instead, every single \lang fixpoint, regardless of the inductive on which they recur,
 is translated to well-founded induction\index{well-founded induction},
 which is defined via a \CICE fixpoint on accessibility predicates\index{accessibility predicate}.
@@ -401,10 +401,12 @@ Intuitively, the return type of a fixpoint corresponds to the motive of well-fou
 while recursion on a strictly smaller size corresponds to the induction hypothesis,
 where the motive holds for all strictly smaller sizes.
 
-The main challenge with this translation is showing that the translations of a fixpoint
-and of its $\mu$-reduction are equivalent in \CICE,
+In the next chapter, I prove that the translation is type preserving and,
+along the way, that the translations of convertible terms are equivalent.
+The main challenge is showing that the translations of a fixpoint
+and its $\mu$-reduction are equivalent in \CICE,
 because this requires showing that the computational behaviour of well-founded induction
-is equivalent to the computational behaviour of the fixpoint.
+is equivalent to that of the fixpoint.
 Once that has been established,
 showing type preservation of the translation is more or less going through the motions of the proof,
 since the remaining \lang terms translate almost directly to their syntactically corresponding terms.
