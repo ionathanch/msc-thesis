@@ -5,6 +5,8 @@
 In this chapter, I elaborate on the proofs of the lemmas and theorems listed in \cref{sec:syntactic-model},
 culminating in type preservation, which by \cref{thm:overview:consistency} proves the consistency of \lang.
 Prior to these proofs, I provide the required metatheoretical properties of both \lang and \CICE.
+Again, I assume that shadowing is disallowed,
+so that the variables in the environments are unique.
 
 \section{Metatheory of \lang}
 
@@ -22,8 +24,7 @@ which extends congruence of reduction to its closure.
 
 \begin{lemma}[Weakening] \label{lem:weakening}
 Let $\Phi$ be a size environment,
-let $\Gamma$ and $\Gamma'$ be term environments
-where $\Gamma'$ does not shadow any variables of $\Gamma$,
+let $\Gamma$ and $\Gamma'$ be term environments,
 and suppose $\wf{\Phi}{\Gamma, \Gamma'}$.
 \begin{enumerate}[noitemsep]
   \item \label{item:weakening:red} If $\red{\Phi; \Gamma}{e_1}{e_2}$ then $\red{\Phi; \Gamma, \Gamma'}{e_1}{e_2}$.
@@ -33,6 +34,8 @@ and suppose $\wf{\Phi}{\Gamma, \Gamma'}$.
 \end{enumerate}
 \end{lemma}
 
+% TODO: clearpage
+\clearpage
 \begin{proof} \hfill
 \begin{enumerate}[noitemsep]
   \item By induction on the derivation of $\red{\Phi; \Gamma}{e_1}{e_2}$.
@@ -125,7 +128,7 @@ using the extended environment from \cref{item:substitutivity:wf}.
 \begin{corollary}
 \nameref{lem:substitutivity-terms} also applies when the environment contains $\define{x}{\sigma}{e}$
 rather than $\annot{x}{\sigma}$ by the exact same arguments.
-Note that the term being substituted in must be the one defined as $x$.
+Note that the term being substituted in must be $e$.
 \end{corollary}
 
 \begin{lemma}[Substitutivity by unbounded sizes] \label{lem:substitutivity-unbounded}
@@ -243,7 +246,8 @@ The technique I use is to first show there is some judgement that satisfies the
 \emph{Z property}\index{Z property}~\citep{Z, confluence} for reduction,
 so called for the Z shape formed by reduction and its closure.
 This is illustrated by \cref{fig:Z},
-with the solid arrow representing reduction $\rhd$ and
+with dotted lines overlaid with $\blacktriangleright$ representing the judgement,
+the solid arrow representing reduction $\rhd$, and
 dashed arrows representing its reflexive, transitive closure $\rhd^*$.
 Confluence then follows from the Z property.
 
@@ -288,9 +292,9 @@ The inclusion of the size and term environments are crucial,
 since $\delta$-reduction depends on definitions in the environment
 and $\mu$-reduction depends on subsizing.
 \cref{fig:develop,app:cong:develop}
-present the rules for complete development.
-The first rule from left to right, top to bottom that applies is used,
-making complete development decidable and deterministic (up to subsizing)
+present the rules for complete development,
+which is defined as applying the first possible rule from left to right, top to bottom.
+This makes complete development decidable and deterministic (up to subsizing)
 given the environments and an initial term.
 
 \FigTakahashi{fig:develop}
@@ -498,7 +502,7 @@ as is the case for $\kw{let}$ expressions.
   so applying \cref{lem:congruence} again with $\zeta$-reduction and chaining it all up,
   we have $\red*{\Phi; \Gamma}{\letin{x}{\tau}{e_1}{e_3}}{\subst{e'_2}{x}{e'_1}}$.
 \end{itemize}
-The remaining cases for congruence of reduction not covered here are similar to the above,
+The remaining cases for congruence of reduction not covered here are similar to those above,
 falling into one of the three categories.
 Meanwhile, the reduction rules involving redexes except $\delta$-reduction
 all involve some form of substitution,
@@ -546,13 +550,13 @@ allow for deducing from a typing judgement the necessary premises for a typing d
 with one principle for each syntactic form.
 In the presence of subtyping, these principles are a little more complex,
 relating the type derived from the premises to the desired type by a subtyping judgement.
-For concision, I prove all inversion principles for a general typing rule
+For concision, I prove all inversion principles for any arbitrary typing rule
 rather than handling each rule explicitly.
 
 Before we can prove these inversion principles,
 we need transitivity of the subtyping judgement,
 which in turn requires both confluence and transitivity of $\alpha$-cumulativity\index{$\alpha$-cumulativity},
-as well a few inversion principles for the closure of reduction.
+as well as a few inversion principles for the closure of reduction.
 
 \begin{lemma}[Inversion on closure of reduction (\rref{pi})] \label{lem:inversion-red}
 If $\red*{\Phi; \Gamma}{\funtype{x}{\sigma_1}{\tau_1}}{\tau}$,
@@ -616,6 +620,7 @@ If $\acum{e_1}{e_2}$ and $\acum{e_2}{e_3}$ then $\acum{e_1}{e_3}$.
 
 \begin{proof}
 By nested induction on the derivations of $\acum{e_1}{e_2}$ and $\acum{e_2}{e_3}$.
+
 \begin{enumerate}[noitemsep, label=\textbf{Cases}, leftmargin=*, labelindent=\parindent]
   \item \rref*{acum-refl} and $\mathcal{R}$, $\mathcal{R}$ and \rref*{acum-refl}.
     Trivial by the $\mathcal{R}$ derivation.
@@ -733,7 +738,8 @@ then $\subtype{\Phi; \Gamma}{\tau_1}{\tau_3}$.
 
 \begin{proof}
 By cases on the derivations of $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$
-and $\subtype{\Phi; \Gamma}{\tau_2}{\tau_3}$.
+and $\subtype{\Phi; \Gamma}{\tau_2}{\tau_3}$
+(of which there is only one case for each derivation below).
 \begin{mathpar}
 \inferrule{
   \acum{\sigma_1}{\sigma_{21}} \\\\
@@ -812,10 +818,10 @@ A diagram representing the proof is shown in \cref{fig:transitivity-subtyping},
 where again the dashed arrows represent closure of reduction $\rhd^*$.
 
 \begin{theorem}[Inversion on typing] \label{thm:inversion}
-Given a syntactic form $e$ and a typing rule $\mathcal{R} \neq \text{\upshape \rref*{conv*}}$ for that form,
+Given a syntactic form $e$ and a typing rule $\mathcal{R} \neq \text{\upshape \rref*{conv}}$ for that form,
 if $\mathcal{D}$ is a derivation ending in $\type{\Gamma}{e}{\tau}$
 and $\mathcal{J}_i$ are the judgement forms in the premises of $\mathcal{R}$,
-then there exist derivations $\mathcal{D}_i$ ending in $\mathcal{J}_i$
+then there exist a type $\sigma$ and derivations $\mathcal{D}_i$ ending in $\mathcal{J}_i$
 such that $\mathcal{R}$ builds a derivation ending in $\type{\Gamma}{e}{\sigma}$,
 and $\subtype{\Gamma}{\sigma}{\tau}$ holds.
 \end{theorem}
@@ -823,11 +829,11 @@ and $\subtype{\Gamma}{\sigma}{\tau}$ holds.
 \begin{proof}
 By induction on the derivation of $\type{\Gamma}{e}{\tau}$.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
-  \item $\mathcal{R}$. The premises of the derivation are the desired ones,
+  \item $\mathcal{R} \neq \rref*{conv}$. The premises of the derivation are the desired ones,
     building a derivation ending in $\type{\Gamma}{e}{\tau}$,
     and $\subtype{\Gamma}{\tau}{\tau}$ holds by
     \rref{subtype-conv, acum-refl, red*-refl}.
-  \item \rref*{conv*}.
+  \item \rref*{conv}.
     \vspace{-\baselineskip}
     \begin{mathpar}
     \inferrule{
@@ -945,22 +951,6 @@ and by \rref{subtype-red} we have
 $\subtype{\Phi; \Gamma_1, \define{x}{\sigma}{e_2}, \Gamma_2}{\tau_1}{\tau_2}$.
 \end{proof}
 
-A diagram representing the proof is shown in \cref{fig:replacement-reduction-3},
-where again the dashed arrows represent closure of reduction $\rhd^*$.
-
-\begin{lemma}[Replacement by reduction] \label{lem:replacement-reduction}
-If $\type{\Phi; \Gamma_1, \define{x}{\sigma}{e_1}, \Gamma_2}{e}{\tau}$
-and $\red*{\Gamma_1}{e_1}{e_2}$
-then $\type{\Phi; \Gamma_1, \define{x}{\sigma}{e_2}, \Gamma_2}{e}{\tau}$.
-\end{lemma}
-
-\begin{proof}
-By induction on the derivation of
-$\type{\Phi; \Gamma_1, \define{x}{\sigma}{e_1}, \Gamma_2}{e}{\tau}$,
-using \cref{lem:replacement-reduction-3}
-for the case of \rref*{conv}.
-\end{proof}
-
 \begin{figure}[h]
 \centering
 \begin{tikzcd}
@@ -987,6 +977,22 @@ for the case of \rref*{conv}.
 \caption{Diagram of proof of \cref{lem:replacement-reduction-3}.}
 \label{fig:replacement-reduction-3}
 \end{figure}
+
+A diagram representing the proof is shown in \cref{fig:replacement-reduction-3},
+where again the dashed arrows represent closure of reduction $\rhd^*$.
+
+\begin{lemma}[Replacement by reduction] \label{lem:replacement-reduction}
+If $\type{\Phi; \Gamma_1, \define{x}{\sigma}{e_1}, \Gamma_2}{e}{\tau}$
+and $\red*{\Gamma_1}{e_1}{e_2}$
+then $\type{\Phi; \Gamma_1, \define{x}{\sigma}{e_2}, \Gamma_2}{e}{\tau}$.
+\end{lemma}
+
+\begin{proof}
+By induction on the derivation of
+$\type{\Phi; \Gamma_1, \define{x}{\sigma}{e_1}, \Gamma_2}{e}{\tau}$,
+using \cref{lem:replacement-reduction-3}
+for the case of \rref*{conv}.
+\end{proof}
 
 \subsection{Regularity}
 
@@ -1161,11 +1167,12 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$ and \nameref{thm:i
     \end{itemize}
     By the induction hypothesis, we have $\type{\Phi; \Gamma}{e'_1}{\sigma}$.
     By \nameref{lem:replacement-reduction},
-    we have $\type{\Phi; \Gamma, \define{x}{\sigma}{e'_1}}{e_2}{\tau'}$.
-    By \rref{let}, we have $\type{\Phi; \Gamma}{\letin{x}{\sigma}{e'_1}{e_2}}{\subst{\tau'}{x}{e'_1}}$.
+    we have $\type{\Phi; \Gamma, \define{x}{\sigma}{e'_1}}{e_2}{\tau'}$,
+    and by \rref{let}, we have $\type{\Phi; \Gamma}{\letin{x}{\sigma}{e'_1}{e_2}}{\subst{\tau'}{x}{e'_1}}$.
     By \nameref{lem:congruence},
     we have $\red*{\Phi; \Gamma}{\subst{\tau'}{x}{e_1}}{\subst{\tau'}{x}{e'_1}}$.
-    Then by \rref{red*-refl, acum-refl, subtype-red}, \nameref{thm:transitivity-subtyping},
+    Then by \rref{red*-refl, acum-refl, subtype-red},
+    followed by \nameref{thm:transitivity-subtyping},
     we have $\subtype{\Phi; \Gamma}{\subst{\tau'}{x}{e'_1}}{\tau}$.
     Finally, by \rref{conv}, we have $\type{\Phi; \Gamma}{\letin{x}{\sigma}{e'_1}{e_2}}{\tau}$.
   \item[\textbf{Cases}] \textbf{remaining}.
@@ -1173,6 +1180,8 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$ and \nameref{thm:i
 \end{itemize}
 \end{proof}
 
+% TODO: clearpage
+\clearpage
 \begin{theorem}[Subject reduction] \label{thm:subject-reduction}
 If $\type{\Phi; \Gamma}{e}{\tau}$ and $\red*{\Phi; \Gamma}{e}{e'}$ then $\type{\Phi; \Gamma}{e'}{\tau}$.
 \end{theorem}
@@ -1613,6 +1622,7 @@ By induction on the derivation of $\subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2
     \end{align*}
     By \cref{sublem:compos-size}, again noting that $\alphaT^*$ never appears in
     $\compile{s_1}$, $\compile{s_2}$, or $\compile{s_3}$, this becomes
+
     \begin{align*}
     &\subsizeto{\Phi_1, \subst{\Phi_2}{\alpha}{s'}}{\subst{s_1}{\alpha}{s'}}{\subst{s_3}{\alpha}{s'}}
     {\\ & \qquad \app{\transleq}{\subst{\compile{s_1}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}{\subst{\compile{s_2}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}{\subst{\compile{s_3}}{\alphaT, \alphaT^*}{\compile{s'}, \eT'}}
@@ -1676,6 +1686,8 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
         \type{\Phi; \Gamma}{\letin{x}{\sigma}{e_1}{e_2}}{\subst{\tau}{x}{e_1}}
       }
     \end{mathpar}
+    % TODO: clearpage
+    \clearpage
     Induction hypotheses:
     \begin{itemize}[noitemsep]
       \item $\subst{\compile{\sigma}}{\alphaT, \alphaT^*}{\compile{s}, \eT'} = \compile{\subst{\sigma}{\alpha}{s}}$,
@@ -1833,6 +1845,8 @@ and $\wf{\Phi_1}{s}$ then
 $\subst{\compile{e}}{\alphaT}{\compile{s}} = \compile{\subst{e}{\alpha}{s}}$.
 \end{lemma}
 
+% TODO: clearpage
+\clearpage
 \begin{proof}
 By induction on the derivation of $\type{\Phi_1, \alpha, \Phi_2; \Gamma}{e}{\tau}$.
 The proof structure follows that of \nameref{lem:compos-size-bounded},
@@ -2023,6 +2037,7 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     Let $\sigmaT$ be $\funT{\alphaT}{\SizeT}{\compile{\sigma}}$,
     and let $\eT$ be $\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\sigma}}{\alphaT}{\betaT}}}}{\compile{e}}}$.
     Liberally using \rref{equiv-trans}, for the left-hand side we then have
+    \allowdisplaybreaks
     \begin{align*}
     \compile{\Phi}, \compile{\Gamma} &\vdash \app{\wfind}{\sigmaT}{\eT}{\compile{s}} \\
     &\equiv \app{\wfacc}{\sigmaT}{\eT}{\compile{s}}{(\app{\accessible}{\compile{s}})} \\
@@ -2359,8 +2374,8 @@ using preservation of subtyping in the \rref*{conv} case
 and preservation of sizes and subsizing,
 which are proven independently.
 
-\begin{lemma}[Preservation of sizes] \label{lem:pres-size}
-\begin{enumerate}[noitemsep]\hfill
+\begin{lemma}[Preservation of sizes] \label{lem:pres-size} \hfill
+\begin{enumerate}[noitemsep]
   \item If $\wf{}{\Phi}$ then $\wf{}{\compile{\Phi}}$; and
   \item If $\wf{\Phi}{s}$ then $\type{\compile{\Phi}}{\compile{s}}{\SizeT}$.
 \end{enumerate}
@@ -2433,6 +2448,8 @@ By induction on the derivation of $\subsizeto{\Phi}{r}{s}{\eT}$.
 \end{itemize}
 \end{proof}
 
+% TODO: clearpage
+\clearpage
 \begin{theorem}[Type preservation] \label{thm:pres-typing} \hfill
 \begin{enumerate}[noitemsep]
   \item If $\wf{\Phi}{\Gamma}$ then $\wf{}{\compile{\Phi}, \compile{\Gamma}}$; and
