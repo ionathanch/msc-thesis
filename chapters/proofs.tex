@@ -1330,7 +1330,7 @@ then $\type{\GammaT}{\eT_1}{\tauT}$ and $\type{\GammaT}{\eT_2}{\tauT}$.
 
 For completeness I restate the consistency of \CICE, again as a postulate.
 
-\begin{postulate}[Consistency]
+\begin{postulate}[Consistency of \CICE] \label{postulate:consistency-cice}
 There exists no term $\eT$ such that
 $\type{\mt}{\eT}{\funtypeT{\PT}{\PropT}{\PT}}$.
 \end{postulate}
@@ -1865,7 +1865,8 @@ Because \CICE's equivalence judgement is typed,
 we need typing information for the translated terms
 to satisfy its premises.
 Note however that we only need \emph{some} typing information,
-and that $\tauT$ isn't necessarily $\compile{\tau}$.
+namely that a translation $\compile{e}$ is well typed with type $\tauT$,
+and that $\tauT$ isn't necessarily the translation $\compile{\tau}$ of the type of $e$.
 To show that it is would require type preservation itself,
 which in turn would make our proofs circular.
 
@@ -2609,4 +2610,21 @@ $\wf{\Phi}{\Gamma}$ and $\type{\Phi; \Gamma}{e}{\tau}$.
     $\type{\compile{\Phi}, \compile{\Gamma}}{\app{\wfind}{(\funT{\alphaT}{\SizeT}{\compile{\sigma}})}{\eT}}{\funtypeT{\alphaT}{\SizeT}{\compile{\sigma}}}$.
     \qedhere
 \end{itemize}
+\end{proof}
+
+\section{Consistency of \lang}
+
+Now that type preservation has been proven,
+we know that \lang is consistent with respect to the consistency of \CICE.
+The proof of consistency is reproduced below.
+
+\begin{theorem}[Consistency of \lang] \label{thm:overview:consistency}
+There exists no term $e$ such that \mbox{$\type{\mt \mathbin{;} \mt}{e}{\funtype{P}{\Prop}{P}}$}.
+\end{theorem}
+\begin{proof}
+Suppose that there were such a term $e$.
+By \nameref{thm:pres-typing}, we would have that
+$\type{\mt}{\compile{e}}{\funtypeT{\PT}{\PropT}{\PT}}$ holds.
+However, this contradicts \nameref{postulate:consistency-cice},
+so there must not be such a term.
 \end{proof}
