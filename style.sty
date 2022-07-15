@@ -87,12 +87,12 @@
 \newtheorem{corollary}[theorem]{Corollary}
 
 % foreign phrases
-\newcommand{\eg}{\emph{e.g.}\xspace}
-\newcommand{\ie}{\emph{i.e.}\xspace}
-\newcommand{\cf}{\emph{cf.}\xspace}
-\newcommand{\etal}{\emph{et al.}\xspace}
+\newcommand{\eg}{\emph{e.g.}\@\xspace}
+\newcommand{\ie}{\emph{i.e.}\@\xspace}
+\newcommand{\cf}{\emph{cf.}\@\xspace}
+\newcommand{\etal}{\emph{et al.}\@\xspace}
 \newcommand{\ala}{\emph{\`a la}\xspace}
-\newcommand{\opcit}{\emph{op. cit.}\xspace}
+\newcommand{\opcit}{\emph{op.\! cit.}\@\xspace}
 \newcommand{\TODO}{\meta{\texttt{TODO}}\xspace}
 
 % check mark, cross mark, interrogation mark
@@ -249,6 +249,7 @@
 \newcommand{\Thunk}[2]{\App{\app{\const{Thunk}}{#1}}{#2}}
 \newcmd*{\Thunk}[0]{\const{Thunk}}
 \newcommand{\force}[1]{#1\mathord{.}\constr{force}}
+\newcmd*{\force}[0]{\constr{force}}
 \newcommand{\thunk}[3]{\set{\app{\constr{force}}{[\bound{#1}{#2}]} \mathrel{\coloneqq} #3}}
 
 % source names
