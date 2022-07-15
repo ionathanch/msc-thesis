@@ -1,6 +1,6 @@
 \chapter{Discussion and Conclusions}\label{ch:discussion}
 
-\lang is neither perfect nor complete:
+\lang is neither flawless nor complete:
 the nature of the syntactic model requires that inductives live in a universe
 higher than that in which their corresponding unsized types would live,
 and it's missing features such as an infinite size and coinductives.
@@ -23,7 +23,7 @@ leading to non--well-founded sequences of strictly ``decreasing'' sizes:
 $\dots < \infty < \infty < \infty$.
 Naturally, there's no way to model the infinite size as an element of $\SizeT$
 given that I've shown that $\SizeT$s \emph{are} well founded.
-If there were, then it'd be possible to prove an inconsistency.
+If there were, then it'd be possible to prove an inconsistency as follows.
 Let $\inftyT$ be the translation of $\infty$,
 and let $\inftyltinfty$ be the translation of $\subsize*{\sss{\infty}}{\infty}$.
 \begin{align*}
@@ -92,25 +92,26 @@ $\const{ac}$ is an instance of the axiom of choice\punctstack{,}%
 \footnote{The ``choice'' made here is the existentially-quantified size in the consequent:
 the axiom asserts that there's always a way to choose a size such that
 all of the well-founded trees returned have that size.}
-which for weak existentials\index{weak dependent pair} (whose elements we can't project out)
+which for weak existentials\index{weak dependent pair}
+(\ie pairs whose elements we can match on but not project out)
 is nonconstructive,
 so there's no hope of implementing $\const{ac}$.
 Even if size expressions were terms and
 projections out to some primitive type $\Size$ of sizes were allowed,
 implementing $\const{ac}$ still requires some notion of limit sizes $\slim{A}{f}$ on functions
-$\annot{f}{\arr{A}{\Type{}}{\arr*{A}{\Size}}}$ and the below subsizing derivation rules,
+$\annot{f}{\arr*{A}{\Size}}$ and the below subsizing derivation rules,
 which would be undecidable in general if $A$ has uncountably many elements
 from which the first rule must select an $a$.
 %
 \begin{mathpar}
 \inferrule{
-\subsize{\Phi; \Gamma}{s}{\app{f}{A}{a}}
+\subsize{\Phi; \Gamma}{s}{\app{f}{a}}
 }{
 \subsize{\Phi; \Gamma}{s}{\slim{A}{f}}
 }
 \and
 \inferrule{
-\subsize{\Phi; \Gamma, \annot{x}{A}}{\app{f}{A}{x}}{s}
+\subsize{\Phi; \Gamma, \annot{x}{A}}{\app{f}{x}}{s}
 }{
 \subsize{\Phi; \Gamma}{\slim{A}{f}}{s}
 }
@@ -131,8 +132,8 @@ and size expressions consequently treated as regular terms.
 There is no way to represent generalized full inductives as
 sized inductives existentially quantified by sizes
 and faithfully define their constructors without losing either
-decidability of subsizing from exposing the underlying ordinal representation of sizes,
-or canonicity from the inclusion of a noncomputing axiom.
+decidability of subsizing, due to exposing the underlying ordinal representation of sizes,
+or canonicity, due to the inclusion of a noncomputing axiom.
 Representing ordinary full inductives (namely naturals) this way,
 however, has been previously explored~\citep{guarded, modal-sizes}.
 
@@ -179,7 +180,7 @@ according to the definition of $\SizeT$, reproduced below.
 \end{align*}
 
 This is a nonnegotiable condition:
-defining $\SizeT$ to be in the same universe as that which $\limT$ quantifies over
+defining $\SizeT$ to be in the same universe as that over which $\limT$ quantifies
 leads to $\szltT$ no longer being well founded,
 since in this hypothetical scenario $\SizeT$ itself could be applied to $\limT$
 to define an $\inftyT$ size.
@@ -189,7 +190,7 @@ to define an $\inftyT$ size.
 \end{align*}
 
 One way to ``shrink'' the universe of $\SizeT$, so to speak,
-could be to parametrize it over the type over which $\limT$ currently quantifies over,
+could be to parametrize it over the type over which $\limT$ currently quantifies,
 yielding the following inductive definition.
 \begin{align*}
 &\dataT{\app{\SizeT}{(\annotT{A}{\TypeT{\iT}})}}{\TypeT{\iT}} \\
@@ -283,7 +284,7 @@ The reduction rules of streams, omitted here, operate as expected:
 $\shd{}$ projects out the head and $\stl{}$ projects out the tail.
 
 To actually construct infinite streams, we need cofixpoint expressions.
-The natural correspondence of guardedness\index{guardedness} in sized types
+The natural analogue of guardedness\index{guardedness} in sized types
 is that cofixpoint bodies must construct coinductives larger than
 their own occurrences inside the body,
 which coincides with the structure of \rref{fix}.
@@ -292,7 +293,7 @@ just like fixpoints.
 Interestingly, this suggests that cofixpoints might also be translated in the syntactic model
 to well-founded induction\index{well-founded induction} on sizes despite constructing a coinductive type.
 
-With cofixpoints, we can then construct an infinite stream of some single element.
+With cofixpoints, we could then construct an infinite stream of some single element.
 Let $A$ in the definitions to follow be some type.
 \begin{align*}
 & \Let{\dup}{\arr*{A}{\Funtype{\alpha}{\Stream{A}{\alpha}}}}{\\
@@ -304,9 +305,9 @@ Notice that the stream produced has \emph{any} size,
 which can be interpreted as having ``at least'' any number of elements---a
 truly infinite stream.
 More generally, a coinductive universally quantified by size corresponds to a full coinductive,
-dual to a inductive existentially quantified by a size corresponding to a full inductive.
+dual to an inductive existentially quantified by a size corresponding to a full inductive.
 
-We can manipulate sized streams as expected,
+We could manipulate sized streams as expected,
 such as taking only the odd elements of a stream
 or interleaving two streams by alternation.
 \begin{align*}
@@ -319,11 +320,12 @@ or interleaving two streams by alternation.
 & \qquad \quad \scons{\gamma}{\beta}{\shd{s_2}}{\gamma}{\beta}{\app{\App{\interleave*}{\alpha}}{(\App{\stl{s_1}}{\gamma})}{(\App{\stl{s_2}}{\gamma})}}}}}}}
 \end{align*}
 
-Just as with lists, we can write size-preserving functions on streams
+Just as with lists, we could write size-preserving functions on streams
 and use them to define cofixpoints that would otherwise not pass syntactic guard checking.
 One common example from Haskell is defining a stream of Fibonacci numbers using,
-in our case, a size-preserving zipping function.
+in our case, a size-preserving stream zipping function.
 Suppose we have a function $\annot{f}{\arr*{A}{A}{A}}$ and some element $\annot{a}{A}$.
+Then we can define the zipping function and a Fibonacci-like stream as follows.
 (For the actual Fibonacci numbers, $A$ would be the naturals, $f$ would be addition, and $a$ would be 1.)
 
 \begin{align*}
@@ -331,7 +333,7 @@ Suppose we have a function $\annot{f}{\arr*{A}{A}{A}}$ and some element $\annot{
 & \quad \cofix{\zip*}{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}{ \\
 & \qquad \fun{s_1}{\Stream{A}{\alpha}}{\fun{s_2}{\Stream{A}{\alpha}}{ \\
 & \qquad \quad \scons{\beta}{\alpha}{\app{f}{\shd{s_1}}{\shd{s_2}}}{\beta}{\alpha}{\app{\App{\zip*}{\beta}}{(\App{\stl{s_1}}{\beta})}{(\App{\stl{s_2}}{\beta})}}}}}} \\
-& \Let{\fibs}{\Funtype{\alpha}{\Stream{A}{\alpha}}}{ \\
+&\Let{\fibs}{\Funtype{\alpha}{\Stream{A}{\alpha}}}{ \\
 & \quad \cofix{\fibs*}{\alpha}{\Stream{A}{\alpha}}{ \\
 & \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\scons{\gamma}{\beta}{a}{\gamma}{\beta}{\app{\App{\zip}{\gamma}}{(\App{\fibs*}{\gamma})}{(\App{\stl{(\App{\fibs*}{\beta})}}{\gamma})}}}}}
 \end{align*}
@@ -344,6 +346,7 @@ in terms of a single coinductive $\Thunk{F}{s}$ record%
 with sized parameter $F$ and size $s$,
 and all other coinductives are implemented as nested inductives,
 where occurrences of the type in its constructors' types are wrapped around a $\Thunk*$.
+In essence, the $\Thunk*$ delays evaluation of corecursive occurrences until they're $\force*$d to.
 \begin{mathpar}
 \inferrule[\rlabel*{thunk}]{
   \wf{\Phi}{s} \\
@@ -378,7 +381,7 @@ since it allows encoding M types, the dual of W types, not just streams.
 
 Choosing to use a syntactic model imposes some constraints on the design
 of the source and target languages, as well as on the proof architecture.
-Most notably, proof of correctness of syntactic models proceed
+Most notably, proofs of correctness of syntactic models proceed
 by induction on the source derivations,
 so \lang uses untyped conversion to avoid a dependency between typing and definitional equality,
 which would otherwise require a large and complex mutually inductive proof of type preservation.
@@ -411,7 +414,7 @@ the na\"ive proof attempts at preservation using only the relevant source deriva
 and well-typedness of the source terms would be missing crucial typing information
 to construct the target derivations, especially for equivalence.
 This is why, in all of the preservation lemmas, well-typedness of the translated terms
-are also required as premises, essentially replacing what would've been mutual or circular appeals
+is also required as premises, essentially replacing what would have been mutual or circular appeals
 to type preservation with just the right amount of typing information.
 
 Quite unexpectedly, requiring well-typedness of translated terms
@@ -444,13 +447,13 @@ definitional equality in the source must be untyped and algorithmic,
 while in the target it must be typed,
 lest we create headaches for ourselves with these complex yet avoidable issues.
 
-These consequences have further effects on the design of the source syntax,
-particularly concerning type annotations, if we also take into account
+These consequences would have further effects on the design of the source syntax,
+particularly concerning type annotations, if we also took into account
 the other required metatheoretical properties.
 Proving subject reduction in the case of $\delta$-reduction requires that
 definitions in the environment have type annotations;
 otherwise, even if $\Gamma = (\define*{x}{e}), (\annot{x}{\tau})$ were well formed,
-we can't guarantee that $x$ reduces to $e$ of the \emph{same} type $\tau$,
+we wouldn't be able to guarantee that $x$ reduces to $e$ of the \emph{same} type $\tau$,
 only that $e$ has \emph{some} type.
 Type-annotated definitions in turn force locally-named expressions
 in $\kw{let}$ expressions to have annotations as well.
@@ -464,10 +467,10 @@ proving confluence requires that the notion of $\rhd^*$ be
 exactly the reflexive, transitive closure of $\rhd$,
 so the congruence rules need to be a part of $\rhd$ and not of $\rhd^*$.
 
-Some of these constraints are not so serious:
+Some of these constraints wouldn't be so serious:
 $\kw{let}$ expressions without type annotations, for instance,
 can be easily elaborated into a core calculus with annotations.
-Other constraints require more work to handle:
+Other constraints would require more work to handle:
 although a variant of \lang with typed equivalence would instinctively be equivalent
 to \lang without, proving that nothing has been broken by the introduction of typed equivalence
 requires yet another syntactic model, which would have the same mutual induction issues.
@@ -510,7 +513,7 @@ Meanwhile, older CICs with coinductive types and cofixpoints guarded by construc
 (\eg \citet{guard}) have issues with subject reduction~\citep{coind-SR}\index{subject reduction},
 which is a necessary property for proving type preservation\index{type preservation} in \cref{ch:proofs}.
 Another potential issue is the translation of cofixpoints into applications of
-a well-founded induction principle, which is suspicious and also requires further investigation.
+a well-founded induction principle, which seems suspicious and also requires further investigation.
 
 Finally, \lang is missing some important but comparatively simple features
 from the perspective of the syntactic model, namely inductive types in general.
@@ -519,13 +522,13 @@ and I conjecture that the type preservation proofs would be a straightforward ex
 Alternatively, since there already are well-founded trees,
 \lang could instead be augmented with dependent pairs and an equality type,
 both of which I also conjecture to be straightforward;
-then mutual inductives, indexed inductives \citep{whynotW}, some nested inductives \citep{barras},
-and even some inductive--inductive types \citep{ind-ind}
-can be encoded, along with their induction principles, using W types and propositional equality.
+then mutual inductives, indexed inductives~\citep{whynotW}, some nested inductives~\citep{barras},
+and even some inductive--inductive types~\citep{ind-ind}
+could be encoded, along with their induction principles, using W types and propositional equality~\citep{whynotW}.
 
-\hfill
+\subsection{Metatheory}
 
-In terms of metatheory, \lang is missing proof of two desirable properties:
+\lang is missing proofs of two desirable metatheoretical properties:
 strong normalization and decidability of type checking.
 Because \nameref{lem:pres-red} only preserves reduction up to equivalence in \CICE,
 not reduction, normalization doesn't hold immediately from the translation.
@@ -533,16 +536,16 @@ In particular, the proof of \nameref{lem:pres-red} uses equality reflection
 to obtain an equivalence between two proofs of accessibility\index{accessibility predicate} of a size,
 and \citet{SProp} show that this equivalence can lead to nonnormalization in
 particular inconsistent environments,
-as is the case for $\tg{false}$.
+as is the case when evaluating $\tg{false}$.
 
-Even so, I conjecture that translation of a \lang term will never lead to
+Even so, I conjecture that the translation of an \lang term would never lead to
 a \CICE term with a subterm in an appropriate inconsistent environment that leads to nonnormalization,
 because the translation will never yield an assumption of the form $\sT \szltT \sT$.
 By inspection of the translation, the only fitting subsizing relation possible is of the form $\alphaT \szltT \alphaT$,
 and the only possible sources $\Funtype<{\alpha}{\alpha}{\tau}$, $\Fun<{\alpha}{\alpha}{e}$ are ill-scoped.
 Since fixpoints only reduce when applied to sizes that have a subsize
-and we can't obtain infinitely decreasing chains of subsizes,
-they can't unfold endlessly and must stop eventually.
+and we shouldn't be able to obtain infinitely decreasing chains of subsizes,
+they wouldn't unfold endlessly and must stop eventually.
 
 Decidability of type checking, meanwhile, rests not only on strong normalization,
 but also on decidability of subsizing, \ie deciding whether $\bound{r}{s}$ holds.
@@ -552,16 +555,16 @@ as the size environment only contains a finite number of bounded size variables,
 and sizes can only have a finite number of successor operators applied.
 Moreover, Agda has transitive subsizing, and so far hasn't had issues with its decidability.
 
-\hfill
+\subsection{Implementation}
 
-As for implementation, the consistency of \lang shows that sized types for inductives in Agda
-are likely to be consistent were the infinite size\index{infinite size} removed.
-This immediately poses a significant problem to Agda's standard library,
+The consistency of \lang shows that sized types for inductives in Agda
+would likely be consistent were the infinite size\index{infinite size} removed.
+This would immediately pose a significant problem to Agda's standard library,
 as 20 of the 33 files that use sized types in version 1.7.1 of the standard library use the infinite size.
 Furthermore, 30 of those files deal with coinductives rather than inductives,
-and it remains to be seen whether \lang with coinductives really is consistent as well.
+and it remains to be seen whether \lang with coinductives really is consistent.
 The addition of the $\const{ac}$ axiom to recover some of the expressivity of the infinite size
-isn't ideal for a proof assistant either, since it would block computation.
+wouldn't ideal for a proof assistant either, since it would block computation.
 
 \section{Conclusion}
 
