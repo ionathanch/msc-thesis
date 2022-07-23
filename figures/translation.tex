@@ -81,8 +81,12 @@
   \end{align*}
 
   \begin{align*}
+  % \wfto{\Phi}{\Gamma &}{\GammaT} % why won't this work?
+  \Aboxed{\wf{\Phi}{\Gamma} &\rightsquigarrow \GammaT} \\
+  \wfto{\Phi}{\mt &}{\compile{\Phi}} \\
+  \hfill \\
   \Aboxed{\compile{\Gamma} &= \GammaT} \\
-  \compile{\mt} &= \mt \\
+  &\cdots \\
   \compile{\Gamma, \annot{x}{\tau}} &= \compile{\Gamma}, \annotT{\xT}{\compile{\tau}} \\
   \compile{\Gamma, \define{x}{\tau}{e}} &= \compile{\Gamma}, \defineT{\xT}{\compile{\tau}}{\compile{e}}
   \end{align*}

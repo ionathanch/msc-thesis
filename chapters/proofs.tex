@@ -16,11 +16,11 @@ We begin with three basic properties that all judgements satisfy:
 \emph{weakening}\index{weakening}, which allows environments to be extended;
 \emph{replacement}\index{replacement}, which allows replacing assumptions by subtypes;
 and \emph{substitutivity}\index{substitutivity}, which allows the substitution of an assumption by a well-typed term
-or a size variable by a size expression.
-Because term environments have definitions in addition to assumptions,
-substitutivity can only apply to variables that aren't bound to a definition in the environment.
+or of a size variable by a size expression.
+% Because term environments have definitions in addition to assumptions,
+% substitutivity can only apply to variables that aren't bound to a definition in the environment.
 A final property is the congruence of the reflexive, transitive closure of reduction,
-which extends congruence of reduction to its closure.
+which extends congruence of reduction.
 
 \begin{lemma}[Weakening] \label{lem:weakening}
 Let $\Phi$ be a size environment,
@@ -34,8 +34,6 @@ and suppose $\wf{\Phi}{\Gamma, \Gamma'}$.
 \end{enumerate}
 \end{lemma}
 
-% TODO: clearpage
-\clearpage
 \begin{proof} \hfill
 \begin{enumerate}[noitemsep]
   \item By induction on the derivation of $\red{\Phi; \Gamma}{e_1}{e_2}$.
@@ -89,6 +87,7 @@ for some $U$.
       }{
         \type{\Phi; \Gamma_1, \annot{x}{\sigma_1}, \Gamma_2}{x}{\sigma_2}
       }
+      \qedhere
       \end{mathpar}
   \end{enumerate}
 \end{proof}
@@ -127,8 +126,8 @@ using the extended environment from \cref{item:substitutivity:wf}.
 
 \begin{corollary}
 \nameref{lem:substitutivity-terms} also applies when the environment contains $\define{x}{\sigma}{e}$
-rather than $\annot{x}{\sigma}$ by the exact same arguments.
-Note that the term being substituted in must be $e$.
+rather than $\annot{x}{\sigma}$ by the exact same arguments,
+but the term being substituted in must be $e$.
 \end{corollary}
 
 \begin{lemma}[Substitutivity by unbounded sizes] \label{lem:substitutivity-unbounded}
@@ -255,8 +254,8 @@ Confluence then follows from the Z property.
 The judgement $\develop{\mt}{\mt}{\mt}$ is said to satisfy the Z property
 if $\develop{\Phi; \Gamma}{e_i}{e'_i}$ for $i = 1, 2$
 and $\red{\Phi; \Gamma}{e_1}{e_2}$
-imply that $\red*{\Phi; \Gamma}{e_2}{e'_1}$
-and $\red*{\Phi; \Gamma}{e'_1}{e'_2}$ hold.
+imply $\red*{\Phi; \Gamma}{e_2}{e'_1}$
+and $\red*{\Phi; \Gamma}{e'_1}{e'_2}$.
 \end{definition}
 
 \begin{lemma} \label{lem:confluence}
@@ -265,6 +264,10 @@ then given $\red*{\Phi; \Gamma}{e}{e_1}$ and $\red*{\Phi; \Gamma}{e}{e_2}$,
 there exists some term $e'$ such that
 $\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
 \end{lemma}
+
+\begin{proof}
+See \citet[Theorem 3.10]{confluence}.
+\end{proof}
 
 \vspace{-\baselineskip}
 \begin{figure}[h]
@@ -284,7 +287,7 @@ $\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
 \label{fig:Z}
 \end{figure}
 
-The judgement I use to satisfy the Z property is an extension of the
+The judgement I use to satisfy the Z property is an extension of
 \emph{complete development}\index{complete development}
 used by~\citet{Takahashi},
 which in short reduces all visible redexes from the inside out.
@@ -540,7 +543,6 @@ $\red*{\Phi; \Gamma}{e_1}{e'}$ and $\red*{\Phi; \Gamma}{e_2}{e'}$.
 \begin{proof}
 Since complete development satisfies the Z property by \cref{lem:Z-property},
 confluence holds by \cref{lem:confluence}.
-See \citet[Theorem 3.10]{confluence} for a complete proof.
 \end{proof}
 
 \subsection{Inversion on typing}
@@ -602,7 +604,7 @@ By induction on the derivation of $\red*{\Phi; \Gamma}{\funtype{x}{\sigma_1}{\ta
 \end{itemize}
 \end{proof}
 
-\begin{corollary}[Inversion on closure of reduction (\rref{forall, forall<})]
+\begin{corollary}[Inversion on closure of reduction (\rref{forall, forall<})] \label{lem:inversion-red*}
 If $\red*{\Phi; \Gamma}{\Funtype{\alpha}{\sigma}}{\tau}$
 or $\type{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\sigma}}{\tau}$,
 then $\tau = \Funtype{\alpha}{\sigma'}$ or $\tau = \Funtype<{\alpha}{s}{\sigma'}$,
@@ -705,7 +707,7 @@ By induction on the derivation of $\acum{e_1}{e_2}$.
   \item \rref*{acum-refl}. Trivial by \rref*{acum-refl} with the same reduction judgement.
   \item[\textbf{Cases}] \rref*{acum-prop}, \rref*{acum-type}.
     Since $\Prop$ and $\Type{}$ don't reduce any further,
-    trivial by \rref*{acum-prop} or \rref*{acum-type} respectively with \cref{red*-refl}.
+    trivial by \rref*{acum-prop} or \rref*{acum-type} respectively with \rref{red*-refl}.
   \item \rref*{acum-pi}. \vspace{-\baselineskip}
     \begin{mathpar}
       \inferrule{
@@ -714,14 +716,15 @@ By induction on the derivation of $\acum{e_1}{e_2}$.
         \acum{\funtype{x}{\sigma}{\tau_1}}{\funtype{x}{\sigma}{\tau_2}}
       }
     \end{mathpar}
-    By inversion on the closure of reduction, we have
+    By \cref{lem:inversion-red}, we have
     $\red*{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau_1}}{\funtype{x}{\sigma'}{\tau'_1}}$.
     where $\red*{\Phi; \Gamma}{\sigma}{\sigma'}$ and $\red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau_1}{\tau'_1}$.
     By the induction hypothesis, we can conclude that there is some term $\tau'_2$ such that
     $\red*{\Phi; \Gamma, \annot{x}{\sigma'}}{\tau_2}{\tau'_2}$ and $\acum{\tau'_1}{\tau'_2}$.
     Then by \nameref{lem:congruence} we conclude that $\red*{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau_2}}{\funtype{x}{\sigma'}{\tau'_2}}$,
     and by \rref{acum-pi} that $\acum{\funtype{x}{\sigma'}{\tau'_1}}{\funtype{x}{\sigma'}{\tau'_2}}$.
-  \item \rref*{acum-forall}, \rref*{acum-forall<}. Similar to the case for \rref*{acum-pi}. \qedhere
+  \item \rref*{acum-forall}, \rref*{acum-forall<}. Similar to the case for \rref*{acum-pi},
+    using \cref{lem:inversion-red*} in place of \cref{lem:inversion-red}. \qedhere
 \end{enumerate}
 \end{proof}
 
@@ -738,8 +741,8 @@ then $\subtype{\Phi; \Gamma}{\tau_1}{\tau_3}$.
 
 \begin{proof}
 By cases on the derivations of $\subtype{\Phi; \Gamma}{\tau_1}{\tau_2}$
-and $\subtype{\Phi; \Gamma}{\tau_2}{\tau_3}$
-(of which there is only one case for each derivation below).
+and $\subtype{\Phi; \Gamma}{\tau_2}{\tau_3}$,
+of which there is only one case for each derivation.
 \begin{mathpar}
 \inferrule{
   \acum{\sigma_1}{\sigma_{21}} \\\\
@@ -829,7 +832,7 @@ and $\subtype{\Gamma}{\sigma}{\tau}$ holds.
 \begin{proof}
 By induction on the derivation of $\type{\Gamma}{e}{\tau}$.
 \begin{itemize}[noitemsep, label=\textbf{Case}, leftmargin=*, labelindent=\parindent]
-  \item $\mathcal{R} \neq \rref*{conv}$. The premises of the derivation are the desired ones,
+  \item $\mathcal{R}$. The premises of the derivation are the desired ones,
     building a derivation ending in $\type{\Gamma}{e}{\tau}$,
     and $\subtype{\Gamma}{\tau}{\tau}$ holds by
     \rref{subtype-conv, acum-refl, red*-refl}.
@@ -837,7 +840,7 @@ By induction on the derivation of $\type{\Gamma}{e}{\tau}$.
     \vspace{-\baselineskip}
     \begin{mathpar}
     \inferrule{
-      \type{\Gamma}{d}{\sigma} \\
+      \type{\Gamma}{e}{\sigma} \\
       \type{\Gamma}{\sigma}{U} \\
       \type{\Gamma}{\tau}{U} \\
       \subtype{\Gamma}{\sigma}{\tau}
@@ -1176,7 +1179,7 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$ and \nameref{thm:i
     we have $\subtype{\Phi; \Gamma}{\subst{\tau'}{x}{e'_1}}{\tau}$.
     Finally, by \rref{conv}, we have $\type{\Phi; \Gamma}{\letin{x}{\sigma}{e'_1}{e_2}}{\tau}$.
   \item[\textbf{Cases}] \textbf{remaining}.
-    All similar to the case for $\beta$-reduction for application of bounded sizes. \qedhere
+    Similar to the case for $\beta$-reduction (application of bounded sizes). \qedhere
 \end{itemize}
 \end{proof}
 
@@ -1251,7 +1254,7 @@ the inversion principles\index{inversion},
 and subject equivalence\index{subject reduction}.
 I don't provide the proofs here, as the properties of CIC,
 typed equivalence, and equality reflection are well established,
-and they're similar to the proofs for the analogous lemmas for \lang.
+and they're similar to the proofs of the analogous lemmas for \lang.
 
 \begin{lemma}[Replacement by subtyping] \label{lem:replacement-subtyping*}
 Suppose $\subtype{\GammaT_1}{\sigmaT_1}{\sigmaT_2}$ where $\type{\GammaT_1}{\sigmaT_1}{U}$ and $\type{\GammaT_1}{\sigmaT_2}{U}$
@@ -1261,7 +1264,7 @@ for some $U$.
   \item If $\subtype{\GammaT_1, \annotT{\xT}{\sigmaT_2}, \GammaT_2}{\tauT_1}{\tauT_2}$ then $\subtype{\GammaT_1, \annotT{\xT}{\sigmaT_1}, \GammaT_2}{\tauT_1}{\tauT_2}$.
   \item If $\defeq{\GammaT_1, \annotT{\xT}{\sigmaT_2}, \GammaT_2}{\eT_1}{\eT_2}{\tauT}$ then $\defeq{\GammaT_1, \annotT{\xT}{\sigmaT_1}, \GammaT_2}{\eT_1}{\eT_2}{\tauT}$.
 \end{itemize}
-Furthermore, the above also applies when the environment contains $\defineT{\xT}{\sigmaT_2}{\eT}$
+The above also apply when the environment contains $\defineT{\xT}{\sigmaT_2}{\eT}$
 rather than $\annotT{\xT}{\sigmaT_2}$.
 \end{lemma}
 
@@ -1281,7 +1284,7 @@ Suppose $\type{\GammaT_1}{\eT}{\sigmaT}$.
   \item If $\subtype{\GammaT_1, \annotT{\xT}{\sigmaT}, \GammaT_2}{\tauT_1}{\tauT_2}$ then $\type{\GammaT_1, \subst{\GammaT_2}{\xT}{\eT}}{\subst{\tauT_1}{\xT}{\eT}}{\subst{\tauT_2}{\tauT}{\eT}}$.
   \item If $\defeq{\GammaT_1, \annotT{\xT}{\sigmaT}, \GammaT_2}{\eT_1}{\eT_2}{\tauT}$ then $\defeq{\GammaT_1, \subst{\GammaT_2}{\xT}{\eT}}{\subst{\eT_1}{\xT}{\eT}}{\subst{\eT_2}{\tauT}{\eT}}{\subst{\tauT}{\xT}{\eT}}$.
 \end{itemize}
-Furthermore, the above also applies when the environment contains $\defineT{\xT}{\sigmaT}{\eT}$
+The above also apply when the environment contains $\defineT{\xT}{\sigmaT}{\eT}$
 rather than $\annotT{\xT}{\sigmaT}$.
 \end{lemma}
 
@@ -1421,7 +1424,6 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
     \begin{mathpar}
     \inferrule{
       \infer{\Phi; \Gamma}{e}{\W{y}{\sigma}{\tau}{s}} \\
-      z_1, z_2 \notin \FV{P} \\
       \infer{\Phi; \Gamma, \annot{w}{\W{y}{\sigma}{\tau}{s}}}{P}{U} \\
       \check{\Phi, \bound{\alpha}{s}; \Gamma, \annot{z_1}{\sigma}, \annot{z_2}{\arr*{\subst{\tau}{y}{z_1}}{\W{y}{\tau}{\sigma}{\alpha}}}}{e_s}{\subst{P}{w}{\sup{y}{\sigma}{\tau}{s}{\alpha}{z_1}{z_2}}}
     }{
@@ -1442,10 +1444,10 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
     &= \matchT{\subst{\compile{e}}{\xT}{\compile{e'}}}{\funT*{\mt}{\wT}{\subst{\compile{P}}{\xT}{\compile{e'}}}}{\\ & \quad \qquad \app{\supT}{\alphaT}{\alphaT^*}{\zT_1}{\zT_2} \RightarrowT \subst{\compile{e_s}}{\xT}{\compile{e'}}} && \textit{by substitution} \\
     &= \matchT{\compile{\subst{e}{x}{e'}}}{\funT*{\mt}{\wT}{\compile{\subst{P}{x}{e'}}}}{\\ & \quad \qquad \app{\supT}{\alphaT}{\alphaT^*}{\zT_1}{\zT_2} \RightarrowT \compile{\subst{e_s}{x}{e'}}} && \textit{by IHs} \\
     &= \compile{\match{\subst{e}{x}{e'}}{\fun*{w}{\subst{P}{x}{e'}}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow \subst{e_s}{x}{e'})}} && \textit{by translation} \\
-    &= \compile{\subst{\match{e}{\fun*{w}{P}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s)}}{x}{e'}} && \textit{by substitution}.
+    &= \compile{\subst{(\match{e}{\fun*{w}{P}}{(\app{\App{\sup*}{\alpha}}{z_1}{z_2} \Rightarrow e_s)})}{x}{e'}} && \textit{by substitution}.
     \end{align*}
     If $x$ is any of the binders $w, z_1, z_2$,
-    then neither substitution of the subterms in \lang nor in \CICE would occur,
+    then substitution of the subterms in neither \lang nor in \CICE would occur,
     giving the exact same equality.
   \item[\textbf{Cases}] \rref*{sapp<}, \rref*{zero}, \rref*{succ}, \rref*{sup}.
     Similar to the above, but with an additional term generated from translating subsizing judgements to deal with.
@@ -1468,7 +1470,7 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
     &= \app{(\subst{\compile{e}}{\xT}{\compile{e'}})}{\compile{s}}{\eT''} && \textit{by \cref{sublem:subsize-FV}} \\
     &= \app{\compile{\subst{e}{x}{e'}}}{\compile{s}}{\eT''} && \textit{by IH} \\
     &= \compile{\App{\subst{e}{x}{e'}}{s}} && \textit{by translation} \\
-    &= \compile{\subst{\App{e}{s}}{x}{e'}} && \textit{by substitution},
+    &= \compile{\subst{(\App{e}{s})}{x}{e'}} && \textit{by substitution},
     \end{align*}
     noting that substitution of a term variable in the translation of a size expression
     has no effect since they produce no term variables.
@@ -1502,7 +1504,7 @@ where $\Gamma = \Gamma_1, \annot{x}{\tau'}, \Gamma_2$.
     & \quad \qquad (\funT{\alphaT}{\SizeT}{\funT{\fT}{\funtypeT{\betaT}{\SizeT}{\arrT*{\betaT \szltT \alphaT}{\subst{\compile{\subst{\sigma}{x}{e'}}}{\alphaT}{\betaT}}}}{\compile{\subst{e}{x}{e'}}}})} \\
     & \quad \textit{by IHs} \\
     &= \compile{\fix{f}{\alpha}{\subst{\sigma}{x}{e'}}{\subst{e}{x}{e'}}} \quad \textit{by translation} \\
-    &= \compile{\subst{\fix{f}{\alpha}{\sigma}{e}}{x}{e'}} \quad \textit{by substitution}.
+    &= \compile{\subst{(\fix{f}{\alpha}{\sigma}{e})}{x}{e'}} \quad \textit{by substitution}.
     \end{align*}
     Substitution of $x$ has no effect on $\wfind$ since it's defined independently of the translation
     and has no variables originating from the source expression. \qedhere
@@ -1519,7 +1521,7 @@ using \nameref{lem:term-compositionality}.
 \fi
 
 In addition to compositionality when substituting terms,
-we also need compositionality when substitution sizes.
+we also need compositionality when substituting sizes.
 This is not as simple when substituting bounded sizes into terms,
 since a single substitution in the source
 would correspond to two substitutions in the target,
@@ -1557,6 +1559,7 @@ By induction on the derivation of $\subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2
     If $\beta \neq \alpha$ and $\bound{\beta}{s} \in \Phi_1$,
     then $\alpha \notin \FV{s}$ and $\bound{\beta}{s} \in \Phi_1, \subst{\Phi_2}{\alpha}{s}$,
     so we have the following.
+    \vspace{-\baselineskip}
     \begin{mathpar}
     \inferrule{
       \bound{\beta}{s} \in \Phi_1, \subst{\Phi_2}{\alpha}{s}
@@ -1567,6 +1570,7 @@ By induction on the derivation of $\subsizeto{\Phi_1, \bound{\alpha}{r'}, \Phi_2
     Otherwise, if $\bound{\beta}{s} \in \Phi_2$,
     then $\bound{\beta}{\subst{s}{\alpha}{r'}} \in \Phi_1, \subst{\Phi_2}{\alpha}{r'}$,
     and we have the following.
+    \vspace{-\baselineskip}
     \begin{mathpar}
     \inferrule[]{
       (\bound{\beta}{\subst{s}{\alpha}{s'}}) \in \Phi_1, \subst{\Phi_2}{\alpha}{r'}
@@ -1646,7 +1650,7 @@ The proof structure follows that of \cref{sublem:compos-subsize-bounded}.
 
 Just as compositionality for subsizing is split into substitution of bounded and unbounded sizes,
 so is size compositionality with respect to terms.
-Of note is that the right-hand side only has a single substitution,
+The right-hand side only has a single substitution,
 while the left-hand side has two,
 since the proof $\eT'$ now needs to be handled explicitly.
 
@@ -1754,7 +1758,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
     &= \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \subst{\compile{r}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}}
     && \textit{by substitution} \\
     &= \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{\subst{r}{\alpha}{s}}}{\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'}}}
-    && \textit{by \cref{sublem:compos-size}, $\alphaT^* \notin \compile{r}$} \\
+    && \textit{by \cref{sublem:compos-size}} \\
     &= \funT{\betaT}{\SizeT}{\funT{\betaT^*}{\betaT \szltT \compile{\subst{r}{\alpha}{s}}}{\compile{\subst{e}{s}{\alpha}}}}
     && \textit{by IH} \\
     &= \compile{\Fun<{\beta}{\subst{r}{\alpha}{s}}{\subst{e}{\alpha}{s}}}
@@ -1763,7 +1767,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
     && \textit{by substitition}.
     \end{align*}
   \item[\textbf{Cases}] \rref*{sapp<}, \rref*{zero}, \rref*{succ}, \rref*{sup}.
-    In these cases, there are additional terms generated rom translation subsizing judgements;
+    In these cases, there are additional terms generated from translating subsizing judgements;
     here is where we use \cref{sublem:compos-subsize-bounded}.
     I prove only the case of \rref*{sapp<} as example.
     \begin{mathpar}
@@ -1784,7 +1788,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
     &= \app{(\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'})}{(\subst{\compile{r}}{\alphaT, \alphaT^*}{\compile{s}, \eT'})}{(\subst{\eT''}{\alphaT, \alphaT^*}{\compile{s}, \eT'})}
     && \textit{by substitution} \\
     &= \app{(\subst{\compile{e}}{\alphaT, \alphaT^*}{\compile{s}, \eT'})}{\compile{\subst{r}{\alpha}{s}}}{(\subst{\eT''}{\alphaT, \alphaT^*}{\compile{s}, \eT'})}
-    && \textit{by \cref{sublem:compos-size}, $\alpha^* \notin \compile{r}$} \\
+    && \textit{by \cref{sublem:compos-size}} \\
     &= \app{\compile{\subst{e}{\alpha}{s}}}{\compile{\subst{r}{\alpha}{s}}}{(\subst{\eT''}{\alphaT, \alphaT^*}{\compile{s}, \eT'})}
     && \textit{by IH}.
     \end{align*}
@@ -1797,7 +1801,7 @@ where $\Phi = \Phi_1, \bound{\alpha}{r}, \Phi_2$.
     &= \compile{\App{\subst{e}{\alpha}{s}}{\subst{r}{\alpha}{s}}}
     && \textit{by substitution} \\
     &= \app{\compile{\subst{e}{\alpha}{s}}}{\compile{\subst{r}{\alpha}{s}}}{(\subst{\eT''}{\alphaT, \alphaT^*}{\compile{s}, \eT'})}
-    && \textit{by translation and \nameref{lem:substitutivity-bounded}}.
+    && \textit{by \nameref{lem:substitutivity-bounded}}.
     \end{align*}
   \item \rref*{fix}.
     \vspace{-\baselineskip}
@@ -2109,7 +2113,7 @@ By induction on the derivation of $\red{\Phi; \Gamma}{e}{e'}$.
     Meanwhile, by \rref{equiv-refl}, we have
     \begin{itemize}[noitemsep]
       \item $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma}}{\UT}$ and
-      \item $\defeq{\compile{\Phi}, \compile{\Gamma}, \defineT{\xT}{\compile{\sigma}}{\compile{e_1}}}{\compile{e_2}}{{\compile{e_2}}{\tauT'}}$.
+      \item $\defeq{\compile{\Phi}, \compile{\Gamma}, \defineT{\xT}{\compile{\sigma}}{\compile{e_1}}}{\compile{e_2}}{{\compile{e_2}}}{\tauT'}$.
     \end{itemize}
     Then by \rref{equiv-cong}, we have
     $$\defeq{\compile{\Phi}, \compile{\Gamma}}{\letinT{\xT}{\compile{\sigma}}{\compile{e_1}}{\compile{e_2}}}{\letinT{\xT}{\compile{\sigma}}{\compile{e'_1}}{\compile{e_2}}}{\subst{\tauT'}{\xT}{\compile{e_1}}}.$$
@@ -2254,21 +2258,21 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
     }
     \end{mathpar}
     By inversion on $\type{\Phi; \Gamma}{\funtype{x}{\sigma}{\tau_i}}{U_i}$ and on
-    $\type{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_i}_{\annot{x}{\sigma}}}}{\compile{U_i}}$
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_i}}}{\compile{U_i}}$
     for $i = 1, 2$, omitting unneeded judgements, we have
     \begin{itemize}[noitemsep]
       %\item $\type{\Phi; \Gamma}{\sigma}{U'}$,
       \item $\type{\Phi; \Gamma, \annot{x}{\sigma}}{\tau_i}{U''_i}$,
       %\item $\subtype{\Phi; \Gamma}{\rules{U'}{U''_i}}{U'_i}$,
       \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\UT'}$, and
-      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{\tau_i}_{\annot{x}{\sigma}}}{\UT''_i}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{\tau_i}}{\UT''_i}$.
       %\item $\subtype{\compile{\Phi}, \compile{\Gamma}}{\rules{\UT'}{\UT''_i}}{\UT_i}$.
     \end{itemize}
     By the induction hypothesis on the premise using the above, we have
-    $\subtype{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{\tau_1}_{\annot{x}{\sigma}}}{\compile{\tau_2}_{\annot{x}{\sigma}}}$.
+    $\subtype{\compile{\Phi}, \compile{\Gamma}, \annotT{\xT}{\compile{\sigma}}}{\compile{\tau_1}}{\compile{\tau_2}}$.
     By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma}}{\compile{\sigma}}{\UT'}$.
     Then by \rref{subtype-pi}, we have
-    $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_1}_{\annot{x}{\sigma}}}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_2}_{\annot{x}{\sigma}}}}$.
+    $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_1}}}{\funtypeT{\xT}{\compile{\sigma}}{\compile{\tau_2}}}$.
   \item \rref{acum-forall}.
     \vspace{-\baselineskip}
     \begin{mathpar}
@@ -2279,18 +2283,18 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
     }
     \end{mathpar}
     By inversion on $\type{\Phi; \Gamma}{\Funtype{\alpha}{\tau_i}}{U_i}$ and on
-    $\type{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_i}_{\alpha}}}{\UT_i}$
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_i}}}{\UT_i}$
     for $i = 1, 2$, omitting unneeded judgements, we have
     \begin{itemize}[noitemsep]
       \item $\type{\Phi, \alpha; \Gamma}{\tau_i}{U''_i}$,
       \item $\type{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\UT'}$, and
-      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{\tau_i}_{\alpha}}{\UT''_i}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{\tau_i}}{\UT''_i}$.
     \end{itemize}
     By the induction hypothesis on the premise using the above, we have
-    $\subtype{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{\tau_1}_{\alpha}}{\compile{\tau_2}_{\alpha}}$.
+    $\subtype{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\compile{\tau_1}}{\compile{\tau_2}}$.
     By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\SizeT}{\UT'}$.
     Then by \rref{subtype-pi}, we have
-    $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_1}_{\alpha}}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_2}_{\alpha}}}$.
+    $\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_1}}}{\funtypeT{\alphaT}{\SizeT}{\compile{\tau_2}}}$.
   \item \rref{acum-forall<}.
     \vspace{-\baselineskip}
     \begin{mathpar}
@@ -2301,20 +2305,20 @@ By induction on the derivation of $\acum{\tau_1}{\tau_2}$.
     }
     \end{mathpar}
     By inversion on $\type{\Phi; \Gamma}{\Funtype<{\alpha}{s}{\tau_i}}{U_i}$ and on
-    $\type{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_i}_{\bound{\alpha}{s}}}}}{\UT_i}$
+    $\type{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_i}}}}{\UT_i}$
     for $i = 1, 2$, omitting unneeded judgements, we have
     \begin{itemize}[noitemsep]
       \item $\type{\Phi; \Gamma, \bound{\alpha}{s}}{\tau_i}{U''_I}$,
       \item $\type{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\UT'}$,
       \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\UT''}$, and
-      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_i}_{\bound{\alpha}{s}}}{\UT'''_i}$.
+      \item $\type{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_i}}{\UT'''_i}$.
     \end{itemize}
     By the induction hypothesis on the premise using the above, we have
-    $\subtype{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_1}_{\bound{\alpha}{s}}}{\compile{\tau_2}_{\bound{\alpha}{s}}}$.
+    $\subtype{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}, \annotT{\alphaT^*}{\alphaT \szltT \compile{s}}}{\compile{\tau_1}}{\compile{\tau_2}}$.
     By \rref{equiv-refl}, we have $\defeq{\compile{\Phi}, \compile{\Gamma}}{\SizeT}{\SizeT}{\UT'}$
     and $\defeq{\compile{\Phi}, \compile{\Gamma}, \annotT{\alphaT}{\SizeT}}{\alphaT \szltT \compile{s}}{\alphaT \szltT \compile{s}}{\UT''}$.
     Then by \rref{subtype-pi} twice, we have
-    $$\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_1}_{\bound{\alpha}{s}}}}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_2}_{\bound{\alpha}{s}}}}}.$$
+    $$\subtype{\compile{\Phi}, \compile{\Gamma}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_1}}}}{\funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau_2}}}}.$$
     \qedhere
 \end{itemize}
 \end{proof}
@@ -2362,7 +2366,7 @@ By \nameref{thm:subject-reduction} and \nameref{thm:subject-equivalence}, we hav
   \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma_1}}{\compile{U}}$, and
   \item $\type{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma_2}}{\compile{U}}$.
 \end{itemize}
-Using the above and the final premise, by \nameref{lem:pres-acum}, we have
+With the final premise, by \nameref{lem:pres-acum}, we have
 $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\sigma_1}}{\compile{\sigma_2}}$.
 Then by \rref{equiv-sym, subtype-conv, subtype-trans}, we have
 $\subtype{\compile{\Phi}, \compile{\Gamma}}{\compile{\tau_1}}{\compile{\tau_2}}$.
@@ -2375,6 +2379,8 @@ using preservation of subtyping in the \rref*{conv} case
 and preservation of sizes and subsizing,
 which are proven independently.
 
+% TODO: clearpage
+\clearpage
 \begin{lemma}[Preservation of sizes] \label{lem:pres-size} \hfill
 \begin{enumerate}[noitemsep]
   \item If $\wf{}{\Phi}$ then $\wf{}{\compile{\Phi}}$; and
@@ -2618,7 +2624,7 @@ Now that type preservation has been proven,
 we know that \lang is consistent with respect to the consistency of \CICE.
 The proof of consistency is reproduced below.
 
-\begin{theorem}[Consistency of \lang] \label{thm:overview:consistency}
+\begin{theorem}[Consistency of \lang] \label{thm:overview:consistency} \hfill \\
 There exists no term $e$ such that \mbox{$\type{\mt \mathbin{;} \mt}{e}{\funtype{P}{\Prop}{P}}$}.
 \end{theorem}
 \begin{proof}

@@ -19,7 +19,7 @@ where to prove some property on sizes, one supposes that it holds for all strict
 Every fixpoint expression in \lang is modelled as an instance of well-founded induction in \CICE.
 To prove well-foundedness and in turn the induction principle,
 I show that sizes satisfy an \emph{accessibility predicate}\index{accessibility predicate}~\citep{accessibility},
-which states that a size is accessible if all sizes smaller than it are accessible
+which states that a size is accessible if all sizes smaller than it are accessible,
 and provides an inductive structure for structural recursion that matches the semantic nature of the order.
 For the type preservation proof to go through,
 definitional proof irrelevance\index{proof irrelevance} of accessibility predicates
@@ -175,8 +175,8 @@ Like \rref{acum-pi}, \rref{subtype-pi} is invariant in the domain of function ty
 
 The typing and environment well-formedness rules are in \cref{fig:typing-cic}.
 Except for \rref{fix*}, the starred rules are the same as for \lang,
-with metafunctions $\axioms{\mt}$ and $\rules{\mt}{\mt}$ operating similarly on universes $\UT$
-as in \cref{fig:rules-axioms}.
+with metafunctions $\axioms{\mt}$ and $\rules{\mt}{\mt}$
+operating similarly on universes of \CICE as in \cref{fig:rules-axioms}.
 An additional premise to \rref{fix*} ensures that the $\nT$th argument is indeed an inductive type.
 % in addition to checking well-typedness of fixpoint bodies with possible recursive references.
 
@@ -204,8 +204,8 @@ or substitution (when the motive ignores the second argument),
 as well as its symmetry, transitivity, and congruence.%
 \footnote{The combined presence of $\JT*$ and equality reflection also allows proving the
 \emph{uniqueness of identity proofs} (UIP)\index{uniqueness of identity proofs},
-or that all proofs of an equality $\eqT{a}{A}{b}$ are themselves equal to one another,
-by reflecting $p$ in the term $\JT{(\funT{b}{A}{\funT{p}{\eqT{a}{A}{b}}{\eqT{\reflT{a}}{}{p}}})}{\reflT{\reflT{a}}.}{}$}
+or that all proofs of an equality $\eqT{\aT}{\tauT}{\bT}$ are themselves equal to one another,
+by reflecting $\pT$ in the term $\JT{(\funT{\bT}{\tauT}{\funT{\pT}{\eqT{\aT}{\tauT}{\bT}}{\eqT{\reflT{\aT}}{}{\pT}}})}{\reflT{\reflT{\aT}}.}{}$}
 
 \rref{ind, constr, case} assign types to inductive types, their constructors,
 and $\tg{case}$ expressions, under the premise that
@@ -219,12 +219,12 @@ the parameters are first substituted in place of $\vec{\wT}$.
 A $\tg{case}$ expression is well typed if its target is,
 if its motive is for any indices and target with those indices,
 and if each branch is well typed for that branch's constructor arguments,
-where its type is the motive with the appropriate indices and reconstructed target.
+where its type is the motive with the appropriate indices and constructor.
 For notational simplicity, the rule assumes that the binding variable names
 $\vec{\yT}$ and $\vec{\zT}$ are those found in the data definition,
 but of course these can be renamed at the expense of additional renaming substitutions.
 
-Additionally, the motive of a $\tg{case}$ expression is restricted by the metarelation $\elim{\mt}{\mt}{\mt}$,
+Additionally, the motive is restricted by the metarelation $\elim{\mt}{\mt}{\mt}$,
 which indicates when large elimination\index{large elimination} is allowed.
 $\elim{\any}{\TypeT{\iT}}{\any}$ and $\elim{\any}{\PropT}{\PropT}$ always hold,
 so that inductives in $\TypeT{}$ can be eliminated to any universe
@@ -236,7 +236,7 @@ They can be loosened while still retaining consistency (see \eg \citet{SProp}).
 
 The typing premises of
 \rref{equiv-beta, equiv-zeta, equiv-rho, equiv-iota, equiv-mu}
-corresponding to some of the reduction rules duplicate the premises found in many of the typing rules,
+duplicate the premises found in many of the typing rules,
 trivially ensuring \emph{subject equivalence}\index{subject reduction}
 (\ie well-typedness of both sides).
 
@@ -254,9 +254,9 @@ The inductive definitions are listed in \cref{fig:data-defns}
 along with some basic definitions I treat as global.
 $\botT$ is the usual empty type.
 $\SizeT$ is a generalization of the $\Ord*$ type introduced in \cref{sec:examples},
-with the domain of the function passed to the limit size $\limT$ replaced by some arbitrary type.
+with the domain of the function passed to $\limT$ replaced by some arbitrary type.
 Although limit sizes aren't strictly necessary for the translation,
-since \lang only has successor sizes and size variables,
+as \lang only has successor sizes and size variables,
 I include them so that various solutions to the problem of the infinite size
 can be explored in \cref{sec:infinity}.
 Furthermore, this allows for a simplification of the definition,
@@ -266,8 +266,8 @@ The order on sizes $\mt \szleT \mt$ is defined by the three properties that must
 \begin{itemize}[noitemsep]
   \item $\monoT$: The successor operator $\sucT$ is monotone with respect to the order;
   \item $\coconeT$: The limit operator $\limT$ constructs an upper bound in that
-    given some function $f$ returning a size,
-    any size smaller than any size returned by $f$ is also smaller than the limit of $f$;
+    given some function $f$ returning sizes,
+    a size smaller than any size returned by $f$ is also smaller than the limit of $f$;
   \item $\limitT$: The limit operator on $f$ constructs a \emph{least} upper bound such that
     if a size is larger than \emph{all} sizes returned by $f$
     then it must also be larger than the limit of $f$.
@@ -293,7 +293,7 @@ the propositional equality $\eq{\app{f}{x}}{}{\app{g}{x}}$ proven by $\app{h}{x}
 can be reflected into the corresponding definitional equality,
 which by \rref{equiv-eta} is then a definitional equality of $f$ and $g$.
 
-The remaining definitions have been mechanized in either Agda and Coq in
+The remaining definitions have been mechanized in Agda and Coq in
 \cref{app:mechanization:agda:prelim} and \cref{app:mechanization:coq:prelim}, respectively,
 under the assumption of function extensionality as an axiom
 (which cannot be proven in, but is consistent with, intensional CIC).
@@ -301,7 +301,7 @@ The mechanizations don't use any additional type-theoretic features beyond CIC,
 and the proofs could theoretically be written in plain CIC,
 but they would be far less manageable without the ergonomics provided by the proof assistants.
 As an example, the Coq proof for $\accessible$ consists of a dozen lines of tactics,
-while the full proof term generated from the tactics is 129 lines long.
+whereas the full proof term generated from the tactics is 129 lines long.
 
 The definitions themselves describe properties of the order on sizes
 and of the accessibility predicate:
@@ -319,7 +319,7 @@ and of the accessibility predicate:
 \end{itemize}
 
 The only time equality reflection\index{equality reflection} is needed is to prove $\accIsProp$ (via $\funext$),
-which in turn is the only other equality that is reflected for proving type preservation.
+which in turn is the only other equality that is reflected when proving type preservation.
 Since $\AccT$ is in already $\PropT$, \CICE could be replaced by an intensional CIC
 with a universe of \emph{strict propositions}\index{strict proposition} $\SPropT$
 of types whose elements are definitionally equal~\citep{SProp},

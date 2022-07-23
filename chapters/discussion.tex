@@ -5,12 +5,12 @@ the nature of the syntactic model requires that inductives live in a universe
 higher than that in which their corresponding unsized types would live,
 and it's missing features such as an infinite size and coinductives.
 In this chapter, I discuss some of these shortcomings
-and give some possible directions for future work based on them.
+and give possible directions for future work.
 
 \section{The Infinite Size} \label{sec:infinity}
 
 In prior sized type systems, the infinite size\index{infinite size} $\infty$ is applied to sized inductive types
-to represent a ``full'' inductive type encompassing that inductive at all sizes,
+to represent a \emph{full} inductive type encompassing that inductive at all sizes,
 which essentially corresponds to the usual unsized inductive.
 Whereas an inductive of some size $s$ can be thought of as the type of elements
 with at most $s$ many layers of constructors,
@@ -32,7 +32,7 @@ and let $\inftyltinfty$ be the translation of $\subsize*{\sss{\infty}}{\infty}$.
 \end{align*}
 
 In set-theoretic models of sized type systems with an infinite size,
-sizes are modelled as set-theoretic (transfinite) ordinals,
+where sizes are modelled as set-theoretic (transfinite) ordinals,
 the infinite size isn't modelled as a single ordinal;
 instead, for each use of the infinite size,
 its set-theoretic interpretation is an ordinal that is ``large enough'' in that context.
@@ -61,7 +61,7 @@ What about going from $\W{x}{A}{B}{\infty}$ to $\W{x}{A}{B}{s}$?
 What should $s$ be?
 The size algebra could be augmented to be able to represent transfinite ordinals
 so that $s$ is again a size that is ``large enough'',
-but we can hardly expect programmers to manipulate ordinals,
+but we can hardly demand programmers to manipulate ordinals,
 and I conjecture that we would lose any hope of deciding $\subsize*{}{}$
 without any user intervention.
 
@@ -121,7 +121,7 @@ Even so, taking weak existentials as a primitive of \lang
 rather than defining them by an encoding,
 and modelling them by strong dependent pairs in \CICE,
 the \emph{translation} of $\const{ac}$ can be implemented as a function,
-making use of the limit operator.
+making use of $\limT$
 In other words, the syntactic model\index{syntactic model} justifies the axiom $\const{ac}$ in the source.
 The mechanization of $\compile{\const{ac}}$ in Agda and Coq are given in
 \cref{app:mechanization:agda:W} and \cref{app:mechanization:coq:W}, respectively.
@@ -139,7 +139,7 @@ however, has been previously explored~\citep{guarded, modal-sizes}.
 
 \section{Universe Levels of Inductives} \label{sec:universe-levels}
 
-The universes in which the type of natural numbers and W types in \lang live
+The universes in which the type of natural numbers and W types of \lang live
 are, in a sense, one level\index{universe level} higher than is usually expected;
 their typing rules are reproduced below.
 $\N*$ is typically in $\Type{0}$,
@@ -182,7 +182,7 @@ according to the definition of $\SizeT$, reproduced below.
 This is a nonnegotiable condition:
 defining $\SizeT$ to be in the same universe as that over which $\limT$ quantifies
 leads to $\szltT$ no longer being well founded,
-since in this hypothetical scenario $\SizeT$ itself could be applied to $\limT$
+since in this hypothetical scenario, $\SizeT$ itself could be applied to $\limT$
 to define an $\inftyT$ size.
 \begin{align*}
 &\LetT{\inftyT}{\SizeT}{\app{\limT}{\SizeT}{(\funT{\xT}{\SizeT}{\xT})}} \\
@@ -215,11 +215,11 @@ so that it's not essentially quantifying over itself.
 If having inductive types in the correct universe were more important than
 the potential expressibility of infinitude,
 we could eliminate $\limT$ altogether and model sizes as ordinary naturals.
-Then $\SizeT$ would live in $\Type{0}$, $\NatT$ and $\WT$ would live in the correct universes,
-as well as $\N*$ and $\W*$.
+Then $\SizeT$ would live in $\Type{0}$, and $\NatT$ and $\WT$ would live in the correct universes,
+as would $\N*$ and $\W*$.
 Although this would affect the judgements of both \lang and \CICE,
 this wouldn't affect the proofs, since the changes are the same for both languages.
-However, this does mean giving up $\const{ac}$
+However, this would mean giving up $\const{ac}$
 and likely any hope of defining any infinitary constructs like $\const{\omega}$
 when using this model.
 
@@ -489,21 +489,21 @@ while attempts at including them either involve inconsistency, undecidability, o
 Alternate approaches need to be investigated to circumvent these problems.
 
 While the issue with the universe levels of inductive types appears to be cosmetic
-and not affect any important significant metatheoretical properties,
+and not affect any important metatheoretical properties,
 it might be a mere symptom of a larger issue with how sizes are modelled,
 especially since prior sized type systems shown to be consistent
 haven't required any similar restrictions.
 One possibility is to take inspiration from Agda and
 make $\SizeT$ live in a universe $\SizeUnivT$ independent of $\TypeT{}$,
-but the consistency of arbitrarily adding a new universe is questionable,
-especially when $\SizeUnivT$ needs to be slightly impredicative:
-$\arrT*{\TypeT{}}{\SizeT}$ would remain in $\SizeUnivT$
-(as would be the case for $\limT$)
-and $\funtypeT{\alphaT}{\SizeT}{\app{\NatT}{\alphaT}}$ would remain in $\TypeT{0}$
-(as would be the case for $\zeroT$).
+but the consistency of adding $\SizeUnivT$ hasn't been established,
+especially when it needs to be slightly impredicative:
+$\arrT*{\TypeT{}}{\SizeT}$ would live in $\SizeUnivT$
+(as would be the case for the type of $\limT$)
+while $\funtypeT{\alphaT}{\SizeT}{\app{\NatT}{\alphaT}}$ would remain in $\TypeT{\tg{0}}$
+(as would be the case for the type of $\zeroT$).
 
 The main barrier to a syntactic model\index{syntactic model} of \lang with any coinductive types
-is the lack of an established target type theory with coinductive types
+is the absence of an established target type theory with coinductive types
 with nice properties.
 Whereas pCIC\index{Calculus of Inductive Constructions!Predicative \textasciitilde}
 and pCuIC\index{Predicative Calculus of Cumulative Inductive Constructions} lack them,
@@ -535,11 +535,11 @@ not reduction, normalization doesn't hold immediately from the translation.
 In particular, the proof of \nameref{lem:pres-red} uses equality reflection
 to obtain an equivalence between two proofs of accessibility\index{accessibility predicate} of a size,
 and \citet{SProp} show that this equivalence can lead to nonnormalization in
-particular inconsistent environments,
+certain inconsistent environments,
 as is the case when evaluating $\tg{false}$.
 
 Even so, I conjecture that the translation of an \lang term would never lead to
-a \CICE term with a subterm in an appropriate inconsistent environment that leads to nonnormalization,
+a \CICE term with a subterm in an inconsistent environment that leads to nonnormalization,
 because the translation will never yield an assumption of the form $\sT \szltT \sT$.
 By inspection of the translation, the only fitting subsizing relation possible is of the form $\alphaT \szltT \alphaT$,
 and the only possible sources $\Funtype<{\alpha}{\alpha}{\tau}$, $\Fun<{\alpha}{\alpha}{e}$ are ill-scoped.

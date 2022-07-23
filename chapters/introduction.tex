@@ -13,7 +13,7 @@ in the end, may be useless in practice.
 The balancing act is particularly perilous for type systems
 used by proof assistants for mechanized theorem proving,
 because a lack of expressivity can make it too much of a burden to be practically useful,
-while it's all to easy to add some convenient, seemingly innocuous feature
+while it's all too easy to add some convenient, seemingly innocuous feature
 that turns out to dismantle the logic of the system,
 rendering it unusable for proving.
 
@@ -192,8 +192,8 @@ it has known disadvantages:
         recursive functions that require inlining
         depend on the implementation of inlined functions,
         and even a minor syntactic change otherwise equivalent to the original
-        can break guardedness~\citep{CIC-hat-minus}.
-      \item As aptly summarized by \citet{coqterm},
+        can violate the guardedness check~\citep{CIC-hat-minus}.
+      \item As aptly summarized by the \citet{coqterm},
         \begin{quote}
         \begin{singlespace}
         \textit{{\rm [\ldots]} unfold{\rm [ing]} all the definitions used in the body of the function, do{\rm [ing]} reductions, e.t.c.
@@ -229,7 +229,7 @@ as long as that function is \emph{size preserving}\index{size preservation}.
 For the list mapping example above,
 this means that if the sublist of elements of type $\tau$ has size $s$,
 then the mapping function must have type $\arr*{\List{\tau}{s}}{\List{\tau}{s}}$.
-Notice that the implementation of the mapping function isn't required,
+The implementation of the mapping function isn't required,
 merely its type, restoring modularity and compositionality.
 
 This thesis then introduces Sizey \textsc{mc}Type Theory (\lang),
@@ -264,9 +264,8 @@ Instead, the purpose is threefold:
     and often requires sacrifices to and constraints on the type theory;
     see Sacchini's dissertation~\citep{CIC-hat-minus} or \CIChatstar~\citep{CIC-hat-star},
     for instance.
-    Instead, a syntactic model relies on the consistency of the language in which I'm modelling,
-    allowing me to focus on only the interesting parts of the sized type theory
-    rather than on consistency as a whole.
+    Meanwhile, a syntactic model into a similar type theory
+    highlights the differences between the two theories unique to sized types.
   \item To present some potential first steps towards improving Agda's implementation of sized types,
     which is currently inconsistent~\citep{infinity}.
     In \cref{ch:discussion}, I frame the issues in the context of \lang
@@ -342,7 +341,7 @@ size abstraction $\Fun{\alpha}{e}$, and size application $\App{e}{s}$.
 Sizes themselves consist of size variables $\alpha$, a \emph{base size} $\circ$,
 and a \emph{size successor operator} $\sss{s}$.
 This is the standard for size expressions in sized type systems.
-Some augment the size grammar with addition of or scalar multiplication of size variables,
+Some augment the size grammar with addition or scalar multiplication of size variables,
 for instance, increasing expressivity at the expense of added complexity in size checking.
 To keep things simple, I don't include these features and stick to successor sizes.
 Size expressions here are \emph{not} terms,
@@ -351,7 +350,7 @@ are syntactically distinct from those of terms,
 similar to how, in nondependent polymorphic type systems,
 types are distinct from terms.
 
-Having explicit sizes differs from some most prior sized type systems where,
+Having explicit sizes differs from some prior sized type systems where,
 extending the type polymorphism analogy,
 there is only implicit \emph{rank-1} or
 \emph{prenex} size quantification:
@@ -359,7 +358,7 @@ size quantifications never appear inside of a type,
 and in fact all size abstractions and applications are fully inferred.
 Explicit sizes, in contrast, let us use
 \emph{higher-rank} size quantification,
-which are more expressive.
+which is more expressive.
 For instance, supposing we have lists parametrized over some sized type $\tau$,
 one could write a size-preserving mapping function over a list
 that leaves the size of its elements untouched, whose type could be
@@ -408,7 +407,7 @@ In summary, the sized type features I include are:
     abstraction $\Fun{\alpha}{e}$, and
     application $\App{e}{s}$;
   \item A \textbf{simple size grammar} with size variables $\alpha$, a base size $\circ$, and successors $\sss{s}$;
-  \item \textbf{Higher-rank sizes}, \eg $\arr*{(\Funtype{\alpha}{\tau})}{\sigma}$;
+  \item \textbf{Higher-rank sizes}, \eg $\arr*{(\Funtype{\alpha}{\tau})}{\sigma}$; and
   \item \textbf{Bounded size} quantification $\Funtype<{\alpha}{s}{\tau}$ and
   abstraction $\Fun<{\alpha}{s}{e}$.
 \end{itemize}
@@ -447,6 +446,8 @@ if some term $e$ is well typed under some environments $\Phi; \Gamma$ with some 
 then the translated term $\compile{e}$ must also be well typed
 under the translated environment $\compile{\Phi}, \compile{\Gamma}$
 with the translated type $\compile{\tau}$.
+Additionally, the notion of consistency must be preserved across translation as well,
+or that $\compile{\bot} = \botT$.
 By the consistency of \CICE and a type-preserving translation to it,
 we then prove the consistency of \lang.
 
@@ -648,7 +649,7 @@ and uses a subtyping relation instead for cumulativity;
 \end{mathpar}
 
 \citet{universes} introduce ways of adding universe polymorphism to \GCC
-as well as to a version of \GCC with definitions.
+as well as a version of \GCC with definitions.
 For the purposes of this thesis, I use \GCC to refer to the type theory
 with subtyping and definitions.
 
@@ -675,7 +676,7 @@ with additional alternate untyped equality and subtyping judgements,
 since Coq's implementation of definitional equality is untyped.
 
 \citet{CCE} adds a propositional equality type with
-equality reflection\index{equality reflection} to \GCC with \rref{cum} in \CCE,
+equality reflection\index{equality reflection} to \GCC using \rref{cum} in \CCE,
 although transitivity of definitional equality only holds for well-typed terms,
 and gives a syntactic model in an extension of CIC.
 Following that, \citet{CICE} improve upon the translation,
@@ -690,7 +691,7 @@ MLTT\index{Martin--L\"of type theory} is a dependent type theory
 with a noncumulative universe hierarchy without $\Prop$,
 typed equality, and some basic types: the empty type, the unit type,
 dependent pair types, disjoint sum types, and a propositional equality type,
-as well as the types of naturals and well-founded trees as mentioned.
+as well as naturals and well-founded trees as mentioned.
 They can all be implemented as inductive types in pCIC.
 
 The source language \lang and target language \CICE in this thesis aren't exactly
@@ -767,7 +768,7 @@ However, it's missing two properties that all of these type theories do have:
 inductive types in the expected universes
 (as we'll see shortly, the type of naturals and well-founded trees
 are one universe higher than is conventional),
-and the existence of an infinite size.
+and the inclusion of an infinite size.
 
 % TODO: fix manual footnote number
 \footnotetext[6]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
@@ -785,5 +786,5 @@ including confluence and subject reduction,
 and elaborate on the proof of type preservation and its associated lemmas.
 I conclude in \cref{ch:discussion}, discussing some of the shortcomings of \lang,
 namely the universe levels of the inductive types and
-decreased expressivity arising from removing the infinite size,
+decreased expressivity arising from excluding the infinite size,
 as well directions for future investigation.

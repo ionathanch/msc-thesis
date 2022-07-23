@@ -6,7 +6,7 @@ corresponds to verifying a proof of some proposition in a higher-order predicate
 To ensure decidability of type checking and consistency of the logic,
 these proof assistants forbid nonterminating recursive functions
 using guard predicates that only allow structurally recursive functions
-recurring only on syntactically smaller arguments.
+recurring on syntactically smaller arguments.
 However, these guard predicates are sometimes too restrictive
 and reject simple terminating functions that aren't otherwise structurally recursive.
 
@@ -19,8 +19,8 @@ support features for more expressive sized types,
 namely higher-rank size quantification
 (which allows for passing around size-preserving functions)
 and bounded size quantification
-(which eliminates the need for complex monotonicity checks),
-but unfortunately none simultaneously support both.
+(which eliminates the need for complex semi-continuity checks),
+but unfortunately none support both simultaneously.
 Meanwhile, the only implementation of sized types in a major proof assistant, Agda,
 does support these features, but is unfortunately logically inconsistent.
 
