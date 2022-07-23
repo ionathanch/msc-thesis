@@ -8,7 +8,7 @@
   e &\Coloneqq \mathrlap{\cdots \mid \N{s} \mid \zero{s}{s} \mid \succ{s}{s}{e} \mid \W{x}{\tau}{\tau}{s} \mid \sup{x}{\tau}{\tau}{s}{s}{e}{e}} \\
   &\mid \mathrlap{\match{e}{\fun*{x}{P}}{(\app{\App{c}{\alpha}}{\vec{z}} \Rightarrow e) \seq} \mid \fix{f}{\alpha}{\tau}{e}}
   \end{align*}
-  \caption[Syntax (naturals, well-founded trees, $\kw{case}$, fixpoints)]{Syntax (naturals, well-founded trees, \\ and $\kw{case}$ and fixpoint expressions)}
+  \caption{Syntax (\lang inductives)}
   \label{#1}
   \end{figure}
 }
@@ -114,7 +114,7 @@
     \infer{\Phi; \Gamma}{\fix{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}
   }
   \end{mathpar}
-  \caption[Typing rules (naturals, well-founded trees, $\kw{case}$, fixpoints)]{Typing rules (naturals, well-founded trees, \\ and $\kw{case}$ and fixpoint expressions)}
+  \caption{Typing rules (\lang inductives)}
   \label{#1}
   \end{figure}
 }
