@@ -1,6 +1,6 @@
 {-# OPTIONS --without-K #-}
 
-open import Agda.Primitive using (Level; lsuc)
+open import Agda.Primitive using (Level; lzero; lsuc)
 open import Relation.Binary.PropositionalEquality.Core using (_≡_; cong)
 open import Data.Empty using (⊥; ⊥-elim)
 open import Data.Product using (proj₁; proj₂; Σ-syntax; _,_)
@@ -131,4 +131,21 @@ ac a f = ⊔ (proj₁ ∘ f) , f′
 mkW : ∀ a → (B a → Σ[ s ∈ Size ] W A B s) → Σ[ s ∈ Size ] W A B s
 mkW a f =
   let sf = ac a f
-  in sup (proj₁ sf) ? a (proj₂ f)
+  in ↑ proj₁ sf , sup (proj₁ sf) s≤s a (proj₂ sf)
+
+{- Full inductives and infinite sizes -}
+
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+
+limN : Nat → Size
+limN zero = ◯
+limN (suc n) = ↑ limN n
+
+∞ᶰ : Size
+∞ᶰ = ⊔ limN
+
+limW : W∞ A B → Size
+limW (sup∞ a f) = ⊔ λ b → limW (f b)
+
+∞ʷ : ∀ {A : Set ℓ} {B : A → Set ℓ} → Size
+∞ʷ {B = B} = ⊔ limW {B = B}

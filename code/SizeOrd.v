@@ -95,3 +95,17 @@ Definition ac {A B} a (f : B a → {s & W A B s}) : {s & B a → W A B s} :=
     | sup r rs a f => sup r (transLeq rs (cocone b reflLeq)) a f
     end
   in (lim (λ b, (f b).1) ; f').
+
+Equations limN (n : nat) : Size :=
+| O => base
+| S n => suc (limN n).
+
+Definition infN : Size := lim limN.
+
+Inductive WInf (A : Type) (B : A → Type) : Type :=
+| sup' : ∀ a, (B a → WInf A B) → WInf A B.
+
+Equations limW {A} {B} (w : WInf A B) : Size :=
+| sup' a f => lim (λ b, limW (f b)).
+
+Definition infW {A} {B} : Size := lim (@limW A B).

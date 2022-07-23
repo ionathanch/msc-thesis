@@ -141,6 +141,26 @@ Definition ac {A B} a (f : B a → {s & W A B s}) : {s & B a → W A B s} :=
 \end{minted}
 \end{singlespace}
 
+\subsection{Full Inductives and Infinite Sizes}
+
+\begin{singlespace}
+\begin{minted}{coq}
+Equations limN (n : nat) : Size :=
+| O => base
+| S n => suc (limN n).
+
+Definition infN : Size := lim limN.
+
+Inductive WInf (A : Type) (B : A → Type) : Type :=
+| sup' : ∀ a, (B a → WInf A B) → WInf A B.
+
+Equations limW {A} {B} (w : WInf A B) : Size :=
+| sup' a f => lim (λ b, limW (f b)).
+
+Definition infW {A} {B} : Size := lim (@limW A B).
+\end{minted}
+\end{singlespace}
+
 \section{Agda}
 
 The following type check on Agda 2.6.2.
@@ -237,5 +257,29 @@ ac a f = ⊔ (λ b → proj₁ (f b)) , f′
   f′ : _
   f′ b with proj₂ (f b)
   ... | sup r r<s a f = sup r (s≤s≤s r<s (s≤⊔f _ b s≤s)) a f
+\end{minted}
+\end{singlespace}
+
+\subsection{Full Inductives and Infinite Sizes}
+
+\begin{singlespace}
+\begin{minted}{agda}
+open import Agda.Builtin.Nat using (Nat; zero; suc)
+
+limN : Nat → Size
+limN zero = ◯
+limN (suc n) = ↑ limN n
+
+∞ᶰ : Size
+∞ᶰ = ⊔ limN
+
+data W∞ (A : Set ℓ) (B : A → Set ℓ) : Set ℓ where
+  sup∞ : ∀ a → (B a → W∞ A B) → W∞ A B
+
+limW : W∞ A B → Size
+limW (sup∞ a f) = ⊔ λ b → limW (f b)
+
+∞ʷ : ∀ {A : Set ℓ} {B : A → Set ℓ} → Size
+∞ʷ {B = B} = ⊔ limW {B = B}
 \end{minted}
 \end{singlespace}
