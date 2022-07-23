@@ -70,20 +70,26 @@ In other words, there must not be any term whose type is $\funtype{P}{\Prop}{P}$
 Otherwise, any proposition would be provable,
 which defeats the purpose of using a logical system for valid reasoning.
 
-\subsection{Digression: Notions of equality}
+\subsection{Equality in dependent type checking}
 
 The two most important components of a formal description of a dependent type theory
 are its typing judgement, whose rules describe when a term has a certain type,
 and its equality judgement, whose rules describe when two terms are equal.
 The latter is also known as \emph{definitional equality}\index{definitional equality},
-which encompasses $\alpha$-equivalence (or syntactic equality up to bound variable renaming)
+which encompasses $\alpha$-equivalence (syntactic equality up to bound variable renaming)
 and reduction (such as substituting a $\kw{let}$-bound expression into the body).
+Because types can now depend on terms,
+deciding equality of two types is nontrivial
+and can depend on the reduction behaviour of terms,
+which in turn is needed during type checking
+so that a well-typed term can be assigned an equal type.
+
 Definitional equality can be \emph{untyped},
-simply relating two terms under some environment,
-or \emph{typed}, requiring typing premises as needed to ensure well-typedness of both terms.
-Typing and equality judgements can also be defined in an \emph{algorithmic} style,
+relating two terms syntactically while ignoring typing,
+or \emph{typed}, relating two terms at some type and therefore requiring well-typedness of both terms.
+Equality judgements can also be defined in an \emph{algorithmic} style,
 where the decision procedure for determining well-typedness or equality
-can be read more or less directly off of the rules,
+can be directly off of the rules (typically up to reduction),
 or in a \emph{declarative} style in contrast, where constructing a derivation tree for a judgement
 may not be decidable at all.
 Definitional equality is also called \emph{conversion} or \emph{equivalence},
@@ -92,7 +98,7 @@ but I use these terms to mean different, specific notions of equality in the upc
 A type theory can also have a notion of \emph{propositional equality}\index{propositional equality},
 which is a proposition---a type---stating the equality of two terms,
 and \emph{not}, in contrast to definitional equality, a judgement.
-Two definitionally equal terms are propositionally equal by the reflexivity proof term
+Two definitionally equal terms are propositionally equal by the \rref*{reflexivity} proof term
 as shown in the below typing rule.
 
 In an \emph{intensional} type theory with propositional equality,
@@ -107,20 +113,20 @@ while propositional equalities are those whose proofs are supplied by the proof 
 
 \vspace{-0.5\baselineskip}
 \begin{mathpar}
-\inferrule[reflexivity]{
+\inferrule[\rlabel*{reflexivity}]{
   \defeq{\Phi; \Gamma}{e_1}{e_2}{\tau}
 }{
   \type{\Phi; \Gamma}{\refl{}}{\eq{e_1}{\tau}{e_2}}
 }
 \and
-\inferrule[reflection]{
+\inferrule[\rlabel*{reflection}]{
   \type{\Phi; \Gamma}{p}{\eq{e_1}{\tau}{e_2}}
 }{
   \defeq{\Phi; \Gamma}{e_1}{e_2}{\tau}
 }
 \end{mathpar}
 
-On the other hand, in an \emph{extensional} type theory, where we have the above equality reflection rule,
+On the other hand, in an \emph{extensional} type theory, where we have the above equality \rref*{reflection} rule,
 two terms are definitionally equal as long as there exists some proof of their propositional equality.
 In general, finding a proof of an arbitrary propositional equality if it exists is undecidable~\citep{extensional-concepts},
 so deciding definitional equality in extensional type theory is consequently undecidable as well,
