@@ -16,8 +16,16 @@
 * Register for a [cIRcle](https://circle.library.ubc.ca/register) account
 * Send name and email address to [G+PS](mailto:graduate.thesis@ubc.ca) to activate account _after_ Joyce has sent the above forms to G+PS
 * Submit thesis to cIRcle named as `ubc_2022_november_chan_jonathan.pdf`
+* Send the following to [Joyce](mailto:poon@cs.ubc.ca):
+  * Thesis acceptance email from G+PS
+  * [MSc release form](https://my.cs.ubc.ca/system/files/docs/mscreleaseform.pdf)
 
-## TODOs
+### Helpful Links
 
-* Revisit `% TODO`s eventually
-* Cite thesis in POPL paper
+* [Structure of Theses and Dissertations](https://www.grad.ubc.ca/current-students/dissertation-thesis-preparation/structure-theses-dissertations)
+* [Formatting Requirements](https://www.grad.ubc.ca/current-students/dissertation-thesis-preparation/formatting-requirements)
+* [Final Submission Requirements](https://www.grad.ubc.ca/current-students/final-dissertation-thesis-submission/final-submission-instructions)
+* [UBC Open Collections - MSc Theses](https://open.library.ubc.ca/search?collection=ubctheses&q=campus:%22%20UBCV%22%20affiliation:%22Computer%20Science,%20Department%20of%22&program=Computer%20Science&degree=Master%20of%20Science%20-%20MSc)
+* [Graduation from MSc Program](https://my.cs.ubc.ca/docs/graduation-msc-program)
+* [MSc Graduation Checklist](https://my.cs.ubc.ca/docs/msc-graduation-checklist)
+* [Rasmussen Bindery - Thesis binding](https://www.rasmussenbindery.com/thesis-binding/)
