@@ -29,7 +29,7 @@ as theorems by induction on the respective congruence rules.
 
 \section{Coq}
 
-The following type check on Coq 8.15.1.
+The following type check on Coq 8.15.2.
 
 \subsection{Preliminary definitions} \label{app:mechanization:coq:prelim}
 
@@ -145,19 +145,41 @@ Definition ac {A B} a (f : B a → {s & W A B s}) : {s & B a → W A B s} :=
 
 \begin{singlespace}
 \begin{minted}{coq}
+(* Naturals *)
+
+Inductive N (s : Size) : Type :=
+| zero : ∀ r, r < s → N s
+| succ : ∀ r, r < s → N r → N s.
+Arguments zero {_}.
+Arguments succ {_}.
+
 Equations limN (n : nat) : Size :=
-| O => base
+| O => suc base
 | S n => suc (limN n).
 
+Equations natToN (n : nat) : N (limN n) :=
+| O => zero base reflLeq
+| S n => succ (limN n) reflLeq (natToN n).
+
 Definition infN : Size := lim limN.
+Definition leqInfN (n : nat) : limN n ≤ infN := cocone n reflLeq.
+
+(* W types *)
 
 Inductive WInf (A : Type) (B : A → Type) : Type :=
 | sup' : ∀ a, (B a → WInf A B) → WInf A B.
 
 Equations limW {A} {B} (w : WInf A B) : Size :=
-| sup' a f => lim (λ b, limW (f b)).
+| sup' a f => suc (lim (λ b, limW (f b))).
+
+Equations liftW {A} {B} {r} {s} : r ≤ s → W A B r → W A B s :=
+| rs, sup t tr a f => sup t (transLeq tr rs) a f.
+
+Equations WInfToW {A} {B} (w : WInf A B) : W A B (limW w) :=
+| sup' a f => sup (lim (λ b, limW (f b))) reflLeq a (λ b, liftW _ (WInfToW (f b))).
 
 Definition infW {A} {B} : Size := lim (@limW A B).
+Definition leqInfW {A} {B} (w : WInf A B) : limW w ≤ @infW A B := cocone w reflLeq.
 \end{minted}
 \end{singlespace}
 
@@ -266,20 +288,52 @@ ac a f = ⊔ (λ b → proj₁ (f b)) , f′
 \begin{minted}{agda}
 open import Agda.Builtin.Nat using (Nat; zero; suc)
 
+{- Naturals -}
+-- Sized naturals
+data N (s : Size) : Set (lsuc lzero) where
+  zero : ∀ r → r < s → N s
+  succ : ∀ r → r < s → N r → N s
+
+-- The size of any given full natural
 limN : Nat → Size
-limN zero = ◯
+limN zero = ↑ ◯
 limN (suc n) = ↑ limN n
 
+-- Producing a sized natural from a full natural
+Nat→N : (n : Nat) → N (limN n)
+Nat→N zero = zero ◯ s≤s
+Nat→N (suc n) = succ (limN n) s≤s (Nat→N n)
+
+-- The infinite size for naturals
 ∞ᶰ : Size
 ∞ᶰ = ⊔ limN
 
+-- The infinite size is greater or equal to the size of any natural
+≤∞ᶰ : ∀ n → limN n ≤ ∞ᶰ
+≤∞ᶰ n = s≤⊔f limN n s≤s
+
+{- W types -}
+-- Full W types
 data W∞ (A : Set ℓ) (B : A → Set ℓ) : Set ℓ where
   sup∞ : ∀ a → (B a → W∞ A B) → W∞ A B
 
+-- The size of any given full W type
 limW : W∞ A B → Size
-limW (sup∞ a f) = ⊔ λ b → limW (f b)
+limW (sup∞ a f) = ↑ ⊔ λ b → limW (f b)
 
+-- Producing a sized W type from a full W type
+W∞→W : (w : W∞ A B) → W A B (limW w)
+W∞→W (sup∞ a f) = sup (⊔ λ b → limW (f b)) s≤s a (λ b → liftW (s≤⊔f (limW ∘ f) b s≤s) (W∞→W (f b)))
+  where
+  liftW : ∀ {r s} → r ≤ s → W A B r → W A B s
+  liftW r≤s (sup t t≤r a f) = sup t (s≤s≤s t≤r r≤s) a f
+
+-- The infinite size for a given W type
 ∞ʷ : ∀ {A : Set ℓ} {B : A → Set ℓ} → Size
 ∞ʷ {B = B} = ⊔ limW {B = B}
+
+-- The infinite size is greater or equal to the size of any W type
+≤∞ʷ : ∀ (w : W∞ A B) → limW w ≤ ∞ʷ {A = A} {B = B}
+≤∞ʷ w = s≤⊔f limW w s≤s
 \end{minted}
 \end{singlespace}
