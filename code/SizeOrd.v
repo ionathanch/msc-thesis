@@ -96,16 +96,34 @@ Definition ac {A B} a (f : B a → {s & W A B s}) : {s & B a → W A B s} :=
     end
   in (lim (λ b, (f b).1) ; f').
 
+Inductive N (s : Size) : Type :=
+| zero : ∀ r, r < s → N s
+| succ : ∀ r, r < s → N r → N s.
+Arguments zero {_}.
+Arguments succ {_}.
+
 Equations limN (n : nat) : Size :=
-| O => base
+| O => suc base
 | S n => suc (limN n).
 
+Equations natToN (n : nat) : N (limN n) :=
+| O => zero base reflLeq
+| S n => succ (limN n) reflLeq (natToN n).
+
 Definition infN : Size := lim limN.
+
+Definition leqInfN (n : nat) : limN n ≤ infN := cocone n reflLeq.
 
 Inductive WInf (A : Type) (B : A → Type) : Type :=
 | sup' : ∀ a, (B a → WInf A B) → WInf A B.
 
 Equations limW {A} {B} (w : WInf A B) : Size :=
-| sup' a f => lim (λ b, limW (f b)).
+| sup' a f => suc (lim (λ b, limW (f b))).
+
+Equations liftW {A} {B} {r} {s} : r ≤ s → W A B r → W A B s :=
+| rs, sup t tr a f => sup t (transLeq tr rs) a f.
+
+Equations WInfToW {A} {B} (w : WInf A B) : W A B (limW w) :=
+| sup' a f => sup (lim (λ b, limW (f b))) reflLeq a (λ b, WInfToW (f b)).
 
 Definition infW {A} {B} : Size := lim (@limW A B).
