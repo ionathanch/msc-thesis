@@ -137,15 +137,44 @@ mkW a f =
 
 open import Agda.Builtin.Nat using (Nat; zero; suc)
 
+-- Sized naturals
+data N (s : Size) : Set (lsuc lzero) where
+  zero : ∀ r → r < s → N s
+  succ : ∀ r → r < s → N r → N s
+
+-- The size of any given full natural
 limN : Nat → Size
-limN zero = ◯
+limN zero = ↑ ◯
 limN (suc n) = ↑ limN n
 
+-- Producing a sized natural from a full natural
+Nat→N : (n : Nat) → N (limN n)
+Nat→N zero = zero ◯ s≤s
+Nat→N (suc n) = succ (limN n) s≤s (Nat→N n)
+
+-- The infinite size for naturals
 ∞ᶰ : Size
 ∞ᶰ = ⊔ limN
 
-limW : W∞ A B → Size
-limW (sup∞ a f) = ⊔ λ b → limW (f b)
+-- The infinite size is greater or equal to the size of any natural
+≤∞ᶰ : ∀ n → limN n ≤ ∞ᶰ
+≤∞ᶰ n = s≤⊔f limN n s≤s
 
+-- The size of any given full W type
+limW : W∞ A B → Size
+limW (sup∞ a f) = ↑ ⊔ λ b → limW (f b)
+
+-- Producing a sized W type from a full W type
+W∞→W : (w : W∞ A B) → W A B (limW w)
+W∞→W (sup∞ a f) = sup (⊔ λ b → limW (f b)) s≤s a (λ b → liftW (s≤⊔f (limW ∘ f) b s≤s) (W∞→W (f b)))
+  where
+  liftW : ∀ {r s} → r ≤ s → W A B r → W A B s
+  liftW r≤s (sup t t≤r a f) = sup t (s≤s≤s t≤r r≤s) a f
+
+-- The infinite size for a given W type
 ∞ʷ : ∀ {A : Set ℓ} {B : A → Set ℓ} → Size
 ∞ʷ {B = B} = ⊔ limW {B = B}
+
+-- The infinite size is greater or equal to the size of any W type
+≤∞ʷ : ∀ (w : W∞ A B) → limW w ≤ ∞ʷ {A = A} {B = B}
+≤∞ʷ w = s≤⊔f limW w s≤s
