@@ -258,9 +258,8 @@ wf (⊔ f) = acc (λ { r (s≤⊔f f a r<fa) → (wf (f a)).acc< r r<fa })
 
 wfInd : ∀ (P : Size {ℓ} → Set ℓ′) → (∀ s → (∀ r → r < s → P r) → P s) → ∀ s → P s
 wfInd P f s = wfAcc s (wf s)
-  where
-  wfAcc : ∀ s → Acc s → P s
-  wfAcc s (acc p) = f s (λ r r<s → wfAcc r (p r r<s))
+  where wfAcc : ∀ s → Acc s → P s
+        wfAcc s (acc p) = f s (λ r r<s → wfAcc r (p r r<s))
 \end{minted}
 \end{singlespace}
 
@@ -275,10 +274,9 @@ data W (A : Set ℓ) (B : A → Set ℓ) (s : Size {ℓ}) : Set (lsuc ℓ) where
 
 ac : ∀ a → (B a → Σ[ s ∈ Size ] W A B s) → Σ[ s ∈ Size ] (B a → W A B s)
 ac a f = ⊔ (λ b → proj₁ (f b)) , f′
-  where
-  f′ : _
-  f′ b with proj₂ (f b)
-  ... | sup r r<s a f = sup r (s≤s≤s r<s (s≤⊔f _ b s≤s)) a f
+  where f′ : _
+        f′ b with proj₂ (f b)
+        ... | sup r r<s a f = sup r (s≤s≤s r<s (s≤⊔f _ b s≤s)) a f
 \end{minted}
 \end{singlespace}
 
@@ -323,10 +321,10 @@ limW (sup∞ a f) = ↑ ⊔ λ b → limW (f b)
 
 -- Producing a sized W type from a full W type
 W∞→W : (w : W∞ A B) → W A B (limW w)
-W∞→W (sup∞ a f) = sup (⊔ λ b → limW (f b)) s≤s a (λ b → liftW (s≤⊔f (limW ∘ f) b s≤s) (W∞→W (f b)))
-  where
-  liftW : ∀ {r s} → r ≤ s → W A B r → W A B s
-  liftW r≤s (sup t t≤r a f) = sup t (s≤s≤s t≤r r≤s) a f
+W∞→W (sup∞ a f) =
+  sup (⊔ λ b → limW (f b)) s≤s a (λ b → liftW (s≤⊔f (limW ∘ f) b s≤s) (W∞→W (f b)))
+  where liftW : ∀ {r s} → r ≤ s → W A B r → W A B s
+        liftW r≤s (sup t t≤r a f) = sup t (s≤s≤s t≤r r≤s) a f
 
 -- The infinite size for a given W type
 ∞ʷ : ∀ {A : Set ℓ} {B : A → Set ℓ} → Size
