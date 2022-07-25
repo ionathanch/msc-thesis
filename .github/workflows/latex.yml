@@ -10,7 +10,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: thesis.pdf
-          path: thesis.pdf
+          path: ubc_2022_november_chan_jonathan.pdf
       - uses: actions/upload-artifact@v3
         with:
           name: POPL23.pdf

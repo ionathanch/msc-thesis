@@ -8,6 +8,7 @@
 *.toc
 *.blg
 *.dvi
+*.pdf
 *.bbl
 *.elc
 *.nav
@@ -24,5 +25,3 @@
 *_minted*/
 *.vscode/
 *~
-thesis.pdf
-POPL23.pdf
