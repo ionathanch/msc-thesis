@@ -1,27 +1,30 @@
-*.loa
+# Auxilliary, log, outline, PDF files
 *.aux
-*.brf
-*.out
-*.lot
 *.log
+*.out
+*.pdf
+
+# Bibtex bibliography, log, backreferences
+*.bbl
+*.blg
+*.brf
+
+# Lists of tables/figures, table of contents
+*.lot
 *.lof
 *.toc
-*.blg
-*.dvi
-*.pdf
-*.bbl
-*.elc
-*.nav
-*.snm
-*.pyc
-*.vrb
+
+# Index, makeindex source, makeindex log
+*.ind
 *.idx
 *.ilg
-*.ind
-*.dblite
+
+# Recorder files, latexmk sources, synctex
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+
+# Working directories and temporary files
 *_minted*/
 *.vscode/
 *~
