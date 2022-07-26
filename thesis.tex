@@ -72,23 +72,24 @@
 \include{chapters/laysummary}
 \include{chapters/preface}
 
+% Page links in ToC, LoT, LoF must be black
+\hypersetup{allcolors=black}
 \tableofcontents
 \listoftables
 \listoffigures
+\hypersetup{allcolors=darkblue}
 
 \include{chapters/acknowledgements}
 \include{chapters/dedication}
+\include{chapters/typography.tex}
 
 \mainmatter
-\setcounter{chapter}{-1}
-\include{chapters/typography.tex}
 \include{chapters/introduction.tex}
 \include{chapters/sized.tex}
 \include{chapters/model.tex}
 \include{chapters/proofs.tex}
 \include{chapters/discussion.tex}
 
-\phantom{\citep{phantom}}
 \bibliographystyle{plainnat}
 \begin{singlespace}
 \raggedright
