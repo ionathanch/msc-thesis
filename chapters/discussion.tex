@@ -26,6 +26,7 @@ given that I've shown that $\SizeT$s \emph{are} well founded.
 If there were, then it'd be possible to prove an inconsistency as follows.
 Let $\inftyT$ be the translation of $\infty$,
 and let $\inftyltinfty$ be the translation of $\subsize*{\sss{\infty}}{\infty}$.
+%
 \begin{align*}
 &\LetT{\tg{{\neg}wf\inftyT}}{\arrT*{\app{\AccT}{\inftyT}}{\botT}}{\funT{\mathit{acc}}{\app{\AccT}{\inftyT}}{\matchT*{\mathit{acc}}{\app{\accT}{p} \RightarrowT \app{p}{\inftyT}{\inftyltinfty}}}} \\
 &\LetT{\tg{false}}{\botT}{\app{\tg{{\neg}wf\inftyT}}{(\app{\accessible}{\inftyT})}}
@@ -50,11 +51,12 @@ Since the motivation for having the infinite size is specifically for representi
 one alternative could be to define the full inductive separately
 and provide functions to and from the corresponding sized inductive,
 such as the following for $\W*$.
+%
 \begin{align*}
 & \data{\App{\app{\W*}{(\annot{A}{\Type{i}})}{(\annot{B}{\arr*{A}{\Type{i}}})}}{\infty}}{\Type{i+1}} \\
 & \quad \annot{\constr{sup\infty}}{\arr{x}{A}{\arr*{(\arr*{\app{B}{x}}{\app{\App{\W*}{\infty}}{A}{B}})}{\App{\app{\W*}{A}{B}}{\infty}}}}
 \end{align*}
-
+%
 Defining a function from $\W{x}{A}{B}{s}$ to $\W{x}{A}{B}{\infty}$ is trivial,
 since we're discarding size information.
 What about going from $\W{x}{A}{B}{\infty}$ to $\W{x}{A}{B}{s}$?
@@ -76,12 +78,17 @@ We've already seen existential sizes in action: they're in the return types of $
 There is still a limitation similar to that in \cref{sec:examples:limitations}
 when trying to represent the constructors of full inductives.
 For $\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}$, we need a ``constructor'' of the following type.
+%
 \begin{align*}
 \annot{\const{sup'}}{\arr{x}{A}{\arr*{(\arr*{B}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}}}}
 \end{align*}
+%
 All we need is a function
+%
 $$\annot{\const{ac}}{\arr{x}{A}{\arr*{(\arr*{B}{\Pairtype{\alpha}{\W{x}{A}{B}{\alpha}}})}{\Pairtype{\alpha}{(\arr*{B}{\W{x}{A}{B}{\alpha}})}}}}$$
+%
 and we're good to go.
+%
 \begin{align*}
 \app{\const{sup'}}{x}{f} =
 \unpair*{\alpha}{f'}{\app{\const{ac}}{x}{f}}{\Pair{\sss{\alpha}}{\sup{x}{A}{B}{\sss{\alpha}}{\alpha}{x}{f'}}}
@@ -116,7 +123,7 @@ from which the first rule must select an $a$.
 \subsize{\Phi; \Gamma}{\slim{A}{f}}{s}
 }
 \end{mathpar}
-
+%
 Even so, taking weak existentials as a primitive of \lang
 rather than defining them by an encoding,
 and modelling them by strong dependent pairs in \CICE,
@@ -144,6 +151,7 @@ are, in a sense, one level\index{universe level} higher than is usually expected
 their typing rules are reproduced below.
 $\N*$ is typically in $\Type{0}$,
 while $\W*$ is typically in $U$ rather than $\axioms{U}$.
+%
 \begin{mathpar}
 \inferrule[\rref*{nat}]{
   \wf{\Phi}{\Gamma} \\
@@ -160,7 +168,7 @@ while $\W*$ is typically in $U$ rather than $\axioms{U}$.
   \infer{\Phi; \Gamma}{\W{x}{\sigma}{\tau}{s}}{\axioms{U}}
 }
 \end{mathpar}
-
+%
 This is due to how the translation is defined:
 $\NatT$ and $\WT$ have a $\SizeT$ as parameter,
 the $\limT$ operator quantifies over the type of the domain of its function argument,
@@ -173,31 +181,34 @@ as is the case for the definition of $\compile{\const{ac}}$,
 so if its universe is $\TypeT{\iT}$,
 then the universe of the type of $\sT$ must be $\TypeT{\tg{i+1}}$,
 according to the definition of $\SizeT$, reproduced below.
+%
 \begin{align*}
 &\dataT{\SizeT}{\TypeT{\tg{i+1}}} \\
 &\quad \annotT{\sucT}{\arrT*{\SizeT}{\SizeT}} \\
 &\quad \annotT{\limT}{\funtypeT{A}{\TypeT{\iT}}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}}
 \end{align*}
-
+%
 This is a nonnegotiable condition:
 defining $\SizeT$ to be in the same universe as that over which $\limT$ quantifies
 leads to $\szltT$ no longer being well founded,
 since in this hypothetical scenario, $\SizeT$ itself could be applied to $\limT$
 to define an $\inftyT$ size.
+%
 \begin{align*}
 &\LetT{\inftyT}{\SizeT}{\app{\limT}{\SizeT}{(\funT{\xT}{\SizeT}{\xT})}} \\
 &\LetT{\inftyltinfty}{\inftyT \szltT \inftyT}{\app{\coconeT}{\SizeT}{(\app{\sucT}{\inftyT})}{(\funT{\xT}{\SizeT}{\xT})}{(\app{\sucT}{\inftyT})}{(\app{\reflleq}{(\app{\sucT}{\inftyT})})}}
 \end{align*}
-
+%
 One way to ``shrink'' the universe of $\SizeT$, so to speak,
 could be to parametrize it over the type over which $\limT$ currently quantifies,
 yielding the following inductive definition.
+%
 \begin{align*}
 &\dataT{\app{\SizeT}{(\annotT{A}{\TypeT{\iT}})}}{\TypeT{\iT}} \\
 &\quad \annotT{\sucT}{\arrT*{\SizeT}{\SizeT}} \\
 &\quad \annotT{\limT}{\arrT*{(\arrT*{A}{\SizeT})}{\SizeT}}
 \end{align*}
-
+%
 The problem with this alternative is that for $\app{\WT}{\sigmaT}{\tauT}$,
 the parameter of its size parameter would be $\app{\tauT}{\aT}$,
 where $\annotT{\aT}{\sigmaT}$ is the third formal argument to its constructor $\supT$,
@@ -237,6 +248,7 @@ as they would lack a translation in the syntactic model.
 Nevertheless, we can speculate on how they might appear and interact with sizes.
 Here, I define the classic example of coinductive streams,
 composed of a head element and a tail stream.
+%
 \begin{mathpar}
 \inferrule[\rlabel*{stream}]{
   \wf{\Phi}{s} \\
@@ -272,7 +284,7 @@ composed of a head element and a tail stream.
   \infer{\Phi; \Gamma}{\cofix{f}{\alpha}{\sigma}{e}}{\Funtype{\alpha}{\sigma}}
 }
 \end{mathpar}
-
+%
 Just as the size of an inductive informally indicates at most how many layers of constructors its elements contain,
 the size of a coinductive informally indicates \emph{at least} how many layers,
 and in the case of $\app{\Stream*}{A}$, at least how many elements of $A$ it contains.
@@ -295,12 +307,13 @@ to well-founded induction\index{well-founded induction} on sizes despite constru
 
 With cofixpoints, we could then construct an infinite stream of some single element.
 Let $A$ in the definitions to follow be some type.
+%
 \begin{align*}
 & \Let{\dup}{\arr*{A}{\Funtype{\alpha}{\Stream{A}{\alpha}}}}{\\
 & \quad \fun{a}{A}{\cofix{\dup*}{\alpha}{\Stream{A}{\alpha}}{\\
 & \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\App{\dup*}{\beta}}}}}
 \end{align*}
-
+%
 Notice that the stream produced has \emph{any} size,
 which can be interpreted as having ``at least'' any number of elements---a
 truly infinite stream.
@@ -310,6 +323,7 @@ dual to an inductive existentially quantified by a size corresponding to a full 
 We could manipulate sized streams as expected,
 such as taking only the odd elements of a stream
 or interleaving two streams by alternation.
+%
 \begin{align*}
 & \Let{\odds}{\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\Stream{A}{\beta}})}{\Stream{A}{\alpha}}}}{ \\
 & \quad \cofix{\odds*}{\alpha}{\arr*{(\Funtype{\beta}{\Stream{A}{\beta}})}{\Stream{A}{\alpha}}}{ \\
@@ -319,25 +333,28 @@ or interleaving two streams by alternation.
 & \qquad \fun{s_1}{\Stream{A}{\alpha}}{\fun{s_2}{\Stream{A}{\alpha}}{\scons{\beta}{\alpha}{\shd{s_1}}{\beta}{\alpha}{ \\
 & \qquad \quad \scons{\gamma}{\beta}{\shd{s_2}}{\gamma}{\beta}{\app{\App{\interleave*}{\alpha}}{(\App{\stl{s_1}}{\gamma})}{(\App{\stl{s_2}}{\gamma})}}}}}}}
 \end{align*}
-
+%
 Just as with lists, we could write size-preserving functions on streams
 and use them to define cofixpoints that would otherwise not pass syntactic guard checking.
 One common example from Haskell is defining a stream of Fibonacci numbers using,
 in our case, a size-preserving stream zipping function.
 Suppose we have a function $\annot{f}{\arr*{A}{A}{A}}$ and some element $\annot{a}{A}$.
 Then we can define the zipping function and a Fibonacci-like stream as follows.
-(For the actual Fibonacci numbers, $A$ would be the naturals, $f$ would be addition, and $a$ would be 1.)
-
+(For the actual Fibonacci numbers, $A$ would be the $\N*$, $f$ would be addition, and $a$ would be 1.)
+%
 \begin{align*}
 & \Let{\zip}{\Funtype{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}}{ \\
 & \quad \cofix{\zip*}{\alpha}{\arr*{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}{\Stream{A}{\alpha}}}{ \\
 & \qquad \fun{s_1}{\Stream{A}{\alpha}}{\fun{s_2}{\Stream{A}{\alpha}}{ \\
-& \qquad \quad \scons{\beta}{\alpha}{\app{f}{\shd{s_1}}{\shd{s_2}}}{\beta}{\alpha}{\app{\App{\zip*}{\beta}}{(\App{\stl{s_1}}{\beta})}{(\App{\stl{s_2}}{\beta})}}}}}} \\
+& \qquad \quad \scons{\beta}{\alpha}{\app{f}{\shd{s_1}}{\shd{s_2}}}{\beta}{\alpha}{\app{\App{\zip*}{\beta}}{(\App{\stl{s_1}}{\beta})}{(\App{\stl{s_2}}{\beta})}}}}}}
+\end{align*}
+
+\begin{align*}
 &\Let{\fibs}{\Funtype{\alpha}{\Stream{A}{\alpha}}}{ \\
 & \quad \cofix{\fibs*}{\alpha}{\Stream{A}{\alpha}}{ \\
 & \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\scons{\gamma}{\beta}{a}{\gamma}{\beta}{\app{\App{\zip}{\gamma}}{(\App{\fibs*}{\gamma})}{(\App{\stl{(\App{\fibs*}{\beta})}}{\gamma})}}}}}
 \end{align*}
-
+%
 Coinductive types in general can be implemented as record definitions
 just as inductive types can be implemented as data definitions.
 However, sized coinductives in Agda's standard library are implemented
@@ -347,6 +364,7 @@ with sized parameter $F$ and size $s$,
 and all other coinductives are implemented as nested inductives,
 where occurrences of the type in its constructors' types are wrapped around a $\Thunk*$.
 In essence, the $\Thunk*$ delays evaluation of corecursive occurrences until they're $\force*$d to.
+%
 \begin{mathpar}
 \inferrule[\rlabel*{thunk}]{
   \wf{\Phi}{s} \\
@@ -367,9 +385,10 @@ In essence, the $\Thunk*$ delays evaluation of corecursive occurrences until the
   \infer{\Phi; \Gamma}{\thunk{\alpha}{s}{e}}{\Thunk{F}{s}}
 }
 \end{mathpar}
-
+%
 This alternate technique is equally expressive,
 since it allows encoding M types, the dual of W types, not just streams.
+%
 \begin{align*}
 & \data{\Stream{(\annot{A}{\Type{i}})}{\alpha}}{\Type{i+1}} \\
 & \quad \annot{\scons*}{\arr*{A}{\Thunk{(\app{\Stream*}{A})}{\alpha}}{\Stream{A}{\alpha}}} \\

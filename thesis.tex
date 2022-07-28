@@ -13,10 +13,10 @@
 \usepackage[no-math]{fontspec}
 \usepackage{mlmodern}
 \usepackage[T1]{fontenc}
-\usepackage[margin=1.25in, marginparwidth=7em]{geometry}
+\usepackage[width=6in, height=8.5in]{geometry}
 \usepackage[numbers]{natbib}
 \usepackage[hang, sc, skip=1ex]{caption}
-\usepackage{xcolor, imakeidx, epigraph}
+\usepackage{xcolor, imakeidx}
 \usepackage{amsmath, amssymb, amsthm}
 \usepackage[pagebackref,bookmarksnumbered,linktocpage,colorlinks,pdfusetitle]{hyperref}
 \usepackage{style}
@@ -38,14 +38,6 @@
 
 % set caption margins to 2× indent
 \setlength{\captionmargin}{2\parindent}
-
-% epigraph custom styling
-\epigraphnoindent
-\setlength{\epigraphrule}{0pt}
-\newcommand{\epigraphic}[3][0.5]{
-  \setlength{\epigraphwidth}{#1\textwidth}
-  \epigraph{\textit{#2}}{--- #3}
-}
 
 \title{Sized Dependent Types via Extensional Type Theory}
 \makeindex[intoc]

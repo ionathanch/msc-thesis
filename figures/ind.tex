@@ -17,7 +17,9 @@
   \begin{figure}[h]
   \centering
   \begin{mathpar}
-  \vspace{-2ex}
+  % This shrinks the space between the cdots and the first inference rule.
+  % Don't ask me why it goes before the fbox instead of after. Don't touch it.
+  \vspace{-0.5\baselineskip}
   \fbox{$\red{\Phi; \Gamma}{e}{e}$} \quad \cdots \hfill \\
   \inferrule[]{~}{
     \red[]{\Phi; \Gamma}{\match*{\App{\zero*_{\any}}{s}}{(\App{\zero*}{\alpha} \Rightarrow e_z) (\app{\App{\succ*}{\any}}{\any} \Rightarrow \any)}}{\subst{e_z}{\alpha}{s}}
