@@ -26,6 +26,7 @@ to not only get the preliminary details out of the way first,
 but also to show that the sublanguage is independent of the chosen inductive types.
 
 \FigSyntax{fig:syntax}
+
 \cref{fig:syntax} gives its syntax, consisting of universes $U$,
 sizes $s$, and terms $e$, which include term functions and size abstractions.
 Note that the hierarchy of universes above $\Prop$ start at $\Type{1}$, not $\Type{0}$.
@@ -57,6 +58,7 @@ On top of those, there are also judgement forms for subsizing, sizes,
 and well-formedness of size and term environments.
 
 \FigRed{fig:reduction}
+
 The reduction rules and their reflexive, transitive closure are described in \cref{fig:reduction}.
 \new{$\subst{e}{x}{e'}$} denotes capture-avoiding substitution of $x$ for $e'$ within $e$,
 and correspondingly \new{$\subst{e}{x_1, \seq, x_n}{e_1, \seq, e_n}$} denotes simultaneous substitution.
@@ -76,6 +78,7 @@ where $\rhd^*$ corresponds to the reflexive, transitive, \emph{compatible} closu
 allows for the usual proof techniques to prove confluence.
 
 \FigSubtype{fig:subtyping}
+
 Rather than a single subtyping\index{subtyping} judgement like in
 \GCC,\index{Calculus of Constructions!Generalized \textasciitilde}
 I use the same presentation as MetaCoq\index{MetaCoq}
@@ -104,6 +107,7 @@ Mixing $\eta$-conversion and untyped conversion is notoriously difficult~\citep{
 and remains to date an unresolved problem in MetaCoq\index{MetaCoq}, so I exclude it here.
 
 \FigSubsize{fig:subsizing}
+
 \cref{fig:subsizing} describes a preorder on sizes such that
 the successor operator is monotonic with respect to the order.
 The base size $\circ$ is smaller than all sizes,
@@ -113,15 +117,17 @@ An additional size judgement ensures well-scopedness of sizes.
 The size environment must be well formed as well;
 its rules are listed in \cref{fig:wf},
 along with those for well-formedness of term environments.
-\FigWF{fig:wf}
 
+\FigWF{fig:wf}
 \FigRulesAxioms{fig:rules-axioms}
+
 Finally, the typing rules for the base \lang are given in \cref{fig:typing}.
 They use the metafunctions $\axioms{\mt}$ for the type of a universe and
 $\rules{\mt}{\mt}$ for the universe of a function type,
 defined in \cref{fig:rules-axioms}.
 
 \FigTyping[h]{fig:typing}
+
 \rref{var, univ, let} are the usual rules for variables, universes, and $\kw{let}$ expressions
 in \GCC,\index{Calculus of Constructions!Generalized \textasciitilde}
 while \rref{pi, lam, app} are the usual ones for functions.
@@ -173,6 +179,7 @@ and similarly for $\refl{}$.
 
 \vspace{-\baselineskip}
 \FigSyntaxInd{fig:syntax-ind}
+
 \cref{fig:syntax-ind} extends the grammar with sized naturals, sized well-founded trees,
 $\kw{case}$ expressions, and fixpoint expressions.
 Informally, borrowing syntax from the definition of general inductives,
@@ -209,6 +216,7 @@ the variable $x$ is bound within $\tau$ in the type $\W{x}{\sigma}{\tau}{s}$.
 
 The dependent $\kw{case}$ expression, or the destructor for an inductive element,
 consists of three parts:
+%
 \begin{itemize}
   \item The target being destructed, either a natural or a well-founded tree in \lang;
   \item A motive with a free size variable for what's being destructed,
@@ -226,6 +234,7 @@ along with the reduction rule for fixpoint expressions.
 By convention, the reduction rules for $\kw{case}$ expressions
 are also referred to as $\iota$-reduction,
 and for fixpoint expressions as $\mu$-reduction.
+
 \FigRedInd{fig:reduction-ind}
 
 Fixpoints reduce when applied to some size $s$ by substitution of itself into its own body.
@@ -369,7 +378,7 @@ $\maximum{0, n - 1}$ for some number $n$ can be size preserving.
 &\quad \App{\zero*}{\beta} \Rightarrow \zero{\alpha}{\beta} \\
 &\quad \app{\App{\succ*}{\beta}}{m} \Rightarrow \app{\App{\liftN}{\alpha}{\beta}}{m}}}}}
 \end{align*}
-
+%
 The $\monus$ function, which computes $\maximum{0, n - m}$ given numbers $n, m$,
 is similarly size preserving in its first argument,
 since $n - m$ is never greater than $n$.
@@ -381,7 +390,7 @@ since $n - m$ is never greater than $n$.
 &\qquad \App{\zero*}{\gamma} \Rightarrow n \\
 &\qquad \app{\App{\succ*}{\gamma}}{k} \Rightarrow \app{\App{\monus*}{\gamma}{\beta}}{(\app{\App{\pred}{\beta}}{n})}{k}}}}}}}
 \end{align*}
-
+%
 We see the benefit of size preservation with $\divv$,
 which computes Euclidean division of $n$ by $m$, or $\left\lceil\frac{n}{m+1}\right\rceil$.
 This is computed recursively by subtracting $m$ from the numerator using $\monus$
@@ -569,9 +578,9 @@ then $\append$ing the sorted lists with the pivot in the middle.
 Meanwhile, mergesort sorts a list by $\spt$ting the list into sublists,
 recursively sorting them,
 then $\mrg$ing the sorted lists while maintaining ordering.
-Both involve recursive calls on lists that are not structurally smaller,
+Both involve recursive calls on lists that aren't structurally smaller,
 but do have smaller sizes,
-and they differ in where $\ifleq$ is applied ($\partition$ or $\mrg$).
+and they differ in where $\ifleq$ is applied (in the $\partition$ or $\mrg$ step).
 
 \vspace{-2\baselineskip}
 \begin{multicols}{2}

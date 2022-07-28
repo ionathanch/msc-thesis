@@ -44,23 +44,23 @@ with the consequent $\app{P}{x}$ depending on the term $x$.
 The proof of such a proposition is an inhabitant of the type,
 which could be some function $\fun{x}{A}{e}$.
 Other logical constructs can be encoded in this manner, for example:
-
+%
 \begin{itemize}
   \item Falsehood ($\bot$) as $\funtype{P}{\Prop}{P}$,
     (where $\Prop$ is the type of all propositions),
     the statement that \emph{all} propositions hold;
-  \item Implication as $\funtype{\any}{A}{B}$
-    (or $\arr*{A}{B}$ for short),
+  \item Implication as $\funtype{\any}{A}{B}$ (or $\arr*{A}{B}$),
     where $B$ must hold when given a proof of $A$;
   \item Negation as $\arr*{A}{\bot}$,
     or that proving $A$ will yield a falsehood; and
   \item Truthhood as $\funtype{P}{\Prop}{\arr*{P}{P}}$\punctstack{,}%
     \footnote{This encoding is slightly shorter than
-    the negation of falsehood $\arr*{\bot}{\bot}$,
-    particularly when written out in full.}
+    the negation of falsehood $\arr*{\bot}{\bot}$
+    when written out in full.}
     which is trivially inhabited by the identity function
     $\fun{P}{\Prop}{\fun{p}{P}{p}}$;
 \end{itemize}
+%
 as well as many other logical connectives such as existential quantification, conjunction, disjunction, and propositional equality.
 
 A key metatheoretical property that a type theory must satisfy
@@ -110,8 +110,7 @@ and don't further reduce to anything definitionally equal,
 but they can be proven to be propositionally equal by induction on $x$ and $y$.
 In practice, definitionally equal terms are those that can automatically be verified by the proof assistant,
 while propositional equalities are those whose proofs are supplied by the proof programmer.
-
-\vspace{-0.5\baselineskip}
+%
 \begin{mathpar}
 \inferrule[\rlabel*{reflexivity}]{
   \defeq{\Phi; \Gamma}{e_1}{e_2}{\tau}
@@ -125,7 +124,7 @@ while propositional equalities are those whose proofs are supplied by the proof 
   \defeq{\Phi; \Gamma}{e_1}{e_2}{\tau}
 }
 \end{mathpar}
-
+%
 On the other hand, in an \emph{extensional} type theory, where we have the above equality \rref*{reflection} rule,
 two terms are definitionally equal as long as there exists some proof of their propositional equality.
 In general, finding a proof of an arbitrary propositional equality if it exists is undecidable~\citep{extensional-concepts},
@@ -181,7 +180,7 @@ in addition to being nonterminating.
 While the guardedness check, being based on the elimination principles of inductive types,
 yields terminating functions and a consistent type theory,
 it has known disadvantages:
-
+%
 \begin{itemize}
   \item Calling some other function on a subargument prior to a recursive call is disallowed,
     even if that function doesn't change the structure of that subargument,
@@ -255,7 +254,7 @@ especially when it comes to dependent types.
 \lang and this thesis as a whole does not aim to resolve
 all of these existing problems with sized types.
 Instead, the purpose is threefold:
-
+%
 \begin{itemize}
   \item To fill an existing gap in sized dependent type theories.
     Two modern sized type features are higher-rank and bounded size quantification,
@@ -289,7 +288,7 @@ and briefly outline the structure of the proof.
 As a simple but expressive foundation for dependent types,
 I start with the Generalized Calculus of Constructions (\GCC)\index{Calculus of Constructions!Generalized \textasciitilde} \citep{GCC-Coquand},
 which has the following features:
-
+%
 \begin{itemize}
   \item \textbf{Dependent function types}, as is standard in the Calculus of Constructions (CC)~\citep{CoC}\index{Calculus of Constructions};
   \item \textbf{Definitions}, \ie locally-named expressions;
@@ -368,10 +367,10 @@ which is more expressive.
 For instance, supposing we have lists parametrized over some sized type $\tau$,
 one could write a size-preserving mapping function over a list
 that leaves the size of its elements untouched, whose type could be
-
+%
 \vspace{-0.25\baselineskip}
 $$\Funtype{\alpha}{\arr*{(\Funtype{\beta}{\arr*{\App{\tau}{\beta}}{\App{\tau}{\beta}}})}{\app{\List*}{(\App{\tau}{\alpha})}}{\app{\List*}{(\App{\tau}{\alpha})}}}.$$
-
+%
 Along with higher-rank sizes, I also include \emph{bounded} size quantification $\Funtype<{\alpha}{s}{\tau}$
 and abstraction $\Fun<{\alpha}{s}{e}$.
 An order on sizes is induced by these bound instantiations and the successor operator;
@@ -388,7 +387,7 @@ summarized by the below typing rule.
   \infer{\Phi; \Gamma}{\fix{f}{\alpha}{\tau}{e}}{\Funtype{\alpha}{\tau}}
 }
 \end{mathpar}
-
+%
 Bounded sizes were originally introduced to avoid inconsistencies
 from pattern-matching on sizes~\citep{MiniAgda}.
 Although \lang has no pattern-matching mechanism,
@@ -407,7 +406,7 @@ trading expressivity for simplicity}.
 \end{quote}
 
 In summary, the sized type features I include are:
-
+%
 \begin{itemize}[noitemsep]
   \item \textbf{Explicit size} quantification $\Funtype{\alpha}{\tau}$,
     abstraction $\Fun{\alpha}{e}$, and
@@ -519,7 +518,7 @@ I present them here only to motivate the proof structure.
   \red{\Phi; \Gamma}{\app{(\fun{x}{\tau}{e})}{e'}}{\subst{e}{x}{e'}}
 }
 \end{mathpar}
-
+%
 We therefore need some lemmas showing that the translation respects
 substitution, reduction, the closure of reduction, $\alpha$-cumulativity, and subtyping
 to prove type preservation.
@@ -633,8 +632,7 @@ The \emph{Extended Calculus of Constructions}\index{Calculus of Constructions!Ex
 (ECC) by \citet{ECC} adds a dependent pair type
 and uses a subtyping relation instead for cumulativity;
 \rref{untyped-subtype-prop, untyped-subtype-pi} are the most notable subtyping rules.
-
-\vspace{-\baselineskip}
+%
 \begin{mathpar}
 \inferrule[\rlabel*{cum}]{
   \type{\Gamma}{e}{\Type{i}}
@@ -653,7 +651,7 @@ and uses a subtyping relation instead for cumulativity;
   \subtype{\Gamma}{\funtype{x}{\sigma_1}{\tau_1}}{\funtype{x}{\sigma_2}{\tau_2}}
 }
 \end{mathpar}
-
+%
 \citet{universes} introduce ways of adding universe polymorphism to \GCC
 as well as a version of \GCC with definitions.
 For the purposes of this thesis, I use \GCC to refer to the type theory
@@ -739,7 +737,7 @@ Type system & Explicit sizes? & Higher-rank? & Bounded? & Size algebra \\
 \Fcopomega~\citep{F-omega-cop} & \checkmark* & \checkmark* & \checkmark* & $\sss{s}$ \\
 \end{tabular}
 \fi
-
+%
 \begin{tabular}{l c c c c}
 Type theory & Explicit sizes? & Higher-rank? & Bounded? & Consistent? \\
 \hline
@@ -779,6 +777,7 @@ and the inclusion of an infinite size.
 % TODO: fix manual footnote number
 \footnotetext[6]{\label{foot:CICE-consistency} Under the postulate that \CICE is consistent.}
 
+\vspace*{-0.5\baselineskip}
 \begin{center}
 \mbox{* * *}
 \end{center}

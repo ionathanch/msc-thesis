@@ -53,7 +53,9 @@ but the type preservation theorem only applies to well-typed terms anyway.
 
 \section{Target Type Theory} \label{sec:target}
 
+\vspace{-\baselineskip}
 \FigSyntaxCIC{fig:syntax-cic}
+
 The syntax of \CICE
 is given in \cref{fig:syntax-cic};
 differences from \lang include a 1-based index for the recursive argument of fixpoint expressions,
@@ -70,7 +72,7 @@ such as well-typedness and \emph{strict positivity}\index{strict positivity},
 are entirely standard, so I omit them here;
 see pCIC\index{Calculus of Inductive Constructions!Predicative \textasciitilde}~\citep{pCIC}
 for instance for a full description.
-Inductive definitions in their full generality are not needed,
+Inductive definitions in their full generality aren't needed,
 and nonmutual, nonnested inductives suffice.
 Indeed, only six inductive definitions are used for the translation
 for representing sizes, their order, their well-foundedness,
@@ -103,6 +105,7 @@ in the empty environment, freely using transitivity,
   &\approx \app{(\fun{p}{\eq{\const{0'}}{\N{\hat{\hat{\circ}}}}{\const{1}}}{\const{1}})}{\refl{\const{0'}}} &&\textrm{by congruence and reflection of $p$} \\
   &\approx \const{1} &&\textrm{by $\beta$-reduction},
 \end{align*}
+%
 since reduction and therefore conversion occurs even when its terms are ill typed,
 as the second and third terms are.
 An alternate solution would be to disallow transitivity of conversion~\citep{CCE},
@@ -135,13 +138,15 @@ regardless of what they are applied to.
 To maintain normalization,
 the usual guarded reduction rule in intensional CIC reduces fixpoints
 only when applied to a literal constructor in the recursive argument position.
-\vspace{-0.25\baselineskip}
+
 \begin{mathpar}
 \inferrule[\rlabel{$\equiv$-$\mu$-guarded}{equiv-mu-guarded}]{\cdots \\ \card{\vec{\eT}'} + 1 = \nT}{
   \defeq{\GammaT}{\app{(\fixT{\nT}{\fT}{\tauT}{\eT})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\app{(\subst{\eT}{\fT}{\fixT{\nT}{\fT}{\tauT}{\eT}})}{\vec{\eT}'}{(\app{\cT}{\vec{\aT}})}}{\tauT}
 }
 \end{mathpar}
 
+% TODO: clearpage
+\clearpage
 Evidently \rref{equiv-mu-guarded} can be derived from \rref{equiv-mu} by congruence.
 On the other hand, for any particular inductive type $\XT$,
 letting $\tauT$ be $\arr{\vec{\xT}}{\vec{\sigmaT}}{\funtypeT{\xT}{\app{\XT}{\vec{\pT}}{\vec{\aT}}}{\tauT'}}$,
@@ -165,12 +170,13 @@ Since \rref{equiv-mu} and \rref{equiv-mu-guarded} are metatheoretically equivale
 I choose to use \rref{equiv-mu} for its simplicity.
 
 \FigSubtypingCIC{fig:subtyping-cic}
+
 As opposed to \lang, for \CICE I use
 pCIC's\index{Calculus of Inductive Constructions!Predicative \textasciitilde}
 presentation of subtyping\index{subtyping} in \cref{fig:subtyping-cic},
 which has a typed equivalence premise in \rref{subtype-conv}.
 It also has an explicit rule for transitivity of subtyping since judgements such as
-$\subtype{\mt}{\app{(\funT{P}{\TypeT{\tg{1}}}{P})}{\PropT}}{\TypeT{\tg{0}}}$ would fail to hold otherwise.
+$\subtype{\mt}{\app{(\funT{P}{\TypeT{\tg{1}}}{P})}{\PropT}}{\TypeT{\tg{0}}}$ wouldn't hold otherwise.
 Like \rref{acum-pi}, \rref{subtype-pi} is invariant in the domain of function types.
 
 The typing and environment well-formedness rules are in \cref{fig:typing-cic}.
@@ -238,7 +244,7 @@ The typing premises of
 \rref{equiv-beta, equiv-zeta, equiv-rho, equiv-iota, equiv-mu}
 duplicate the premises found in many of the typing rules,
 trivially ensuring \emph{subject equivalence}\index{subject reduction}
-(\ie well-typedness of both sides).
+(\ie well-typedness of both sides with the same type).
 
 \section{Preliminary Definitions}
 
@@ -263,6 +269,7 @@ Furthermore, this allows for a simplification of the definition,
 since the zero size $\baseT$ can be defined as a limit size rather than as another constructor.
 
 The order on sizes $\mt \szleT \mt$ is defined by the three properties that must hold~\citep{ordinals}:
+%
 \begin{itemize}[noitemsep]
   \item $\monoT$: The successor operator $\sucT$ is monotone with respect to the order;
   \item $\coconeT$: The limit operator $\limT$ constructs an upper bound in that
@@ -305,6 +312,7 @@ whereas the full proof term generated from the tactics is 129 lines long.
 
 The definitions themselves describe properties of the order on sizes
 and of the accessibility predicate:
+%
 \begin{itemize}[noitemsep]
   \item $\baseleq$, $\reflleq$, $\transleq$, and $\sucleq$:
     The order is reflexive and transitive (\ie a preorder)
@@ -338,12 +346,13 @@ so that the types of $\NatT$ and $\WT$ and their constructors are preserved.
 
 The key type preservation\index{type preservation} theorem states that well-typed terms of \lang translate to
 corresponding well-typed terms of CICE.
-However, terms are not the only thing requiring translation:
+However, terms aren't the only thing requiring translation:
 well-typedness holds under some environment, so term environments need translations;
 sizes and their environments translate to terms and term environments as well;
 and derivations of size orders translate to terms which represent them.
 
 \FigTransSize{fig:trans:size}
+
 I begin with the translation of sizes and their environments in \cref{fig:trans:size},
 which are straightforward recursive metafunctions over their syntax.
 I use an asterisk superscript \new{$\mt^\ast$} on a variable $\alphaT$ to represent
@@ -353,6 +362,7 @@ $\alphaT^\ast$ represents the proof that the translated size is strictly smaller
 than its size bound.
 
 \FigTransSubsize{fig:trans:subsize}
+
 The translation of subsizing judgements, on the other hand,
 is a recursive metafunction over the \emph{subsizing derivation}.
 \cref{fig:trans:subsize} defines the translation to \CICE terms
