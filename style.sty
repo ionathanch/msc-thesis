@@ -28,12 +28,6 @@
 \WithSuffix\newcommand\newcmd*[3]{\WithSuffix\newcommand#1*#2{#3}}
 \WithSuffix\newcommand\newcmd<[3]{\WithSuffix\newcommand#1<#2{#3}}
 
-% Add binding offset for two-sided printing:
-% 137 pages * 0.1 mm thickness/page / 2 = 6.85 mm
-\if@twoside
-  \geometry{bindingoffset=6.85mm}
-\fi
-
 % rule labels:
 % \rlabel{name}{label} creates given label and prints name
 % \rref{label} prints "Rule <name>"
