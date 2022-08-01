@@ -16,9 +16,12 @@
 * Register for a [cIRcle](https://circle.library.ubc.ca/register) account
 * Send name and email address to [G+PS](mailto:graduate.thesis@ubc.ca) to activate account _after_ Joyce has sent the above forms to G+PS
 * Submit thesis to cIRcle named as `ubc_2022_november_chan_jonathan.pdf`
-* Send the following to [Joyce](mailto:poon@cs.ubc.ca):
-  * Thesis acceptance email from G+PS
-  * [MSc release form](https://my.cs.ubc.ca/system/files/docs/mscreleaseform.pdf)
+* Send [MSc release form](https://my.cs.ubc.ca/system/files/docs/mscreleaseform.pdf) to [Joyce](mailto:poon@cs.ubc.ca) with signatures/emails from:
+  * Supervisor
+  * [Group Assistant](mailto:ga-help@cs.ubc.ca)
+  * [Help Desk](mailto:helpdeskers@cs.ubc.ca)
+  * [Undergrad Program Assistant](mailto:undergrad-info@cs.ubc.ca)
+  * [CS Reading Room](mailto:rdngroom@cs.ubc.ca)
 
 ### Helpful Links
 
@@ -29,3 +32,4 @@
 * [Graduation from MSc Program](https://my.cs.ubc.ca/docs/graduation-msc-program)
 * [MSc Graduation Checklist](https://my.cs.ubc.ca/docs/msc-graduation-checklist)
 * [Rasmussen Bindery - Thesis binding](https://www.rasmussenbindery.com/thesis-binding/)
+  * Costs are on website; colour printing is ~0.40$ a page
