@@ -94,8 +94,8 @@
 Contemporary proof assistants based on dependent type theories
 restrict nonterminating recursive functions to ensure logical consistency of the type theory
 and decidability of type checking.
-This is done via guard predicates that only allow functions
-that are structurally recursive and that recur only on syntactically smaller arguments.
+This is done via guard predicates that only allow stucturally recursive functions
+recurring on syntactically smaller arguments.
 However, guard predicates are restrictive and reject functions
 that aren't structurally recursive but are obviously terminating,
 creating extra work for the programmer to convince the guard checker.
@@ -110,8 +110,8 @@ support features for more expressive sized types,
 namely higher-rank size quantification
 (which allows for passing around size-preserving functions)
 and bounded size quantification
-(which eliminates the need for complex monotonicity checks),
-but unfortunately none simultaneously support both.
+(which eliminates the need for complex semi-continuity checks),
+but unfortunately none support both simultaneously.
 
 We present a sized dependent type theory with higher-rank and bounded sizes (\lang),
 and prove its logical consistency with a syntactic model:
@@ -191,7 +191,7 @@ However, this too has disadvantages:
     recursive functions that require inlining
     depend on the implementation of inlined functions,
     and a minor syntactic change otherwise equivalent to the original
-    can break guardedness~\citep{CIC-hat-minus}.
+    can violate guardedness~\citep{CIC-hat-minus}.
   \item As aptly summarized by \citet{coqterm},
     \begin{quote}
     \textit{{\rm [\ldots]} unfold{\rm [ing]} all the definitions used in the body of the function, do{\rm [ing]} reductions, e.t.c.
@@ -341,7 +341,7 @@ are syntactically distinct from those of terms,
 similar to how, in nondependent polymorphic type systems,
 types are distinct from terms.
 
-Explicit sizes differs from most prior sized type systems which,
+Explicit sizes differs from prior sized type systems which,
 extending the type polymorphism analogy,
 support only implicit \emph{rank-1} or
 \emph{prenex} size quantification:
@@ -349,7 +349,7 @@ size quantifications never appear inside a type,
 and all size abstractions and applications are fully inferred.
 Explicit sizes, in contrast, let us express
 \emph{higher-rank} size quantification,
-which are more expressive.
+which is more expressive.
 For instance, consider a list parametrized over some sized type $\tau$:
 one could write a size-preserving mapping function over a list
 of type
@@ -441,8 +441,8 @@ followed by examples of programming with sized dependent types.
 \subsection{Base \lang}
 
 \FigSyntax{fig:syntax}
-\cref{fig:syntax} gives the syntax of \lang, which consists of universes $U$,
-sizes $s$, and terms $e$, which includes term functions and size abstractions.
+\cref{fig:syntax} gives the syntax of \lang, consisting of universes $U$, sizes $s$, and terms $e$,
+the latter of which includes term functions and size abstractions.
 Note that the hierarchy of universes above $\Prop$ start at $\Type{1}$, not $\Type{0}$.
 Most judgements use two environments: a term environment $\Gamma$ with assumptions $\annot{x}{\tau}$
 and type-annotated definitions $\define{x}{\tau}{e}$,
@@ -583,7 +583,12 @@ and it can always be lifted to a larger size, but never lowered to a smaller one
 
 In \lang, the constructors are annotated with their types
 since the parameter-like sizes cannot otherwise be synthesized.
-Additionally, W types have explicit binders for convenience:
+For instance, $\succ{s}{r}{e}$ constructs a natural of size $s$,
+while taking as argument a natural of size $r < s$.
+Although $\zero*$ has no recursive arguments,
+it still takes a smaller size argument solely for uniformity with $\succ*$.
+Additionally, W types have explicit binders for the first type parameter for convenience,
+much like dependent function types:
 the variable $x$ is bound within $\tau$ in the type $\W{x}{\sigma}{\tau}{s}$.
 
 The expression
@@ -609,10 +614,9 @@ because subsizing is well founded, and there cannot be an infinite chain of smal
 
 \FigTypingInd{fig:typing-ind}
 
-The typing rules for all new constructs are given in \cref{fig:typing-ind}.
-There are two additional metafunctions:
-$\FV{\mt}$, which produces the free variables in the given term,
-and $\fresh{\seq}$, which asserts the freshness of the given variables.
+The typing rules for all new constructs are given in \cref{fig:typing-ind},
+using two additional metafunctions: $\fresh{\seq}$ asserts the freshness of the given variables,
+and $\FV{\mt}$ produces the free variables in the given term.
 As discussed, the body of a fixpoint is only well typed
 when the fixpoint is recursively applied to a smaller size,
 as enforced by its type in the environment when type checking the body.
@@ -646,12 +650,12 @@ where the sizes of the input and output types are the same.
 This guarantees that the output is never larger than the input,
 and size-preserving functions can be used in recursive calls of fixpoints.
 For instance, the $\monus$ function, which computes $\maximum{0, n - m}$,
-is size preserving in its first argument,
+can be size preserving in its first argument,
 since $n - m$ is never greater than $n$.
 Here, $\pred$ is another size-preserving function
 $\Funtype{\alpha}{\arr*{\N{\alpha}}{\N{\alpha}}}$
 that computes $\maximum{0, n - 1}$ for some number $n$.
-%
+
 \begin{align*}
 &\Let{\monus}{\Funtype{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}}{ \\
 &\fix{\monus*}{\alpha}{\Funtype{\beta}{\arr*{\N{\beta}}{\N{\alpha}}{\N{\beta}}}}{ \\
@@ -664,7 +668,7 @@ We see the benefit of size preservation with $\divv$,
 which computes Euclidean division of $n$ by $m$, or $\left\lceil\frac{n}{m+1}\right\rceil$.
 This is computed recursively by subtracting $m$ from the numerator using $\monus$
 until $\zero*$ is reached, and counting the number of times the subtraction is performed.
-The recursive call is done on the result of $\monus$;
+The recursive call is performed on the result of $\monus$;
 $\divv$ then only type checks because $\monus$ is size preserving.
 Because the first argument of the recursive call to $\divv$ isn't \emph{structurally}
 a subterm with the call to $\monus$ in the way,
@@ -721,7 +725,7 @@ with zero, successor, and limit ordinals:
 
 The limit ordinal, taking some function on naturals returning an ordinal,
 constructs an ordinal meant to be ``larger'' than any of the returned ordinals.
-Such a function should be able to return an ordinal far larger than any natural,
+Such a function should be able to return an ordinal larger than any natural,
 hence the bounded size quantification in its domain.
 Conversely, the naturals embed quite naturally within the ordinals;
 let $\natOrd$ be such an embedding function
@@ -729,7 +733,7 @@ $\Funtype{\alpha}{\arr*{\N{\alpha}}{\Ord{\alpha}}}$.
 In an unsized type theory, supposing that $\const{natOrd'}$ is an unsized version of $\natOrd$,
 the first limit ordinal $\const{\omega'}$ is easily defined as
 $\Let{\const{\omega'}}{\const{Ord}}{\app{\lord*}{\const{natOrd'}}}$.
-However, in \lang, things are not so easy; given a function $\App{\liftO}{\alpha}{\beta}$
+However, in \lang, things aren't so easy; given a function $\App{\liftO}{\alpha}{\beta}$
 that lifts an ordinal $\Ord{\beta}$ to a larger-sized ordinal $\Ord{\alpha}$, we might try:
 %
 \begin{align*}
@@ -767,9 +771,9 @@ For the type preservation proof to go through,
 \emph{definitional proof irrelevance}
 of accessibility predicates is required---all proofs of accessibility
 are definitionally equal.
-This holds in extensional type theory via equality reflection
-but not in intensional type theory,
-hence our use of extensional CIC.
+Since the proof irrelevance holds propositionally,
+We use an extensional CIC to obtain the definitional equality
+from the propositional equality via equality reflection\index{equality reflection}.
 
 We start by briefly reviewing the syntax and judgements of \CICE.
 We then describe the translation from \lang to \CICE,
@@ -804,7 +808,7 @@ The well formedness conditions on inductive data definitions,
 such as well typedness and \emph{strict positivity},
 are entirely standard, so we omit them;
 see \eg pCIC~\citep{pCIC} for instance for a full description.
-Inductive definitions in their full generality are not needed,
+Inductive definitions in their full generality aren't needed,
 and nonmutual, nonnested inductives suffice.
 Indeed, only six inductive definitions are used for the translation
 for representing sizes, their order, their well foundedness,
@@ -909,7 +913,7 @@ On the other hand,
 \rref{equiv-mu} can be derived from \rref{equiv-mu-guarded}
 by reflecting a proof of their propositional equality,
 which can be constructed using transitivity, congruence, and $\eta$-equivalence.
-Since \rref{equiv-mu} and \rref{equiv-mu-guarded} are metatheoretically equivalent,
+Since \rref{equiv-mu} and \rref{equiv-mu-guarded} are metatheoretically equivalent in \CICE,
 we choose to use \rref{equiv-mu} for its simplicity.
 
 As opposed to \lang, for \CICE we use pCIC's presentation of subtyping,
@@ -927,7 +931,7 @@ we will provide either a mechanization or present a brief argument of guardednes
 \subsection{Preliminary Definitions} \label{subsec:prelim}
 
 Before defining the translation from \lang terms to \CICE terms,
-in this section we describe how the \CICE terms are constructed,
+in this section we describe how the necessary \CICE terms are constructed,
 which comprises the aforementioned six inductive data definitions
 and well-founded induction principle
 as well as the various properties which the order on sizes satisfies.
@@ -938,9 +942,9 @@ The inductive definitions are listed in \cref{fig:data-defns}
 along with some basic definitions we treat as global.
 $\botT$ is the usual empty type.
 $\SizeT$ is a generalization of the $\Ord*$ type introduced in \cref{subsec:examples},
-with the domain of the function passed to the limit size $\limT$ replaced by some arbitrary type.
+with the domain of the function passed to $\limT$ replaced by some arbitrary type.
 Although limit sizes aren't strictly necessary for the translation,
-since \lang only has successor sizes and size variables,
+as \lang only has successor sizes and size variables,
 we include them so that various solutions to the problem of the infinite size
 can be explored in \cref{subsec:infinity}.
 Furthermore, this allows for a simplification of the definition,
@@ -950,8 +954,8 @@ The order on sizes $\mt \szleT \mt$ is defined by the three properties that must
 \begin{itemize}[noitemsep]
   \item $\monoT$: The successor operator $\sucT$ is monotone with respect to the order;
   \item $\coconeT$: The limit operator $\limT$ constructs an upper bound, \ie
-    given some function $f$ returning a size,
-    any size smaller than any size returned by $f$ is also smaller than the limit of $f$;
+    given some function $f$ returning sizes,
+    a size smaller than any size returned by $f$ is also smaller than the limit of $f$;
   \item $\limitT$: The limit operator on $f$ constructs a \emph{least} upper bound such that
     if a size is larger than \emph{all} sizes returned by $f$
     then it must also be larger than the limit of $f$.
@@ -973,19 +977,19 @@ asserting that two functions $\annot{f, g}{\funtypeT{x}{A}{\app{B}{x}}}$ are pro
 In \CICE, they are in fact equivalent (\ie definitionally equal):
 given some proof $h$ of their pointwise equality,
 under the assumption $\annot{x}{A}$,
-the propositional equality $\eq{\app{f}{x}}{}{\app{g}{x}}$ by $\app{h}{x}$
+the propositional equality $\eq{\app{f}{x}}{}{\app{g}{x}}$ proven by $\app{h}{x}$
 can be reflected into the corresponding definitional equality,
 which by $\eta$-equivalence is then a definitional equality of $f$ and $g$.
 
 The remaining definitions have been mechanized in either Agda and Coq in
 \cref{app:mechanization:agda:prelim} and \cref{app:mechanization:coq:prelim},
 respectively, under the assumption of function extensionality as an axiom
-(which cannot be proven in intensional CIC).
+(which cannot be proven in, but is consistent with, intensional CIC).
 The mechanizations don't use any additional type-theoretic features beyond CIC,
 and the proofs could theoretically be written in plain CIC,
-but they would be far less comprehensible without the ergonomics provided by the proof assistants.
+but they would be far less manageable without the ergonomics provided by the proof assistants.
 As an example, the Coq proof for $\accessible$ consists of a dozen lines of tactics,
-while the full proof term generated from the tactics is 129 lines long.
+whereas the full proof term generated from the tactics is 129 lines long.
 
 The definitions themselves describe properties of the order on sizes
 and of the accessibility predicate:
@@ -1003,7 +1007,7 @@ and of the accessibility predicate:
 \end{itemize}
 
 The only time equality reflection is needed is to prove $\accIsProp$ (via $\funext$),
-which in turn is the only other equality that is reflected for proving type preservation.
+which in turn is the only other equality that is reflected when proving type preservation.
 Since $\AccT$ is in already $\PropT$, \CICE could be replaced by an intensional CIC
 with a universe of \emph{strict propositions} $\SPropT$
 of types whose elements are definitionally equal~\citep{SProp},
@@ -1022,7 +1026,7 @@ so that the types of $\NatT$ and $\WT$ and their constructors are preserved.
 
 The key type preservation theorem states that well-typed terms of \lang translate to
 corresponding well-typed terms of CICE.
-However, terms are not the only thing requiring translation:
+However, terms aren't the only thing requiring translation:
 well typedness holds under some environment, so term environments need translations;
 sizes and their environments translate to terms and term environments as well;
 and derivations of size orders translate to terms which represent them.
@@ -1096,7 +1100,7 @@ when well formed under the current implicit size environment.
 \FigTransTermSquash{fig:trans:term}
 
 The translation for base \lang without inductives is given in \cref{fig:trans:term}
-in the more concise notation translated terms follow directly from subderivations
+in the more concise notation when translated terms follow directly from subderivations
 and in the usual notation otherwise.
 Terms not involving sizes are translated in a straightforward recursive manner.
 Unbounded size quantifications and abstractions translate to quantifications and abstractions over $\SizeT$,
@@ -1116,7 +1120,7 @@ and dually an additional abstraction over such terms in the branches of $\tg{cas
 Fixpoints in \lang are not translated as fixpoints in \CICE.
 Doing so while preserving types would mean that \lang fixpoints
 need to be subject to the same guard conditions as \CICE fixpoints,
-which is clearly undesirable and not the case in the examples from \cref{subsec:examples}.
+which would defeat the purpose of using sized types.
 Instead, every single \lang fixpoint, regardless of the inductive on which they recur,
 is translated to well-founded induction,
 which is defined via a \CICE fixpoint on accessibility predicates.
@@ -1124,10 +1128,12 @@ Intuitively, the return type of a fixpoint corresponds to the motive of well-fou
 while recursion on a strictly smaller size corresponds to the induction hypothesis,
 where the motive holds for all strictly smaller sizes.
 
-The main challenge with this translation is showing that the translations of a fixpoint
-and of its $\mu$-reduction are equivalent in \CICE,
+In the next section, we prove that the translation is type preserving and,
+along the way, that the translations of convertible terms are equivalent.
+The main challenge is showing that the translations of a fixpoint
+and its $\mu$-reduction are equivalent in \CICE,
 because this requires showing that the computational behaviour of well-founded induction
-is equivalent to the computational behaviour of the fixpoint.
+is equivalent to that of the fixpoint.
 Once that has been established,
 showing type preservation of the translation is more or less going through the motions of the proof,
 since the remaining \lang terms translate almost directly to their syntactically corresponding terms.
@@ -1506,18 +1512,18 @@ There exists no term $e$ such that $\type{\mt \mathbin{;} \mt}{e}{\funtype{P}{\P
 Suppose that there were such a term $e$.
 By \nameref{thm:type-pres}, we would have that
 $\type{\mt}{\compile{e}}{\funtypeT{\PT}{\PropT}{\PT}}$ holds.
-However, this contradicts \cref{fact:consistency},
-so there must not be such a term.
+But this contradicts \cref{fact:consistency},
+so there must not be such an $e$.
 \end{proof}
 
-\section{Discussion and Conclusions} \label{sec:discussion}
+\section{Discussion} \label{sec:discussion}
 
-\lang is neither perfect nor complete:
+\lang is neither flawless nor complete:
 the nature of the syntactic model requires that inductives live in a universe
 higher than that in which their corresponding unsized types would live,
 and it's missing features such as an infinite size.
-In this chapter, we discuss some of these shortcomings
-and give some possible directions for future work based on them.
+In this section, we discuss some of these shortcomings,
+followed by possible directions for future work.
 
 \subsection{The Infinite Size} \label{subsec:infinity}
 
@@ -1544,7 +1550,7 @@ and let $\inftyltinfty$ be the translation of $\subsize*{\sss{\infty}}{\infty}$.
 \end{align*}
 
 In set-theoretic models of sized type systems with an infinite size,
-sizes are modelled as set-theoretic (transfinite) ordinals,
+where sizes are modelled as set-theoretic (transfinite) ordinals,
 the infinite size isn't modelled as a single ordinal;
 instead, for each use of the infinite size,
 its set-theoretic interpretation is an ordinal that is ``large enough'' in that context.
@@ -1573,7 +1579,7 @@ What about going from $\W{x}{A}{B}{\infty}$ to $\W{x}{A}{B}{s}$?
 What should $s$ be?
 The size algebra could be augmented to be able to represent transfinite ordinals
 so that $s$ is again a size that is ``large enough'',
-but we can hardly expect programmers to manipulate ordinals,
+but we can hardly demand programmers to manipulate ordinals,
 and we conjecture that we would lose any hope of deciding $\subsize*{}{}$
 without any user intervention.
 
@@ -1625,14 +1631,14 @@ and size expressions consequently treated as regular terms.
 There is no way to represent generalized full inductives as
 sized inductives existentially quantified by sizes
 and faithfully define their constructors without losing either
-decidability of subsizing from exposing the underlying ordinal representation of sizes,
-or canonicity from the inclusion of a noncomputing axiom.
+decidability of subsizing, due to exposing the underlying ordinal representation of sizes,
+or canonicity, due to the inclusion of a noncomputing axiom.
 Representing ordinary full inductives (namely naturals) this way,
 however, has been previously explored~\citep{guarded, modal-sizes}.
 
 \subsection{Universe Levels of Inductives} \label{subsec:universe-levels}
 
-The universes in which the type of natural numbers and W types in \lang live
+The universes in which the types of natural numbers and W types of \lang live
 are, in a sense, one level higher than is usually expected,
 as given by \rref{nat, wft}.
 $\N*$ is typically in $\Type{0}$,
@@ -1651,9 +1657,9 @@ then the universe of the type of $\sT$ must be $\TypeT{\tg{i+1}}$,
 according to the definition of $\SizeT$.
 
 This is a nonnegotiable condition:
-defining $\SizeT$ to be in the same universe as that which $\limT$ quantifies over
+defining $\SizeT$ to be in the same universe as that over which $\limT$ quantifies
 leads to $\szltT$ no longer being well founded,
-since in this hypothetical scenario $\SizeT$ itself could be applied to $\limT$
+since in this hypothetical scenario, $\SizeT$ itself could be applied to $\limT$
 to define an $\inftyT$ size.
 \begin{align*}
 &\LetT{\inftyT}{\SizeT}{\app{\limT}{\SizeT}{(\funT{\xT}{\SizeT}{\xT})}} \\
@@ -1661,7 +1667,7 @@ to define an $\inftyT$ size.
 \end{align*}
 
 One way to ``shrink'' the universe of $\SizeT$, so to speak,
-could be to parametrize it over the type over which $\limT$ currently quantifies over,
+could be to parametrize it over the type over which $\limT$ currently quantifies,
 yielding the following inductive definition.
 \begin{align*}
 &\dataT{\app{\SizeT}{(\annotT{A}{\TypeT{\iT}})}}{\TypeT{\iT}} \\
@@ -1679,11 +1685,11 @@ and there aren't ``enough'' sizes to cover all well-founded trees of any particu
 If having inductive types in the correct universe were more important than
 the potential expressibility of infinitude,
 we could eliminate $\limT$ altogether and model sizes as ordinary naturals.
-Then $\SizeT$ would live in $\Type{0}$, $\NatT$ and $\WT$ would live in the correct universes,
-as well as $\N*$ and $\W*$.
+Then $\SizeT$ would live in $\Type{0}$, and $\NatT$ and $\WT$ would live in the correct universes,
+as would $\N*$ and $\W*$.
 Although this would affect the judgements of both \lang and \CICE,
 this wouldn't affect the proofs, since the changes are the same for both languages.
-However, this does mean giving up $\const{ac}$
+However, this would mean giving up $\const{ac}$
 and likely any hope of defining any infinitary constructs like $\const{\omega}$
 when using this model.
 
@@ -1698,18 +1704,18 @@ while attempts at including them either involve inconsistency, undecidability, o
 Alternate approaches need to be investigated to circumvent these problems.
 
 While the issue with the universe levels of inductive types appears to be cosmetic
-and not affect any important significant metatheoretical properties,
+and not affect any important metatheoretical properties,
 it might be a mere symptom of a larger issue with how sizes are modelled,
 especially since prior sized type systems shown to be consistent
 haven't required any similar restrictions.
 One possibility is to take inspiration from Agda and
 make $\SizeT$ live in a universe $\SizeUnivT$ independent of $\TypeT{}$,
-but the consistency of arbitrarily adding a new universe is questionable,
-especially when $\SizeUnivT$ needs to be slightly impredicative:
-$\arrT*{\TypeT{}}{\SizeT}$ would remain in $\SizeUnivT$
-(as would be the case for $\limT$)
-and $\funtypeT{\alpha}{\SizeT}{\N{\alpha}}$ would remain in $\TypeT{0}$
-(as would be the case for $\zeroT$).
+but the consistency of adding $\SizeUnivT$ hasn't been established,
+especially when it needs to be slightly impredicative:
+$\arrT*{\TypeT{}}{\SizeT}$ would live in $\SizeUnivT$
+(as would be the case for the type of $\limT$)
+while $\funtypeT{\alphaT}{\SizeT}{\app{\NatT}{\alphaT}}$ would remain in $\TypeT{\tg{0}}$
+(as would be the case for the type of $\zeroT$).
 
 Additionally, \lang is missing some important but comparatively simple features
 from the perspective of the syntactic model, namely inductive types in general.
@@ -1718,13 +1724,13 @@ and we conjecture that the type preservation proofs would be a straightforward e
 Alternatively, since there already are well-founded trees,
 \lang could instead be augmented with dependent pairs and an equality type,
 both of which we also conjecture to be straightforward;
-then mutual inductives, indexed inductives \citep{whynotW}, some nested inductives \citep{barras},
-and even some inductive--inductive types \citep{ind-ind}
-can be encoded, along with their induction principles, using W types and propositional equality.
+then mutual inductives, indexed inductives~\citep{whynotW}, some nested inductives~\citep{barras},
+and even some inductive--inductive types~\citep{ind-ind}
+could be encoded, along with their induction principles, using W types and propositional equality~\citep{whynotW}.
 
 Dually, \lang is also missing coinductive types.
 The main barrier to a syntactic model of \lang with any coinductive types
-is the lack of an established target type theory with coinductive types
+is the absence of an established target type theory with coinductive types
 with nice properties.
 Whereas pCIC and pCuIC lack them,
 MetaCoq mechanizes Coq-style coinductive types,
@@ -1733,9 +1739,7 @@ Meanwhile, older CICs with coinductive types and cofixpoints guarded by construc
 (\eg \citet{guard}) have issues with subject reduction~\citep{coind-SR},
 which is a necessary property for proving type preservation in \cref{subsec:preservation}.
 Another potential issue is the translation of cofixpoints into applications of
-a well-founded induction principle, which is suspicious and also requires further investigation.
-
-\hfill
+a well-founded induction principle, which seems suspicious and also requires further investigation.
 
 In terms of metatheory, \lang is missing proof of two desirable properties:
 strong normalization and decidability of type checking.
@@ -1744,17 +1748,17 @@ not reduction, normalization doesn't hold immediately from the translation.
 In particular, the proof of \nameref{lem:pres-red} uses equality reflection
 to obtain an equivalence between two proofs of accessibility of a size,
 and \citet{SProp} show that this equivalence can lead to nonnormalization in
-particular inconsistent environments,
+certain inconsistent environments,
 as is the case for $\tg{false}$.
 
-Even so, we conjecture that translation of a \lang term will never lead to
-a \CICE term with a subterm in an appropriate inconsistent environment that leads to nonnormalization,
+Even so, we conjecture that the translation of an \lang term would never lead to
+a \CICE term with a subterm in an inconsistent environment that leads to nonnormalization,
 because the translation will never yield an assumption of the form $\sT \szltT \sT$.
 By inspection of the translation, the only fitting subsizing relation possible is of the form $\alphaT \szltT \alphaT$,
 and the only possible sources $\Funtype<{\alpha}{\alpha}{\tau}$, $\Fun<{\alpha}{\alpha}{e}$ are ill-scoped.
 Since fixpoints only reduce when applied to sizes that have a subsize
-and we can't obtain infinitely decreasing chains of subsizes,
-they can't unfold endlessly.
+and there shouldn't be any infinitely decreasing chains of subsizes,
+they wouldn't unfold endlessly.
 
 Decidability of type checking, meanwhile, rests not only on strong normalization,
 but also on decidability of subsizing, \ie deciding whether $\bound{r}{s}$ holds.
