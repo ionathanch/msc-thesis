@@ -350,7 +350,7 @@ Then we can define the zipping function and a Fibonacci-like stream as follows.
 \end{align*}
 
 \begin{align*}
-&\Let{\fibs}{\Funtype{\alpha}{\Stream{A}{\alpha}}}{ \\
+& \Let{\fibs}{\Funtype{\alpha}{\Stream{A}{\alpha}}}{ \\
 & \quad \cofix{\fibs*}{\alpha}{\Stream{A}{\alpha}}{ \\
 & \qquad \scons{\beta}{\alpha}{a}{\beta}{\alpha}{\scons{\gamma}{\beta}{a}{\gamma}{\beta}{\app{\App{\zip}{\gamma}}{(\App{\fibs*}{\gamma})}{(\App{\stl{(\App{\fibs*}{\beta})}}{\gamma})}}}}}
 \end{align*}

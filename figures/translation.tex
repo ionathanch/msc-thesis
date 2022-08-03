@@ -129,28 +129,32 @@
   \centering
   \begin{multicols}{2}
   \begin{align*}
+  \Aboxed{\wf{\Phi}{\Gamma} &\rightsquigarrow \GammaT} \\
+  \wfto{\Phi}{\mt &}{\compile{\Phi}} \\
   \Aboxed{\compile{\Gamma} &= \GammaT} \\
-  \compile{\mt} &= \mt \\
+  &\cdots \\
   \compile{\Gamma, \annot{x}{\tau}} &= \compile{\Gamma}, \annotT{\xT}{\compile{\tau}} \\
   \compile{\Gamma, \define{x}{\tau}{e}} &= \compile{\Gamma}, \defineT{\xT}{\compile{\tau}}{\compile{e}} \\
   \Aboxed{\compile{e} &= \eT} \\
   \compile{x} &= \xT \\
   \compile{U} &= \UT \\
-  \compile{\App{e}{s}} &= \app{\compile{e}}{\compile{s}} \qquad (for \textrm{\rref{sapp}})
-  \end{align*}
+\end{align*}
 
-  \begin{align*}
+\begin{align*}
+  \hfill \\
   \mathclap{\mathit{(continued)}} \\
+  \compile{\App{e}{s}} &= \app{\compile{e}}{\compile{s}} \qquad (\textrm{\rref{sapp}}) \\
   \compile{\funtype{x}{\sigma}{\tau}} &= \funtypeT{\xT}{\compile{\sigma}}{\compile{\tau}_{\annot{x}{\sigma}}} \\
   \compile{\fun{x}{\sigma}{e}} &= \funT{\xT}{\compile{\sigma}}{\compile{e}_{\annot{x}{\sigma}}} \\
   \compile{\app{e_1}{e_2}} &= \app{\compile{e_1}}{\compile{e_2}} \\
   \compile{\Funtype{\alpha}{\tau}} &= \funtypeT{\alphaT}{\SizeT}{\compile{\tau}_{\alpha}} \\
   \compile{\Funtype<{\alpha}{s}{\tau}} &= \funtypeT{\alphaT}{\SizeT}{\funtypeT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{\tau}_{\bound{\alpha}{s}}}} \\
   \compile{\Fun{\alpha}{e}} &= \funT{\alphaT}{\SizeT}{\compile{e}_{\alpha}} \\
-  \compile{\Fun<{\alpha}{s}{e}} &= \funT{\alphaT}{\SizeT}{\funT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}_{\bound{\alpha}{s}}}}
+  \compile{\Fun<{\alpha}{s}{e}} &= \funT{\alphaT}{\SizeT}{\funT{\alphaT^*}{\alphaT \szltT \compile{s}}{\compile{e}_{\bound{\alpha}{s}}}} \\
+  \hfill
   \end{align*}
   \end{multicols}
-  \vspace{-\baselineskip}
+  \vspace{-2\baselineskip}
   \begin{mathpar}
   \fbox{$\typeto{\Phi; \Gamma}{e}{\tau}{\eT}$} \quad \cdots \hfill \\
   \inferrule[\nameref{conv}]{
