@@ -16,7 +16,7 @@
 * Register for a [cIRcle](https://circle.library.ubc.ca/register) account
 * Send name and email address to [G+PS](mailto:graduate.thesis@ubc.ca) to activate account _after_ Joyce has sent the above forms to G+PS
 * Submit thesis to cIRcle named as `ubc_2022_november_chan_jonathan.pdf`
-* Send [MSc release form](https://my.cs.ubc.ca/system/files/docs/mscreleaseform.pdf) to [Joyce](mailto:poon@cs.ubc.ca) with signatures/emails from:
+* Send [MSc release form](https://my.cs.ubc.ca/system/files/docs/2024/07/releaseform_msc_updated_2024-03-25.pdf) to [Joyce](mailto:poon@cs.ubc.ca) with signatures/emails from:
   * Supervisor
   * [Group Assistant](mailto:ga-help@cs.ubc.ca)
   * [Help Desk](mailto:helpdeskers@cs.ubc.ca)
